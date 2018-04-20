@@ -6,9 +6,55 @@
     <description>Recent content in Tags on anti-: against</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
+    <lastBuildDate>Wed, 18 Apr 2018 20:13:20 -0400</lastBuildDate>
     
 	<atom:link href="https://antiagainst.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Compiler</title>
+      <link>https://antiagainst.github.io/tags/compiler/</link>
+      <pubDate>Wed, 18 Apr 2018 20:13:20 -0400</pubDate>
+      
+      <guid>https://antiagainst.github.io/tags/compiler/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Hlsl</title>
+      <link>https://antiagainst.github.io/tags/hlsl/</link>
+      <pubDate>Wed, 18 Apr 2018 20:13:20 -0400</pubDate>
+      
+      <guid>https://antiagainst.github.io/tags/hlsl/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Matrix</title>
+      <link>https://antiagainst.github.io/tags/matrix/</link>
+      <pubDate>Wed, 18 Apr 2018 20:13:20 -0400</pubDate>
+      
+      <guid>https://antiagainst.github.io/tags/matrix/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Spirv</title>
+      <link>https://antiagainst.github.io/tags/spirv/</link>
+      <pubDate>Wed, 18 Apr 2018 20:13:20 -0400</pubDate>
+      
+      <guid>https://antiagainst.github.io/tags/spirv/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Vulkan</title>
+      <link>https://antiagainst.github.io/tags/vulkan/</link>
+      <pubDate>Wed, 18 Apr 2018 20:13:20 -0400</pubDate>
+      
+      <guid>https://antiagainst.github.io/tags/vulkan/</guid>
+      <description></description>
+    </item>
     
   </channel>
 </rss>

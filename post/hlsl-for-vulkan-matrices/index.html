@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>HLSL for Vulkan: Matrices - anti-: against</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Lei Zhang" /><meta name="description" content="HLSL for Vulkan: translating HLSL matrices into SPIR-V" />
+<meta name="keywords" content="vulkan, compiler, hlsl, spirv, matrix" />
+
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.37.1" />
+
+
+<link rel="canonical" href="https://antiagainst.github.io/post/hlsl-for-vulkan-matrices/" />
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+
+
+
+
+<link href="/dist/even.min.css?v=3.1.1" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+
+
+<meta property="og:title" content="HLSL for Vulkan: Matrices" />
+<meta property="og:description" content="HLSL for Vulkan: translating HLSL matrices into SPIR-V" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://antiagainst.github.io/post/hlsl-for-vulkan-matrices/" />
+
+
+
+<meta property="article:published_time" content="2018-04-18T20:13:20-04:00"/>
+
+<meta property="article:modified_time" content="2018-04-18T20:13:20-04:00"/>
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="HLSL for Vulkan: Matrices">
+<meta itemprop="description" content="HLSL for Vulkan: translating HLSL matrices into SPIR-V">
+
+
+<meta itemprop="datePublished" content="2018-04-18T20:13:20-04:00" />
+<meta itemprop="dateModified" content="2018-04-18T20:13:20-04:00" />
+<meta itemprop="wordCount" content="2516">
+
+
+
+<meta itemprop="keywords" content="vulkan,compiler,hlsl,spirv,matrix," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="HLSL for Vulkan: Matrices"/>
+<meta name="twitter:description" content="HLSL for Vulkan: translating HLSL matrices into SPIR-V"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">anti-: against</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">anti-: against</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">HLSL for Vulkan: Matrices</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2018-04-18 </span>
+        <div class="post-category">
+            
+              <a href="/categories/hlsl-for-vulkan/"> hlsl-for-vulkan </a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Contents</h2>
+  
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+<ul>
+<li><a href="#translation-guidelines">Translation Guidelines</a>
+<ul>
+<li><a href="#for-driver">For driver</a></li>
+<li><a href="#for-developer">For developer</a></li>
+</ul></li>
+<li><a href="#hlsl-matrices">HLSL Matrices</a>
+<ul>
+<li><a href="#initialization">Initialization</a></li>
+<li><a href="#majorness">Majorness</a>
+<ul>
+<li><a href="#external-initialization">External initialization</a></li>
+<li><a href="#internal-initialization">Internal initialization</a></li>
+<li><a href="#initializer">Initializer</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#spir-v-matrices">SPIR-V Matrices</a>
+<ul>
+<li><a href="#validation-rules">Validation rules</a></li>
+<li><a href="#element-type">Element type</a></li>
+<li><a href="#float-matrix-operations">Float matrix operations</a>
+<ul>
+<li><a href="#indexing">Indexing</a></li>
+<li><a href="#per-element-operations">Per-element operations</a></li>
+<li><a href="#multiplication">Multiplication</a></li>
+</ul></li>
+<li><a href="#initialization-1">Initialization</a></li>
+<li><a href="#majorness-1">Majorness</a>
+<ul>
+<li><a href="#float-matrices">Float matrices</a></li>
+<li><a href="#bool-integer-matrices">Bool/integer matrices</a></li>
+</ul></li>
+<li><a href="#summary">Summary</a></li>
+</ul></li>
+<li><a href="#takeaways">Takeaways</a></li>
+</ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <p>This blog post discusses how HLSL matrices are translated into SPIR-V for Vulkan
+consumption in the <a href="https://github.com/Microsoft/DirectXShaderCompiler/blob/master/docs/SPIR-V.rst">SPIR-V CodeGen</a> of <a href="https://github.com/Microsoft/DirectXShaderCompiler">DirectXShaderCompiler</a>.
+It is one of the &ldquo;HLSL for Vulkan&rdquo; series.</p>
+
+<p></p>
+
+<p>Matrix types are native to high-level shading languages, but not to GPU ISAs,
+which only perform operations on scalars and vectors. Intermediate languages,
+albeit higher level than GPU ISAs, have their own decisions of whether to
+retain matrix types: <a href="https://github.com/Microsoft/DirectXShaderCompiler/blob/master/docs/DXIL.rst">DXIL</a> lowers matrices into vectors, while
+<a href="https://www.khronos.org/registry/spir-v/specs/unified1/SPIRV.html">SPIR-V</a> keeps them.</p>
+
+<h1 id="translation-guidelines">Translation Guidelines</h1>
+
+<h2 id="for-driver">For driver</h2>
+
+<p>Having native matrix types in SPIR-V does not necessarily mean that we must
+translate HLSL matrices into SPIR-V matrices, though. We can still lower
+HLSL matrices into SPIR-V vectors, which helps to reduce some of the confusions
+(to be discussed later), but loses high-level information and brings
+complexity into the CodeGen (because we need to emulate all the native SPIR-V
+matrix instructions like <code>OpMatrixTimesMatrix</code> using vectors). GPU drivers
+arguably prefer high-level information so that they can perform optimizations
+more tailored to their architectures. With only lower-level information, they
+sometimes need to perform analyses to rediscover high-level information.
+Therefore, we decided to</p>
+
+<blockquote>
+<p>Use SPIR-V&rsquo;s matrix types and instructions when possible.</p>
+</blockquote>
+
+<h2 id="for-developer">For developer</h2>
+
+<p>Of course, aiding the driver is only half of the job of a compiler; we also
+need to make sure the developer does not need to switch to another mindset
+when using HLSL to program Vulkan shaders: HLSL should be written the way
+they are written for DirectX, and data should be passed into the shader from
+application the way they are in DirectX. So, we should</p>
+
+<blockquote>
+<p>Translate in an approach intuitive and transparent to developers.</p>
+</blockquote>
+
+<p>Here we use the behavior of <code>fxc.exe</code> as the definition of HLSL and what
+developers will expect since HLSL does not have a language specification
+publicly available.</p>
+
+<h1 id="hlsl-matrices">HLSL Matrices</h1>
+
+<p>Regarding HLSL matrices, there are a few aspects that need to be covered:</p>
+
+<ul>
+<li>Initialization: external vs. internal</li>
+<li>Majorness: row vs. column</li>
+<li>Element type: boolean vs. integer vs. float</li>
+</ul>
+
+<h2 id="initialization">Initialization</h2>
+
+<p>Depending on the visibility of the matrix, it can be either initialized via
+the application or within the shader. Let&rsquo;s call the former as <em>externally
+initialized</em> and the later as <em>internally initialized</em>. From HLSL&rsquo;s perspective,</p>
+
+<ul>
+<li>Externally initialized matrices are in <code>cbuffer</code>s, <code>tbuffer</code>s, structured
+buffers, the <code>$Globals</code> cbuffer (declared as non-<code>static</code> global variables),
+and the <code>$Params</code> cbuffer (declared as <code>uniform</code> entry function parameters);</li>
+<li>Internally initialized matrices are the rest, declared as global <code>static</code> or
+local variables.</li>
+</ul>
+
+<p>Note that HLSL for DirectX supports supplying initializers for <code>cbuffer</code>
+members, which is a feature that Vulkan does not have the equivalent. <code>cbuffer</code>
+member initializers will simply trigger warnings and be ignored by the compiler.
+So, we cannot have matrices that are able to be initialized via both ways.</p>
+
+<p>We need to differentiate these two kinds of matrices because they need
+different handling regarding majorness.</p>
+
+<h2 id="majorness">Majorness</h2>
+
+<h3 id="external-initialization">External initialization</h3>
+
+<p>For externally initialized matrices, <strong>conceptually</strong>, we need to read the
+initialization data from the GPU memory. Data backing the matrices in memory
+are stored as a sequence of elements. Majorness determines how we group these
+elements into vectors and then matrices. For a <code>floatMxN</code> matrix,</p>
+
+<ul>
+<li>Row-major means consecutive numbers group into row-vectors and then the
+matrix. That is, the first <code>N</code> elements group into the first row-vector,
+the next <code>N</code> elements group into the second row-vector, and so on. We have
+<code>M</code> such row-vectors in total.</li>
+<li>column-major means consecutive numbers group into column-vectors and then
+the matrix. That is, the first <code>M</code> elements group into the first
+column-vector, the next <code>M</code> elements group into the second column-vector,
+and so on.  We have <code>N</code> such column-vectors in total.</li>
+</ul>
+
+<p>For the ease of discussion, let&rsquo;s call the matrix on GPU memory as in the
+<em>storage form</em>, and the matrix in shader after initialization as in
+<em>mathematical form</em>.</p>
+
+<p>Using <code>float2x3</code> as an example:</p>
+
+<pre><code class="language-c">// Data on GPU memory
+{1, 2, 3, 4, 5, 6}
+
+// -----
+
+// Storage form for row-major float2x3
+{{1, 2, 3}, {4, 5, 6}}
+
+// Mathematical form for row-major float2x3
+[ 1, 2, 3,
+  4, 5, 6 ]
+
+// -----
+
+// Storage form for column-major float2x3
+{{1, 2}, {3, 4}, {5, 6}}
+
+// Mathematical form for column-major float2x3
+[ 1, 3, 5,
+  2, 4, 6 ]
+</code></pre>
+
+<p>Majorness only matters for external initialized matrices, because it controls
+how they transform from the storage to the mathematical form.</p>
+
+<h3 id="internal-initialization">Internal initialization</h3>
+
+<p>For internally initialized matrices, we have already embedded the matrix
+initialization data in the shader. <strong>Conceptually</strong>, we don&rsquo;t need to get the
+data from GPU memory again, instead they are placed in GPU registers as
+immediate values.</p>
+
+<p>Internally initialized matrices are populated nothing different than other
+structured types: they are all in an element-wise way. For a <code>floatMxN</code>
+matrix <code>mat</code>, the first element in the initializer populates <code>mat[0][0]</code>,
+the second element populates <code>mat[0][1]</code>, the <code>N</code>th element populates
+<code>mat[0][N-1]</code>, the <code>N+1</code>th element populates <code>mat[1][0]</code>, and so on.</p>
+
+<h3 id="initializer">Initializer</h3>
+
+<p>It&rsquo;s sometimes the flexibility of HLSL syntax that can cause confusions
+with the majorness. The compiler is happy with the initializer as long as the
+total number of elements agrees with the matrix to initialize. With that,
+we can group elements in the initializer almost randomly, even if it means
+further decomposing some element into components. For example,</p>
+
+<pre><code>static float4   vec  = {2, 3, 4, 5};
+static float2x3 mat1 = {1, 2, 3, 4, 5, 6};
+static float2x3 mat2 = {{1}, {2, 3, {4, 5}}, 6};
+static float2x3 mat3 = {1, vec, 6};
+</code></pre>
+
+<p><code>fxc.exe</code> accepts all of the above initializers. It is easy to have the question
+of what majorness we should use to initialize <code>mat1</code>. Should it be column-major
+since column-major is the default for externally initialized matrices? Actually,
+majorness does not matter here since this is just element-wise initialization.
+<code>fxc.exe</code> also agrees with that. For example, for the following source code:</p>
+
+<pre><code>static column_major float2x2 mat1 = {1, 2, 3, 4};
+static row_major    float2x2 mat2 = {1, 2, 3, 4};
+
+void main(
+  out float4 v1 : A,
+  out float4 v2 : B
+) {
+  v1 = float4(mat1[0][0], mat1[0][1], mat1[1][0], mat1[1][1]);
+  v2 = float4(mat2[0][0], mat2[0][1], mat2[1][0], mat2[1][1]);
+}
+</code></pre>
+
+<p>The output of <code>fxc.exe</code> is</p>
+
+<pre><code>// Output signature:
+//
+// Name                 Index   Mask Register SysValue  Format   Used
+// -------------------- ----- ------ -------- -------- ------- ------
+// A                        0   xyzw        0     NONE   float   xyzw
+// B                        0   xyzw        1     NONE   float   xyzw
+//
+vs_5_1
+dcl_globalFlags refactoringAllowed
+dcl_output o0.xyzw
+dcl_output o1.xyzw
+mov o0.xyzw, l(1.000000,2.000000,3.000000,4.000000)
+mov o1.xyzw, l(1.000000,2.000000,3.000000,4.000000)
+ret
+</code></pre>
+
+<p>The <code>row_major</code>/<code>column_major</code> modifier is just ignored. It is also the case for
+<code>-Zpr</code>/<code>-Zpc</code> command-line options.</p>
+
+<h1 id="spir-v-matrices">SPIR-V Matrices</h1>
+
+<p>SPIR-V <code>OpTypeMatrix</code> is <em>column-oriented</em>; it takes a &ldquo;column type&rdquo; and
+a &ldquo;column count&rdquo; as parameters:</p>
+
+<ul>
+<li>Column Type is the type of each column in the matrix. It must be vector type.</li>
+<li>Column Count is the number of columns in the new matrix type. It must be at
+least 2.</li>
+<li>Matrix columns are numbered consecutively, starting with 0. This is true
+independently of any Decorations describing the memory layout of a matrix
+(e.g., <code>RowMajor</code> or <code>MatrixStride</code>).</li>
+</ul>
+
+<p>So with one-level indexing into a SPIR-V matrix, we get the column vector.
+This is fundamentally different from HLSL matrices, which is <em>row-oriented</em>;
+One-level indexing into a HLSL matrix gives us the row vector.</p>
+
+<p>Resulting from the above differences, translating HLSL matrices into SPIR-V
+ones is not straightforward.</p>
+
+<p>Furthermore, the SPIR-V specification has a few rules regarding using
+<code>OpTypeMatrix</code> (in &ldquo;2.16. Validation Rules&rdquo;) that make us even unable to have
+a unified way of translating HLSL matrices into SPIR-V matrices.</p>
+
+<h2 id="validation-rules">Validation rules</h2>
+
+<ul>
+<li>Matrix types can only be parameterized with floating-point types.</li>
+<li>Matrix types can only be parameterized as having only 2, 3, or 4 columns.</li>
+<li>Composite objects in the <code>StorageBuffer</code>, <code>UniformConstant</code>, <code>Uniform</code>, and
+<code>PushConstant</code> Storage Classes must be explicitly laid out. The following
+apply to all the aggregate and matrix types describing such an object,
+recursively through their nested types:
+
+<ul>
+<li>Each structure-type member that is a matrix or array-of-matrices must have
+be decorated with a <code>MatrixStride</code> Decoration and one of the <code>RowMajor</code> or
+<code>ColMajor</code> Decorations.</li>
+</ul></li>
+</ul>
+
+<h2 id="element-type">Element type</h2>
+
+<p>So, for float matrices, we can use SPIR-V <code>OpTypeMatrix</code> and all the matrix
+instructions like <code>OpVectorTimesMatrix</code>, <code>OpMatrixTimesVector</code>,
+<code>OpMatrixTimesMatrix</code>, etc. Unfortunately, boolean/integer matrices cannot
+enjoy such luxury because of the validation rules shown in the above.
+We translate them into arrays of vectors: a HLSL <code>MxN</code> matrix will turn into
+an SPIR-V <code>OpTypeArray</code> of <code>M</code> <code>N</code>-component vectors. This means we need
+to emulate all the nice matrix instructions by ourselves, too.</p>
+
+<h2 id="float-matrix-operations">Float matrix operations</h2>
+
+<p>For float matrices, although we can use <code>OpTypeMatrix</code>, the translation is
+not straightforward because of the differences explained in the beginning
+of this section.</p>
+
+<p>The translation must be functionally correct. This means, for the same HLSL
+source code with the same data from the application, we should have the same
+behavior as <code>fxc.exe</code>. Then we need to get the following language features
+correct:</p>
+
+<ul>
+<li>Matrix indexing</li>
+<li>Matrix per-element operations</li>
+<li>Matrix multiplication</li>
+<li>Matrix majorness modifiers</li>
+</ul>
+
+<h3 id="indexing">Indexing</h3>
+
+<p>Among them, indexing is the most flexible one: we can have multiple
+forms/ways to index into a matrix, like <code>._mMN</code>, <code>._MN</code>, <code>[M][N]</code>, <code>[M].yyxx</code>,
+etc. Thus it is more likely to cause problems for the CodeGen than others.
+So we chose our translation scheme to satisfy indexing correctness first.</p>
+
+<p>We have two approach to represent a <code>floatMxN</code> matrix <code>mat</code> in SPIR-V:</p>
+
+<pre><code>// 1st approach
+%vec1 = OpTypeVector %float N // Column vector with N elements
+%mat1 = OpTypeMatrix %vec1  M // M columns
+
+// 2nd approach
+%vec2 = OpTypeVector %float M // Column vector with M elements
+%mat2 = OpTypeMatrix %vec2  N // N columns
+</code></pre>
+
+<p>The 2nd way represents a <code>floatMxN</code> as a matrix of <code>M</code> rows and <code>N</code> columns.
+It&rsquo;s nice that we have consistent mathematical representation here, but
+unfortunately, it breaks indexing. Let&rsquo;s say we are trying to get <code>mat[i][j]</code>.
+Clearly in the source code we have <code>0 &lt;= i &lt; M</code> and <code>0 &lt;= j &lt; N</code>.
+But for <code>%mat2</code> in SPIR-V, we actually have <code>0 &lt;= i &lt; N</code> and <code>0 &lt;= j &lt; M</code>.
+Further considering that we can copy the whole <code>mat[i]</code> vector and then
+referencing the <code>j</code>th element in it behind complicated control flows, this
+approach is just unmanageable.</p>
+
+<p>That leaves us to use the first representation, which is essentially a
+transpose of the original matrix: <code>%mat1</code> is a matrix of <code>N</code> rows and <code>M</code>
+columns. But we have the correct indexing behavior. Accessing <code>mat[i][j]</code>
+can be translated into indexing into <code>%mat2</code> first by <code>i</code> and then by <code>j</code>,
+and we are getting the correct element if the matrix is initialized in the
+transposed manner (to be discussed later).</p>
+
+<h3 id="per-element-operations">Per-element operations</h3>
+
+<p>Operations conducting in a per-element manner, like multiplying the matrix
+by a scalar, will just work naturally since we have the same operation on
+each element.</p>
+
+<h3 id="multiplication">Multiplication</h3>
+
+<p>Because for a HLSL matrix <code>mat</code>, we are actually representing it as
+<code>transpose(mat)</code> in SPIR-V,  HLSL matrix multiplication <code>mat1 * mat2</code> should
+swap the operands in SPIR-V: <code>transpose(mat2) * transpose(mat1)</code>, which is
+then <code>transpose(mat1 * mat2)</code>: just how we should represent <code>mat1 * mat2</code> in
+SPIR-V.</p>
+
+<h2 id="initialization-1">Initialization</h2>
+
+<p>Initialization the matrix in the transposed manner is key to get float matrix
+calculations correct.</p>
+
+<p>For the SPIR-V matrix <code>%mat</code> from an internally initialized <code>floatMxN</code> matrix,
+we should initialize <code>%mat[0][0]</code> with the first element, <code>%mat[0][N-1]</code> with
+the <code>n</code>th element, <code>%mat[1][0]</code> with the <code>n+1</code>th element, and so on. That means,
+we need to group the first <code>N</code> elements as the first column-vector, the second
+<code>N</code> elements as the second column-vector, and so on.</p>
+
+<pre><code>// HLSL
+static float2x3 mat = {1, 2, 3, 4, 5, 6};
+
+// SPIR-V
+%vec1 = OpCompositeConstruct %v3float %float_1 %float_2 %float_3
+%vec2 = OpCompositeConstruct %v3float %float_4 %float_5 %float_6
+%mat  = OpCompositeConstruct %mat2v3float %vec1 %vec2
+</code></pre>
+
+<p>The above is just nice and natural: it populates the elements in the matrix one
+by one following the &ldquo;ᴎ&rdquo; pattern; just what we want.</p>
+
+<p>For externally initialized matrices, majorness is involved.</p>
+
+<h2 id="majorness-1">Majorness</h2>
+
+<p>As said previously, majorness only matters for externally initialized matrices.
+This agrees with SPIR-V validation rules, which requires matrices inside
+<a href="https://www.khronos.org/registry/vulkan/specs/1.1-extensions/html/vkspec.html#interfaces-resources-correspondence">shader resources</a> to be explicitly laid out, but not
+the shader internal ones (inside <code>Function</code> or <code>Private</code> storage class).</p>
+
+<h3 id="float-matrices">Float matrices</h3>
+
+<p>But as we need to swap the multiplication operands, we also need to flip
+the majorness decoration in SPIR-V to make sure matrices are initialized
+in the transposed manner:</p>
+
+<ul>
+<li>HLSL <code>row_major</code> should be translated into SPIR-V <code>ColMajor</code>;</li>
+<li>HLSL <code>column_major</code> should be translated into SPIR-V <code>RowMajor</code>.</li>
+</ul>
+
+<p>An example will make it clear:</p>
+
+<pre><code class="language-c">// Data on GPU memory
+{1, 2, 3, 4, 5, 6}
+
+// --- HLSL ---
+
+// Storage form for row-major float2x3
+{{1, 2, 3}, {4, 5, 6}}
+
+// Mathematical form for row-major float2x3
+[ 1, 2, 3,
+  4, 5, 6 ]
+
+// -----
+
+// Storage form for column-major float2x3
+{{1, 2}, {3, 4}, {5, 6}}
+
+// Mathematical form for column-major float2x3
+[ 1, 3, 5,
+  2, 4, 6 ]
+
+// --- SPIR-V ---
+
+// Storage form for RowMajor %mat2v3float
+{{1, 2}, {3, 4}, {5, 6}}
+
+// Mathematical form for RowMajor %mat2v3float
+[ 1, 2,
+  3, 4,
+  5, 6 ]
+
+// -----
+
+// Storage form for ColMajor %mat2v3float
+{{1, 2, 3}, {4, 5, 6}}
+
+// Mathematical form for ColMajor %mat2v3float
+[ 1, 4,
+  2, 5,
+  3, 6 ]
+</code></pre>
+
+<p>It&rsquo;s clear from the above that <code>row_major</code> <code>float2x3</code> should be represented as
+<code>ColMajor</code> <code>%mat2v3float</code>, and <code>column_major</code> <code>float2x3</code> should be represented
+as <code>RowMajor</code> <code>%mat2v3float</code>, to achieve transposed initialization.</p>
+
+<h3 id="bool-integer-matrices">Bool/integer matrices</h3>
+
+<p>The above is for float matrices, though. We don&rsquo;t have the <code>RowMajor</code>/
+<code>ColMajor</code> decoration for boolean/integer matrices since they are translated
+into an array of vectors. For them, we need to handle source code <code>row_major</code>/
+<code>column_major</code> modifier similarly to what the driver is doing for <code>RowMajor</code>/
+<code>ColMajor</code> decorations. Note that we do not want to perform transposed
+initialization here since we are not using <code>OpTypeMatrix</code>.</p>
+
+<p>So for HLSL <code>row_major</code> <code>floatMxN</code> matrix, we just need to take the first <code>N</code>
+consecutive elements to initialize the first vector in the array, the second <code>N</code>
+consecutive elements to initialize the second vector in the array. Essentially
+we don&rsquo;t need to do anything special.</p>
+
+<p>But for HLSL <code>column_major</code> <code>floatMxN</code> matrix, we need to take the 1st,
+<code>M+1</code>th, <code>M*2+1</code>th, &hellip;, <code>M*(N-1)+1</code>th element to compose the first vector.
+Similarly for other vectors.</p>
+
+<h2 id="summary">Summary</h2>
+
+<p>To summarize what discussed in the above sections:</p>
+
+<table>
+<thead>
+<tr>
+<th align="center">HLSL Element Type</th>
+<th align="center">HLSL Initialization</th>
+<th align="center">Majorness</th>
+<th align="center">SPIR-V Type</th>
+<th align="center">SPIRV Decoration</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="center">Float</td>
+<td align="center">Internal</td>
+<td align="center">Row</td>
+<td align="center"><code>OpTypeMatrix</code></td>
+<td align="center">N/A</td>
+</tr>
+
+<tr>
+<td align="center">Float</td>
+<td align="center">Internal</td>
+<td align="center">Column</td>
+<td align="center"><code>OpTypeMatrix</code></td>
+<td align="center">N/A</td>
+</tr>
+
+<tr>
+<td align="center">Float</td>
+<td align="center">External</td>
+<td align="center">Row</td>
+<td align="center"><code>OpTypeMatrix</code></td>
+<td align="center"><code>ColMajor</code></td>
+</tr>
+
+<tr>
+<td align="center">Float</td>
+<td align="center">External</td>
+<td align="center">Column</td>
+<td align="center"><code>OpTypeMatrix</code></td>
+<td align="center"><code>RowMajor</code></td>
+</tr>
+
+<tr>
+<td align="center">Bool/Integer</td>
+<td align="center">Internal</td>
+<td align="center">Row</td>
+<td align="center">Array of <code>OpTypeVector</code></td>
+<td align="center">N/A</td>
+</tr>
+
+<tr>
+<td align="center">Bool/Integer</td>
+<td align="center">Internal</td>
+<td align="center">Column</td>
+<td align="center">Array of <code>OpTypeVector</code></td>
+<td align="center">N/A</td>
+</tr>
+
+<tr>
+<td align="center">Bool/Integer</td>
+<td align="center">External</td>
+<td align="center">Row</td>
+<td align="center">Array of <code>OpTypeVector</code></td>
+<td align="center">N/A</td>
+</tr>
+
+<tr>
+<td align="center">Bool/Integer</td>
+<td align="center">External</td>
+<td align="center">Column</td>
+<td align="center">Array of <code>OpTypeVector</code></td>
+<td align="center">N/A</td>
+</tr>
+</tbody>
+</table>
+
+<h1 id="takeaways">Takeaways</h1>
+
+<p>Due to the fundamental differences between HLSL matrices and SPIR-V matrices
+(HLSL matrices are row-oriented while SPIR-V matrices are column-oriented)
+and additional requirements over matrix types in SPIR-V, we don&rsquo;t have a
+straightforward and unified translation scheme for HLSL matrices.</p>
+
+<ul>
+<li>HLSL float matrices are translated into SPIR-V <code>OpTypeMatrix</code>s in a transposed
+manner, which requires corresponding special handling of matrix features:
+
+<ul>
+<li>Operands in matrix multiplication need to be swapped.</li>
+<li>Majorness decorations need to be swapped.</li>
+</ul></li>
+<li>HLSL boolean/integer matrices are translated into SPIR-V <code>OpTypeArray</code>s of
+<code>OpTypeVector</code>s.</li>
+</ul>
+
+<p>With the above translation scheme, we retain source code high-level information
+as much as we can, and the SPIR-V code should work transparently for developers.</p>
+    </div>
+
+    
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">Lei Zhang</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">2018-04-18</span>
+  </p>
+  
+  
+</div>
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          
+          <a href="/tags/vulkan/">vulkan</a>
+          
+          <a href="/tags/compiler/">compiler</a>
+          
+          <a href="/tags/hlsl/">hlsl</a>
+          
+          <a href="/tags/spirv/">spirv</a>
+          
+          <a href="/tags/matrix/">matrix</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="https://github.com/antiagainst" class="iconfont icon-github" title="github"></a>
+  <a href="https://antiagainst.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2018
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Lei Zhang</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+<script src="/lib/highlight/highlight.pack.js?v=20171001"></script><script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+<script type="text/javascript" src="/dist/even.min.js?v=3.1.1"></script>
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-109525036-1', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+</body>
+</html>
