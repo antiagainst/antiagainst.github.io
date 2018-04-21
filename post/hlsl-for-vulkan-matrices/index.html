@@ -75,7 +75,7 @@
 
 <meta itemprop="datePublished" content="2018-04-18T20:13:20-04:00" />
 <meta itemprop="dateModified" content="2018-04-18T20:13:20-04:00" />
-<meta itemprop="wordCount" content="2516">
+<meta itemprop="wordCount" content="2618">
 
 
 
@@ -418,8 +418,7 @@ a &ldquo;column count&rdquo; as parameters:</p>
 <li>Column Count is the number of columns in the new matrix type. It must be at
 least 2.</li>
 <li>Matrix columns are numbered consecutively, starting with 0. This is true
-independently of any Decorations describing the memory layout of a matrix
-(e.g., <code>RowMajor</code> or <code>MatrixStride</code>).</li>
+independently of any Decorations describing the memory layout of a matrix.</li>
 </ul>
 
 <p>So with one-level indexing into a SPIR-V matrix, we get the column vector.
@@ -448,6 +447,26 @@ recursively through their nested types:
 be decorated with a <code>MatrixStride</code> Decoration and one of the <code>RowMajor</code> or
 <code>ColMajor</code> Decorations.</li>
 </ul></li>
+</ul>
+
+<p>There are a few Vulkan/SPIR-V terms in the above worth some explanations:</p>
+
+<p>Storage class dictates the type of memory:</p>
+
+<ul>
+<li>HLSL textures and samplers will be put in the <code>UniformConstant</code> storage class;</li>
+<li>HLSL structured buffers will be put in the <code>Uniform</code> storage class.</li>
+</ul>
+
+<p>(See the <a href="https://github.com/Microsoft/DirectXShaderCompiler/blob/master/docs/SPIR-V.rst#textures">tables in the mapping doc</a> for details of how all
+HLSL resource types are mapping to Vulkan resource types and their corresponding
+storage classes.)</p>
+
+<ul>
+<li><code>RowMajor</code> indicates that components within a row are contiguous in memory.</li>
+<li><code>ColMajor</code> indicates that components within a column are contiguous in memory.</li>
+<li><code>MatrixStride</code> specifies the stride of rows in a <code>RowMajor</code>-decorated matrix,
+or columns in a <code>ColMajor</code>-decorated matrix.</li>
 </ul>
 
 <h2 id="element-type">Element type</h2>
@@ -781,6 +800,22 @@ as much as we can, and the SPIR-V code should work transparently for developers.
   </article>
         </div>
         
+  <div id="disqus_thread"></div>
+    <script type="text/javascript">
+    (function() {
+      
+      
+      if (window.location.hostname === 'localhost') return;
+
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      var disqus_shortname = 'antiagainst';
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+  
 
       </div>
     </main>
