@@ -6,7 +6,7 @@
     <description>Recent content in Tags on Lei Zhang (antiagainst)&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 18 Apr 2018 20:13:20 -0400</lastBuildDate>
+    <lastBuildDate>Tue, 24 Apr 2018 16:39:21 -0400</lastBuildDate>
     
 	<atom:link href="https://antiagainst.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,16 +14,34 @@
     <item>
       <title>Compiler</title>
       <link>https://antiagainst.github.io/tags/compiler/</link>
-      <pubDate>Wed, 18 Apr 2018 20:13:20 -0400</pubDate>
+      <pubDate>Tue, 24 Apr 2018 16:39:21 -0400</pubDate>
       
       <guid>https://antiagainst.github.io/tags/compiler/</guid>
       <description></description>
     </item>
     
     <item>
+      <title>Glsl</title>
+      <link>https://antiagainst.github.io/tags/glsl/</link>
+      <pubDate>Tue, 24 Apr 2018 16:39:21 -0400</pubDate>
+      
+      <guid>https://antiagainst.github.io/tags/glsl/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Graphics</title>
+      <link>https://antiagainst.github.io/tags/graphics/</link>
+      <pubDate>Tue, 24 Apr 2018 16:39:21 -0400</pubDate>
+      
+      <guid>https://antiagainst.github.io/tags/graphics/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Hlsl</title>
       <link>https://antiagainst.github.io/tags/hlsl/</link>
-      <pubDate>Wed, 18 Apr 2018 20:13:20 -0400</pubDate>
+      <pubDate>Tue, 24 Apr 2018 16:39:21 -0400</pubDate>
       
       <guid>https://antiagainst.github.io/tags/hlsl/</guid>
       <description></description>
@@ -39,9 +57,27 @@
     </item>
     
     <item>
+      <title>Resource</title>
+      <link>https://antiagainst.github.io/tags/resource/</link>
+      <pubDate>Tue, 24 Apr 2018 16:39:21 -0400</pubDate>
+      
+      <guid>https://antiagainst.github.io/tags/resource/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Shader</title>
+      <link>https://antiagainst.github.io/tags/shader/</link>
+      <pubDate>Tue, 24 Apr 2018 16:39:21 -0400</pubDate>
+      
+      <guid>https://antiagainst.github.io/tags/shader/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Spirv</title>
       <link>https://antiagainst.github.io/tags/spirv/</link>
-      <pubDate>Wed, 18 Apr 2018 20:13:20 -0400</pubDate>
+      <pubDate>Tue, 24 Apr 2018 16:39:21 -0400</pubDate>
       
       <guid>https://antiagainst.github.io/tags/spirv/</guid>
       <description></description>
@@ -50,7 +86,7 @@
     <item>
       <title>Vulkan</title>
       <link>https://antiagainst.github.io/tags/vulkan/</link>
-      <pubDate>Wed, 18 Apr 2018 20:13:20 -0400</pubDate>
+      <pubDate>Tue, 24 Apr 2018 16:39:21 -0400</pubDate>
       
       <guid>https://antiagainst.github.io/tags/vulkan/</guid>
       <description></description>
