@@ -6,10 +6,24 @@
     <description>Recent content in Hlsl on Lei Zhang (antiagainst)&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 24 Apr 2018 16:39:21 -0400</lastBuildDate>
+    <lastBuildDate>Fri, 11 May 2018 13:15:45 -0400</lastBuildDate>
     
 	<atom:link href="https://antiagainst.github.io/tags/hlsl/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>HLSL for Vulkan: Semantic Strings and Location Numbers</title>
+      <link>https://antiagainst.github.io/post/hlsl-for-vulkan-semantic-strings-and-location-numbers/</link>
+      <pubDate>Fri, 11 May 2018 13:15:45 -0400</pubDate>
+      
+      <guid>https://antiagainst.github.io/post/hlsl-for-vulkan-semantic-strings-and-location-numbers/</guid>
+      <description>&lt;p&gt;This blog post discusses how HLSL semantic strings are translated into
+SPIR-V location numbers for Vulkan shader inter-stage interface matching
+in the &lt;a href=&#34;https://github.com/Microsoft/DirectXShaderCompiler/blob/master/docs/SPIR-V.rst&#34;&gt;SPIR-V CodeGen&lt;/a&gt; of &lt;a href=&#34;https://github.com/Microsoft/DirectXShaderCompiler&#34;&gt;DirectXShaderCompiler&lt;/a&gt; (DXC).
+It is one of the &amp;ldquo;HLSL for Vulkan&amp;rdquo; series.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>HLSL for Vulkan: Resources</title>
