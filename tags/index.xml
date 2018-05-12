@@ -21,6 +21,24 @@
     </item>
     
     <item>
+      <title>Doc</title>
+      <link>https://antiagainst.github.io/tags/doc/</link>
+      <pubDate>Sat, 12 May 2018 17:44:14 -0400</pubDate>
+      
+      <guid>https://antiagainst.github.io/tags/doc/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Download</title>
+      <link>https://antiagainst.github.io/tags/download/</link>
+      <pubDate>Sat, 12 May 2018 17:44:14 -0400</pubDate>
+      
+      <guid>https://antiagainst.github.io/tags/download/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Glsl</title>
       <link>https://antiagainst.github.io/tags/glsl/</link>
       <pubDate>Tue, 24 Apr 2018 16:39:21 -0400</pubDate>
@@ -41,7 +59,7 @@
     <item>
       <title>Hlsl</title>
       <link>https://antiagainst.github.io/tags/hlsl/</link>
-      <pubDate>Fri, 11 May 2018 13:15:45 -0400</pubDate>
+      <pubDate>Sat, 12 May 2018 17:44:14 -0400</pubDate>
       
       <guid>https://antiagainst.github.io/tags/hlsl/</guid>
       <description></description>
@@ -86,7 +104,7 @@
     <item>
       <title>Shader</title>
       <link>https://antiagainst.github.io/tags/shader/</link>
-      <pubDate>Fri, 11 May 2018 13:15:45 -0400</pubDate>
+      <pubDate>Sat, 12 May 2018 17:44:14 -0400</pubDate>
       
       <guid>https://antiagainst.github.io/tags/shader/</guid>
       <description></description>
@@ -102,9 +120,18 @@
     </item>
     
     <item>
+      <title>Talk</title>
+      <link>https://antiagainst.github.io/tags/talk/</link>
+      <pubDate>Sat, 12 May 2018 17:44:14 -0400</pubDate>
+      
+      <guid>https://antiagainst.github.io/tags/talk/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Vulkan</title>
       <link>https://antiagainst.github.io/tags/vulkan/</link>
-      <pubDate>Fri, 11 May 2018 13:15:45 -0400</pubDate>
+      <pubDate>Sat, 12 May 2018 17:44:14 -0400</pubDate>
       
       <guid>https://antiagainst.github.io/tags/vulkan/</guid>
       <description></description>

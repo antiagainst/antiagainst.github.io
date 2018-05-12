@@ -6,10 +6,24 @@
     <description>Recent content in Hlsl on Lei Zhang (antiagainst)&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 11 May 2018 13:15:45 -0400</lastBuildDate>
+    <lastBuildDate>Sat, 12 May 2018 17:44:14 -0400</lastBuildDate>
     
 	<atom:link href="https://antiagainst.github.io/tags/hlsl/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Shader Toolchain: HLSL in Vulkan</title>
+      <link>https://antiagainst.github.io/post/shader-toolchain-hlsl-in-vulkan/</link>
+      <pubDate>Sat, 12 May 2018 17:44:14 -0400</pubDate>
+      
+      <guid>https://antiagainst.github.io/post/shader-toolchain-hlsl-in-vulkan/</guid>
+      <description>&lt;p&gt;On &lt;a href=&#34;https://www.khronos.org/events/2018-vulkan-developer-day-in-montreal&#34;&gt;2018 Vulkan Developer Day in Montréal&lt;/a&gt;, I gave a talk
+regarding &amp;ldquo;Shader Toolchain: HLSL in Vulkan&amp;rdquo;. Here are the links to the
+video recording, slides, and documentation/downloads for DirectX Shader
+Compiler (DXC)&amp;rsquo;s SPIR-V CodeGen.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>HLSL for Vulkan: Semantic Strings and Location Numbers</title>
