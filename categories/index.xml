@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on Lei Zhang (antiagainst)&#39;s Blog</title>
@@ -6,12 +6,9 @@
     <description>Recent content in Categories on Lei Zhang (antiagainst)&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    
-	<atom:link href="https://antiagainst.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Sat, 12 May 2018 17:44:14 -0400</lastBuildDate><atom:link href="https://antiagainst.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Dxc</title>
+      <title>dxc</title>
       <link>https://antiagainst.github.io/categories/dxc/</link>
       <pubDate>Sat, 12 May 2018 17:44:14 -0400</pubDate>
       
@@ -20,7 +17,7 @@
     </item>
     
     <item>
-      <title>Hlsl-for-vulkan</title>
+      <title>hlsl-for-vulkan</title>
       <link>https://antiagainst.github.io/categories/hlsl-for-vulkan/</link>
       <pubDate>Fri, 11 May 2018 13:15:45 -0400</pubDate>
       

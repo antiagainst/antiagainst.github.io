@@ -1,16 +1,12 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Glsl on Lei Zhang (antiagainst)&#39;s Blog</title>
+    <title>glsl on Lei Zhang (antiagainst)&#39;s Blog</title>
     <link>https://antiagainst.github.io/tags/glsl/</link>
-    <description>Recent content in Glsl on Lei Zhang (antiagainst)&#39;s Blog</description>
+    <description>Recent content in glsl on Lei Zhang (antiagainst)&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 24 Apr 2018 16:39:21 -0400</lastBuildDate>
-    
-	<atom:link href="https://antiagainst.github.io/tags/glsl/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Tue, 24 Apr 2018 16:39:21 -0400</lastBuildDate><atom:link href="https://antiagainst.github.io/tags/glsl/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>HLSL for Vulkan: Resources</title>
       <link>https://antiagainst.github.io/post/hlsl-for-vulkan-resources/</link>
@@ -19,9 +15,7 @@
       <guid>https://antiagainst.github.io/post/hlsl-for-vulkan-resources/</guid>
       <description>&lt;p&gt;This blog post discusses how to manage resources in HLSL for Vulkan, using the
 &lt;a href=&#34;https://github.com/Microsoft/DirectXShaderCompiler/blob/master/docs/SPIR-V.rst&#34;&gt;SPIR-V CodeGen&lt;/a&gt; of &lt;a href=&#34;https://github.com/Microsoft/DirectXShaderCompiler&#34;&gt;DirectXShaderCompiler&lt;/a&gt; (DXC).
-It is one of the &amp;ldquo;HLSL for Vulkan&amp;rdquo; series.&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;</description>
+It is one of the &amp;ldquo;HLSL for Vulkan&amp;rdquo; series.&lt;/p&gt;</description>
     </item>
     
   </channel>

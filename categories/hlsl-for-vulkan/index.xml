@@ -1,16 +1,12 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Hlsl-for-vulkan on Lei Zhang (antiagainst)&#39;s Blog</title>
+    <title>hlsl-for-vulkan on Lei Zhang (antiagainst)&#39;s Blog</title>
     <link>https://antiagainst.github.io/categories/hlsl-for-vulkan/</link>
-    <description>Recent content in Hlsl-for-vulkan on Lei Zhang (antiagainst)&#39;s Blog</description>
+    <description>Recent content in hlsl-for-vulkan on Lei Zhang (antiagainst)&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 11 May 2018 13:15:45 -0400</lastBuildDate>
-    
-	<atom:link href="https://antiagainst.github.io/categories/hlsl-for-vulkan/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Fri, 11 May 2018 13:15:45 -0400</lastBuildDate><atom:link href="https://antiagainst.github.io/categories/hlsl-for-vulkan/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>HLSL for Vulkan: Semantic Strings and Location Numbers</title>
       <link>https://antiagainst.github.io/post/hlsl-for-vulkan-semantic-strings-and-location-numbers/</link>
@@ -20,9 +16,7 @@
       <description>&lt;p&gt;This blog post discusses how HLSL semantic strings are translated into
 SPIR-V location numbers for Vulkan shader inter-stage interface matching
 in the &lt;a href=&#34;https://github.com/Microsoft/DirectXShaderCompiler/blob/master/docs/SPIR-V.rst&#34;&gt;SPIR-V CodeGen&lt;/a&gt; of &lt;a href=&#34;https://github.com/Microsoft/DirectXShaderCompiler&#34;&gt;DirectXShaderCompiler&lt;/a&gt; (DXC).
-It is one of the &amp;ldquo;HLSL for Vulkan&amp;rdquo; series.&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;</description>
+It is one of the &amp;ldquo;HLSL for Vulkan&amp;rdquo; series.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -33,9 +27,7 @@ It is one of the &amp;ldquo;HLSL for Vulkan&amp;rdquo; series.&lt;/p&gt;
       <guid>https://antiagainst.github.io/post/hlsl-for-vulkan-resources/</guid>
       <description>&lt;p&gt;This blog post discusses how to manage resources in HLSL for Vulkan, using the
 &lt;a href=&#34;https://github.com/Microsoft/DirectXShaderCompiler/blob/master/docs/SPIR-V.rst&#34;&gt;SPIR-V CodeGen&lt;/a&gt; of &lt;a href=&#34;https://github.com/Microsoft/DirectXShaderCompiler&#34;&gt;DirectXShaderCompiler&lt;/a&gt; (DXC).
-It is one of the &amp;ldquo;HLSL for Vulkan&amp;rdquo; series.&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;</description>
+It is one of the &amp;ldquo;HLSL for Vulkan&amp;rdquo; series.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -46,9 +38,7 @@ It is one of the &amp;ldquo;HLSL for Vulkan&amp;rdquo; series.&lt;/p&gt;
       <guid>https://antiagainst.github.io/post/hlsl-for-vulkan-matrices/</guid>
       <description>&lt;p&gt;This blog post discusses how HLSL matrices are translated into SPIR-V for Vulkan
 consumption in the &lt;a href=&#34;https://github.com/Microsoft/DirectXShaderCompiler/blob/master/docs/SPIR-V.rst&#34;&gt;SPIR-V CodeGen&lt;/a&gt; of &lt;a href=&#34;https://github.com/Microsoft/DirectXShaderCompiler&#34;&gt;DirectXShaderCompiler&lt;/a&gt;.
-It is one of the &amp;ldquo;HLSL for Vulkan&amp;rdquo; series.&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;</description>
+It is one of the &amp;ldquo;HLSL for Vulkan&amp;rdquo; series.&lt;/p&gt;</description>
     </item>
     
   </channel>

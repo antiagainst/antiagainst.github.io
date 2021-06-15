@@ -16,20 +16,17 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
 
 
-<meta name="author" content="Lei Zhang" /><meta name="description" content="HLSL for Vulkan: translating HLSL semantic strings into SPIR-V location numbers" />
-<meta name="keywords" content="graphics, vulkan, shader, compiler, hlsl, spirv, semantic, location" />
+<meta name="author" content="Lei Zhang" /><meta name="description" content="HLSL for Vulkan: translating HLSL semantic strings into SPIR-V location numbers" /><meta name="keywords" content="graphics, vulkan, shader, compiler, hlsl, spirv, semantic, location" />
 
 
 
 
 
 
-
-<meta name="generator" content="Hugo 0.40.3" />
+<meta name="generator" content="Hugo 0.83.1 with theme even" />
 
 
 <link rel="canonical" href="https://antiagainst.github.io/post/hlsl-for-vulkan-semantic-strings-and-location-numbers/" />
-
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -38,49 +35,22 @@
 
 
 
-
-
-
-
-<link href="/dist/even.min.css?v=3.1.1" rel="stylesheet">
-<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
-
-
+<link href="/sass/main.min.341f22ab860c0999b470e9188931bd03b148c0112ed9ffece6f6c20cb61241d5.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
 
 
 <meta property="og:title" content="HLSL for Vulkan: Semantic Strings and Location Numbers" />
 <meta property="og:description" content="HLSL for Vulkan: translating HLSL semantic strings into SPIR-V location numbers" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://antiagainst.github.io/post/hlsl-for-vulkan-semantic-strings-and-location-numbers/" />
-
-
-
-<meta property="article:published_time" content="2018-05-11T13:15:45-04:00"/>
-
-<meta property="article:modified_time" content="2018-05-12T13:27:37-04:00"/>
-
-
-
-
-
-
-
-
-
-
+<meta property="og:url" content="https://antiagainst.github.io/post/hlsl-for-vulkan-semantic-strings-and-location-numbers/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2018-05-11T13:15:45-04:00" />
+<meta property="article:modified_time" content="2018-05-12T13:27:37-04:00" />
 
 <meta itemprop="name" content="HLSL for Vulkan: Semantic Strings and Location Numbers">
-<meta itemprop="description" content="HLSL for Vulkan: translating HLSL semantic strings into SPIR-V location numbers">
-
-
-<meta itemprop="datePublished" content="2018-05-11T13:15:45-04:00" />
-<meta itemprop="dateModified" content="2018-05-11T13:15:45-04:00" />
-<meta itemprop="wordCount" content="2180">
-
-
-
-<meta itemprop="keywords" content="graphics,vulkan,shader,compiler,hlsl,spirv,semantic,location," />
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="description" content="HLSL for Vulkan: translating HLSL semantic strings into SPIR-V location numbers"><meta itemprop="datePublished" content="2018-05-11T13:15:45-04:00" />
+<meta itemprop="dateModified" content="2018-05-12T13:27:37-04:00" />
+<meta itemprop="wordCount" content="2304">
+<meta itemprop="keywords" content="graphics,vulkan,shader,compiler,hlsl,spirv,semantic,location," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="HLSL for Vulkan: Semantic Strings and Location Numbers"/>
 <meta name="twitter:description" content="HLSL for Vulkan: translating HLSL semantic strings into SPIR-V location numbers"/>
 
@@ -119,12 +89,21 @@
         <li class="mobile-menu-item">About</li>
       </a>
   </ul>
+
+  
+
+
 </nav>
+
   <div class="container" id="mobile-panel">
     <header id="header" class="header">
         <div class="logo-wrapper">
   <a href="/" class="logo">anti-: against</a>
 </div>
+
+
+
+
 
 <nav class="site-navbar">
   <ul id="menu" class="menu">
@@ -141,6 +120,7 @@
       </li>
   </ul>
 </nav>
+
     </header>
 
     <main id="main" class="main">
@@ -154,78 +134,68 @@
       <div class="post-meta">
         <span class="post-time"> 2018-05-11 </span>
         <div class="post-category">
-            
-              <a href="/categories/hlsl-for-vulkan/"> hlsl-for-vulkan </a>
-            
-              <a href="/categories/dxc/"> dxc </a>
-            
-          </div>
-        <span class="more-meta"> 2180 words </span>
-        <span class="more-meta"> 11 mins read </span>
+            <a href="/categories/hlsl-for-vulkan/"> hlsl-for-vulkan </a>
+            <a href="/categories/dxc/"> dxc </a>
+            </div>
+          <span class="more-meta"> 2304 words </span>
+          <span class="more-meta"> 11 mins read </span>
         
       </div>
     </header>
 
-    
-    
-<div class="post-toc" id="post-toc">
+    <div class="post-toc" id="post-toc">
   <h2 class="post-toc-title">Contents</h2>
-  
   <div class="post-toc-content always-active">
     <nav id="TableOfContents">
-<ul>
-<li><a href="#terminology">Terminology</a>
-<ul>
-<li><a href="#directx-hlsl-dxil">DirectX/HLSL/DXIL</a></li>
-<li><a href="#vulkan-glsl-spir-v">Vulkan/GLSL/SPIR-V</a></li>
-</ul></li>
-<li><a href="#shader-inter-stage-interface">Shader Inter-stage Interface</a>
-<ul>
-<li><a href="#directx">DirectX</a>
-<ul>
-<li><a href="#semantic-string">Semantic string</a></li>
-<li><a href="#interface-matching">Interface matching</a></li>
-</ul></li>
-<li><a href="#vulkan">Vulkan</a></li>
-</ul></li>
-<li><a href="#semantic-string-to-location-number">Semantic String to Location Number</a>
-<ul>
-<li><a href="#hs-ds-gs-arrayness">HS/DS/GS arrayness</a></li>
-<li><a href="#hs-output-and-ds-input">HS output and DS input</a></li>
-<li><a href="#sv-semantic-vs-non-sv-semantic">SV semantic vs. non-SV semantic</a></li>
-<li><a href="#sv-target">SV_Target</a></li>
-<li><a href="#sv-clipdistance-sv-culldistance">SV_ClipDistance &amp; SV_CullDistance</a></li>
-<li><a href="#explicit-control">Explicit control</a>
-<ul>
-<li><a href="#dual-source-blending">Dual-source blending</a></li>
-</ul></li>
-</ul></li>
-<li><a href="#takeaways">Takeaways</a></li>
-</ul>
+  <ul>
+    <li><a href="#terminology">Terminology</a>
+      <ul>
+        <li><a href="#directxhlsldxil">DirectX/HLSL/DXIL</a></li>
+        <li><a href="#vulkanglslspir-v">Vulkan/GLSL/SPIR-V</a></li>
+      </ul>
+    </li>
+    <li><a href="#shader-inter-stage-interface">Shader Inter-stage Interface</a>
+      <ul>
+        <li><a href="#directx">DirectX</a>
+          <ul>
+            <li><a href="#semantic-string">Semantic string</a></li>
+            <li><a href="#interface-matching">Interface matching</a></li>
+          </ul>
+        </li>
+        <li><a href="#vulkan">Vulkan</a></li>
+      </ul>
+    </li>
+    <li><a href="#semantic-string-to-location-number">Semantic String to Location Number</a>
+      <ul>
+        <li><a href="#hsdsgs-arrayness">HS/DS/GS arrayness</a></li>
+        <li><a href="#hs-output-and-ds-input">HS output and DS input</a></li>
+        <li><a href="#sv-semantic-vs-non-sv-semantic">SV semantic vs. non-SV semantic</a></li>
+        <li><a href="#sv_target">SV_Target</a></li>
+        <li><a href="#sv_clipdistance--sv_culldistance">SV_ClipDistance &amp; SV_CullDistance</a></li>
+        <li><a href="#explicit-control">Explicit control</a>
+          <ul>
+            <li><a href="#dual-source-blending">Dual-source blending</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#takeaways">Takeaways</a></li>
+  </ul>
 </nav>
   </div>
 </div>
-
-    
     <div class="post-content">
       <p>This blog post discusses how HLSL semantic strings are translated into
 SPIR-V location numbers for Vulkan shader inter-stage interface matching
 in the <a href="https://github.com/Microsoft/DirectXShaderCompiler/blob/master/docs/SPIR-V.rst">SPIR-V CodeGen</a> of <a href="https://github.com/Microsoft/DirectXShaderCompiler">DirectXShaderCompiler</a> (DXC).
 It is one of the &ldquo;HLSL for Vulkan&rdquo; series.</p>
-
-<p></p>
-
 <p>There are a few places that DirectX and Vulkan adopt different mechanisms
 (and different terms!) for the same task; how to match/link shader inputs
 and outputs is one of them.</p>
-
 <h1 id="terminology">Terminology</h1>
-
 <p>Before diving in, to confuse everyone, here are a few concepts related to
 shader inter-stage interface. :)</p>
-
-<h2 id="directx-hlsl-dxil">DirectX/HLSL/DXIL</h2>
-
+<h2 id="directxhlsldxil">DirectX/HLSL/DXIL</h2>
 <ul>
 <li><em>Input/output signature</em>: all input/output parameters of a shader entry
 function.</li>
@@ -238,12 +208,9 @@ entry function to convey the intended usage of the parameter.</li>
 that has specific meanings and constraints. SV semantics are shader stage
 dependent.</li>
 </ul>
-
 <p>More details can be found in the DXIL spec,
 <a href="https://github.com/Microsoft/DirectXShaderCompiler/blob/master/docs/DXIL.rst#hlsl-signatures-and-semantics">&ldquo;HLSL signatures and semantics&rdquo;</a>.</p>
-
-<h2 id="vulkan-glsl-spir-v">Vulkan/GLSL/SPIR-V</h2>
-
+<h2 id="vulkanglslspir-v">Vulkan/GLSL/SPIR-V</h2>
 <ul>
 <li><em>Shader input and output interface</em>: when multiple stages are present in
 a pipeline, the outputs of one stage form an interface with the inputs of
@@ -255,17 +222,12 @@ Each class has a different set of matching criteria.</li>
 comprised of a 32-bit four-component vector conveyed between stages. The
 <code>Component</code> specifies components within these vector locations.</li>
 </ul>
-
 <p>More details can be found in the Vulkan spec,
 <a href="https://www.khronos.org/registry/vulkan/specs/1.1-extensions/html/vkspec.html#interfaces-iointerfaces">&ldquo;Shader Input and Output Interfaces&rdquo;</a>.</p>
-
 <h1 id="shader-inter-stage-interface">Shader Inter-stage Interface</h1>
-
 <p>Now let&rsquo;s look at shader inter-stage interface matching for both DirectX
 and Vulkan.</p>
-
 <h2 id="directx">DirectX</h2>
-
 <p>For a single shader stage, the input/output parameters must be packed
 into a space of N 4x32-bit registers according to runtime constraints.
 The C/C++ type system adopted by HLSL introduces complexity in the process;
@@ -273,12 +235,24 @@ therefore, to simplify packing, all signature variables of composite types are
 fattened first: turning struct parameters into constituent components and
 making strided arrays contiguous. The DXIL spec, <a href="https://github.com/Microsoft/DirectXShaderCompiler/blob/master/docs/DXIL.rst#signature-packing">&ldquo;Signature packing&rdquo;</a>
 contains the complete set of packing rules.</p>
-
 <p>Each signature parameter can take one or more registers; and the register
 assignment process happens in <strong>declaration order</strong>. For example, for the
 following source code:</p>
-
-<pre><code>struct VSOut {
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">struct VSOut {
   float4  pos  : SV_Position;
   float3  vec1 : VECTOR1;
   float3  vec2 : VECTOR2;
@@ -288,11 +262,30 @@ VSOut main(
   float3x2 mat : MATRIX,
   float4   pos : POSITION
 )  { ... }
-</code></pre>
-
-<p><code>fxc.exe</code> gives the following register allocation:</p>
-
-<pre><code>// Input signature:
+</code></pre></td></tr></table>
+</div>
+</div><p><code>fxc.exe</code> gives the following register allocation:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">// Input signature:
 //
 // Name                 Index   Mask Register SysValue  Format   Used
 // -------------------- ----- ------ -------- -------- ------- ------
@@ -308,49 +301,64 @@ VSOut main(
 // SV_Position              0   xyzw        0      POS   float   xyzw
 // VECTOR                   1   xyz         1     NONE   float   xyz
 // VECTOR                   2   xyz         2     NONE   float   xyz
-</code></pre>
-
-<p>For input parameters, <code>pos</code> are assigned to its register after <code>mat</code>.
+</code></pre></td></tr></table>
+</div>
+</div><p>For input parameters, <code>pos</code> are assigned to its register after <code>mat</code>.
 For output parameters, <code>pos</code> are assigned to its register before <code>vec1</code>
 and <code>vec2</code>.</p>
-
 <h3 id="semantic-string">Semantic string</h3>
-
 <p>Additionally, each signature parameter must have a
 <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/bb509647(v=vs.85).aspx">semantic string</a> attached to it. Semantic strings can contain
 indices, which are used to disambiguate parameters that use the same semantic
 name (e.g., <code>VECTOR</code> in the above example), or occupy multiple registers
 (e.g., <code>MATRIX</code> in the above example).</p>
-
 <p>If semantic strings are attached to both a struct and its fields,
 the one on the struct will overwrite those on the fields. For example,</p>
-
-<pre><code>struct S {
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">struct S {
   float4 a : AAA;
   float4 b : BBB;
   float4 c : CCC;
 };
 
 S main (...) : DDD5 { ... }
-</code></pre>
-
-<p><code>fxc.exe</code> gives the following register and index allocation:</p>
-
-<pre><code>// Output signature:
+</code></pre></td></tr></table>
+</div>
+</div><p><code>fxc.exe</code> gives the following register and index allocation:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">// Output signature:
 //
 // Name                 Index   Mask Register SysValue  Format   Used
 // -------------------- ----- ------ -------- -------- ------- ------
 // DDD                      5   xyzw        0     NONE   float   xyzw
 // DDD                      6   xyzw        1     NONE   float   xyzw
 // DDD                      7   xyzw        2     NONE   float   xyzw
-</code></pre>
-
-<p>All member fields in <code>S</code> have <code>DDD</code> as the semantic name. Semantic indices
+</code></pre></td></tr></table>
+</div>
+</div><p>All member fields in <code>S</code> have <code>DDD</code> as the semantic name. Semantic indices
 are assigned to them incrementally in declaration order, starting with the
 index on the struct.</p>
-
 <h3 id="interface-matching">Interface matching</h3>
-
 <p>To match the output signature of a source stage with the input signature of
 the destination stage, DirectX requires each register has <strong>matching type and
 semantic (both name and index)</strong>. Because registers are assigned in declaration
@@ -358,43 +366,63 @@ order, this means signature parameters should match in type and semantic string
 in declaration order. There is one exception though: tail parameters on the
 destination stage can be omitted. For example, given the following vertex shader
 (VS) output signature,</p>
-
-<pre><code>struct VSOut {
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">struct VSOut {
   float4 pos  : SV_Position;
   float2 uv   : UV;
   float3 norm : NORMAL;
 };
-</code></pre>
-
-<p>The following pixel shader input signature will match:</p>
-
-<pre><code>struct PSIn {
+</code></pre></td></tr></table>
+</div>
+</div><p>The following pixel shader input signature will match:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">struct PSIn {
   float4 pos  : SV_Position;
   float2 uv   : UV;
 };
-</code></pre>
-
-<p>But not this one, which swaps <code>uv</code> and <code>norm</code>:</p>
-
-<pre><code>struct PSIn {
+</code></pre></td></tr></table>
+</div>
+</div><p>But not this one, which swaps <code>uv</code> and <code>norm</code>:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">struct PSIn {
   float4 pos  : SV_Position;
   float3 norm : NORMAL;
   float2 uv   : UV;
 };
-</code></pre>
-
-<h2 id="vulkan">Vulkan</h2>
-
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="vulkan">Vulkan</h2>
 <p>On the Vulkan side, shader input and output interfaces are matched using
 location numbers. Locations in Vulkan are conceptually similar to registers
 in DirectX. But Vulkan has different location assignment rules compared to
 DirectX signature packing rules. Details can be found in the Vulkan spec,
 <a href="https://www.khronos.org/registry/vulkan/specs/1.1-extensions/html/vkspec.html#interfaces-iointerfaces-locations">&ldquo;Location Assignment&rdquo;</a>.</p>
-
 <p>Vulkan basically requires <strong>exact type match</strong> for the same location number.
 Quoting interface matching rules from the Vulkan spec,
 <a href="https://www.khronos.org/registry/vulkan/specs/1.1-extensions/html/vkspec.html#interfaces-iointerfaces-matching">&ldquo;Interface Matching&rdquo;</a>:</p>
-
 <blockquote>
 <p>A user-defined output variable is considered to match an input variable in
 the subsequent stage if the two variables are declared with the same
@@ -403,9 +431,7 @@ that interpolation decorations are not required to match. For the purposes of
 interface matching, variables declared without a <code>Component</code> decoration are
 considered to have a <code>Component</code> decoration of zero.</p>
 </blockquote>
-
 <p>For composite types, the spec requires each member to be in exact match:</p>
-
 <blockquote>
 <p>Variables or block members declared as structures are considered to match in
 type if and only if the structure members match in type, decoration, number,
@@ -413,10 +439,8 @@ and declaration order. Variables or block members declared as arrays are
 considered to match in type only if both declarations specify the same element
 type and size.</p>
 </blockquote>
-
 <p>For tessellation and geometry shaders, the outermost array dimension on
 per-vertex parameters is ignored for the purpose of interface matching:</p>
-
 <blockquote>
 <p>Tessellation control shader per-vertex output variables and blocks, and
 tessellation control, tessellation evaluation, and geometry shader per-vertex
@@ -425,22 +449,32 @@ element representing input or output values for a single vertex of a
 multi-vertex primitive. For the purposes of interface matching, the outermost
 array dimension of such variables and blocks is ignored.</p>
 </blockquote>
-
 <h1 id="semantic-string-to-location-number">Semantic String to Location Number</h1>
-
 <p>As said in the above, Vulkan locations are conceptually similar to DirectX
 registers. So a natural translation scheme is to</p>
-
 <ul>
 <li><strong>1)</strong> follow declaration order of input/output parameters and assign
 locations incrementally.</li>
 <li>Similarly, <strong>2)</strong> struct types should be flattened and each member field
 should be mapped separately.</li>
 </ul>
-
 <p>For example, for the following source code:</p>
-
-<pre><code>struct S {
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">struct S {
   float3x2 mat : MATRIX;
   float3   vec : VECTOR;
 };
@@ -451,43 +485,62 @@ struct T {
 };
 
 T main() { ... }
-</code></pre>
-
-<p>We will create 3 stand-alone output variables:</p>
-
+</code></pre></td></tr></table>
+</div>
+</div><p>We will create 3 stand-alone output variables:</p>
 <ul>
 <li><code>out_var_ARRAY</code>: takes 4 locations</li>
 <li><code>out_var_MATRIX</code>: takes 3 locations</li>
 <li><code>out_var_VECTOR</code>: takes 1 location</li>
 </ul>
-
-<pre><code>OpDecorate %out_var_ARRAY  Location 0
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">OpDecorate %out_var_ARRAY  Location 0
 OpDecorate %out_var_MATRIX Location 4
 OpDecorate %out_var_VECTOR Location 7
 
  %out_var_ARRAY = OpVariable %_ptr_Output__arr_float_uint_4 Output
 %out_var_MATRIX = OpVariable %_ptr_Output_mat3v2float Output
 %out_var_VECTOR = OpVariable %_ptr_Output_v3float Output
-</code></pre>
-
-<p>(You may wonder why <code>float3x2</code> takes 3 Vulkan locations but 2 DirectX registers.
+</code></pre></td></tr></table>
+</div>
+</div><p>(You may wonder why <code>float3x2</code> takes 3 Vulkan locations but 2 DirectX registers.
 Read more about how matrix types are handled in
 <a href="https://antiagainst.github.io/post/hlsl-for-vulkan-matrices/">&ldquo;HLSL for Vulkan: Matrices&rdquo;</a>).</p>
-
 <p>The above scheme implicitly requires that developers keep consistent
 declaration order for input/output parameters in adjacent shader stages.
 But since DirectX basically has the same requirement, and sharing the
 same struct definition among different shader stages is common, it won&rsquo;t
 be a problem.</p>
-
-<h2 id="hs-ds-gs-arrayness">HS/DS/GS arrayness</h2>
-
+<h2 id="hsdsgs-arrayness">HS/DS/GS arrayness</h2>
 <p>Input parameters for per-vertex data in hull shader (HS), domain shader (DS),
 and geometry shader (GS) are arrays, since each primitive/patch contains
 multiple vertices. Typically, they are declared as arrays of structs in
 the HLSL source code:</p>
-
-<pre><code>#define NumVertices ...
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">#define NumVertices ...
 
 // Hull shader
 HSPerVertexOut main (InputPatch &lt;HSPerVertexIn,  NumVertices&gt; inData, ...) { ... }
@@ -497,81 +550,94 @@ DSPerVertexOut main (OutputPatch&lt;HSPerVertexOut, NumVertices&gt; inData, ...)
 
 // Geometry shader
 void main (in triangle DsPerVertexOut inData[NumVertices], ...) { ... }
-</code></pre>
-
-<p>To meet the requirements of Vulkan interface matching, <strong>3)</strong> the flattened
+</code></pre></td></tr></table>
+</div>
+</div><p>To meet the requirements of Vulkan interface matching, <strong>3)</strong> the flattened
 struct members retain the outermost array dimension. That is, these array of
 structs are transformed into arrays of their fields. For example, for the
 following source code:</p>
-
-<pre><code>struct PerVertex {
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">struct PerVertex {
   float4 a : AAA;
   float3 b : BBB;
 };
 
 PerVertex main (InputPatch&lt;PerVertex, 3&gt; inData, ...) { ... }
-</code></pre>
-
-<p>The corresponding SPIR-V code:</p>
-
-<pre><code> %out_var_AAA = OpVariable %_ptr_Output__arr_v4float_uint_3 Output
+</code></pre></td></tr></table>
+</div>
+</div><p>The corresponding SPIR-V code:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback"> %out_var_AAA = OpVariable %_ptr_Output__arr_v4float_uint_3 Output
  %out_var_BBB = OpVariable %_ptr_Output__arr_v3float_uint_3 Output
-</code></pre>
-
-<h2 id="hs-output-and-ds-input">HS output and DS input</h2>
-
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="hs-output-and-ds-input">HS output and DS input</h2>
 <p>One more interesting thing about HS is that, apart from the entry function,
 it also has a patch constant function. These two functions both write to
 shader output parameters: some for per-vertex data, some for per-patch data.
 Using declaration order to assign location numbers becomes problematic and
 error-prone here: it depends on the subtle positioning of these two functions
 and the compiler&rsquo;s visiting order of them.</p>
-
 <p>Since HS and DS must be both present or both absent, which makes the interface
 between HS output and DS input much tighter than others, we decided to <strong>4)</strong>
 use alphabetical order to assign location numbers to HS output and DS input.</p>
-
 <h2 id="sv-semantic-vs-non-sv-semantic">SV semantic vs. non-SV semantic</h2>
-
 <p>I haven&rsquo;t talked about the differences between SV semantics and non-SV
 semantics thus far.</p>
-
 <p>A related concept is built-in variables and normal input/output variables
 in Vulkan. Vulkan built-in variables does not need location assignment,
 but normal input/output variables do. They also subject to different matching
 rules.</p>
-
 <p>SV semantics are mostly translated into Vulkan built-in variables, but not
 always. And the translation is shader stage dependent. For example,
 <code>SV_Position</code> will be translated into a normal input variable if used for
 VS input, into Vulkan built-in <code>Position</code> if used for VS output, and
 <code>FragCoord</code> if used for pixel shader (PS) input. So there is no single
 rule for SV semantic mapping; they are handled case by case.</p>
-
 <p>Non-SV semantics are always translated into normal input/output variables.</p>
-
-<h2 id="sv-target">SV_Target</h2>
-
+<h2 id="sv_target">SV_Target</h2>
 <p>And an exception for SV_Target of course since it is special!</p>
-
 <p>When you write <code>SV_TargetX</code> in the source code, you typically would like
 to associate it with the <code>X</code>th render target, regardless of the declaration
 order. So, <strong>5)</strong> for <code>SV_TargetX</code>, the location number would be <code>X</code>,
 regardless of declaration order.</p>
-
-<h2 id="sv-clipdistance-sv-culldistance">SV_ClipDistance &amp; SV_CullDistance</h2>
-
+<h2 id="sv_clipdistance--sv_culldistance">SV_ClipDistance &amp; SV_CullDistance</h2>
 <p>Yes, more exceptions. :)</p>
-
 <p>You can have multiple HLSL variables annotated with
 <code>SV_ClipDistanceX</code>/<code>SV_CullDistanceX</code>, and each of them can be of float or
 vector of float type. But for Vulkan, there is only one built-in for
 <code>ClipDistance</code>/<code>CullDistance</code> and it must be array of float type.</p>
-
 <p>So to map them into one float array, we <strong>6)</strong> firstly sort them asecendingly
 according to <code>X</code>, and then concatenate them tightly. For example,</p>
-
-<pre><code>struct T {
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">struct T {
   float clip0: SV_ClipDistance0,
 };
 
@@ -581,62 +647,94 @@ struct S {
 };
 
 void main (T t, S s, float2 clip2 : SV_ClipDistance2) { ... }
-</code></pre>
-
-<p>Then we have an float array of size (1 + 2 + 3 =) 6 for <code>ClipDistance</code>,
+</code></pre></td></tr></table>
+</div>
+</div><p>Then we have an float array of size (1 + 2 + 3 =) 6 for <code>ClipDistance</code>,
 with <code>clip0</code> at offset 0, <code>clip2</code> at offset 1, <code>clip5</code> at offset 3.</p>
-
 <h2 id="explicit-control">Explicit control</h2>
-
 <p>As always, we are trying to provide a meaningful and hassle-free default
 behavior in the compiler together with explicit control mechanisms for
 developers to overrule the default behavior. For this case, a C++11 style
 attribute, <code>[[vk::location(X)]]</code>, can be used in the source code to
 explicitly specify the location of an input/output parameter:</p>
-
-<pre><code>struct S {
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">struct S {
   [[vk::location(3)]] float4 a : AAA;
   [[vk::location(6)]] float4 b : BBB;
 };
 
 S main() { ... }
-</code></pre>
-
-<p>The corresponding SPIR-V code:</p>
-
-<pre><code>OpDecorate %out_var_AAA Location 3
+</code></pre></td></tr></table>
+</div>
+</div><p>The corresponding SPIR-V code:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">OpDecorate %out_var_AAA Location 3
 OpDecorate %out_var_BBB Location 6
 
 %out_var_AAA = OpVariable %_ptr_Output_v4float Output
 %out_var_BBB = OpVariable %_ptr_Output_v4float Output
-</code></pre>
-
-<h3 id="dual-source-blending">Dual-source blending</h3>
-
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="dual-source-blending">Dual-source blending</h3>
 <p>This explicit control mechanism is also how you can use
 <a href="https://www.khronos.org/registry/vulkan/specs/1.1-extensions/html/vkspec.html#framebuffer-dsb">dual-source blending</a> in Vulkan:</p>
-
-<pre><code>struct PSOut {
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">struct PSOut {
     [[vk::location(0), vk::index(0)]] float4 a: SV_Target0;
     [[vk::location(0), vk::index(1)]] float4 b: SV_Target1;
 };
 
 PSOut main() { ... }
-</code></pre>
-
-<p>The corresponding SPIR-V code:</p>
-
-<pre><code>OpDecorate %out_var_SV_Target0 Location 0
+</code></pre></td></tr></table>
+</div>
+</div><p>The corresponding SPIR-V code:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">OpDecorate %out_var_SV_Target0 Location 0
 OpDecorate %out_var_SV_Target0 Index 0
 OpDecorate %out_var_SV_Target1 Location 0
 OpDecorate %out_var_SV_Target1 Index 1
 
 %out_var_SV_Target0 = OpVariable %_ptr_Output_v4float Output
 %out_var_SV_Target1 = OpVariable %_ptr_Output_v4float Output
-</code></pre>
-
-<h1 id="takeaways">Takeaways</h1>
-
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="takeaways">Takeaways</h1>
 <ul>
 <li>SV semantics are mostly mapped into Vulkan built-in variables, but not always.
 Non-SV semantics are always mapped into normal Vulkan input/output variables.</li>
@@ -648,18 +746,17 @@ fields.</li>
 <li>Flattened struct fields will retain the outermost array dimension for
 number of vertices in HS/DS/GS.</li>
 <li>But there are a few exceptions:
-
 <ul>
 <li>Location numbers are assigned to HS output and DS input according to
 alphabetical order of semantics.</li>
 <li><code>SV_TargetX</code> will be assigned to location <code>X</code>.</li>
 <li><code>SV_ClipDistanceX</code>/<code>SV_CullDistanceX</code> are sorted and aggregated into one
 float array.</li>
-</ul></li>
+</ul>
+</li>
 </ul>
     </div>
 
-    
     <div class="post-copyright">
   <p class="copyright-item">
     <span class="item-title">Author</span>
@@ -667,74 +764,61 @@ float array.</li>
   </p>
   <p class="copyright-item">
     <span class="item-title">LastMod</span>
-    <span class="item-content">2018-05-12</span>
+    <span class="item-content">
+        2018-05-12
+        
+    </span>
   </p>
   
   
 </div>
-
-    
-    
-
-    <footer class="post-footer">
+<footer class="post-footer">
       <div class="post-tags">
-          
           <a href="/tags/graphics/">graphics</a>
-          
           <a href="/tags/vulkan/">vulkan</a>
-          
           <a href="/tags/shader/">shader</a>
-          
           <a href="/tags/compiler/">compiler</a>
-          
           <a href="/tags/hlsl/">hlsl</a>
-          
           <a href="/tags/spirv/">spirv</a>
-          
           <a href="/tags/semantic/">semantic</a>
-          
           <a href="/tags/location/">location</a>
-          
-        </div>
-
-      
+          </div>
       <nav class="post-nav">
-        
-          <a class="prev" href="/post/shader-toolchain-hlsl-in-vulkan/">
+        <a class="prev" href="/post/shader-toolchain-hlsl-in-vulkan/">
             <i class="iconfont icon-left"></i>
             <span class="prev-text nav-default">Shader Toolchain: HLSL in Vulkan</span>
             <span class="prev-text nav-mobile">Prev</span>
           </a>
-        
-          <a class="next" href="/post/hlsl-for-vulkan-resources/">
+        <a class="next" href="/post/hlsl-for-vulkan-resources/">
             <span class="next-text nav-default">HLSL for Vulkan: Resources</span>
-            <span class="prev-text nav-mobile">Next</span>
+            <span class="next-text nav-mobile">Next</span>
             <i class="iconfont icon-right"></i>
           </a>
       </nav>
     </footer>
   </article>
         </div>
-        
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2018-05-11 13:15:45 -0400 EDT',
+        title: 'HLSL for Vulkan: Semantic Strings and Location Numbers',
+        clientID: 'b8662de767cfcdd5e40e',
+        clientSecret: '4bedf864e229dfa6d535d92e0077739213777f96',
+        repo: 'antiagainst.github.io',
+        owner: 'antiagainst',
+        admin: ['antiagainst'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
   
 
-  <div id="gitalk-container"></div>
-  <link rel="stylesheet" href="/lib/gitalk/gitalk-1.2.2.min.css">
-    <script src="/lib/gitalk/gitalk-1.2.2.min.js"></script>
-  <script type="text/javascript">
-  var gitalk = new Gitalk({
-    id: '2018-05-11 13:15:45 -0400 EDT',
-    title: 'HLSL for Vulkan: Semantic Strings and Location Numbers',
-    clientID: 'b8662de767cfcdd5e40e',
-    clientSecret: '4bedf864e229dfa6d535d92e0077739213777f96',
-    repo: 'antiagainst.github.io',
-    owner: 'antiagainst',
-    admin: ['antiagainst'],
-    body: decodeURI(location.href)
-  });
-  gitalk.render('gitalk-container');
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+  
 
       </div>
     </main>
@@ -759,13 +843,11 @@ float array.</li>
 
   <span class="copyright-year">
     &copy; 
-    2018
-    <span class="heart">
-      <i class="iconfont icon-heart"></i>
-    </span>
-    <span class="author">Lei Zhang</span>
+    2018 - 
+    2021<span class="heart"><i class="iconfont icon-heart"></i></span><span>Lei Zhang</span>
   </span>
 </div>
+
     </footer>
 
     <div class="back-to-top" id="back-to-top">
@@ -773,18 +855,25 @@ float array.</li>
     </div>
   </div>
   
-<script src="/lib/highlight/highlight.pack.js?v=20171001"></script><script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
-  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
-  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
-<script type="text/javascript" src="/dist/even.min.js?v=3.1.1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
 
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-109525036-1', 'auto');
-ga('send', 'pageview');
+
+<script type="text/javascript" src="/js/main.min.c99b103c33d1539acf3025e1913697534542c4a5aa5af0ccc20475ed2863603b.js"></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-109525036-1', 'auto');
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
 </script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
 
 

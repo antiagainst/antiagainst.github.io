@@ -1,10 +1,100 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <?xml-stylesheet type="text/xsl" href="https://antiagainst.github.io/sitemap.xsl"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://antiagainst.github.io/categories/</loc>
+    <lastmod>2018-05-12T18:06:14-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://antiagainst.github.io/tags/doc/</loc>
+    <lastmod>2018-05-12T18:06:14-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://antiagainst.github.io/tags/download/</loc>
+    <lastmod>2018-05-12T18:06:14-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://antiagainst.github.io/categories/dxc/</loc>
+    <lastmod>2018-05-12T18:06:14-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://antiagainst.github.io/tags/hlsl/</loc>
+    <lastmod>2018-05-12T18:06:14-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://antiagainst.github.io/</loc>
+    <lastmod>2018-05-12T18:06:14-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://antiagainst.github.io/post/</loc>
+    <lastmod>2018-05-12T18:06:14-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://antiagainst.github.io/tags/shader/</loc>
+    <lastmod>2018-05-12T18:06:14-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://antiagainst.github.io/post/shader-toolchain-hlsl-in-vulkan/</loc>
     <lastmod>2018-05-12T18:06:14-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://antiagainst.github.io/tags/</loc>
+    <lastmod>2018-05-12T18:06:14-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://antiagainst.github.io/tags/talk/</loc>
+    <lastmod>2018-05-12T18:06:14-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://antiagainst.github.io/tags/vulkan/</loc>
+    <lastmod>2018-05-12T18:06:14-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://antiagainst.github.io/tags/compiler/</loc>
+    <lastmod>2018-05-12T13:27:37-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://antiagainst.github.io/tags/graphics/</loc>
+    <lastmod>2018-05-12T13:27:37-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -17,7 +107,49 @@
   </url>
   
   <url>
+    <loc>https://antiagainst.github.io/categories/hlsl-for-vulkan/</loc>
+    <lastmod>2018-05-12T13:27:37-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://antiagainst.github.io/tags/location/</loc>
+    <lastmod>2018-05-12T13:27:37-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://antiagainst.github.io/tags/semantic/</loc>
+    <lastmod>2018-05-12T13:27:37-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://antiagainst.github.io/tags/spirv/</loc>
+    <lastmod>2018-05-12T13:27:37-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://antiagainst.github.io/tags/glsl/</loc>
+    <lastmod>2018-04-26T22:52:49-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://antiagainst.github.io/post/hlsl-for-vulkan-resources/</loc>
+    <lastmod>2018-04-26T22:52:49-04:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://antiagainst.github.io/tags/resource/</loc>
     <lastmod>2018-04-26T22:52:49-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -31,149 +163,17 @@
   </url>
   
   <url>
-    <loc>https://antiagainst.github.io/about/</loc>
-    <lastmod>2018-05-20T11:47:50-05:00</lastmod>
+    <loc>https://antiagainst.github.io/tags/matrix/</loc>
+    <lastmod>2018-04-24T17:29:20-04:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://antiagainst.github.io/categories/</loc>
+    <loc>https://antiagainst.github.io/about/</loc>
+    <lastmod>2018-05-20T11:47:50-05:00</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://antiagainst.github.io/tags/compiler/</loc>
-    <lastmod>2018-05-12T13:27:37-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://antiagainst.github.io/tags/doc/</loc>
-    <lastmod>2018-05-12T18:06:14-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://antiagainst.github.io/tags/download/</loc>
-    <lastmod>2018-05-12T18:06:14-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://antiagainst.github.io/categories/dxc/</loc>
-    <lastmod>2018-05-12T18:06:14-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://antiagainst.github.io/tags/glsl/</loc>
-    <lastmod>2018-04-26T22:52:49-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://antiagainst.github.io/tags/graphics/</loc>
-    <lastmod>2018-05-12T13:27:37-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://antiagainst.github.io/tags/hlsl/</loc>
-    <lastmod>2018-05-12T18:06:14-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://antiagainst.github.io/categories/hlsl-for-vulkan/</loc>
-    <lastmod>2018-05-12T13:27:37-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://antiagainst.github.io/</loc>
-    <lastmod>2018-05-12T18:06:14-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://antiagainst.github.io/tags/location/</loc>
-    <lastmod>2018-05-12T13:27:37-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://antiagainst.github.io/tags/matrix/</loc>
-    <lastmod>2018-04-24T17:29:20-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://antiagainst.github.io/post/</loc>
-    <lastmod>2018-05-12T18:06:14-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://antiagainst.github.io/tags/resource/</loc>
-    <lastmod>2018-04-26T22:52:49-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://antiagainst.github.io/tags/semantic/</loc>
-    <lastmod>2018-05-12T13:27:37-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://antiagainst.github.io/tags/shader/</loc>
-    <lastmod>2018-05-12T18:06:14-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://antiagainst.github.io/tags/spirv/</loc>
-    <lastmod>2018-05-12T13:27:37-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://antiagainst.github.io/tags/</loc>
-    <lastmod>2018-05-12T13:27:37-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://antiagainst.github.io/tags/talk/</loc>
-    <lastmod>2018-05-12T18:06:14-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://antiagainst.github.io/tags/vulkan/</loc>
-    <lastmod>2018-05-12T18:06:14-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0</priority>
+    <priority>0.5</priority>
   </url>
   
 </urlset>
