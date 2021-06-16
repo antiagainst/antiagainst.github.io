@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on Lei Zhang (antiagainst)&#39;s Blog</title>
-    <link>https://antiagainst.github.io/post/</link>
+    <link>https://www.lei.chat/post/</link>
     <description>Recent content in Posts on Lei Zhang (antiagainst)&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 12 May 2018 17:44:14 -0400</lastBuildDate><atom:link href="https://antiagainst.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 12 May 2018 17:44:14 -0400</lastBuildDate><atom:link href="https://www.lei.chat/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Shader Toolchain: HLSL in Vulkan</title>
-      <link>https://antiagainst.github.io/post/shader-toolchain-hlsl-in-vulkan/</link>
+      <link>https://www.lei.chat/post/shader-toolchain-hlsl-in-vulkan/</link>
       <pubDate>Sat, 12 May 2018 17:44:14 -0400</pubDate>
       
-      <guid>https://antiagainst.github.io/post/shader-toolchain-hlsl-in-vulkan/</guid>
+      <guid>https://www.lei.chat/post/shader-toolchain-hlsl-in-vulkan/</guid>
       <description>&lt;p&gt;On &lt;a href=&#34;https://www.khronos.org/events/2018-vulkan-developer-day-in-montreal&#34;&gt;2018 Vulkan Developer Day in Montréal&lt;/a&gt;, I gave a talk
 regarding &amp;ldquo;Shader Toolchain: HLSL in Vulkan&amp;rdquo;. Here are the links to the
 video recording, slides, and documentation/downloads for DirectX Shader
@@ -21,10 +21,10 @@ Compiler (DXC)&amp;rsquo;s SPIR-V CodeGen.&lt;/p&gt;</description>
     
     <item>
       <title>HLSL for Vulkan: Semantic Strings and Location Numbers</title>
-      <link>https://antiagainst.github.io/post/hlsl-for-vulkan-semantic-strings-and-location-numbers/</link>
+      <link>https://www.lei.chat/post/hlsl-for-vulkan-semantic-strings-and-location-numbers/</link>
       <pubDate>Fri, 11 May 2018 13:15:45 -0400</pubDate>
       
-      <guid>https://antiagainst.github.io/post/hlsl-for-vulkan-semantic-strings-and-location-numbers/</guid>
+      <guid>https://www.lei.chat/post/hlsl-for-vulkan-semantic-strings-and-location-numbers/</guid>
       <description>&lt;p&gt;This blog post discusses how HLSL semantic strings are translated into
 SPIR-V location numbers for Vulkan shader inter-stage interface matching
 in the &lt;a href=&#34;https://github.com/Microsoft/DirectXShaderCompiler/blob/master/docs/SPIR-V.rst&#34;&gt;SPIR-V CodeGen&lt;/a&gt; of &lt;a href=&#34;https://github.com/Microsoft/DirectXShaderCompiler&#34;&gt;DirectXShaderCompiler&lt;/a&gt; (DXC).
@@ -33,10 +33,10 @@ It is one of the &amp;ldquo;HLSL for Vulkan&amp;rdquo; series.&lt;/p&gt;</descri
     
     <item>
       <title>HLSL for Vulkan: Resources</title>
-      <link>https://antiagainst.github.io/post/hlsl-for-vulkan-resources/</link>
+      <link>https://www.lei.chat/post/hlsl-for-vulkan-resources/</link>
       <pubDate>Tue, 24 Apr 2018 16:39:21 -0400</pubDate>
       
-      <guid>https://antiagainst.github.io/post/hlsl-for-vulkan-resources/</guid>
+      <guid>https://www.lei.chat/post/hlsl-for-vulkan-resources/</guid>
       <description>&lt;p&gt;This blog post discusses how to manage resources in HLSL for Vulkan, using the
 &lt;a href=&#34;https://github.com/Microsoft/DirectXShaderCompiler/blob/master/docs/SPIR-V.rst&#34;&gt;SPIR-V CodeGen&lt;/a&gt; of &lt;a href=&#34;https://github.com/Microsoft/DirectXShaderCompiler&#34;&gt;DirectXShaderCompiler&lt;/a&gt; (DXC).
 It is one of the &amp;ldquo;HLSL for Vulkan&amp;rdquo; series.&lt;/p&gt;</description>
@@ -44,10 +44,10 @@ It is one of the &amp;ldquo;HLSL for Vulkan&amp;rdquo; series.&lt;/p&gt;</descri
     
     <item>
       <title>HLSL for Vulkan: Matrices</title>
-      <link>https://antiagainst.github.io/post/hlsl-for-vulkan-matrices/</link>
+      <link>https://www.lei.chat/post/hlsl-for-vulkan-matrices/</link>
       <pubDate>Wed, 18 Apr 2018 20:13:20 -0400</pubDate>
       
-      <guid>https://antiagainst.github.io/post/hlsl-for-vulkan-matrices/</guid>
+      <guid>https://www.lei.chat/post/hlsl-for-vulkan-matrices/</guid>
       <description>&lt;p&gt;This blog post discusses how HLSL matrices are translated into SPIR-V for Vulkan
 consumption in the &lt;a href=&#34;https://github.com/Microsoft/DirectXShaderCompiler/blob/master/docs/SPIR-V.rst&#34;&gt;SPIR-V CodeGen&lt;/a&gt; of &lt;a href=&#34;https://github.com/Microsoft/DirectXShaderCompiler&#34;&gt;DirectXShaderCompiler&lt;/a&gt;.
 It is one of the &amp;ldquo;HLSL for Vulkan&amp;rdquo; series.&lt;/p&gt;</description>

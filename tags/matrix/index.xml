@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>matrix on Lei Zhang (antiagainst)&#39;s Blog</title>
-    <link>https://antiagainst.github.io/tags/matrix/</link>
+    <link>https://www.lei.chat/tags/matrix/</link>
     <description>Recent content in matrix on Lei Zhang (antiagainst)&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 18 Apr 2018 20:13:20 -0400</lastBuildDate><atom:link href="https://antiagainst.github.io/tags/matrix/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 18 Apr 2018 20:13:20 -0400</lastBuildDate><atom:link href="https://www.lei.chat/tags/matrix/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>HLSL for Vulkan: Matrices</title>
-      <link>https://antiagainst.github.io/post/hlsl-for-vulkan-matrices/</link>
+      <link>https://www.lei.chat/post/hlsl-for-vulkan-matrices/</link>
       <pubDate>Wed, 18 Apr 2018 20:13:20 -0400</pubDate>
       
-      <guid>https://antiagainst.github.io/post/hlsl-for-vulkan-matrices/</guid>
+      <guid>https://www.lei.chat/post/hlsl-for-vulkan-matrices/</guid>
       <description>&lt;p&gt;This blog post discusses how HLSL matrices are translated into SPIR-V for Vulkan
 consumption in the &lt;a href=&#34;https://github.com/Microsoft/DirectXShaderCompiler/blob/master/docs/SPIR-V.rst&#34;&gt;SPIR-V CodeGen&lt;/a&gt; of &lt;a href=&#34;https://github.com/Microsoft/DirectXShaderCompiler&#34;&gt;DirectXShaderCompiler&lt;/a&gt;.
 It is one of the &amp;ldquo;HLSL for Vulkan&amp;rdquo; series.&lt;/p&gt;</description>

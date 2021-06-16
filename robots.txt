@@ -1,2 +1,2 @@
 User-agent: *
-Sitemap: https://antiagainst.github.io/sitemap.xml
+Sitemap: https://www.lei.chat/sitemap.xml
