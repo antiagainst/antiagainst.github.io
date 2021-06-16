@@ -59,9 +59,9 @@ It is one of the &amp;ldquo;HLSL for Vulkan&amp;rdquo; series.&lt;/p&gt;</descri
       <pubDate>Tue, 14 Nov 2017 09:45:50 -0500</pubDate>
       
       <guid>https://www.lei.chat/about/</guid>
-      <description>About Me I&amp;rsquo;m Lei Zhang. I work on Vulkan and SPIR-V tooling within Google. They are all open source projects hosted on GitHub:
- SPIRV-Headers: https://github.com/KhronosGroup/SPIRV-Headers SPIRV-Tools: https://github.com/KhronosGroup/SPIRV-Tools Shaderc: https://github.com/google/shaderc Glslang: https://github.com/KhronosGroup/glslang VK-GL-CTS: https://github.com/KhronosGroup/VK-GL-CTS rspirv: https://github.com/google/rspirv shaderc-rs: https://github.com/google/shaderc-rs  Currently I&amp;rsquo;m leading the effort of contributing SPIR-V CodeGen into DirectX Shader Compiler:
- https://github.com/Microsoft/DirectXShaderCompiler https://khr.io/hlsl2spirv  </description>
+      <description>About This Blog Hello, thanks for your interest in my blog. 😊 I try to log down my learnings and thoughts about compilers (SPIR-V, MLIR), GPU (Vulkan, Metal), toolchain (ML frameworks, productivity tools), and others sporadically.
+About Me I&amp;rsquo;m Lei Zhang. I work on machine learning frameworks and compilers within Google.
+Currently my main focus is to push forward leveraging a compilation based approach and Vulkan compute for ML inference on GPUs.</description>
     </item>
     
   </channel>
