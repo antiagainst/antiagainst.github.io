@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang='en' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>HLSL for Vulkan: Resources | Lei Chat</title>
+
+<meta name="generator" content="Hugo Eureka 0.8.0" />
+<link rel="stylesheet" href="https://www.lei.chat/css/eureka.min.css">
+<script defer src="https://www.lei.chat/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/8olarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/bash.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/c.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cmake.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cpp.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/glsl.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/javascript.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/llvm.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/python.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/shell.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="HLSL for Vulkan: translating HLSL resources into SPIR-V">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Posts",
+      "item":"https://www.lei.chat/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"HLSL for Vulkan: Resources",
+      "item":"https://www.lei.chat/posts/hlsl-for-vulkan-resources/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.lei.chat/posts/hlsl-for-vulkan-resources/"
+    },
+    "headline": "HLSL for Vulkan: Resources | Lei Chat","datePublished": "2018-04-24T16:39:21-04:00",
+    "dateModified": "2018-04-26T22:52:49-04:00",
+    "wordCount":  1479 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "Lei Zhang",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.lei.chat/images/avatar.png"
+        }
+        },
+    "description": "HLSL for Vulkan: translating HLSL resources into SPIR-V"
+}
+</script><meta property="og:title" content="HLSL for Vulkan: Resources | Lei Chat" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="https://www.lei.chat/images/avatar.png">
+
+
+<meta property="og:url" content="https://www.lei.chat/posts/hlsl-for-vulkan-resources/" />
+
+
+
+<meta property="og:description" content="HLSL for Vulkan: translating HLSL resources into SPIR-V" />
+
+
+
+<meta property="og:locale" content="en" />
+
+
+
+
+<meta property="og:site_name" content="Lei Chat" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2018-04-24T16:39:21-04:00" />
+
+
+<meta property="article:modified_time" content="2018-04-26T22:52:49-04:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="graphics" />
+
+<meta property="article:tag" content="vulkan" />
+
+<meta property="article:tag" content="shader" />
+
+<meta property="article:tag" content="compiler" />
+
+<meta property="article:tag" content="hlsl" />
+
+<meta property="article:tag" content="glsl" />
+
+
+
+
+
+
+
+
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/hlsl-for-vulkan-semantic-strings-and-location-numbers/" />
+
+
+
+
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/hlsl-for-vulkan-matrices/" />
+
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Lei Chat</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">Posts</a>
+            <a href="/authors/me" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">About</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">Light</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">Dark</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">Auto</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">HLSL for Vulkan: Resources</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2018-04-24</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>7 min read</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="https://www.lei.chat/categories/hlsl-for-vulkan/" class="hover:text-eureka">hlsl-for-vulkan</a>
+        
+        
+        <span>, </span>
+        <a href="https://www.lei.chat/categories/dxc/" class="hover:text-eureka">dxc</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="https://www.lei.chat/series/hlsl-for-vulkan/" class="hover:text-eureka">hlsl-for-vulkan</a>
+        
+    </div>
+    
+</div>
+        
+        
+        
+
+        <div class="content">
+            <p>This blog post discusses how to manage resources in HLSL for Vulkan, using the
+<a href="https://github.com/Microsoft/DirectXShaderCompiler/blob/master/docs/SPIR-V.rst">SPIR-V CodeGen</a> of <a href="https://github.com/Microsoft/DirectXShaderCompiler">DirectXShaderCompiler</a> (DXC).
+It is one of the “HLSL for Vulkan” series.</p>
+<p>Since resource is too huge a topic in graphics to be covered in a single
+blog post, I will mainly focus on the shader side here.</p>
+<h2 id="resource--descriptor">Resource &amp; Descriptor</h2>
+<p><em>Resources</em> is just a block of data on memory. They can be textures, vertex
+geometry data, etc. Resources need to be <em>bound</em> to the graphics pipeline
+for shaders to access them. Both DirectX and Vulkan use descriptors to
+refer to resources for binding. <em>Descriptors</em>, in a GPU-specific opaque
+format, are just handles/views to the resource. There are multiple types of
+descriptors.</p>
+<p>In DirectX, common <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/mt709127(v=vs.85).aspx">descriptor types</a> are:</p>
+<ul>
+<li>Sampler - sampler (read-only) - using <code>s#</code> registers</li>
+<li>SRV - shader resource view (read-only) - using <code>t#</code> registers</li>
+<li>CBV - constant buffer view (read-only) - using <code>b#</code> registers</li>
+<li>UAV - unordered access view (read-write) - using <code>u#</code> registers</li>
+</ul>
+<p>Vulkan has its own terms for <a href="https://www.khronos.org/registry/vulkan/specs/1.1-extensions/html/vkspec.html#descriptorsets-types">descriptor types</a>:</p>
+<ul>
+<li>Sampler - read-only</li>
+<li>Sampled image - read-only</li>
+<li>Storage image - read-write</li>
+<li>Combined image sampler - read-only</li>
+<li>Uniform texel buffer - read-only</li>
+<li>Storage texel buffer - read-write</li>
+<li>Uniform buffer - read-only</li>
+<li>Storage buffer - read-write</li>
+<li>Input attachment - read-only</li>
+</ul>
+<h2 id="hlsl-resource-types">HLSL Resource Types</h2>
+<p>HLSL provides corresponding resource types to access the resources behind
+various descriptor types. The following table summerizes them and their
+GLSL equivalents if possible:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">HLSL Type</th>
+<th style="text-align:center">DirectX Descriptor Type</th>
+<th style="text-align:center">Vulkan Descriptor Type</th>
+<th style="text-align:center">GLSL Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>SamplerState</code></td>
+<td style="text-align:center">Sampler</td>
+<td style="text-align:center">Sampler</td>
+<td style="text-align:center"><code>uniform sampler*</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>SamplerComparisonState</code></td>
+<td style="text-align:center">Sampler</td>
+<td style="text-align:center">Sampler</td>
+<td style="text-align:center"><code>uniform sampler*Shadow</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>Buffer</code></td>
+<td style="text-align:center">SRV</td>
+<td style="text-align:center">Uniform Texel Buffer</td>
+<td style="text-align:center"><code>uniform samplerBuffer</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>RWBuffer</code></td>
+<td style="text-align:center">UAV</td>
+<td style="text-align:center">Storage Texel Buffer</td>
+<td style="text-align:center"><code>uniform imageBuffer</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>Texture*</code></td>
+<td style="text-align:center">SRV</td>
+<td style="text-align:center">Sampled Image</td>
+<td style="text-align:center"><code>uniform texture*</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>RWTexture*</code></td>
+<td style="text-align:center">UAV</td>
+<td style="text-align:center">Storage Image</td>
+<td style="text-align:center"><code>uniform image*</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>cbuffer</code></td>
+<td style="text-align:center">CBV</td>
+<td style="text-align:center">Uniform Buffer</td>
+<td style="text-align:center"><code>uniform { ... }</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>ConstantBuffer</code></td>
+<td style="text-align:center">CBV</td>
+<td style="text-align:center">Uniform Buffer</td>
+<td style="text-align:center"><code>uniform { ... }</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>tbuffer</code></td>
+<td style="text-align:center">CBV</td>
+<td style="text-align:center">Storage Buffer</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>TextureBuffer</code></td>
+<td style="text-align:center">CBV</td>
+<td style="text-align:center">Storage Buffer</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>StructuredBuffer</code></td>
+<td style="text-align:center">SRV</td>
+<td style="text-align:center">Storage Buffer</td>
+<td style="text-align:center"><code>buffer { ... }</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>RWStructuredBuffer</code></td>
+<td style="text-align:center">UAV</td>
+<td style="text-align:center">Storage Buffer</td>
+<td style="text-align:center"><code>buffer { ... }</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>ByteAddressBuffer</code></td>
+<td style="text-align:center">SRV</td>
+<td style="text-align:center">Storage Buffer</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>RWByteAddressBuffer</code></td>
+<td style="text-align:center">UAV</td>
+<td style="text-align:center">Storage Buffer</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>AppendStructuredBuffer</code></td>
+<td style="text-align:center">UAV</td>
+<td style="text-align:center">Storage Buffer</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>ConsumeStructuredBuffer</code></td>
+<td style="text-align:center">UAV</td>
+<td style="text-align:center">Storage Buffer</td>
+<td style="text-align:center"></td>
+</tr>
+</tbody>
+</table>
+<p>You can find more detailed information on how these resource types are
+translated into SPIR-V in the <a href="https://github.com/Microsoft/DirectXShaderCompiler/blob/master/docs/SPIR-V.rst#textures">SPIR-V doc</a> in DXC.</p>
+<h3 id="subpass-inputs">Subpass inputs</h3>
+<p>The above table lists native HLSL resource types. To further support HLSL for
+Vulkan shader programming, we added the following resource type for Vulkan
+subpass inputs into DXC<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">HLSL Type</th>
+<th style="text-align:center">Vulkan Descriptor Type</th>
+<th style="text-align:center">GLSL Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>SubpassInput</code></td>
+<td style="text-align:center">Input Attachment</td>
+<td style="text-align:center"><code>uniform subpassInput</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>SubpassInputMS</code></td>
+<td style="text-align:center">Input Attachment</td>
+<td style="text-align:center"><code>uniform subpassInputMS</code></td>
+</tr>
+</tbody>
+</table>
+<p>See the SPIR-V doc in DXC for <a href="https://github.com/Microsoft/DirectXShaderCompiler/blob/master/docs/SPIR-V.rst#subpass-inputs">the syntax and how to use</a>
+subpass inputs.</p>
+<h2 id="resource-binding">Resource Binding</h2>
+<p>Vulkan descriptors are grouped together into <a href="https://www.khronos.org/registry/vulkan/specs/1.1-extensions/html/vkspec.html#descriptorsets-sets">descriptor set</a>
+objects. According to the Vulkan spec,</p>
+<blockquote>
+<p>A <em>descriptor set object</em> is an opaque object that contains storage for a set
+of descriptors, where the types and number of descriptors is defined by a
+<em>descriptor set layout</em>. &hellip; The layout is used both for determining the
+resources that need to be associated with the descriptor set, and determining
+the interface between shader stages and shader resources.</p>
+<p>A descriptor set layout object is defined by an array of zero or more
+descriptor bindings. Each individual descriptor binding is specified by a
+descriptor type, a count (array size) of the number of descriptors in the
+binding, a set of shader stages that can access the binding, &hellip;</p>
+</blockquote>
+<p>Vulkan requires shader resource variables to have the SPIR-V <code>DescriptorSet</code>
+and <code>Binding</code> decoration, which should be &ldquo;assigned and matched with the
+descriptor set layout objects in the pipeline layout&rdquo;. We support three
+mechanisms to control <code>DescriptorSet</code> number and <code>Binding</code> number assignment.</p>
+<h3 id="vulkan-attribute-assignment">Vulkan attribute assignment</h3>
+<p>You can use the <code>[[vk::binding(X, Y)]]</code> attribute to specify the
+descriptor set number <code>Y</code> and binding number <code>X</code>. The descriptor set
+number <code>Y</code> can be omitted; if missing, it will default to #0.</p>
+<p>For example, the following code will assign <code>MyTexture1</code> to descriptor
+set #0 and binding #3, and <code>MyTexture2</code> to descriptor set #1 and
+binding #5.</p>
+<pre><code>[[vk::binding(3)]]    Texture2D MyTexture1;
+[[vk::binding(5, 1)]] Texture2D MyTexture2;
+</code></pre>
+<p>This way of control has the <strong>highest</strong> priority; it will overrule the other
+if multiple ways are used on the same variable.</p>
+<p>The benefits of this way is explicity, but it will render the shader
+incompilable with <code>fxc.exe</code>, which does not support C++11 style attributes.
+You may want to use <code>#ifdef</code> to wrap this attribute to share the same shader
+between DirectX and Vulkan. This issue will be alleviated after DXC becomes
+widely adopted for DirectX. Using DXC to generate <a href="https://github.com/Microsoft/DirectXShaderCompiler/blob/master/docs/DXIL.rst">DXIL</a> will just
+ignore this attribute.</p>
+<h4 id="associated-counters">Associated counters</h4>
+<p>RW/append/consume structured buffers have associated counters. Those counters
+will have their own descriptors.</p>
+<p><code>[[vk::counter_binding(Z)]]</code> can be attached to a RW/append/consume structured
+buffer to specify the binding number for the associated counter to <code>Z</code>.
+Note that the descriptor set number of the counter is always the same as the
+main buffer. If no explicit <code>[[vk::counter_binding(Z)]]</code> attribute is
+provided, the associated counter will just get the next unused binding number
+from the main buffer&rsquo;s descriptor set.</p>
+<h3 id="hlsl-register-assignment">HLSL register assignment</h3>
+<p>If no Vulkan attribute is specified and the resource variable has a
+<code>:register(xX, spaceY)</code> annotation, the compiler will pick up information
+from it and assign the resource variable to descriptor set number <code>Y</code>
+and binding number <code>X</code>.</p>
+<p>For example, the following code will assign <code>MyTexture1</code> to descriptor
+set #0 and binding #3, and <code>MyTexture2</code> to descriptor set #1 and
+binding #5.</p>
+<pre><code>Texture2D MyTexture1 : register(t3);
+Texture2D MyTexture2 : register(t5, space1);
+</code></pre>
+<p>This approach does not touch the shader source code, so the shader can be
+shared between DirectX and Vulkan. But, we may assign the same binding
+number in the same descriptor set to multiple resource variables. This is
+because we have multiple register types in HLSL: <code>s</code>, <code>t</code>, <code>b</code>, and <code>u</code>.
+Yet we don&rsquo;t have corresponding concepts in Vulkan for register types.</p>
+<h4 id="register-overlap">Register overlap</h4>
+<p>To handle the overlap, you can use command-line options to shift the binding
+numbers for a particular register type:</p>
+<ul>
+<li><code>-fvk-s-shift M N</code></li>
+<li><code>-fvk-t-shift M N</code></li>
+<li><code>-fvk-b-shift M N</code></li>
+<li><code>-fvk-u-shift M N</code></li>
+</ul>
+<p><code>-fvk-*-shift M N</code> means to shift all binding numbers gotten from register
+annotations by <code>M</code> in descriptor set <code>N</code>. For example,</p>
+<pre><code>SamplerState MySampler1 : register(s5);
+SamplerState MySampler2 : register(s5, space1);
+Texture2D    MyTexture1 : register(t5);
+Texture2D    MyTexture2 : register(t5, space2);
+</code></pre>
+<p>With <code>-fvk-s-shift 10 0</code> and <code>-fvk-t-shift 20 2</code>, we have</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Variable</th>
+<th style="text-align:center">Descriptor Set #</th>
+<th style="text-align:center">Binding #</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>MySampler1</code></td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">15</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>MySampler2</code></td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">5</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>MyTexture1</code></td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">5</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>MyTexture2</code></td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">25</td>
+</tr>
+</tbody>
+</table>
+<p><code>-fvk-*-shift</code> accepts a special value <code>all</code> as the set number.
+<code>-fvk-*-shift M all</code> means shifting all sets of the given register type by <code>M</code>.</p>
+<p>The same example but with <code>-fvk-s-shift 10 all</code>, we have</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Variable</th>
+<th style="text-align:center">Descriptor Set #</th>
+<th style="text-align:center">Binding #</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>MySampler1</code></td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">15</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>MySampler2</code></td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">15</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>MyTexture1</code></td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">5</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>MyTexture2</code></td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">5</td>
+</tr>
+</tbody>
+</table>
+<h3 id="default-assignment">Default assignment</h3>
+<p>If neither Vulkan attribute nor HLSL register annotation is specified for
+a resource variable, the compiler will just assign the next unused binding
+number in descriptor set #0 to the resource.</p>
+<p>This approach is better to be used together with
+<a href="https://github.com/chaoticbob/SPIRV-Reflect">SPIR-V reflection</a>.</p>
+<h3 id="globals-cbuffer">$Globals cbuffer</h3>
+<p>Following <code>fxc.exe</code> conventions, we collect all global variables, excluding
+resources, into a $Globals cbuffer. For example, for the following code:</p>
+<pre><code>float4                   Var1;
+static float3            Var2 = 1.5;
+float2                   Var3;
+Texture2D                Var4;
+StructuredBuffer&lt;float4&gt; Var5;
+</code></pre>
+<p>We will have the following Vulkan uniform buffer:</p>
+<pre><code>; Name debug information
+OpMemberName %type__Globals 0 &quot;Var1&quot;
+OpMemberName %type__Globals 1 &quot;Var3&quot;
+OpName %type__Globals &quot;type.$Globals&quot;
+OpName %_Globals      &quot;$Globals&quot;
+
+; Type
+             %type__Globals = OpTypeStruct %v4float %v2float
+%_ptr_Uniform_type__Globals = OpTypePointer Uniform %type__Globals
+
+; Variable
+                  %_Globals = OpVariable %_ptr_Uniform_type__Globals Uniform
+</code></pre>
+<p>This $Globals cbuffer will get the next unused binding number in descriptor
+set #0. There is no explicit way to control the descriptor set number and
+binding number assignmnet at the moment; but one may come up in the future.</p>
+<h2 id="resource-memory-layout">Resource Memory Layout</h2>
+<p>In Vulkan, resources must be explicitly laid out. DXC right now provides three
+sets of memory layout rules to ease porting from other APIs.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Rules</th>
+<th style="text-align:center">Command-line Option</th>
+<th style="text-align:center">Uniform Buffer</th>
+<th style="text-align:center">Storage Buffer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Vulkan</td>
+<td style="text-align:center">(default)</td>
+<td style="text-align:center">&ldquo;vector-relaxed&rdquo; std140</td>
+<td style="text-align:center">&ldquo;vector-relaxed&rdquo; std430</td>
+</tr>
+<tr>
+<td style="text-align:center">DirectX</td>
+<td style="text-align:center"><code>-fvk-use-dx-layout</code></td>
+<td style="text-align:center"><code>fxc.exe</code> behavior</td>
+<td style="text-align:center"><code>fxc.exe</code> behavior</td>
+</tr>
+<tr>
+<td style="text-align:center">OpenGL</td>
+<td style="text-align:center"><code>-fvk-use-gl-layout</code></td>
+<td style="text-align:center">std140</td>
+<td style="text-align:center">std430</td>
+</tr>
+</tbody>
+</table>
+<p>In the above, std140 and std430 are well defined layout rules in
+<a href="https://www.khronos.org/opengl/wiki/Interface_Block_(GLSL)#Memory_layout">GLSL spec</a>. &ldquo;Vector-relaxed&rdquo; std140/std430 means std140/std430
+with modifications to relax packing rules for vectors: the alignment of a
+vector type is set to be the alignment of its element type, if not crossing
+16-byte boundary. If crossing 16-byte boundary, the alignment will be set to
+16 bytes. &ldquo;Vector-relaxed&rdquo; std140/std430 satisfies Vulkan spec
+<a href="https://www.khronos.org/registry/vulkan/specs/1.1-extensions/html/vkspec.html#interfaces-resources-layout">Standard Uniform/Storage Buffer Layout</a>.</p>
+<p>DirectX layout rules enables packing data on the application side that can be
+shared with DirectX. Note that this is not yet officially supported by Vulkan;
+it just happens to work.</p>
+<p>See the <a href="https://github.com/Microsoft/DirectXShaderCompiler/blob/master/docs/SPIR-V.rst#memory-layout-rules">SPIR-V doc</a> in DXC for more details.</p>
+<h2 id="takeaways">Takeaways</h2>
+<ul>
+<li>DXC supports three approaches to control resource bindings
+<ul>
+<li><code>[[vk::binding(X, Y)]]</code> and <code>[[vk::counter_binding(Z)]]</code></li>
+<li><code>:register(xX, spaceY)</code> with <code>-fvk-*shift M N</code></li>
+<li>Default next unused binding number assignment</li>
+</ul>
+</li>
+<li>DXC supports three sets of layout rules
+<ul>
+<li>Vulkan rules: the default</li>
+<li>DirectX rules: <code>-fvk-use-dx-layout</code></li>
+<li>OpenGL rules <code>-fvk-use-gl-layout</code></li>
+</ul>
+</li>
+</ul>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p>You will need to <a href="https://github.com/Microsoft/DirectXShaderCompiler/wiki/SPIR%E2%80%90V-CodeGen#building">compile DXC</a> with <code>ENABLE_SPIRV_CODEGEN</code> to have the compiler recognize them.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+        </div>
+        
+        <div class="my-4">
+    
+    <a href="https://www.lei.chat/tags/graphics/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#graphics</a>
+    
+    <a href="https://www.lei.chat/tags/vulkan/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#vulkan</a>
+    
+    <a href="https://www.lei.chat/tags/shader/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#shader</a>
+    
+    <a href="https://www.lei.chat/tags/compiler/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#compiler</a>
+    
+    <a href="https://www.lei.chat/tags/hlsl/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#hlsl</a>
+    
+    <a href="https://www.lei.chat/tags/glsl/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#glsl</a>
+    
+    <a href="https://www.lei.chat/tags/spirv/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#spirv</a>
+    
+    <a href="https://www.lei.chat/tags/resource/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#resource</a>
+    
+</div>
+        
+        
+        
+
+
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+        <span class="block font-bold">Previous</span>
+        <a href="https://www.lei.chat/posts/hlsl-for-vulkan-semantic-strings-and-location-numbers/" class="block">HLSL for Vulkan: Semantic Strings and Location Numbers</a>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">Next</span>
+        <a href="https://www.lei.chat/posts/hlsl-for-vulkan-matrices/" class="block">HLSL for Vulkan: Matrices</a>
+        
+    </div>
+</div>
+
+        
+
+
+
+  <script id="utterances" src="https://utteranc.es/client.js"
+            issue-term=title
+            repo=antiagainst/antiagainst.github.io
+              theme=preferred-color-scheme
+        crossorigin="anonymous"
+        async>
+</script>
+<script>
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+      document.getElementById('utterances').setAttribute('theme', 'github-dark')
+    }
+</script>
+
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+<div class="bg-secondary-bg rounded p-6">
+    <h3 class="text-lg font-semibold mb-4">Series of Posts</h3>
+    <div class="content">
+        
+        
+        <a href="https://www.lei.chat/posts/hlsl-for-vulkan-semantic-strings-and-location-numbers/">HLSL for Vulkan: Semantic Strings and Location Numbers</a>
+        <br />
+        
+        <a href="https://www.lei.chat/posts/hlsl-for-vulkan-resources/">HLSL for Vulkan: Resources</a>
+        <br />
+        
+        <a href="https://www.lei.chat/posts/hlsl-for-vulkan-matrices/">HLSL for Vulkan: Matrices</a>
+        <br />
+        
+        
+    </div>
+</div>
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">On This Page</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#resource--descriptor">Resource &amp; Descriptor</a></li>
+    <li><a href="#hlsl-resource-types">HLSL Resource Types</a>
+      <ul>
+        <li><a href="#subpass-inputs">Subpass inputs</a></li>
+      </ul>
+    </li>
+    <li><a href="#resource-binding">Resource Binding</a>
+      <ul>
+        <li><a href="#vulkan-attribute-assignment">Vulkan attribute assignment</a>
+          <ul>
+            <li><a href="#associated-counters">Associated counters</a></li>
+          </ul>
+        </li>
+        <li><a href="#hlsl-register-assignment">HLSL register assignment</a>
+          <ul>
+            <li><a href="#register-overlap">Register overlap</a></li>
+          </ul>
+        </li>
+        <li><a href="#default-assignment">Default assignment</a></li>
+        <li><a href="#globals-cbuffer">$Globals cbuffer</a></li>
+      </ul>
+    </li>
+    <li><a href="#resource-memory-layout">Resource Memory Layout</a></li>
+    <li><a href="#takeaways">Takeaways</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded p-6">
+        <h2 class="text-lg font-semibold mb-4">See Also</h2>
+        <div class="content">
+            
+            <a href="https://www.lei.chat/posts/hlsl-for-vulkan-matrices/">HLSL for Vulkan: Matrices</a>
+            <br />
+            
+        </div>
+    </div>
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2018 - 2021 <a href="https://www.lei.chat/">Lei Zhang</a>
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

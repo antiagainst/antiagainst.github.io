@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>download on Lei Zhang (antiagainst)&#39;s Blog</title>
+    <title>download on Lei Chat</title>
     <link>https://www.lei.chat/tags/download/</link>
-    <description>Recent content in download on Lei Zhang (antiagainst)&#39;s Blog</description>
+    <description>Recent content in download on Lei Chat</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
+    <copyright>&amp;copy; 2018 - 2021 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
+</copyright>
     <lastBuildDate>Sat, 12 May 2018 17:44:14 -0400</lastBuildDate><atom:link href="https://www.lei.chat/tags/download/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Shader Toolchain: HLSL in Vulkan</title>
-      <link>https://www.lei.chat/post/shader-toolchain-hlsl-in-vulkan/</link>
+      <link>https://www.lei.chat/posts/shader-toolchain-hlsl-in-vulkan/</link>
       <pubDate>Sat, 12 May 2018 17:44:14 -0400</pubDate>
       
-      <guid>https://www.lei.chat/post/shader-toolchain-hlsl-in-vulkan/</guid>
+      <guid>https://www.lei.chat/posts/shader-toolchain-hlsl-in-vulkan/</guid>
       <description>&lt;p&gt;On &lt;a href=&#34;https://www.khronos.org/events/2018-vulkan-developer-day-in-montreal&#34;&gt;2018 Vulkan Developer Day in Montréal&lt;/a&gt;, I gave a talk
-regarding &amp;ldquo;Shader Toolchain: HLSL in Vulkan&amp;rdquo;. Here are the links to the
+regarding “Shader Toolchain: HLSL in Vulkan”. Here are the links to the
 video recording, slides, and documentation/downloads for DirectX Shader
-Compiler (DXC)&amp;rsquo;s SPIR-V CodeGen.&lt;/p&gt;</description>
+Compiler (DXC) SPIR-V CodeGen.&lt;/p&gt;</description>
     </item>
     
   </channel>

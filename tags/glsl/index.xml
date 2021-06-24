@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>glsl on Lei Zhang (antiagainst)&#39;s Blog</title>
+    <title>glsl on Lei Chat</title>
     <link>https://www.lei.chat/tags/glsl/</link>
-    <description>Recent content in glsl on Lei Zhang (antiagainst)&#39;s Blog</description>
+    <description>Recent content in glsl on Lei Chat</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
+    <copyright>&amp;copy; 2018 - 2021 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
+</copyright>
     <lastBuildDate>Tue, 24 Apr 2018 16:39:21 -0400</lastBuildDate><atom:link href="https://www.lei.chat/tags/glsl/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>HLSL for Vulkan: Resources</title>
-      <link>https://www.lei.chat/post/hlsl-for-vulkan-resources/</link>
+      <link>https://www.lei.chat/posts/hlsl-for-vulkan-resources/</link>
       <pubDate>Tue, 24 Apr 2018 16:39:21 -0400</pubDate>
       
-      <guid>https://www.lei.chat/post/hlsl-for-vulkan-resources/</guid>
+      <guid>https://www.lei.chat/posts/hlsl-for-vulkan-resources/</guid>
       <description>&lt;p&gt;This blog post discusses how to manage resources in HLSL for Vulkan, using the
 &lt;a href=&#34;https://github.com/Microsoft/DirectXShaderCompiler/blob/master/docs/SPIR-V.rst&#34;&gt;SPIR-V CodeGen&lt;/a&gt; of &lt;a href=&#34;https://github.com/Microsoft/DirectXShaderCompiler&#34;&gt;DirectXShaderCompiler&lt;/a&gt; (DXC).
-It is one of the &amp;ldquo;HLSL for Vulkan&amp;rdquo; series.&lt;/p&gt;</description>
+It is one of the “HLSL for Vulkan” series.&lt;/p&gt;</description>
     </item>
     
   </channel>

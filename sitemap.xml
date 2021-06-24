@@ -1,179 +1,87 @@
-<?xml-stylesheet type="text/xsl" href="https://www.lei.chat/sitemap.xsl"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://www.lei.chat/categories/</loc>
     <lastmod>2018-05-12T18:06:14-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://www.lei.chat/tags/doc/</loc>
     <lastmod>2018-05-12T18:06:14-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://www.lei.chat/tags/download/</loc>
     <lastmod>2018-05-12T18:06:14-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://www.lei.chat/categories/dxc/</loc>
     <lastmod>2018-05-12T18:06:14-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://www.lei.chat/tags/hlsl/</loc>
     <lastmod>2018-05-12T18:06:14-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://www.lei.chat/</loc>
     <lastmod>2018-05-12T18:06:14-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.lei.chat/post/</loc>
+  </url><url>
+    <loc>https://www.lei.chat/posts/</loc>
     <lastmod>2018-05-12T18:06:14-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://www.lei.chat/tags/shader/</loc>
     <lastmod>2018-05-12T18:06:14-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.lei.chat/post/shader-toolchain-hlsl-in-vulkan/</loc>
+  </url><url>
+    <loc>https://www.lei.chat/posts/shader-toolchain-hlsl-in-vulkan/</loc>
     <lastmod>2018-05-12T18:06:14-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://www.lei.chat/tags/</loc>
     <lastmod>2018-05-12T18:06:14-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://www.lei.chat/tags/talk/</loc>
     <lastmod>2018-05-12T18:06:14-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://www.lei.chat/tags/vulkan/</loc>
     <lastmod>2018-05-12T18:06:14-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://www.lei.chat/tags/compiler/</loc>
     <lastmod>2018-05-12T13:27:37-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://www.lei.chat/tags/graphics/</loc>
     <lastmod>2018-05-12T13:27:37-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.lei.chat/post/hlsl-for-vulkan-semantic-strings-and-location-numbers/</loc>
+  </url><url>
+    <loc>https://www.lei.chat/posts/hlsl-for-vulkan-semantic-strings-and-location-numbers/</loc>
     <lastmod>2018-05-12T13:27:37-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
+    <loc>https://www.lei.chat/series/hlsl-for-vulkan/</loc>
+    <lastmod>2018-05-12T13:27:37-04:00</lastmod>
+  </url><url>
     <loc>https://www.lei.chat/categories/hlsl-for-vulkan/</loc>
     <lastmod>2018-05-12T13:27:37-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://www.lei.chat/tags/location/</loc>
     <lastmod>2018-05-12T13:27:37-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://www.lei.chat/tags/semantic/</loc>
     <lastmod>2018-05-12T13:27:37-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
+    <loc>https://www.lei.chat/series/</loc>
+    <lastmod>2018-05-12T13:27:37-04:00</lastmod>
+  </url><url>
     <loc>https://www.lei.chat/tags/spirv/</loc>
     <lastmod>2018-05-12T13:27:37-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://www.lei.chat/tags/glsl/</loc>
     <lastmod>2018-04-26T22:52:49-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.lei.chat/post/hlsl-for-vulkan-resources/</loc>
+  </url><url>
+    <loc>https://www.lei.chat/posts/hlsl-for-vulkan-resources/</loc>
     <lastmod>2018-04-26T22:52:49-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://www.lei.chat/tags/resource/</loc>
     <lastmod>2018-04-26T22:52:49-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.lei.chat/post/hlsl-for-vulkan-matrices/</loc>
+  </url><url>
+    <loc>https://www.lei.chat/posts/hlsl-for-vulkan-matrices/</loc>
     <lastmod>2018-04-24T17:29:20-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://www.lei.chat/tags/matrix/</loc>
     <lastmod>2018-04-24T17:29:20-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
+  </url><url>
+    <loc>https://www.lei.chat/authors/</loc>
+  </url><url>
+    <loc>https://www.lei.chat/authors/me/</loc>
   </url>
-  
-  <url>
-    <loc>https://www.lei.chat/about/</loc>
-    <lastmod>2021-06-16T11:19:25-04:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
 </urlset>

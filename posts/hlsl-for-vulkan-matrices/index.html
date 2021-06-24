@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang='en' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>HLSL for Vulkan: Matrices | Lei Chat</title>
+
+<meta name="generator" content="Hugo Eureka 0.8.0" />
+<link rel="stylesheet" href="https://www.lei.chat/css/eureka.min.css">
+<script defer src="https://www.lei.chat/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/8olarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/bash.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/c.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cmake.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cpp.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/glsl.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/javascript.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/llvm.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/python.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/shell.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="HLSL for Vulkan: translating HLSL matrices into SPIR-V">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Posts",
+      "item":"https://www.lei.chat/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"HLSL for Vulkan: Matrices",
+      "item":"https://www.lei.chat/posts/hlsl-for-vulkan-matrices/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.lei.chat/posts/hlsl-for-vulkan-matrices/"
+    },
+    "headline": "HLSL for Vulkan: Matrices | Lei Chat","datePublished": "2018-04-18T20:13:20-04:00",
+    "dateModified": "2018-04-24T17:29:20-04:00",
+    "wordCount":  2618 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "Lei Zhang",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.lei.chat/images/avatar.png"
+        }
+        },
+    "description": "HLSL for Vulkan: translating HLSL matrices into SPIR-V"
+}
+</script><meta property="og:title" content="HLSL for Vulkan: Matrices | Lei Chat" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="https://www.lei.chat/images/avatar.png">
+
+
+<meta property="og:url" content="https://www.lei.chat/posts/hlsl-for-vulkan-matrices/" />
+
+
+
+<meta property="og:description" content="HLSL for Vulkan: translating HLSL matrices into SPIR-V" />
+
+
+
+<meta property="og:locale" content="en" />
+
+
+
+
+<meta property="og:site_name" content="Lei Chat" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2018-04-18T20:13:20-04:00" />
+
+
+<meta property="article:modified_time" content="2018-04-24T17:29:20-04:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="graphics" />
+
+<meta property="article:tag" content="vulkan" />
+
+<meta property="article:tag" content="shader" />
+
+<meta property="article:tag" content="compiler" />
+
+<meta property="article:tag" content="hlsl" />
+
+<meta property="article:tag" content="spirv" />
+
+
+
+
+
+
+
+
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/hlsl-for-vulkan-semantic-strings-and-location-numbers/" />
+
+
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/hlsl-for-vulkan-resources/" />
+
+
+
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Lei Chat</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">Posts</a>
+            <a href="/authors/me" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">About</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">Light</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">Dark</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">Auto</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">HLSL for Vulkan: Matrices</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2018-04-18</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>13 min read</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="https://www.lei.chat/categories/hlsl-for-vulkan/" class="hover:text-eureka">hlsl-for-vulkan</a>
+        
+        
+        <span>, </span>
+        <a href="https://www.lei.chat/categories/dxc/" class="hover:text-eureka">dxc</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="https://www.lei.chat/series/hlsl-for-vulkan/" class="hover:text-eureka">hlsl-for-vulkan</a>
+        
+    </div>
+    
+</div>
+        
+        
+        
+
+        <div class="content">
+            <p>This blog post discusses how HLSL matrices are translated into SPIR-V for Vulkan
+consumption in the <a href="https://github.com/Microsoft/DirectXShaderCompiler/blob/master/docs/SPIR-V.rst">SPIR-V CodeGen</a> of <a href="https://github.com/Microsoft/DirectXShaderCompiler">DirectXShaderCompiler</a>.
+It is one of the “HLSL for Vulkan” series.</p>
+<p>Matrix types are native to high-level shading languages, but not to GPU ISAs,
+which only perform operations on scalars and vectors. Intermediate languages,
+albeit higher level than GPU ISAs, have their own decisions of whether to
+retain matrix types: <a href="https://github.com/Microsoft/DirectXShaderCompiler/blob/master/docs/DXIL.rst">DXIL</a> lowers matrices into vectors, while
+<a href="https://www.khronos.org/registry/spir-v/specs/unified1/SPIRV.html">SPIR-V</a> keeps them.</p>
+<h2 id="translation-guidelines">Translation Guidelines</h2>
+<h3 id="for-driver">For driver</h3>
+<p>Having native matrix types in SPIR-V does not necessarily mean that we must
+translate HLSL matrices into SPIR-V matrices, though. We can still lower
+HLSL matrices into SPIR-V vectors, which helps to reduce some of the confusions
+(to be discussed later), but loses high-level information and brings
+complexity into the CodeGen (because we need to emulate all the native SPIR-V
+matrix instructions like <code>OpMatrixTimesMatrix</code> using vectors). GPU drivers
+arguably prefer high-level information so that they can perform optimizations
+more tailored to their architectures. With only lower-level information, they
+sometimes need to perform analyses to rediscover high-level information.
+Therefore, we decided to</p>
+<blockquote>
+<p>Use SPIR-V&rsquo;s matrix types and instructions when possible.</p>
+</blockquote>
+<h3 id="for-developer">For developer</h3>
+<p>Of course, aiding the driver is only half of the job of a compiler; we also
+need to make sure the developer does not need to switch to another mindset
+when using HLSL to program Vulkan shaders: HLSL should be written the way
+they are written for DirectX, and data should be passed into the shader from
+application the way they are in DirectX. So, we should</p>
+<blockquote>
+<p>Translate in an approach intuitive and transparent to developers.</p>
+</blockquote>
+<p>Here we use the behavior of <code>fxc.exe</code> as the definition of HLSL and what
+developers will expect since HLSL does not have a language specification
+publicly available.</p>
+<h2 id="hlsl-matrices">HLSL Matrices</h2>
+<p>Regarding HLSL matrices, there are a few aspects that need to be covered:</p>
+<ul>
+<li>Initialization: external vs. internal</li>
+<li>Majorness: row vs. column</li>
+<li>Element type: boolean vs. integer vs. float</li>
+</ul>
+<h3 id="initialization">Initialization</h3>
+<p>Depending on the visibility of the matrix, it can be either initialized via
+the application or within the shader. Let&rsquo;s call the former as <em>externally
+initialized</em> and the later as <em>internally initialized</em>. From HLSL&rsquo;s perspective,</p>
+<ul>
+<li>Externally initialized matrices are in <code>cbuffer</code>s, <code>tbuffer</code>s, structured
+buffers, the <code>$Globals</code> cbuffer (declared as non-<code>static</code> global variables),
+and the <code>$Params</code> cbuffer (declared as <code>uniform</code> entry function parameters);</li>
+<li>Internally initialized matrices are the rest, declared as global <code>static</code> or
+local variables.</li>
+</ul>
+<p>Note that HLSL for DirectX supports supplying initializers for <code>cbuffer</code>
+members, which is a feature that Vulkan does not have the equivalent. <code>cbuffer</code>
+member initializers will simply trigger warnings and be ignored by the compiler.
+So, we cannot have matrices that are able to be initialized via both ways.</p>
+<p>We need to differentiate these two kinds of matrices because they need
+different handling regarding majorness.</p>
+<h3 id="majorness">Majorness</h3>
+<h4 id="external-initialization">External initialization</h4>
+<p>For externally initialized matrices, <strong>conceptually</strong>, we need to read the
+initialization data from the GPU memory. Data backing the matrices in memory
+are stored as a sequence of elements. Majorness determines how we group these
+elements into vectors and then matrices. For a <code>floatMxN</code> matrix,</p>
+<ul>
+<li>Row-major means consecutive numbers group into row-vectors and then the
+matrix. That is, the first <code>N</code> elements group into the first row-vector,
+the next <code>N</code> elements group into the second row-vector, and so on. We have
+<code>M</code> such row-vectors in total.</li>
+<li>column-major means consecutive numbers group into column-vectors and then
+the matrix. That is, the first <code>M</code> elements group into the first
+column-vector, the next <code>M</code> elements group into the second column-vector,
+and so on.  We have <code>N</code> such column-vectors in total.</li>
+</ul>
+<p>For the ease of discussion, let&rsquo;s call the matrix on GPU memory as in the
+<em>storage form</em>, and the matrix in shader after initialization as in
+<em>mathematical form</em>.</p>
+<p>Using <code>float2x3</code> as an example:</p>
+<pre><code class="language-c">// Data on GPU memory
+{1, 2, 3, 4, 5, 6}
+
+// -----
+
+// Storage form for row-major float2x3
+{{1, 2, 3}, {4, 5, 6}}
+
+// Mathematical form for row-major float2x3
+[ 1, 2, 3,
+  4, 5, 6 ]
+
+// -----
+
+// Storage form for column-major float2x3
+{{1, 2}, {3, 4}, {5, 6}}
+
+// Mathematical form for column-major float2x3
+[ 1, 3, 5,
+  2, 4, 6 ]
+</code></pre>
+<p>Majorness only matters for external initialized matrices, because it controls
+how they transform from the storage to the mathematical form.</p>
+<h4 id="internal-initialization">Internal initialization</h4>
+<p>For internally initialized matrices, we have already embedded the matrix
+initialization data in the shader. <strong>Conceptually</strong>, we don&rsquo;t need to get the
+data from GPU memory again, instead they are placed in GPU registers as
+immediate values.</p>
+<p>Internally initialized matrices are populated nothing different than other
+structured types: they are all in an element-wise way. For a <code>floatMxN</code>
+matrix <code>mat</code>, the first element in the initializer populates <code>mat[0][0]</code>,
+the second element populates <code>mat[0][1]</code>, the <code>N</code>th element populates
+<code>mat[0][N-1]</code>, the <code>N+1</code>th element populates <code>mat[1][0]</code>, and so on.</p>
+<h4 id="initializer">Initializer</h4>
+<p>It&rsquo;s sometimes the flexibility of HLSL syntax that can cause confusions
+with the majorness. The compiler is happy with the initializer as long as the
+total number of elements agrees with the matrix to initialize. With that,
+we can group elements in the initializer almost randomly, even if it means
+further decomposing some element into components. For example,</p>
+<pre><code>static float4   vec  = {2, 3, 4, 5};
+static float2x3 mat1 = {1, 2, 3, 4, 5, 6};
+static float2x3 mat2 = {{1}, {2, 3, {4, 5}}, 6};
+static float2x3 mat3 = {1, vec, 6};
+</code></pre>
+<p><code>fxc.exe</code> accepts all of the above initializers. It is easy to have the question
+of what majorness we should use to initialize <code>mat1</code>. Should it be column-major
+since column-major is the default for externally initialized matrices? Actually,
+majorness does not matter here since this is just element-wise initialization.
+<code>fxc.exe</code> also agrees with that. For example, for the following source code:</p>
+<pre><code>static column_major float2x2 mat1 = {1, 2, 3, 4};
+static row_major    float2x2 mat2 = {1, 2, 3, 4};
+
+void main(
+  out float4 v1 : A,
+  out float4 v2 : B
+) {
+  v1 = float4(mat1[0][0], mat1[0][1], mat1[1][0], mat1[1][1]);
+  v2 = float4(mat2[0][0], mat2[0][1], mat2[1][0], mat2[1][1]);
+}
+</code></pre>
+<p>The output of <code>fxc.exe</code> is</p>
+<pre><code>// Output signature:
+//
+// Name                 Index   Mask Register SysValue  Format   Used
+// -------------------- ----- ------ -------- -------- ------- ------
+// A                        0   xyzw        0     NONE   float   xyzw
+// B                        0   xyzw        1     NONE   float   xyzw
+//
+vs_5_1
+dcl_globalFlags refactoringAllowed
+dcl_output o0.xyzw
+dcl_output o1.xyzw
+mov o0.xyzw, l(1.000000,2.000000,3.000000,4.000000)
+mov o1.xyzw, l(1.000000,2.000000,3.000000,4.000000)
+ret
+</code></pre>
+<p>The <code>row_major</code>/<code>column_major</code> modifier is just ignored. It is also the case for
+<code>-Zpr</code>/<code>-Zpc</code> command-line options.</p>
+<h2 id="spir-v-matrices">SPIR-V Matrices</h2>
+<p>SPIR-V <code>OpTypeMatrix</code> is <em>column-oriented</em>; it takes a &ldquo;column type&rdquo; and
+a &ldquo;column count&rdquo; as parameters:</p>
+<ul>
+<li>Column Type is the type of each column in the matrix. It must be vector type.</li>
+<li>Column Count is the number of columns in the new matrix type. It must be at
+least 2.</li>
+<li>Matrix columns are numbered consecutively, starting with 0. This is true
+independently of any Decorations describing the memory layout of a matrix.</li>
+</ul>
+<p>So with one-level indexing into a SPIR-V matrix, we get the column vector.
+This is fundamentally different from HLSL matrices, which is <em>row-oriented</em>;
+One-level indexing into a HLSL matrix gives us the row vector.</p>
+<p>Resulting from the above differences, translating HLSL matrices into SPIR-V
+ones is not straightforward.</p>
+<p>Furthermore, the SPIR-V specification has a few rules regarding using
+<code>OpTypeMatrix</code> (in &ldquo;2.16. Validation Rules&rdquo;) that make us even unable to have
+a unified way of translating HLSL matrices into SPIR-V matrices.</p>
+<h3 id="validation-rules">Validation rules</h3>
+<ul>
+<li>Matrix types can only be parameterized with floating-point types.</li>
+<li>Matrix types can only be parameterized as having only 2, 3, or 4 columns.</li>
+<li>Composite objects in the <code>StorageBuffer</code>, <code>UniformConstant</code>, <code>Uniform</code>, and
+<code>PushConstant</code> Storage Classes must be explicitly laid out. The following
+apply to all the aggregate and matrix types describing such an object,
+recursively through their nested types:
+<ul>
+<li>Each structure-type member that is a matrix or array-of-matrices must have
+be decorated with a <code>MatrixStride</code> Decoration and one of the <code>RowMajor</code> or
+<code>ColMajor</code> Decorations.</li>
+</ul>
+</li>
+</ul>
+<p>There are a few Vulkan/SPIR-V terms in the above worth some explanations:</p>
+<p>Storage class dictates the type of memory:</p>
+<ul>
+<li>HLSL textures and samplers will be put in the <code>UniformConstant</code> storage class;</li>
+<li>HLSL structured buffers will be put in the <code>Uniform</code> storage class.</li>
+</ul>
+<p>(See the <a href="https://github.com/Microsoft/DirectXShaderCompiler/blob/master/docs/SPIR-V.rst#textures">tables in the mapping doc</a> for details of how all
+HLSL resource types are mapping to Vulkan resource types and their corresponding
+storage classes.)</p>
+<ul>
+<li><code>RowMajor</code> indicates that components within a row are contiguous in memory.</li>
+<li><code>ColMajor</code> indicates that components within a column are contiguous in memory.</li>
+<li><code>MatrixStride</code> specifies the stride of rows in a <code>RowMajor</code>-decorated matrix,
+or columns in a <code>ColMajor</code>-decorated matrix.</li>
+</ul>
+<h3 id="element-type">Element type</h3>
+<p>So, for float matrices, we can use SPIR-V <code>OpTypeMatrix</code> and all the matrix
+instructions like <code>OpVectorTimesMatrix</code>, <code>OpMatrixTimesVector</code>,
+<code>OpMatrixTimesMatrix</code>, etc. Unfortunately, boolean/integer matrices cannot
+enjoy such luxury because of the validation rules shown in the above.
+We translate them into arrays of vectors: a HLSL <code>MxN</code> matrix will turn into
+an SPIR-V <code>OpTypeArray</code> of <code>M</code> <code>N</code>-component vectors. This means we need
+to emulate all the nice matrix instructions by ourselves, too.</p>
+<h3 id="float-matrix-operations">Float matrix operations</h3>
+<p>For float matrices, although we can use <code>OpTypeMatrix</code>, the translation is
+not straightforward because of the differences explained in the beginning
+of this section.</p>
+<p>The translation must be functionally correct. This means, for the same HLSL
+source code with the same data from the application, we should have the same
+behavior as <code>fxc.exe</code>. Then we need to get the following language features
+correct:</p>
+<ul>
+<li>Matrix indexing</li>
+<li>Matrix per-element operations</li>
+<li>Matrix multiplication</li>
+<li>Matrix majorness modifiers</li>
+</ul>
+<h4 id="indexing">Indexing</h4>
+<p>Among them, indexing is the most flexible one: we can have multiple
+forms/ways to index into a matrix, like <code>._mMN</code>, <code>._MN</code>, <code>[M][N]</code>, <code>[M].yyxx</code>,
+etc. Thus it is more likely to cause problems for the CodeGen than others.
+So we chose our translation scheme to satisfy indexing correctness first.</p>
+<p>We have two approach to represent a <code>floatMxN</code> matrix <code>mat</code> in SPIR-V:</p>
+<pre><code>// 1st approach
+%vec1 = OpTypeVector %float N // Column vector with N elements
+%mat1 = OpTypeMatrix %vec1  M // M columns
+
+// 2nd approach
+%vec2 = OpTypeVector %float M // Column vector with M elements
+%mat2 = OpTypeMatrix %vec2  N // N columns
+</code></pre>
+<p>The 2nd way represents a <code>floatMxN</code> as a matrix of <code>M</code> rows and <code>N</code> columns.
+It&rsquo;s nice that we have consistent mathematical representation here, but
+unfortunately, it breaks indexing. Let&rsquo;s say we are trying to get <code>mat[i][j]</code>.
+Clearly in the source code we have <code>0 &lt;= i &lt; M</code> and <code>0 &lt;= j &lt; N</code>.
+But for <code>%mat2</code> in SPIR-V, we actually have <code>0 &lt;= i &lt; N</code> and <code>0 &lt;= j &lt; M</code>.
+Further considering that we can copy the whole <code>mat[i]</code> vector and then
+referencing the <code>j</code>th element in it behind complicated control flows, this
+approach is just unmanageable.</p>
+<p>That leaves us to use the first representation, which is essentially a
+transpose of the original matrix: <code>%mat1</code> is a matrix of <code>N</code> rows and <code>M</code>
+columns. But we have the correct indexing behavior. Accessing <code>mat[i][j]</code>
+can be translated into indexing into <code>%mat2</code> first by <code>i</code> and then by <code>j</code>,
+and we are getting the correct element if the matrix is initialized in the
+transposed manner (to be discussed later).</p>
+<h4 id="per-element-operations">Per-element operations</h4>
+<p>Operations conducting in a per-element manner, like multiplying the matrix
+by a scalar, will just work naturally since we have the same operation on
+each element.</p>
+<h4 id="multiplication">Multiplication</h4>
+<p>Because for a HLSL matrix <code>mat</code>, we are actually representing it as
+<code>transpose(mat)</code> in SPIR-V,  HLSL matrix multiplication <code>mat1 * mat2</code> should
+swap the operands in SPIR-V: <code>transpose(mat2) * transpose(mat1)</code>, which is
+then <code>transpose(mat1 * mat2)</code>: just how we should represent <code>mat1 * mat2</code> in
+SPIR-V.</p>
+<h3 id="initialization-1">Initialization</h3>
+<p>Initialization the matrix in the transposed manner is key to get float matrix
+calculations correct.</p>
+<p>For the SPIR-V matrix <code>%mat</code> from an internally initialized <code>floatMxN</code> matrix,
+we should initialize <code>%mat[0][0]</code> with the first element, <code>%mat[0][N-1]</code> with
+the <code>n</code>th element, <code>%mat[1][0]</code> with the <code>n+1</code>th element, and so on. That means,
+we need to group the first <code>N</code> elements as the first column-vector, the second
+<code>N</code> elements as the second column-vector, and so on.</p>
+<pre><code>// HLSL
+static float2x3 mat = {1, 2, 3, 4, 5, 6};
+
+// SPIR-V
+%vec1 = OpCompositeConstruct %v3float %float_1 %float_2 %float_3
+%vec2 = OpCompositeConstruct %v3float %float_4 %float_5 %float_6
+%mat  = OpCompositeConstruct %mat2v3float %vec1 %vec2
+</code></pre>
+<p>The above is just nice and natural: it populates the elements in the matrix one
+by one following the &ldquo;ᴎ&rdquo; pattern; just what we want.</p>
+<p>For externally initialized matrices, majorness is involved.</p>
+<h3 id="majorness-1">Majorness</h3>
+<p>As said previously, majorness only matters for externally initialized matrices.
+This agrees with SPIR-V validation rules, which requires matrices inside
+<a href="https://www.khronos.org/registry/vulkan/specs/1.1-extensions/html/vkspec.html#interfaces-resources-correspondence">shader resources</a> to be explicitly laid out, but not
+the shader internal ones (inside <code>Function</code> or <code>Private</code> storage class).</p>
+<h4 id="float-matrices">Float matrices</h4>
+<p>But as we need to swap the multiplication operands, we also need to flip
+the majorness decoration in SPIR-V to make sure matrices are initialized
+in the transposed manner:</p>
+<ul>
+<li>HLSL <code>row_major</code> should be translated into SPIR-V <code>ColMajor</code>;</li>
+<li>HLSL <code>column_major</code> should be translated into SPIR-V <code>RowMajor</code>.</li>
+</ul>
+<p>An example will make it clear:</p>
+<pre><code class="language-c">// Data on GPU memory
+{1, 2, 3, 4, 5, 6}
+
+// --- HLSL ---
+
+// Storage form for row-major float2x3
+{{1, 2, 3}, {4, 5, 6}}
+
+// Mathematical form for row-major float2x3
+[ 1, 2, 3,
+  4, 5, 6 ]
+
+// -----
+
+// Storage form for column-major float2x3
+{{1, 2}, {3, 4}, {5, 6}}
+
+// Mathematical form for column-major float2x3
+[ 1, 3, 5,
+  2, 4, 6 ]
+
+// --- SPIR-V ---
+
+// Storage form for RowMajor %mat2v3float
+{{1, 2}, {3, 4}, {5, 6}}
+
+// Mathematical form for RowMajor %mat2v3float
+[ 1, 2,
+  3, 4,
+  5, 6 ]
+
+// -----
+
+// Storage form for ColMajor %mat2v3float
+{{1, 2, 3}, {4, 5, 6}}
+
+// Mathematical form for ColMajor %mat2v3float
+[ 1, 4,
+  2, 5,
+  3, 6 ]
+</code></pre>
+<p>It&rsquo;s clear from the above that <code>row_major</code> <code>float2x3</code> should be represented as
+<code>ColMajor</code> <code>%mat2v3float</code>, and <code>column_major</code> <code>float2x3</code> should be represented
+as <code>RowMajor</code> <code>%mat2v3float</code>, to achieve transposed initialization.</p>
+<h4 id="boolinteger-matrices">Bool/integer matrices</h4>
+<p>The above is for float matrices, though. We don&rsquo;t have the <code>RowMajor</code>/
+<code>ColMajor</code> decoration for boolean/integer matrices since they are translated
+into an array of vectors. For them, we need to handle source code <code>row_major</code>/
+<code>column_major</code> modifier similarly to what the driver is doing for <code>RowMajor</code>/
+<code>ColMajor</code> decorations. Note that we do not want to perform transposed
+initialization here since we are not using <code>OpTypeMatrix</code>.</p>
+<p>So for HLSL <code>row_major</code> <code>floatMxN</code> matrix, we just need to take the first <code>N</code>
+consecutive elements to initialize the first vector in the array, the second <code>N</code>
+consecutive elements to initialize the second vector in the array. Essentially
+we don&rsquo;t need to do anything special.</p>
+<p>But for HLSL <code>column_major</code> <code>floatMxN</code> matrix, we need to take the 1st,
+<code>M+1</code>th, <code>M*2+1</code>th, &hellip;, <code>M*(N-1)+1</code>th element to compose the first vector.
+Similarly for other vectors.</p>
+<h3 id="summary">Summary</h3>
+<p>To summarize what discussed in the above sections:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">HLSL Element Type</th>
+<th style="text-align:center">HLSL Initialization</th>
+<th style="text-align:center">Majorness</th>
+<th style="text-align:center">SPIR-V Type</th>
+<th style="text-align:center">SPIRV Decoration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Float</td>
+<td style="text-align:center">Internal</td>
+<td style="text-align:center">Row</td>
+<td style="text-align:center"><code>OpTypeMatrix</code></td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center">Float</td>
+<td style="text-align:center">Internal</td>
+<td style="text-align:center">Column</td>
+<td style="text-align:center"><code>OpTypeMatrix</code></td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center">Float</td>
+<td style="text-align:center">External</td>
+<td style="text-align:center">Row</td>
+<td style="text-align:center"><code>OpTypeMatrix</code></td>
+<td style="text-align:center"><code>ColMajor</code></td>
+</tr>
+<tr>
+<td style="text-align:center">Float</td>
+<td style="text-align:center">External</td>
+<td style="text-align:center">Column</td>
+<td style="text-align:center"><code>OpTypeMatrix</code></td>
+<td style="text-align:center"><code>RowMajor</code></td>
+</tr>
+<tr>
+<td style="text-align:center">Bool/Integer</td>
+<td style="text-align:center">Internal</td>
+<td style="text-align:center">Row</td>
+<td style="text-align:center">Array of <code>OpTypeVector</code></td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center">Bool/Integer</td>
+<td style="text-align:center">Internal</td>
+<td style="text-align:center">Column</td>
+<td style="text-align:center">Array of <code>OpTypeVector</code></td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center">Bool/Integer</td>
+<td style="text-align:center">External</td>
+<td style="text-align:center">Row</td>
+<td style="text-align:center">Array of <code>OpTypeVector</code></td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center">Bool/Integer</td>
+<td style="text-align:center">External</td>
+<td style="text-align:center">Column</td>
+<td style="text-align:center">Array of <code>OpTypeVector</code></td>
+<td style="text-align:center">N/A</td>
+</tr>
+</tbody>
+</table>
+<h2 id="takeaways">Takeaways</h2>
+<p>Due to the fundamental differences between HLSL matrices and SPIR-V matrices
+(HLSL matrices are row-oriented while SPIR-V matrices are column-oriented)
+and additional requirements over matrix types in SPIR-V, we don&rsquo;t have a
+straightforward and unified translation scheme for HLSL matrices.</p>
+<ul>
+<li>HLSL float matrices are translated into SPIR-V <code>OpTypeMatrix</code>s in a transposed
+manner, which requires corresponding special handling of matrix features:
+<ul>
+<li>Operands in matrix multiplication need to be swapped.</li>
+<li>Majorness decorations need to be swapped.</li>
+</ul>
+</li>
+<li>HLSL boolean/integer matrices are translated into SPIR-V <code>OpTypeArray</code>s of
+<code>OpTypeVector</code>s.</li>
+</ul>
+<p>With the above translation scheme, we retain source code high-level information
+as much as we can, and the SPIR-V code should work transparently for developers.</p>
+        </div>
+        
+        <div class="my-4">
+    
+    <a href="https://www.lei.chat/tags/graphics/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#graphics</a>
+    
+    <a href="https://www.lei.chat/tags/vulkan/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#vulkan</a>
+    
+    <a href="https://www.lei.chat/tags/shader/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#shader</a>
+    
+    <a href="https://www.lei.chat/tags/compiler/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#compiler</a>
+    
+    <a href="https://www.lei.chat/tags/hlsl/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#hlsl</a>
+    
+    <a href="https://www.lei.chat/tags/spirv/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#spirv</a>
+    
+    <a href="https://www.lei.chat/tags/matrix/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#matrix</a>
+    
+</div>
+        
+        
+        
+
+
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+        <span class="block font-bold">Previous</span>
+        <a href="https://www.lei.chat/posts/hlsl-for-vulkan-resources/" class="block">HLSL for Vulkan: Resources</a>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+    </div>
+</div>
+
+        
+
+
+
+  <script id="utterances" src="https://utteranc.es/client.js"
+            issue-term=title
+            repo=antiagainst/antiagainst.github.io
+              theme=preferred-color-scheme
+        crossorigin="anonymous"
+        async>
+</script>
+<script>
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+      document.getElementById('utterances').setAttribute('theme', 'github-dark')
+    }
+</script>
+
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+<div class="bg-secondary-bg rounded p-6">
+    <h3 class="text-lg font-semibold mb-4">Series of Posts</h3>
+    <div class="content">
+        
+        
+        <a href="https://www.lei.chat/posts/hlsl-for-vulkan-semantic-strings-and-location-numbers/">HLSL for Vulkan: Semantic Strings and Location Numbers</a>
+        <br />
+        
+        <a href="https://www.lei.chat/posts/hlsl-for-vulkan-resources/">HLSL for Vulkan: Resources</a>
+        <br />
+        
+        <a href="https://www.lei.chat/posts/hlsl-for-vulkan-matrices/">HLSL for Vulkan: Matrices</a>
+        <br />
+        
+        
+    </div>
+</div>
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">On This Page</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#translation-guidelines">Translation Guidelines</a>
+      <ul>
+        <li><a href="#for-driver">For driver</a></li>
+        <li><a href="#for-developer">For developer</a></li>
+      </ul>
+    </li>
+    <li><a href="#hlsl-matrices">HLSL Matrices</a>
+      <ul>
+        <li><a href="#initialization">Initialization</a></li>
+        <li><a href="#majorness">Majorness</a>
+          <ul>
+            <li><a href="#external-initialization">External initialization</a></li>
+            <li><a href="#internal-initialization">Internal initialization</a></li>
+            <li><a href="#initializer">Initializer</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#spir-v-matrices">SPIR-V Matrices</a>
+      <ul>
+        <li><a href="#validation-rules">Validation rules</a></li>
+        <li><a href="#element-type">Element type</a></li>
+        <li><a href="#float-matrix-operations">Float matrix operations</a>
+          <ul>
+            <li><a href="#indexing">Indexing</a></li>
+            <li><a href="#per-element-operations">Per-element operations</a></li>
+            <li><a href="#multiplication">Multiplication</a></li>
+          </ul>
+        </li>
+        <li><a href="#initialization-1">Initialization</a></li>
+        <li><a href="#majorness-1">Majorness</a>
+          <ul>
+            <li><a href="#float-matrices">Float matrices</a></li>
+            <li><a href="#boolinteger-matrices">Bool/integer matrices</a></li>
+          </ul>
+        </li>
+        <li><a href="#summary">Summary</a></li>
+      </ul>
+    </li>
+    <li><a href="#takeaways">Takeaways</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2018 - 2021 <a href="https://www.lei.chat/">Lei Zhang</a>
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

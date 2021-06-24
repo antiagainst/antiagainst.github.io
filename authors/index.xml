@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Authors on Lei Chat</title>
+    <link>https://www.lei.chat/authors/</link>
+    <description>Recent content in Authors on Lei Chat</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>&amp;copy; 2018 - 2021 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
+</copyright><atom:link href="https://www.lei.chat/authors/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Lei Zhang</title>
+      <link>https://www.lei.chat/authors/me/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.lei.chat/authors/me/</guid>
+      <description>About This Website Hello, thanks for your interest in my website. 😊 I try to log down my learnings and thoughts about compilers (SPIR-V, MLIR, etc.), GPU (Vulkan, Metal, etc.), toolchain (ML frameworks, productivity tools, etc.), and others sporadically.
+About Me I&amp;rsquo;m Lei Zhang. I work on machine learning frameworks and compilers within Google.
+Currently my main focus is pushing forward leveraging a compilation-based approach and Vulkan compute for ML inference on GPUs. It involves developing a compiler stack and various other tools; for example, I created and open sourced µVkCompute, maintain the SPIR-V dialect and conversions in MLIR, and contribute to IREE, a MLIR-based end-to-end compiler and runtime that draws lots of design principles for Vulkan.</description>
+    </item>
+    
+  </channel>
+</rss>
