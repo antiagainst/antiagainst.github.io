@@ -805,7 +805,11 @@ as much as we can, and the SPIR-V code should work transparently for developers.
     if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
       document.getElementById('utterances').setAttribute('theme', 'github-dark')
     }
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: light)").matches) || storageColorScheme == "Light") {
+      document.getElementById('utterances').setAttribute('theme', 'github-light')
+    }
 </script>
+
 
     </div>
     
