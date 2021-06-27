@@ -353,14 +353,14 @@ would also need to manually 5) <strong>manage GPU object lifetime</strong>.</p>
 details in each category, where graphics is typically much more complicated
 than compute.</p>
 <p>Today even though we can render fabulous scenes in AAA games, we are still
-mainly in a stage where shortcuts and approximations (<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap27.html#primsrast">rasterization</a>,
-etc.) are taken, because generating geometry primitives and lighting in the
-most natural way (pure ray tracing) is still an overwhelming amount of
-computation that exceeds today&rsquo;s GPU capabilities. This weighs on the graphics
-pipeline and API. As examples, we need to have fixed-function stages (<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap22.html">input
-assembling</a>, rasterization, etc.), trading flexibility for
-performance; we need to support various &ldquo;tricks&rdquo; (<a href="https://vulkan-tutorial.com/Multisampling">MSAA</a>, etc.)
-directly in the API, burdening the API.</p>
+mainly in a stage where shortcuts and approximations (e.g.,
+<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap27.html#primsrast">rasterization</a>) are taken, because generating geometry primitives
+and lighting in the most natural way (pure ray tracing) is still an overwhelming
+amount of computation that exceeds today&rsquo;s GPU capabilities. This weighs on the
+graphics pipeline and API. As examples, we need to have fixed-function stages
+(<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap22.html">input assembling</a>, rasterization, etc.), trading
+flexibility for performance; we need to support various &ldquo;tricks&rdquo; (e.g.,
+<a href="https://vulkan-tutorial.com/Multisampling">MSAA</a>) directly in the API, burdening the API.</p>
 <ul>
 <li>For GPU discovery, graphics additionally needs to consider lots of different
 image formats and <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap33.html">presentation</a> constraints.</li>
