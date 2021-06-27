@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang='en' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>What is Vulkan Compute? | Lei Chat</title>
+
+<meta name="generator" content="Hugo Eureka 0.8.0" />
+<link rel="stylesheet" href="https://www.lei.chat/css/eureka.min.css">
+<script defer src="https://www.lei.chat/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/8olarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/bash.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/c.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cmake.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cpp.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/glsl.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/javascript.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/llvm.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/python.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/shell.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="The compute subset of the Vulkan API">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Posts",
+      "item":"https://www.lei.chat/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"What is Vulkan Compute?",
+      "item":"https://www.lei.chat/posts/what-is-vulkan-compute/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.lei.chat/posts/what-is-vulkan-compute/"
+    },
+    "headline": "What is Vulkan Compute? | Lei Chat",
+    "image": "https://www.lei.chat/posts/what-is-vulkan-compute/vulkan-compute-application.svg",
+    "datePublished": "2021-06-25T10:15:58-04:00",
+    "dateModified": "2021-06-25T10:15:58-04:00",
+    "wordCount":  3204 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "Lei Zhang",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.lei.chat/images/avatar.png"
+        }
+        },
+    "description": "The compute subset of the Vulkan API"
+}
+</script><meta property="og:title" content="What is Vulkan Compute? | Lei Chat" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="https://www.lei.chat/images/avatar.png">
+
+
+<meta property="og:url" content="https://www.lei.chat/posts/what-is-vulkan-compute/" />
+
+
+
+<meta property="og:description" content="The compute subset of the Vulkan API" />
+
+
+
+<meta property="og:locale" content="en" />
+
+
+
+
+<meta property="og:site_name" content="Lei Chat" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2021-06-25T10:15:58-04:00" />
+
+
+<meta property="article:modified_time" content="2021-06-25T10:15:58-04:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="gpu" />
+
+<meta property="article:tag" content="vulkan" />
+
+<meta property="article:tag" content="api" />
+
+<meta property="article:tag" content="compute" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Lei Chat</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">Posts</a>
+            <a href="/authors/me" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">About</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">Light</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">Dark</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">Auto</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">What is Vulkan Compute?</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2021-06-25</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>16 min read</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="https://www.lei.chat/categories/vulkan-compute/" class="hover:text-eureka">vulkan-compute</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="https://www.lei.chat/series/vulkan-compute/" class="hover:text-eureka">vulkan-compute</a>
+        
+    </div>
+    
+</div>
+        
+        <div class="content">
+            <p>Vulkan is designed to be both a graphics and compute API. However, there is no
+formal definition of the compute subset from the Khronos group, the industry
+consortium behind Vulkan. The unified specification of Vulkan does not help here
+either as it contains everything, both graphics and compute. Unlike the
+complicated graphics subset, the compute subset is actually quite
+straightforward and clean. So in this blog post I try to explain what Vulkan
+compute is, from my point of view.</p>
+<p>While I&rsquo;ll inevitably discuss Vulkan compute API calls, the goal here isn&rsquo;t to
+provide a comprehensive list for all of them and explain their various
+parameters and <code>Vk*CreateInfo</code> structures. We can find them readily in the
+specification. The goal isn&rsquo;t to provide a tutorial on building an application
+with Vulkan compute, either<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>. Rather, I&rsquo;d like to sketch out the
+categories and key API calls to introduce a structure. Hopefully it can serve
+as an overall picture to help navigate through the details. This also means
+this blog post is introductory.</p>
+<p>Okay, enough as a preamble. 😊 Putting the one-liner summary out first:
+<strong>Vulkan compute is the subset of Vulkan API calls that handles GPU discovery,
+resource management, <em>compute pipeline</em> management, synchronization, and object
+lifetime management</strong>.</p>
+<h2 id="gpu-in-the-computer-system">GPU in the Computer System</h2>
+<p>Before moving onto explaining details about Vulkan compute, it would be
+beneficial to quickly refresh ourselves about the organization of the GPU in a
+typical computer system to understand what is needed for interacting with the
+GPU. That can explain why certain API calls exist at all. If this is already
+crystal clear for you, please feel free to skip this section.</p>
+<p><img src="gpu-in-computer-system.svg" alt="GPU in Computer System" title="GPU in Computer System"></p>
+<p>The CPU sits in the center and orchestrates operation of various hardware in a
+computer system. GPUs, either for desktop/server systems, where we typically
+see discrete ones, and for mobile/embedded systems, where we typically see
+integrated ones, are just <em>additional specialized</em> computation devices in this
+architecture. GPUs have their own processors to execute commands and memory
+hierarchy to hold data. These characteristics mean that GPUs can execute
+programs <em>asynchronously</em> from the CPU. But it cannot do that on its own; it
+needs to receive workload from the CPU.</p>
+<h3 id="gpu-api">GPU API</h3>
+<p>Therefore, to utilize the GPU, the CPU needs to 1) <strong>discover</strong> it, 2) <strong>prepare
+resources and program</strong> for it, 3) <strong>compose and send workload</strong> to it to
+process, and 4) <strong>synchronize</strong> with it to know the progress. This is basically
+the functionality categories one would expect to see from a GPU API, which is
+mainly executed on the CPU and meant to be an abstraction of the above. Also,
+because the GPU has a highly parallel structure with many compute units, it also
+needs to 4) <strong>synchronize</strong> internally. You can pretty easily find calls in the
+above categories in various GPU APIs, either for graphics or compute; Vulkan is
+no exception here.</p>
+<p>However, due to the explicit nature, Vulkan API surface area is, unsurprisingly,
+larger than other GPU APIs. So you&rsquo;ll find more API calls per the above category
+in Vulkan. Also, for CUDA/OpenCL-era APIs, the GPU driver internally manages
+a global context for an application and tracks the lifetime of various objects
+corresponding to GPU resources. But for Vulkan, in exchange for low overhead and
+explicit control, the responsibility lies on the shoulders of developers. So we
+would also need to manually 5) <strong>manage GPU object lifetime</strong>.</p>
+<h3 id="graphics-vs-compute-api">Graphics vs. compute API</h3>
+<p>Note that the above categories are common to both Vulkan graphics and compute
+(as both graphics and compute are just workload to GPU).  What differs is the
+details in each category, where graphics is typically much more complicated
+than compute.</p>
+<p>Today even though we can render fabulous scenes in AAA games, we are still
+mainly in a stage where shortcuts and approximations (<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap27.html#primsrast">rasterization</a>,
+etc.) are taken, because generating geometry primitives and lighting in the
+most natural way (pure ray tracing) is still an overwhelming amount of
+computation that exceeds today&rsquo;s GPU capabilities. This weighs on the graphics
+pipeline and API. As examples, we need to have fixed-function stages (<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap22.html">input
+assembling</a>, rasterization, etc.), trading flexibility for
+performance; we need to support various &ldquo;tricks&rdquo; (<a href="https://vulkan-tutorial.com/Multisampling">MSAA</a>, etc.)
+directly in the API, burdening the API.</p>
+<ul>
+<li>For GPU discovery, graphics additionally needs to consider lots of different
+image formats and <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap33.html">presentation</a> constraints.</li>
+<li>The program is where graphics and compute differ the most. As said in the
+above graphics uses the graphics pipeline, which is a
+<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap10.html#pipelines-block-diagram">mix</a> of fixed-function and programmable stages.
+It incurs huge complications here as we need to both
+<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/VkGraphicsPipelineCreateInfo.html">configure</a> those fixed-function stages
+and provide shaders for various programmable stages. And they need to match
+the <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap15.html">interface</a>. The compute pipeline is much more simpler: it
+just contains one programmable shader (or kernel in CUDA/OpenCL terminology).</li>
+<li>For synchronization, the graphics and compute pipeline both have the same set
+of underlying synchronization primitives. The graphics pipeline additionally
+provides <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap8.html#renderpass">render passes</a> that provide implicit
+synchronization guarantees to simplify usage.</li>
+</ul>
+<p>Basically, the majority of API calls in Vulkan are shared by both graphics and
+compute. That makes sense as a typical graphics renderer also use the compute
+pipeline for async compute. Although, compared to the messiness of the graphics
+pipeline, the compute pipeline is much more simpler and cleaner. That is to say,
+<strong>another way to define Vulkan compute is, Vulkan API minus all graphics
+specific craziness.</strong> 😛</p>
+<h2 id="vulkan-compute-api">Vulkan Compute API</h2>
+<p>Before going into details about each category, I&rsquo;ll first explain the overall
+interaction between a Vulkan application and the Vulkan system, in case it isn&rsquo;t
+immediately obvious.</p>
+<h3 id="application-system-interaction">Application-system interaction</h3>
+<p>A Vulkan application interacts with the Vulkan system via a Vulkan
+<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap4.html#initialization-instances">instance</a>, which contains application-specific states. The
+application queries available GPUs in the system and gets a list of
+<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap5.html#devsandqueues-physical-device-enumeration">physical devices</a>. Then the application goes on querying
+available functionalities from these physical devices and chooses one or many
+of them to create <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap5.html#devsandqueues-devices">logical devices</a>. A logical device is the uber
+object that the application asks for allocating resources, and compiling and
+executing programs.</p>
+<p>A Vulkan device exposes one or more <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap5.html#devsandqueues-queues">queues</a>, which is an abstraction
+of compute units on the GPU. Workloads (binding resources and program and
+executing the program) are recorded into <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap6.html">command buffers</a>
+and submitted to queues. Different queues may process work asynchronously; so
+synchronization is needed to guarantee dependency <em>correctness</em> across queues;
+that&rsquo;s <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap7.html#synchronization-semaphores">semaphores</a>. Even inside the same queue, commands may be
+executed <em>out of order</em>, so synchronization is also needed here. (This is one
+of the places Vulkan differs significantly from CUDA/OpenCL, where by default
+all commands run and complete in submission order.) That&rsquo;s mainly <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap7.html#synchronization-pipeline-barriers">pipeline
+barriers</a>. The application can know the progress on the
+GPU from the CPU via <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap7.html#synchronization-fences">fences</a>.</p>
+<p>The Vulkan specification can be pretty daunting with all those details for the
+most of the time; but I find its <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap3.html#fundamentals-execmodel">&ldquo;execution model&rdquo;</a> section
+a good read to get a high-level understanding of the system.</p>
+<p>In the following sections, I&rsquo;ll explain each API category. For mentioned API
+calls, important bits are highlighted and I&rsquo;ll also embed a link to the
+specification/manpage so that you can find more details. Note that Vulkan API
+follows certain conventions:</p>
+<ul>
+<li>All Vulkan API calls have the <code>vk</code> prefix. They are typically of the form
+<code>vkActObject</code>, where <code>Act</code> is some action like:
+<ul>
+<li><code>Enumerate</code>/<code>Get</code>: just for querying (static) information from the system.</li>
+<li><code>Create</code>/<code>Destroy</code>: for light-weight GPU resource handles.</li>
+<li><code>Allocate</code>/<code>Free</code>: for heavy-weight GPU resource management.</li>
+</ul>
+</li>
+<li>All Vulkan structures have the <code>Vk</code> prefix. <code>Vk*CreateInfo</code> structures are
+fed into <code>vkCreate*</code> API calls to specify arguments for creation. They
+typically have two common leading fields: <code>sType</code> (for identifying the
+structure type) and <code>pNext</code> (for future extension purpose).</li>
+</ul>
+<h3 id="gpu-discovery">GPU discovery</h3>
+<p>Vulkan is open and scalable. We can have multiple Vulkan implementations in the
+same system. For example, nowadays in a laptop, it&rsquo;s common to see an integrated
+GPU plus a discrete GPU; they can both support Vulkan. Different Vulkan
+implementations can be of different architectures from different hardware
+vendors (AMD, ARM, NVIDIA, Qualcomm, etc.), targeting from mobile/embedded to
+desktop/server scenarios.</p>
+<p>For such a wide range of coverage, Vulkan have a rich set of functionality
+probing API calls to enumerate devices and discover their <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap42.html">limits</a>
+(implementation-dependent minimums/maximums of certain properties),
+<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap41.html">features</a> (core-spec level optional functionalities that may not be
+supported by all implementations), and <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap40.html#extendingvulkan-extensions">extensions</a> (a set of
+functionalities supported by one or more vendors).</p>
+<p>Those API calls typically have <code>vkEnumerate</code>/<code>vkGet</code> as their prefix.
+Important ones include:</p>
+<ul>
+<li><code>vkEnumeratePhysicalDevices</code>: <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap5.html#vkEnumeratePhysicalDevices">enumerates</a>
+all Vulkan implementations in the system.</li>
+<li><code>vkGetPhysicalDeviceProperties2</code><sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>: <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkGetPhysicalDeviceProperties2.html">returns</a>
+a huge structure containing various device properties and limits.
+We can chain the structures for Vulkan <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/VkPhysicalDeviceProperties.html">1.0</a>,
+<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/VkPhysicalDeviceVulkan11Properties.html">1.1</a>, and <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/VkPhysicalDeviceVulkan12Properties.html">1.2</a>
+via <code>pNext</code> to query properties like vendor ID (since 1.0), device name
+(since 1.0), subgroup size (since 1.1), subgroup supported operations
+(since 1.1), floating point rounding mode (since 1.2) and important compute
+limits like max compute shared memory size (since 1.0), max compute workgroup
+sizes (since 1.0).</li>
+<li><code>vkGetPhysicalDeviceFeatures2</code>: similar to <code>vkGetPhysicalDeviceProperties2</code>,
+but for <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkGetPhysicalDeviceFeatures2.html">querying</a> core-spec level optional
+features. We can also chain the structures for Vulkan
+<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/VkPhysicalDeviceFeatures.html">1.0</a>, <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/VkPhysicalDeviceVulkan11Features.html">1.1</a>, and
+<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/VkPhysicalDeviceVulkan12Features.html">1.2</a> via <code>pNext</code>. Interesting features include
+float64/int16/int64 support for computation (since 1.0), variable pointer
+support (since 1.1), float16/int8 support for computation (since 1.2),
+Vulkan <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap47.html">memory model</a> support (since 1.2), <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap50.html#_description_182">buffer device
+address</a> support (since 1.2).</li>
+<li><code>vkEnumerateInstanceExtensionProperties</code>/<code>vkEnumerateDeviceExtensionProperties</code>:
+queries <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkEnumerateInstanceExtensionProperties.html">instance</a>/<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkEnumerateDeviceExtensionProperties.html">device</a>
+level Vulkan extension support.</li>
+<li><code>vkGetPhysicalDeviceQueueFamilyProperties2</code>: <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkGetPhysicalDeviceQueueFamilyProperties2KHR.html">queries</a>
+the characteristics about queue families, like whether it has transfer/compute
+capabilities.</li>
+<li><code>vkGetPhysicalDeviceMemoryProperties2</code>: <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkGetPhysicalDeviceMemoryProperties2KHR.html">queries</a>
+the memory characteristics, like available memory heaps (for distinct
+banks of physical memory) and types (for different use scenarios,
+cached/uncached/etc., on top of a specific heap).</li>
+</ul>
+<p>These API calls are typically invoked at the very beginning of an application as
+we try to discover available Vulkan implementations and its characteristics,
+select one to create instance/device and then get a proper queue out of it:</p>
+<ul>
+<li><code>vk{Create|Destroy}Instance</code>:
+<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkCreateInstance.html">creates</a>/<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkDestroyInstance.html">destroys</a> Vulkan
+instances. When creating we need to provide information about the application
+and request what Vulkan instance extensions to enable.</li>
+<li><code>vk{Create|Destroy}Device</code>:
+<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkCreateDevice.html">creates</a>/<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkDestroyDevice.html">destroys</a> Vulkan logical
+devices. Here we specify what device extensions to enable and how many queues
+to create and their relative priorities.</li>
+</ul>
+<p><code>vkGetPhysicalDeviceMemoryProperties2</code> is sort of an outlier here as it
+interacts with buffer allocation, which is explained in the next section.</p>
+<h3 id="resource-and-program-preparation">Resource and program preparation</h3>
+<p>There are generally two types of resources in Vulkan: <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap12.html#resources-buffers">buffers</a>
+(for unstructured bag-of-words data) and <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap12.html#resources-images">images</a> (for structured data
+with some format).  But I won&rsquo;t touch images too much in this blog post. They
+are a major source of complication. They can be used in ML vision models but
+still it&rsquo;s not that common in compute.</p>
+<p>For buffers, its memory and handle object are detached in Vulkan for
+explicitness and clear cost model, as <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap11.html">memory allocation</a>
+is costly and different applications may approach it very differently. So it&rsquo;s
+better to avoid bundling them together to stifle choices.</p>
+<h4 id="memory-allocation">Memory allocation</h4>
+<ul>
+<li><code>vk{Allocate|Free}Memory</code>: <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkAllocateMemory.html">creates</a>/<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkFreeMemory.html">frees</a>
+memory. For better performance, normally we&rsquo;d like to perform a large
+allocation and then sub-allocate.</li>
+<li><code>vk{Map|UnMap}Memory</code>: <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkMapMemory.html">maps</a> allocated host-visible memory to
+get an CPU side pointer so we can read or write / <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkUnmapMemory.html">unmaps</a>
+the CPU side pointer after reading or writing.</li>
+<li><code>vk{Flush|Invalidate}MappedMemoryRanges</code>:
+<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkFlushMappedMemoryRanges.html">flushes</a>/<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkInvalidateMappedMemoryRanges.html">invalidates</a> mapped memory
+range.</li>
+</ul>
+<p><code>vk{Map|UnMap}Memory</code> and <code>vk{Flush|Invalidate}MappedMemoryRanges</code> are also
+examples of Vulkan explicitness. They reflect GPU architecture characteristics.
+GPU might have its own dedicated memory. Getting a CPU side pointer to an
+allocation there would mean letting the kernel perform the page mapping and
+sharing between the application&rsquo;s and kernel drivers' address spaces.
+Also, due to the various levels of caches, writes on either CPU or GPU may not
+necessary be immediately <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap47.html#memory-model-availability-visibility">available or visible</a> to the other.
+So we need flushing (for CPU → GPU) or invalidating (for GPU → CPU).  I&rsquo;m
+certainly oversimplifying here as there are lots of details behind, which
+<a href="https://themaister.net/blog/2019/08/14/yet-another-blog-explaining-vulkan-synchronization/">this blog post</a> gives a great explanation.</p>
+<h4 id="buffer-object-and-binding">Buffer object and binding</h4>
+<ul>
+<li><code>vk{Create|Destroy}Buffer</code>:
+<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkCreateBuffer.html">creates</a>/<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkDestroyBuffer.html">destroys</a> a buffer object.
+When creating a buffer object, aside from its size, we also need to indicate
+its <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/VkBufferUsageFlagBits.html">usage</a> so that drivers can optimize accordingly.</li>
+<li><code>vkGetBufferMemoryRequirements2</code>: <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkGetBufferMemoryRequirements2.html">queries</a>
+the memory requirements (e.g., memory type, alignment), for a specific buffer.</li>
+<li><code>vkBindBufferMemory2</code>: <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkBindBufferMemory2.html">binds</a> a buffer object to
+some concrete backing memory.</li>
+</ul>
+<p>The above are API calls for managing buffer resources. Next let&rsquo;s look at the
+program side, which is composed by a compute pipeline.</p>
+<h4 id="descriptor-and-compute-pipeline">Descriptor and compute pipeline</h4>
+<p>The compute pipeline is very simple and clean compared to the graphics pipeline.
+It just contains one programmable compute shader stage. Vulkan shaders are
+required to be expressed in the <a href="https://www.khronos.org/registry/spir-v/">SPIR-V</a> binary format.</p>
+<p>The compute shader references buffer resources that must be provided by the
+Vulkan runtime. These buffers are in binding &ldquo;slots&rdquo;; each slot has a binding
+number, and slots are organized into different sets. The compute pipeline
+(containing only the single compute shader) describes its buffer usage needs
+as a <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap14.html#descriptorsets-pipelinelayout">pipeline layout</a>, which contains multiple <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap14.html#descriptorsets-setlayout">descriptor
+set layout</a>. Each descriptor is a handle to some
+buffer resource from the <em>shader</em>&rsquo;s perspective.</p>
+<p>Descriptors provide another level of indirection, which allows detaching the
+compute pipeline from the concrete buffer resources. So that we can use the same
+compute pipeline with different buffers. This helps to amortize the cost of
+compute pipelines as creating them means compiling SPIR-V in the driver to GPU
+ISA. That can be costly.</p>
+<p>Before executing, the Vulkan runtime needs to bind concrete
+<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap14.html#descriptorsets-sets">sets</a> of <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap14.html">descriptors</a> that matches the
+compute pipeline layout. Descriptors are concrete objects in the GPU (as they
+need to be allocated inside the GPU driver); so we use pool objects to amortize
+the cost of allocation.</p>
+<ul>
+<li><code>vk{Create|Destroy}DescriptorSetLayout</code>:
+<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkCreateDescriptorSetLayout.html">creates</a>/<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkDestroyDescriptorSetLayout.html">destroys</a>
+the layout for a descriptor set. When creating, we need to specify the
+<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap14.html#descriptorsets-types">descriptor type</a> for each taken binding number. For buffers,
+it&rsquo;s typically <code>UNIFORM_BUFFER</code> or <code>STORAGE_BUFFER</code> or their <code>_DYNAMIC</code>
+variants.</li>
+<li><code>vk{Create|Destroy}PipelineLayout</code>:
+<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkCreatePipelineLayout.html">creates</a>/<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkDestroyPipelineLayout.html">destroys</a>
+the layout for the whole compute pipeline. This basically points to a few
+set layouts.</li>
+<li><code>vk{Create|Destroy}DescriptorPool</code>:
+<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkCreateDescriptorPool.html">creates</a>/<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkDestroyDescriptorPool.html">destroys</a> descriptor
+pools. We need to specify the maximal number of sets it can support and the
+maximal number of descriptors per type.</li>
+<li><code>vk{Allocate|Free}DescriptorSets</code>:
+<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkAllocateDescriptorSets.html">allocates</a>/<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkFreeDescriptorSets.html">frees</a> descriptors
+from/to the pool.</li>
+<li><code>vkUpdateDescriptorSets</code>: really <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkUpdateDescriptorSets.html">associates</a> sets of
+descriptors to concrete buffer resources. Remember that descriptors are just
+handle objects. They need to be backed by concrete buffers before being used
+in execution.</li>
+</ul>
+<p>With the descriptor set layouts, we can then create the compute pipeline:</p>
+<ul>
+<li><code>vkCreateShaderModule</code>: <a href="%60https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkCreateShaderModule.html">creates</a> a shader module
+from a SPIR-V blob.</li>
+<li><code>vkCreateComputePipelines</code>: <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkCreateComputePipelines.html">creates</a> a compute
+pipeline. We need to specify the compute shader&rsquo;s SPIR-V shader module and
+the pipeline layout.</li>
+<li><code>vkDestroyPipeline</code>: <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkDestroyPipeline.html">destroys</a> a compute pipeline.</li>
+</ul>
+<h4 id="putting-it-together">Putting it together</h4>
+<p>Okay, thus far quite a few Vulkan objects were discussed. So it&rsquo;s worth a graph
+to show their relationship 😊:</p>
+<p><img src="vulkan-compute-application.svg" alt="Vulkan Compute Application Graph" title="Vulkan Compute Application Graph"></p>
+<h3 id="workload-communication">Workload communication</h3>
+<p>Like the CPU, the processor inside the GPU also consumes a stream of commands.
+These commands are prepared by the CPU and recorded in <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap6.html">command
+buffers</a> in Vulkan. Really in Vulkan, command buffer is
+just an abstraction for CPU to handle workload generation, possibly in a
+multi-threaded fashion. There is no command buffer concept on the GPU (if we
+disregard the real buffer storage needs for these commands) as the GPU just
+sees a stream of commands.</p>
+<p>Command buffers require concrete resources from the GPU so they have
+dedicated pool objects to help amortize the cost of allocation. Commands can
+be recorded into the command buffer after <code>vkBeginCommandBuffer</code>. The typical
+sequence is binding the compute pipeline (for the program to run), binding
+the descriptor sets (for referencing buffer resources), and dispatch (to
+kick off the execution). Then <code>vkEndCommandBuffer</code> stops recording and puts
+the command buffer in a pending state that is ready to be submitted to the
+queue via <code>vkQueueSubmit</code>.</p>
+<ul>
+<li><code>vk{Create|Reset|Destroy}CommandPool</code>:
+<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkCreateCommandPool.html">creates</a>/<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkResetCommandPool.html">resets</a>/<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkDestroyCommandPool.html">destroys</a>
+a command pool. A command pool is associated with a particular command queue
+and the command buffers allocated from it can only be submitted to that queue.</li>
+<li><code>vk{Allocate|Free}CommandBuffers</code>:
+<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkAllocateCommandBuffers.html">allocates</a>/<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/VkFreeCommandBuffers.html">frees</a> command buffers
+from/to the pool.</li>
+<li><code>vk{Begin|End}CommandBuffer</code>:
+<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkBeginCommandBuffer.html">begins</a>/<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkEndCommandBuffer.html">stops</a> recording command buffer.</li>
+<li><code>vkCmdBindPipeline</code>: <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkCmdBindPipeline.html">binds</a> compute pipeline to the
+command buffer.</li>
+<li><code>vkCmdBindDescriptorSets</code>: <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkCmdBindDescriptorSets.html">binds</a> the descriptor sets
+to the command buffer.</li>
+<li><code>vkCmdDispatch{|Base|Indirect}</code>: <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkCmdDispatch.html">dispatches</a> the workload.</li>
+<li><code>vkQueueSubmit</code>: <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkQueueSubmit.html">submits</a> command buffers to the queue
+to kick of async execution on the GPU.</li>
+</ul>
+<p>Note that <code>vkQueueSubmit</code> can take multiple command buffers together, as
+queue submission is a costly action so worth amortizing. <code>vkQueueSubmit</code>
+is also where we can attach synchronization primitives, to be explained in the
+next section.</p>
+<h3 id="synchronization">Synchronization</h3>
+<p>Synchronization is probably one of the most opaque topics in Vulkan. I will just
+give an introduction here and won&rsquo;t go into details. (Explaining them well can
+take many blog posts! You can already find fantastic existing ones like <a href="https://themaister.net/blog/2019/08/14/yet-another-blog-explaining-vulkan-synchronization/">this
+one</a>, <a href="https://www.jeremyong.com/vulkan/graphics/rendering/2018/11/22/vulkan-synchronization-primer/">this one</a>, and <a href="https://www.jeremyong.com/vulkan/graphics/rendering/2018/11/23/vulkan-synchonization-primer-part-ii/">this
+one</a>).</p>
+<p>One important thing to remember is that by default in Vulkan commands can
+execute <em>out of order</em>, so we would need explicit synchronization for
+<em>correctness</em>. Another important thing to remember is that by default Vulkan
+does not guarantee memory coherency (as the underlying hardware does not!),
+so we would need to have explicit memory barriers.</p>
+<p>In general, there are multiple synchronization primitives to satisfy different
+needs:</p>
+<ul>
+<li><code>vk{Create|Destroy}Fence</code>:
+<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkCreateFence.html">creates</a>/<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkDestroyFence.html">destroys</a> <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap7.html#synchronization-fences">fences</a>,
+which are used to wait for the GPU on the CPU.</li>
+<li><code>vk{Create|Destroy}Semaphore</code>:
+<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkCreateSemaphore.html">creates</a>/<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkDestroySemaphore.html">destroys</a> <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap7.html#synchronization-semaphores">semaphores</a>.
+One thing worth noting here: there is a difference between binary semaphores
+and timeline semaphores. The former is used for <em>cross</em>-queue GPU internal
+synchronization but is subject to many restrictions. The latter is a more
+<a href="https://community.arm.com/developer/tools-software/graphics/b/blog/posts/vulkan-timeline-semaphores">powerful</a> recent addition to Vulkan that lifts
+lots of restrictions and sort of unifies synchronization primitives by
+covering both CPU and GPU synchronization needs.</li>
+<li><code>vkCmdPipelineBarrier</code>: <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkCmdPipelineBarrier.html">inserts</a> into the command
+buffer a <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap7.html#synchronization-pipeline-barriers">pipeline barrier</a>, which are used to synchronize
+commands in the <em>same</em> queue.</li>
+<li><code>vk{Create|Destroy}Event</code>:
+<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkCreateEvent.html">creates</a>/<a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/vkDestroyEvent.html">destroys</a> <a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap7.html#synchronization-events">events</a>.
+Events are also called &ldquo;split barriers&rdquo;. It has separate signalling and
+waiting stages.  And both the CPU and GPU can signal/wait. So we have a bunch
+of API calls here:
+<ul>
+<li><code>vkCmd{Set|Reset}Event</code>: signals/resets on GPU; <code>vkCmdWaitEvents</code>: waits
+on GPU.</li>
+<li><code>vk{Set|Reset}Event</code>: signals/resets on CPU; <code>vkGetEventStatus</code>: waits
+on CPU.</li>
+</ul>
+</li>
+</ul>
+<p>We can specify a list of semaphores to wait, a list of semaphores and one fence
+to signal together with <code>vkQueueSubmit</code>.</p>
+<p>And there are big hammers that just drain the whole queue or device:
+<code>vkQueueWaitIdle</code> and <code>vkDeviceWaitIdle</code>. They shouldn&rsquo;t really be used other
+than the case where we exit the application.</p>
+<h3 id="gpu-object-lifetime-management">GPU object lifetime management</h3>
+<p>The important GPU object lifetime management API calls were already discussed
+in the above sections. So nothing more specially here.</p>
+<h2 id="summary">Summary</h2>
+<p>Phew. I tried to keep this blog post as a short introduction. But it still
+became somewhat lengthy. So thanks for reading it through! Hopefully it provides
+some help for understanding what Vulkan compute is. Just to re-iterate:
+<strong>Vulkan compute is the subset of Vulkan API calls that handles GPU discovery,
+resource management, <em>compute pipeline</em> management, synchronization, and object
+lifetime management</strong>. It is actually a very straightforward and clean API
+surface area, in my opinion.</p>
+<p>This blog post does not cover all API calls that can potentially be used for
+compute. The Khronos Group previously released a very nice <a href="https://www.khronos.org/registry/vulkan/specs/1.1/refguide/Vulkan-1.1-web.pdf">reference
+sheet</a> for Vulkan 1.1. I modified it to remove all graphics
+specific API calls and put it <a href="https://gist.github.com/antiagainst/ef74b39945f8427b2d2303ac9128d1e2">here</a>. You can find a more
+complete list of API calls and their parameters there.</p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p>If you are looking for a Vulkan compute tutorial,
+<a href="https://github.com/google/uVkCompute">µVkCompute</a> might be interesting to you.
+It&rsquo;s meant for writing microbenchmarks in Vulkan compute. It provides a thin
+wrapper over Vulkan compute API calls.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p>Note that I&rsquo;m using the &ldquo;v2&rdquo; API call here and similarly for the
+following calls. These &ldquo;v2&rdquo; API calls are no much difference from the &ldquo;v1&rdquo; ones;
+they just fixed the missing <code>pNext</code> in &ldquo;v1&rdquo; structures to make them extensible.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+        </div>
+        
+        <div class="my-4">
+    
+    <a href="https://www.lei.chat/tags/gpu/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#gpu</a>
+    
+    <a href="https://www.lei.chat/tags/vulkan/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#vulkan</a>
+    
+    <a href="https://www.lei.chat/tags/api/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#api</a>
+    
+    <a href="https://www.lei.chat/tags/compute/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#compute</a>
+    
+</div>
+        
+        
+        
+
+
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">Next</span>
+        <a href="https://www.lei.chat/posts/shader-toolchain-hlsl-in-vulkan/" class="block">Shader Toolchain: HLSL in Vulkan</a>
+        
+    </div>
+</div>
+
+        
+
+
+
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+<div class="bg-secondary-bg rounded p-6">
+    <h3 class="text-lg font-semibold mb-4">Series of Posts</h3>
+    <div class="content">
+        
+        
+        <a href="https://www.lei.chat/posts/what-is-vulkan-compute/">What is Vulkan Compute?</a>
+        <br />
+        
+        
+    </div>
+</div>
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">On This Page</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#gpu-in-the-computer-system">GPU in the Computer System</a>
+      <ul>
+        <li><a href="#gpu-api">GPU API</a></li>
+        <li><a href="#graphics-vs-compute-api">Graphics vs. compute API</a></li>
+      </ul>
+    </li>
+    <li><a href="#vulkan-compute-api">Vulkan Compute API</a>
+      <ul>
+        <li><a href="#application-system-interaction">Application-system interaction</a></li>
+        <li><a href="#gpu-discovery">GPU discovery</a></li>
+        <li><a href="#resource-and-program-preparation">Resource and program preparation</a>
+          <ul>
+            <li><a href="#memory-allocation">Memory allocation</a></li>
+            <li><a href="#buffer-object-and-binding">Buffer object and binding</a></li>
+            <li><a href="#descriptor-and-compute-pipeline">Descriptor and compute pipeline</a></li>
+            <li><a href="#putting-it-together">Putting it together</a></li>
+          </ul>
+        </li>
+        <li><a href="#workload-communication">Workload communication</a></li>
+        <li><a href="#synchronization">Synchronization</a></li>
+        <li><a href="#gpu-object-lifetime-management">GPU object lifetime management</a></li>
+      </ul>
+    </li>
+    <li><a href="#summary">Summary</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded p-6">
+        <h2 class="text-lg font-semibold mb-4">See Also</h2>
+        <div class="content">
+            
+            <a href="https://www.lei.chat/posts/shader-toolchain-hlsl-in-vulkan/">Shader Toolchain: HLSL in Vulkan</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/hlsl-for-vulkan-semantic-strings-and-location-numbers/">HLSL for Vulkan: Semantic Strings and Location Numbers</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/hlsl-for-vulkan-resources/">HLSL for Vulkan: Resources</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/hlsl-for-vulkan-matrices/">HLSL for Vulkan: Matrices</a>
+            <br />
+            
+        </div>
+    </div>
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2018 - 2021 <a href="https://www.lei.chat/">Lei Zhang</a>
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

@@ -8,7 +8,43 @@
     <language>en</language>
     <copyright>&amp;copy; 2018 - 2021 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Sat, 12 May 2018 17:44:14 -0400</lastBuildDate><atom:link href="https://www.lei.chat/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 25 Jun 2021 10:15:58 -0400</lastBuildDate><atom:link href="https://www.lei.chat/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>api</title>
+      <link>https://www.lei.chat/tags/api/</link>
+      <pubDate>Fri, 25 Jun 2021 10:15:58 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/api/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>compute</title>
+      <link>https://www.lei.chat/tags/compute/</link>
+      <pubDate>Fri, 25 Jun 2021 10:15:58 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/compute/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>gpu</title>
+      <link>https://www.lei.chat/tags/gpu/</link>
+      <pubDate>Fri, 25 Jun 2021 10:15:58 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/gpu/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>vulkan</title>
+      <link>https://www.lei.chat/tags/vulkan/</link>
+      <pubDate>Fri, 25 Jun 2021 10:15:58 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/vulkan/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>doc</title>
       <link>https://www.lei.chat/tags/doc/</link>
@@ -51,15 +87,6 @@
       <pubDate>Sat, 12 May 2018 17:44:14 -0400</pubDate>
       
       <guid>https://www.lei.chat/tags/talk/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>vulkan</title>
-      <link>https://www.lei.chat/tags/vulkan/</link>
-      <pubDate>Sat, 12 May 2018 17:44:14 -0400</pubDate>
-      
-      <guid>https://www.lei.chat/tags/vulkan/</guid>
       <description></description>
     </item>
     

@@ -8,7 +8,22 @@
     <language>en</language>
     <copyright>&amp;copy; 2018 - 2021 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Sat, 12 May 2018 17:44:14 -0400</lastBuildDate><atom:link href="https://www.lei.chat/tags/vulkan/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 25 Jun 2021 10:15:58 -0400</lastBuildDate><atom:link href="https://www.lei.chat/tags/vulkan/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>What is Vulkan Compute?</title>
+      <link>https://www.lei.chat/posts/what-is-vulkan-compute/</link>
+      <pubDate>Fri, 25 Jun 2021 10:15:58 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/posts/what-is-vulkan-compute/</guid>
+      <description>&lt;p&gt;Vulkan is designed to be both a graphics and compute API. However, there is no
+formal definition of the compute subset from the Khronos group, the industry
+consortium behind Vulkan. The unified specification of Vulkan does not help here
+either as it contains everything, both graphics and compute. Unlike the
+complicated graphics subset, the compute subset is actually quite
+straightforward and clean. So in this blog post I try to explain what Vulkan
+compute is, from my point of view.&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Shader Toolchain: HLSL in Vulkan</title>
       <link>https://www.lei.chat/posts/shader-toolchain-hlsl-in-vulkan/</link>

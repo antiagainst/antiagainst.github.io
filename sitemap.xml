@@ -2,8 +2,41 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://www.lei.chat/tags/api/</loc>
+    <lastmod>2021-06-25T10:15:58-04:00</lastmod>
+  </url><url>
     <loc>https://www.lei.chat/categories/</loc>
-    <lastmod>2018-05-12T18:06:14-04:00</lastmod>
+    <lastmod>2021-06-25T10:15:58-04:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/tags/compute/</loc>
+    <lastmod>2021-06-25T10:15:58-04:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/tags/gpu/</loc>
+    <lastmod>2021-06-25T10:15:58-04:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/</loc>
+    <lastmod>2021-06-25T10:15:58-04:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/posts/</loc>
+    <lastmod>2021-06-25T10:15:58-04:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/series/</loc>
+    <lastmod>2021-06-25T10:15:58-04:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/tags/</loc>
+    <lastmod>2021-06-25T10:15:58-04:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/tags/vulkan/</loc>
+    <lastmod>2021-06-25T10:15:58-04:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/series/vulkan-compute/</loc>
+    <lastmod>2021-06-25T10:15:58-04:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/categories/vulkan-compute/</loc>
+    <lastmod>2021-06-25T10:15:58-04:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/posts/what-is-vulkan-compute/</loc>
+    <lastmod>2021-06-25T10:15:58-04:00</lastmod>
   </url><url>
     <loc>https://www.lei.chat/tags/doc/</loc>
     <lastmod>2018-05-12T18:06:14-04:00</lastmod>
@@ -17,25 +50,13 @@
     <loc>https://www.lei.chat/tags/hlsl/</loc>
     <lastmod>2018-05-12T18:06:14-04:00</lastmod>
   </url><url>
-    <loc>https://www.lei.chat/</loc>
-    <lastmod>2018-05-12T18:06:14-04:00</lastmod>
-  </url><url>
-    <loc>https://www.lei.chat/posts/</loc>
-    <lastmod>2018-05-12T18:06:14-04:00</lastmod>
-  </url><url>
     <loc>https://www.lei.chat/tags/shader/</loc>
     <lastmod>2018-05-12T18:06:14-04:00</lastmod>
   </url><url>
     <loc>https://www.lei.chat/posts/shader-toolchain-hlsl-in-vulkan/</loc>
     <lastmod>2018-05-12T18:06:14-04:00</lastmod>
   </url><url>
-    <loc>https://www.lei.chat/tags/</loc>
-    <lastmod>2018-05-12T18:06:14-04:00</lastmod>
-  </url><url>
     <loc>https://www.lei.chat/tags/talk/</loc>
-    <lastmod>2018-05-12T18:06:14-04:00</lastmod>
-  </url><url>
-    <loc>https://www.lei.chat/tags/vulkan/</loc>
     <lastmod>2018-05-12T18:06:14-04:00</lastmod>
   </url><url>
     <loc>https://www.lei.chat/tags/compiler/</loc>
@@ -57,9 +78,6 @@
     <lastmod>2018-05-12T13:27:37-04:00</lastmod>
   </url><url>
     <loc>https://www.lei.chat/tags/semantic/</loc>
-    <lastmod>2018-05-12T13:27:37-04:00</lastmod>
-  </url><url>
-    <loc>https://www.lei.chat/series/</loc>
     <lastmod>2018-05-12T13:27:37-04:00</lastmod>
   </url><url>
     <loc>https://www.lei.chat/tags/spirv/</loc>
