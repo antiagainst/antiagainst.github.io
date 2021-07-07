@@ -118,11 +118,56 @@
     </item>
     
     <item>
+      <title>pipeline</title>
+      <link>https://www.lei.chat/tags/pipeline/</link>
+      <pubDate>Fri, 25 Jun 2021 10:15:58 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/pipeline/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>structure</title>
+      <link>https://www.lei.chat/tags/structure/</link>
+      <pubDate>Fri, 25 Jun 2021 10:15:58 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/structure/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>synchronization</title>
+      <link>https://www.lei.chat/tags/synchronization/</link>
+      <pubDate>Fri, 25 Jun 2021 10:15:58 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/synchronization/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>tutorial</title>
+      <link>https://www.lei.chat/tags/tutorial/</link>
+      <pubDate>Fri, 25 Jun 2021 10:15:58 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/tutorial/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>vulkan</title>
       <link>https://www.lei.chat/tags/vulkan/</link>
       <pubDate>Fri, 25 Jun 2021 10:15:58 -0400</pubDate>
       
       <guid>https://www.lei.chat/tags/vulkan/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>compiler</title>
+      <link>https://www.lei.chat/tags/compiler/</link>
+      <pubDate>Sat, 12 May 2018 17:44:14 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/compiler/</guid>
       <description></description>
     </item>
     
@@ -145,6 +190,24 @@
     </item>
     
     <item>
+      <title>dxc</title>
+      <link>https://www.lei.chat/tags/dxc/</link>
+      <pubDate>Sat, 12 May 2018 17:44:14 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/dxc/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>graphics</title>
+      <link>https://www.lei.chat/tags/graphics/</link>
+      <pubDate>Sat, 12 May 2018 17:44:14 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/graphics/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>hlsl</title>
       <link>https://www.lei.chat/tags/hlsl/</link>
       <pubDate>Sat, 12 May 2018 17:44:14 -0400</pubDate>
@@ -163,6 +226,15 @@
     </item>
     
     <item>
+      <title>spirv</title>
+      <link>https://www.lei.chat/tags/spirv/</link>
+      <pubDate>Sat, 12 May 2018 17:44:14 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/spirv/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>talk</title>
       <link>https://www.lei.chat/tags/talk/</link>
       <pubDate>Sat, 12 May 2018 17:44:14 -0400</pubDate>
@@ -172,20 +244,20 @@
     </item>
     
     <item>
-      <title>compiler</title>
-      <link>https://www.lei.chat/tags/compiler/</link>
+      <title>direct3d</title>
+      <link>https://www.lei.chat/tags/direct3d/</link>
       <pubDate>Fri, 11 May 2018 13:15:45 -0400</pubDate>
       
-      <guid>https://www.lei.chat/tags/compiler/</guid>
+      <guid>https://www.lei.chat/tags/direct3d/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>graphics</title>
-      <link>https://www.lei.chat/tags/graphics/</link>
+      <title>interface</title>
+      <link>https://www.lei.chat/tags/interface/</link>
       <pubDate>Fri, 11 May 2018 13:15:45 -0400</pubDate>
       
-      <guid>https://www.lei.chat/tags/graphics/</guid>
+      <guid>https://www.lei.chat/tags/interface/</guid>
       <description></description>
     </item>
     
@@ -208,11 +280,11 @@
     </item>
     
     <item>
-      <title>spirv</title>
-      <link>https://www.lei.chat/tags/spirv/</link>
-      <pubDate>Fri, 11 May 2018 13:15:45 -0400</pubDate>
+      <title>descriptor</title>
+      <link>https://www.lei.chat/tags/descriptor/</link>
+      <pubDate>Tue, 24 Apr 2018 16:39:21 -0400</pubDate>
       
-      <guid>https://www.lei.chat/tags/spirv/</guid>
+      <guid>https://www.lei.chat/tags/descriptor/</guid>
       <description></description>
     </item>
     
@@ -222,6 +294,15 @@
       <pubDate>Tue, 24 Apr 2018 16:39:21 -0400</pubDate>
       
       <guid>https://www.lei.chat/tags/glsl/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>layout</title>
+      <link>https://www.lei.chat/tags/layout/</link>
+      <pubDate>Tue, 24 Apr 2018 16:39:21 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/layout/</guid>
       <description></description>
     </item>
     
