@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang='en' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Android/Linux GPU Drivers: Internals and Resources | Lei Chat</title>
+
+<meta name="generator" content="Hugo Eureka 0.8.0" />
+<link rel="stylesheet" href="https://www.lei.chat/css/eureka.min.css">
+<script defer src="https://www.lei.chat/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/bash.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/c.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cmake.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cpp.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/glsl.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/javascript.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/llvm.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/python.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/shell.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-109525036-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-109525036-1');
+</script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="Recently I have been working on a library that needs to directly interact with
+GPU kernel drivers from various vendors on Android/Linux systems. Compared to
+various GPU APIs, information at this level is quite sparse; so it is not a
+straightforward task, to say the least, and ends up requiring me to piece
+multiple sources together to figure out the details. So I&rsquo;m logging these driver
+internals and resources down in case it can be useful to others that are
+interested in these low-level bits.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Posts",
+      "item":"https://www.lei.chat/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Android/Linux GPU Drivers: Internals and Resources",
+      "item":"https://www.lei.chat/posts/android-linux-gpu-drivers-internals-and-resources/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.lei.chat/posts/android-linux-gpu-drivers-internals-and-resources/"
+    },
+    "headline": "Android\/Linux GPU Drivers: Internals and Resources | Lei Chat",
+    "image": "https://www.lei.chat/posts/android-linux-gpu-drivers-internals-and-resources/gpu-user-kernel-driver.svg",
+    "datePublished": "2021-07-05T18:20:07-04:00",
+    "dateModified": "2021-07-05T18:20:07-04:00",
+    "wordCount":  2449 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "Lei Zhang",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.lei.chat/images/avatar.png"
+        }
+        },
+    "description": "\u003cp\u003eRecently I have been working on a library that needs to directly interact with\nGPU kernel drivers from various vendors on Android\/Linux systems. Compared to\nvarious GPU APIs, information at this level is quite sparse; so it is not a\nstraightforward task, to say the least, and ends up requiring me to piece\nmultiple sources together to figure out the details. So I\u0026rsquo;m logging these driver\ninternals and resources down in case it can be useful to others that are\ninterested in these low-level bits.\u003c\/p\u003e"
+}
+</script><meta property="og:title" content="Android/Linux GPU Drivers: Internals and Resources | Lei Chat" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="https://www.lei.chat/images/avatar.png">
+
+
+<meta property="og:url" content="https://www.lei.chat/posts/android-linux-gpu-drivers-internals-and-resources/" />
+
+
+
+
+<meta property="og:description" content="Recently I have been working on a library that needs to directly interact with
+GPU kernel drivers from various vendors on Android/Linux systems. Compared to
+various GPU APIs, information at this level is quite sparse; so it is not a
+straightforward task, to say the least, and ends up requiring me to piece
+multiple sources together to figure out the details. So I&rsquo;m logging these driver
+internals and resources down in case it can be useful to others that are
+interested in these low-level bits." />
+
+
+
+
+<meta property="og:locale" content="en" />
+
+
+
+
+<meta property="og:site_name" content="Lei Chat" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2021-07-05T18:20:07-04:00" />
+
+
+<meta property="article:modified_time" content="2021-07-05T18:20:07-04:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="android" />
+
+<meta property="article:tag" content="linux" />
+
+<meta property="article:tag" content="gpu" />
+
+<meta property="article:tag" content="driver" />
+
+<meta property="article:tag" content="internal" />
+
+<meta property="article:tag" content="resource" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Lei Chat</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">Posts</a>
+            <a href="/authors/me" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">About</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">Light</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">Dark</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">Auto</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">Android/Linux GPU Drivers: Internals and Resources</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2021-07-05</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>12 min read</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="https://www.lei.chat/categories/gpu-driver/" class="hover:text-eureka">gpu-driver</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="https://www.lei.chat/series/gpu-driver/" class="hover:text-eureka">gpu-driver</a>
+        
+    </div>
+    
+</div>
+        
+        <div class="content">
+            <p>Recently I have been working on a library that needs to directly interact with
+GPU kernel drivers from various vendors on Android/Linux systems. Compared to
+various GPU APIs, information at this level is quite sparse; so it is not a
+straightforward task, to say the least, and ends up requiring me to piece
+multiple sources together to figure out the details. So I&rsquo;m logging these driver
+internals and resources down in case it can be useful to others that are
+interested in these low-level bits.</p>
+<p>I&rsquo;ll mostly be talking about the components directly involving GPU drivers in
+this blog post. The full Linux&rsquo;s graphics stack, including the window system and
+libraries, is super complex. If you&rsquo;d like to be brave and understand the full
+picture, you can refer to great <a href="https://blog.mecheye.net/2012/06/the-linux-graphics-stack/">writeups</a> and <a href="https://en.wikipedia.org/wiki/Direct_Rendering_Infrastructure">wiki</a>
+<a href="https://en.wikipedia.org/wiki/Direct_Rendering_Manager">pages</a>. Even with the reduced scope, there are an overwhelming amount of
+details. So I&rsquo;ll just cover the major concepts and ideas, with proper embedded
+links in case you are curious and want to learn more.</p>
+<p>A GPU driver is split into two parts: a <em>user mode driver</em> and a <em>kernel mode
+driver</em>.</p>
+<h2 id="user-mode-driver">User Mode Driver</h2>
+<p>As the name suggests, user mode drivers run in the address spaces of
+applications. They are where the majority of the magic happens. An application
+invokes GPU API calls that are implemented by the user mode driver, which
+maintains the application context, validates API arguments (for non-explicit
+APIs like OpenGL, OpenCL, etc.), translates the API calls to much lower and
+simpler commands specific to the GPU, and communicates the workload to the
+kernel mode driver. Clearly these are all heavyweight operations that&rsquo;s better
+to stay out of the mission critical kernel.</p>
+<h3 id="shared-libraries">Shared libraries</h3>
+<p>User mode drivers are generally in the form of shared libraries. For example,
+for Adreno/Mali GPUs in Android systems, we can find <code>vulkan.*.so</code>s (the
+exact name varies per the device) under the <code>/vendor/lib64/hw/</code> directory for
+the Vulkan API.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> This allows the same user mode driver to
+be mapped to many applications' address spaces.</p>
+<p>Though typically an application is not expected to directly link against the
+vendor-specific shared library; instead the application should link against a
+loader library. For example, for Vulkan, that&rsquo;s <code>libvulkan.so</code>, the <a href="https://github.com/KhronosGroup/Vulkan-Loader/blob/master/loader/LoaderAndLayerInterface.md#overview">Vulkan
+loader</a>. The loader library exposes all API calls and dispatches
+them to the underlying vendor-specific user mode driver. The vendor-specific
+library may or may not directly expose API calls (actually they are advised not
+to in order to avoid symbol collisions and other issues), so the loader
+discovers the symbols from the vendor driver with a specific
+<a href="https://github.com/KhronosGroup/Vulkan-Loader/blob/master/loader/LoaderAndLayerInterface.md#icd-vulkan-entry-point-discovery">contract</a>.<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<p>In general, if we have some logic and we need to decide whether to put in the
+user or kernel mode driver, it should be put in the user mode as much as
+possible. Being in the user mode means we can enjoy all the benefits of, well,
+being in the user mode: less buggy and more stable kernels, more utilities to
+leverage and depend on, much easier to update, better debugging experience
+(as the user mode driver is just a shared library), and others.</p>
+<h2 id="kernel-mode-driver">Kernel Mode Driver</h2>
+<p>Once the user mode driver converts high-level API calls into low-level
+vendor-specific commands, it hands them over to the kernel mode driver, which
+is part of the Linux kernel and shares the kernel address space.</p>
+<p>Like other kernel components, the kernel mode driver manages unique resources
+(here, the GPU hardware) and provides services to all upper level users.
+It handles resource allocation requests from the user mode driver, which is on
+the application&rsquo;s behalf. Additionally, it also performs many routine tasks like
+GPU device initialization, <a href="https://en.wikipedia.org/wiki/Mode_setting">mode settings</a>, <a href="https://en.wikipedia.org/wiki/Watchdog_timer">watchdog
+timers</a>, and <a href="https://en.wikipedia.org/wiki/Interrupt">interrupts</a>.</p>
+<h3 id="memory-management">Memory management</h3>
+<p>Security and isolation are also concerns for GPUs. As a shared resource used by
+many applications, obviously we don&rsquo;t want one application to be able to access
+other applications' data. For this, GPUs also use virtual addresses and <a href="https://en.wikipedia.org/wiki/Memory_management_unit">memory
+management units</a> (MMU, called IOMMU for Adreno and SMMU for Mali) to map
+virtual addresses to physical memory. The virtual address is chosen by the
+kernel mode driver and the kernel mode driver configures the GPU to use
+different page tables for different applications so that they are isolated.
+Hence, for the same physical memory page shared between the kernel mode driver
+and the application, there are two virtual addresses for it in two different
+virtual address spaces. The kernel mode driver uses the GPU&rsquo;s IOMMU/SMMU to
+translate, while the application uses the CPU&rsquo;s MMU to translate.</p>
+<h3 id="command-buffer-management">Command buffer management</h3>
+<p>Aside from supervising memory, the kernel mode driver also manages the main
+command buffer, which is the buffer really shared with the GPU processor.
+It&rsquo;s commonly a ring buffer, still in system memory. We know that a ring buffer
+has a read pointer and a write pointer. The read pointer is used by the GPU
+processor for fetching the next commands for execution; the write pointer is
+used by the kernel mode driver for queuing more workloads.</p>
+<p>Command buffers created by a specific application are just placed in normal
+system memory allocated to the user mode driver; the kernel mode driver needs
+to copy them to the ring buffer. This allows many applications to prepare
+workloads simultaneously without always contending for some lock. Well, actually
+not copy as the application generated command buffers can be large. So the
+kernel just inserts &ldquo;indirect calls&rdquo; into those command buffers in the ring
+buffer.</p>
+<p>So in summary in ring buffer, we can see GPU setup and teardown commands,
+context switching commands, and &ldquo;indirect calls&rdquo; to application-specific
+command buffers. There are also others (e.g., for performance counters) that
+I won&rsquo;t go into details.</p>
+<h3 id="driver-implementation">Driver implementation</h3>
+<p>Next let&rsquo;s talk about how kernel mode drivers are implemented in the kernel.</p>
+<h4 id="loadable-kernel-modules">Loadable kernel modules</h4>
+<p>GPU kernel mode drivers nowadays are implemented as <a href="https://en.wikipedia.org/wiki/Loadable_kernel_module">loadable kernel
+modules</a> (LKMs). Using LKMs &ldquo;isolates&rdquo; the device drivers from the Linux
+core to some extent, as now the kernel core can kill unresponsive drivers and
+crashes in a driver won&rsquo;t blow up the whole Linux kernel. (But still they are
+in the same address space.) Also LKMs enable hardware hot swapping: the kernel
+can dynamically load/remove the corresponding driver on hardware
+plugging/unplugging. This isn&rsquo;t very relevant in the context of Android, though,
+as we typically have a fixed set of hardware that never changes.</p>
+<p>For Android, we can describe the whole hardware hierarchy to the Linux kernel
+via a static <a href="https://en.wikipedia.org/wiki/Devicetree">Device Tree Source</a> (DTS), which is compiled down to a binary
+Device Tree Blob (DTB) and can be fed into the Linux kernel via bootloader at
+kernel startup time. But still, GPU drivers use the same LKM mechanism for
+uniformity and simplicity in the kernel.</p>
+<p>Implementing a LKM basically boils down to filling out some &ldquo;hook&rdquo; functions.
+Minimally, <a href="https://www.kernel.org/doc/html/latest/driver-api/basics.html#c.module_init"><code>module_init()</code></a> and <a href="https://www.kernel.org/doc/html/latest/driver-api/basics.html#c.module_exit"><code>module_exit()</code></a> for
+LKM setup and teardown. Of course, only these two hooks won&rsquo;t really get us far;
+we&rsquo;ll need to support more kernel system calls to make the driver powerful,
+especially for something as complex as GPUs.</p>
+<h4 id="system-calls">System calls</h4>
+<p>In Linux resources are typically represented as files to userspace applications;
+the kernel has a <a href="https://www.kernel.org/doc/html/latest/filesystems/vfs.html">Virtual File System</a> multiplexing file descriptors and
+dispatching to underlying implementations. GPU devices follow this principle.
+Device files on Linux systems are under the <code>/dev</code> directory. For example, for
+Adreno and Mali GPUs, the corresponding files are something like <code>/dev/kgsl-3d0</code>
+and <code>/dev/mali0</code>, respectively. (Again, the exact name can vary per the GPU
+product and driver implementation, especially for Mali devices.)</p>
+<p>The <a href="https://www.kernel.org/doc/html/latest/filesystems/vfs.html?highlight=file_operations#struct-file-operations"><code>file_operations</code></a> struct declares common operations that
+can be performed on files, e.g., <code>open</code>, <code>close</code>, <code>read</code>, <code>write</code>, <code>mmap</code>:</p>
+<pre><code class="language-c">struct file_operations {
+  int (*open) (struct inode *, struct file *);
+  ssize_t (*read) (struct file *, char __user *, size_t, loff_t *);
+  ssize_t (*write) (struct file *, const char __user *, size_t, loff_t *);
+  int (*mmap) (struct file *, struct vm_area_struct *);
+  // ...
+};
+</code></pre>
+<p>These operations have corresponding system calls: <a href="https://man7.org/linux/man-pages/man2/open.2.html"><code>open(2)</code></a><sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>,
+<a href="https://man7.org/linux/man-pages/man2/close.2.html"><code>close(2)</code></a>, <a href="https://man7.org/linux/man-pages/man2/read.2.html"><code>read(2)</code></a>, <a href="https://man7.org/linux/man-pages/man2/write.2.html"><code>write(2)</code></a>,
+<a href="https://man7.org/linux/man-pages/man2/mmap.2.html"><code>mmap(2)</code></a>. Our GPU device driver can implement these operations to
+support those system calls on the device file. It enables support for broader
+functionalities in the kernel mode driver. For example, now the application
+can request memory via <code>mmap(2)</code>. But the list of operations defined in
+<code>file_operations</code> is finite and far from satisfying GPU&rsquo;s needs. In fact, each
+GPU might have its own quirks. So that comes to the <a href="https://en.wikipedia.org/wiki/Ioctl"><code>ioctl(2)</code></a>
+system call.</p>
+<p><code>ioctl(2)</code> is intended for device-specific operations that cannot be expressed
+by the standard system calls. Each device is free to define its own list of
+<code>ioctl</code> commands and format. <code>ioctl</code> essentially works as device-specific
+&ldquo;extensions&rdquo; to system calls. This is a perfect fit for GPU devices as we can
+have a quite large API surface area, e.g., for <a href="https://github.com/antiagainst/SM-G991U/blob/fb74f31e5afbd748a1bc99a06e8793a3c428f54e/include/uapi/linux/msm_kgsl.h">Adreno</a> and
+<a href="https://github.com/antiagainst/SM-G991B/blob/5971a12600f91a101beab6acccc70720a05248c0/drivers/gpu/arm/bv_r26p0/mali_kbase_ioctl.h">Mali</a>.</p>
+<p>GPU devices typically implement <code>open</code> and <code>close</code> for opening/closing the
+device, <code>mmap</code> for sharing data between the application (which uses the user
+mode driver as its deputy) and the kernel mode driver, and <code>ioctl</code> for various
+controls.</p>
+<h4 id="driver-frameworks">Driver frameworks</h4>
+<p>Actually, it&rsquo;s so common to see devices of similar categories. GPU drivers from
+all vendors have similar basic needs. Likewise for other devices. So in Linux,
+there are quite a few driver frameworks as scaffolding to provide common
+helpers. For example, all PCI devices can just utilize the <a href="https://www.kernel.org/doc/html/latest/PCI/pci.html">PCI driver
+framework</a> to handle common needs like device enumeration, driver
+binding, and others.</p>
+<p>Since v2.6, Linux unifies various driver models into one <a href="https://www.kernel.org/doc/html/latest/driver-api/driver-model/overview.html">Kernel Device
+Model</a>, which handles all <a href="https://en.wikipedia.org/wiki/Bus_(computing)">buses</a>, devices, and device
+drivers. A device must be attached to some bus, and must be bound to and driven
+by a driver. One common abstraction for everything again. This is fine for
+discrete GPUs where they attach to the system via PCI Express bus. Actually,
+we can utilize the PCI driver framework for it, for example, for <a href="https://github.com/torvalds/linux/blob/v5.13/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c#L1805">AMD
+GPUs</a> and <a href="https://github.com/torvalds/linux/blob/v5.13/drivers/gpu/drm/nouveau/nouveau_drm.c#L1341">NVIDIA GPUs</a>. (They actually use more
+driver frameworks, like <a href="https://www.kernel.org/doc/html/latest/gpu/drm-internals.html">DRM</a>, which I won&rsquo;t go into details here.
+You can follow the links to read more.)</p>
+<p>But what about Android, where GPUs are in the same <a href="https://en.wikipedia.org/wiki/System_on_a_chip">SoC</a> as CPU,
+<a href="https://en.wikipedia.org/wiki/Image_processor">ISP</a>, etc.? There are no physical buses at all! Well, the kernel provides
+the <a href="https://www.kernel.org/doc/html/latest/driver-api/driver-model/platform.html">platform driver framework</a> for them. It provides a pseudo
+platform bus to connect devices on busses with minimal infrastructure. Normally
+drivers for SoC functionality blocks are written as platform drivers; this
+includes GPU drivers like <a href="https://github.com/antiagainst/SM-G991U/blob/main/drivers/gpu/msm/adreno.c#L3943">Adreno</a> and
+<a href="https://github.com/antiagainst/SM-G991B/blob/5971a12600f91a101beab6acccc70720a05248c0/drivers/gpu/arm/bv_r26p0/mali_kbase_core_linux.c#L4997">Mali</a>.</p>
+<h3 id="userspace-interaction">Userspace interaction</h3>
+<p>System calls are one way to interact with the kernel mode driver, but not the
+only way. As explained previously, Linux introduced a unified Kernel Device
+Model in v2.6. Together with it, <a href="https://linux-kernel-labs.github.io/refs/heads/master/labs/device_model.html#sysfs">sysfs</a> was introduced to expose
+details inside the Kernel Device Model. Sysfs is a pseudo file system that is
+normally mounted at <code>/sys</code> and there are multiple subdirectories inside it,
+providing different &ldquo;views&rdquo; into the Kernel Device Model. For example,
+<code>/sys/bus/</code> organizes all devices and drivers according to the buses they are
+attached to, and <code>/sys/devices/</code> lists all devices.</p>
+<p><code>/sys/devices/platform/</code> is an interesting directory here. Recall that GPU
+drivers are platform drivers. So we can find attributes exposed by GPU drivers
+here. For example, <code>/sys/devices/platform/soc/*.qcom,kgsl-3d0/kgsl/kgsl-3d0</code>
+(for Adreno) and <code>/sys/devices/platform/*.mali</code> (for Mali) can contain GPU
+frequency, power, <a href="https://en.wikipedia.org/wiki/Dynamic_voltage_scaling">DVFS</a> attributes, among others. Once the Android device
+is rooted, you can write those pseudo files to control those parameters, like,
+for benchmarking purposes.</p>
+<h2 id="showing-user-and-kernel-mode-drivers-together">Showing User and Kernel Mode Drivers Together</h2>
+<p>Okay, this concludes the introduction to both user and kernel mode drivers.
+Time to visualize important aspects with one drawing 😊:</p>
+<p><img src="gpu-user-kernel-driver.svg" alt="GPU User/Kernel Mode Drivers" title="GPU User/Kernel Mode Drivers"></p>
+<h2 id="driver-resources">Driver Resources</h2>
+<p>There are quite a few vendors, and for each of them, actually there can exist
+multiple drivers, some proprietary and some open source. Though, due to GPL,
+even proprietary ones are required to release the kernel mode drivers. So we
+can indeed understand the internals.</p>
+<p>But (yeah), these kernel mode drivers from the original vendors may not exist
+in the upstream Linux kernel tree. Actually, both Adreno and Mali kernel mode
+drivers are outside; they are provided to Android device OEMs and OEMs release
+them in their own way. For example, Samsung has its own <a href="https://opensource.samsung.com/main">open source
+website</a> and Xiaomi releases via <a href="https://github.com/MiCode/Xiaomi_Kernel_OpenSource">GitHub</a>. You can
+search for other OEMs. The code released by a particular OEM may be customized
+by the OEM, but they are unlikely to change the main logic.</p>
+<p>What&rsquo;s in the upstream Linux kernels are open source kernel mode drivers for
+these vendors. They work closely with the <a href="https://www.mesa3d.org/">Mesa</a> project, which hosts
+various open source user mode drivers. Mesa is another big topic that I won&rsquo;t
+go into details here.</p>
+<p>Anyway, here is a table summarize some of the kernel mode
+drivers<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup> for your convenience:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">GPU</th>
+<th style="text-align:center">Proprietary Driver</th>
+<th style="text-align:center">Open Source Driver</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">ARM Mali</td>
+<td style="text-align:center"><a href="https://github.com/antiagainst/SM-G991B/tree/5971a12600f91a101beab6acccc70720a05248c0/drivers/gpu/arm">mali kbase</a></td>
+<td style="text-align:center"><a href="https://github.com/torvalds/linux/tree/v5.13/drivers/gpu/drm/lima">lima</a>, <a href="https://github.com/torvalds/linux/tree/v5.13/drivers/gpu/drm/panfrost">panfrost</a></td>
+</tr>
+<tr>
+<td style="text-align:center">Qualcomm Adreno</td>
+<td style="text-align:center"><a href="https://github.com/antiagainst/SM-G991U/tree/main/drivers/gpu/msm">kgsl</a></td>
+<td style="text-align:center"><a href="https://github.com/torvalds/linux/tree/v5.13/drivers/gpu/drm/msm">msm</a></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>KGSL means Kernel Graphics Support Layer.</li>
+<li>Lima is for Mali Utgard GPUs. The user mode OpenCL driver for Lima is
+also named as <a href="https://docs.mesa3d.org/drivers/lima.html">Lima</a>.</li>
+<li>Panfrost is for Mali Midgard and Bifrost GPUs. (There are plans to support
+Mali Valhall GPUs later.) The user mode OpenCL driver for Panfrost is also
+named as <a href="https://docs.mesa3d.org/drivers/panfrost.html">Panfrost</a>. The user mode Vulkan driver is PanVK.</li>
+<li>The user mode OpenCL driver for msm is <a href="https://docs.mesa3d.org/drivers/freedreno.html">Freedreno</a>. The user
+mode Vulkan driver is Turnip.</li>
+</ul>
+<p>The open source projects are great resources not only because they give us
+details about how drivers are implemented but also GPU architecture details.
+For example, Freedreno has wiki pages about Adreno <a href="https://gitlab.freedesktop.org/freedreno/freedreno/-/wikis/A3xx-shader-instruction-set-architecture">ISA</a> and A6XX
+series <a href="https://gitlab.freedesktop.org/freedreno/freedreno/-/wikis/A6xx-SP">compute unit details</a>. Panfrost has docs about Mali
+<a href="https://gitlab.freedesktop.org/panfrost/mali-isa-docs/-/tree/master">Utgard, Midgard, and Bifrost ISAs</a>. Huge thanks to all the
+participating open source developers!</p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p>An interesting aspect about Mali GPUs is that they have
+a monolithic shared library to support all of OpenCL, OpenGL, and Vulkan.
+The monolithic library is <code>/vendor/lib64/egl/libGLES_mali.so</code>. The <code>vulkan.*.so</code>
+library under the <code>/vendor/lib64/hw/</code> directory is just a symlink to it.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p>The loader is mainly for handling the case where we have
+multiple implementations in the same system. That&rsquo;s actually typical for laptops
+nowadays given we can have an integrated GPU for energy efficiency and a
+discrete GPU for high performance. That&rsquo;s not the case for Android devices,
+where we commonly have no more than one GPU. So in a sense the loader is just
+overhead. And it can cause other issues. There was a bug in Android 10 causing
+the Vulkan loader to be inaccessible in the <code>adb</code> environment under
+<code>/data/local/tmp</code>, which is very common for developing purposes. One way to work
+around the bug is to symlink the vendor-specific library as <code>libvulkan.so</code> under
+<code>/data/local/tmp</code>. However, it would require to <a href="https://github.com/google/uVkCompute/commit/e3f4648d7985e6f85ee7a8d29a22a417f88e866e">mimic</a> the
+loader-driver contract to discover the API symbols from the driver.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p>I&rsquo;m using the <code>(2)</code> suffix here to follow man page conventions.
+Man pages are organized into sections, which you can use <code>man man</code> to check them.
+Section #2 means system calls.&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p>Links to proprietary drivers point to code released by
+Samsung for the Galaxy S21 series.&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+        </div>
+        
+        <div class="my-4">
+    
+    <a href="https://www.lei.chat/tags/android/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#android</a>
+    
+    <a href="https://www.lei.chat/tags/linux/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#linux</a>
+    
+    <a href="https://www.lei.chat/tags/gpu/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#gpu</a>
+    
+    <a href="https://www.lei.chat/tags/driver/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#driver</a>
+    
+    <a href="https://www.lei.chat/tags/internal/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#internal</a>
+    
+    <a href="https://www.lei.chat/tags/resource/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#resource</a>
+    
+    <a href="https://www.lei.chat/tags/kernel/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#kernel</a>
+    
+    <a href="https://www.lei.chat/tags/adreno/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#adreno</a>
+    
+    <a href="https://www.lei.chat/tags/mali/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#mali</a>
+    
+    <a href="https://www.lei.chat/tags/syscall/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#syscall</a>
+    
+</div>
+        
+        
+        
+
+
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">Next</span>
+        <a href="https://www.lei.chat/posts/what-is-vulkan-compute/" class="block">What is Vulkan Compute?</a>
+        
+    </div>
+</div>
+
+        
+
+
+
+  <script id="utterances" src="https://utteranc.es/client.js"
+            issue-term=title
+            repo=antiagainst/antiagainst.github.io
+              theme=preferred-color-scheme
+        crossorigin="anonymous"
+        async>
+</script>
+<script>
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+      document.getElementById('utterances').setAttribute('theme', 'github-dark')
+    }
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: light)").matches) || storageColorScheme == "Light") {
+      document.getElementById('utterances').setAttribute('theme', 'github-light')
+    }
+</script>
+
+
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+<div class="bg-secondary-bg rounded p-6">
+    <h3 class="text-lg font-semibold mb-4">Series of Posts</h3>
+    <div class="content">
+        
+        
+        <a href="https://www.lei.chat/posts/android-linux-gpu-drivers-internals-and-resources/">Android/Linux GPU Drivers: Internals and Resources</a>
+        <br />
+        
+        
+    </div>
+</div>
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">On This Page</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#user-mode-driver">User Mode Driver</a>
+      <ul>
+        <li><a href="#shared-libraries">Shared libraries</a></li>
+      </ul>
+    </li>
+    <li><a href="#kernel-mode-driver">Kernel Mode Driver</a>
+      <ul>
+        <li><a href="#memory-management">Memory management</a></li>
+        <li><a href="#command-buffer-management">Command buffer management</a></li>
+        <li><a href="#driver-implementation">Driver implementation</a>
+          <ul>
+            <li><a href="#loadable-kernel-modules">Loadable kernel modules</a></li>
+            <li><a href="#system-calls">System calls</a></li>
+            <li><a href="#driver-frameworks">Driver frameworks</a></li>
+          </ul>
+        </li>
+        <li><a href="#userspace-interaction">Userspace interaction</a></li>
+      </ul>
+    </li>
+    <li><a href="#showing-user-and-kernel-mode-drivers-together">Showing User and Kernel Mode Drivers Together</a></li>
+    <li><a href="#driver-resources">Driver Resources</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded p-6">
+        <h2 class="text-lg font-semibold mb-4">See Also</h2>
+        <div class="content">
+            
+            <a href="https://www.lei.chat/posts/what-is-vulkan-compute/">What is Vulkan Compute?</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/hlsl-for-vulkan-resources/">HLSL for Vulkan: Resources</a>
+            <br />
+            
+        </div>
+    </div>
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2018 - 2021 <a href="https://www.lei.chat/">Lei Zhang</a>
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

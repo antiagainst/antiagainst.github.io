@@ -8,7 +8,97 @@
     <language>en</language>
     <copyright>&amp;copy; 2018 - 2021 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Fri, 25 Jun 2021 10:15:58 -0400</lastBuildDate><atom:link href="https://www.lei.chat/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 05 Jul 2021 18:20:07 -0400</lastBuildDate><atom:link href="https://www.lei.chat/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>adreno</title>
+      <link>https://www.lei.chat/tags/adreno/</link>
+      <pubDate>Mon, 05 Jul 2021 18:20:07 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/adreno/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>android</title>
+      <link>https://www.lei.chat/tags/android/</link>
+      <pubDate>Mon, 05 Jul 2021 18:20:07 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/android/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>driver</title>
+      <link>https://www.lei.chat/tags/driver/</link>
+      <pubDate>Mon, 05 Jul 2021 18:20:07 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/driver/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>gpu</title>
+      <link>https://www.lei.chat/tags/gpu/</link>
+      <pubDate>Mon, 05 Jul 2021 18:20:07 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/gpu/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>internal</title>
+      <link>https://www.lei.chat/tags/internal/</link>
+      <pubDate>Mon, 05 Jul 2021 18:20:07 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/internal/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kernel</title>
+      <link>https://www.lei.chat/tags/kernel/</link>
+      <pubDate>Mon, 05 Jul 2021 18:20:07 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/kernel/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>linux</title>
+      <link>https://www.lei.chat/tags/linux/</link>
+      <pubDate>Mon, 05 Jul 2021 18:20:07 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/linux/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>mali</title>
+      <link>https://www.lei.chat/tags/mali/</link>
+      <pubDate>Mon, 05 Jul 2021 18:20:07 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/mali/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>resource</title>
+      <link>https://www.lei.chat/tags/resource/</link>
+      <pubDate>Mon, 05 Jul 2021 18:20:07 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/resource/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>syscall</title>
+      <link>https://www.lei.chat/tags/syscall/</link>
+      <pubDate>Mon, 05 Jul 2021 18:20:07 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/syscall/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>api</title>
       <link>https://www.lei.chat/tags/api/</link>
@@ -24,15 +114,6 @@
       <pubDate>Fri, 25 Jun 2021 10:15:58 -0400</pubDate>
       
       <guid>https://www.lei.chat/tags/compute/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>gpu</title>
-      <link>https://www.lei.chat/tags/gpu/</link>
-      <pubDate>Fri, 25 Jun 2021 10:15:58 -0400</pubDate>
-      
-      <guid>https://www.lei.chat/tags/gpu/</guid>
       <description></description>
     </item>
     
@@ -141,15 +222,6 @@
       <pubDate>Tue, 24 Apr 2018 16:39:21 -0400</pubDate>
       
       <guid>https://www.lei.chat/tags/glsl/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>resource</title>
-      <link>https://www.lei.chat/tags/resource/</link>
-      <pubDate>Tue, 24 Apr 2018 16:39:21 -0400</pubDate>
-      
-      <guid>https://www.lei.chat/tags/resource/</guid>
       <description></description>
     </item>
     

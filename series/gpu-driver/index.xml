@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>gpu-driver on Lei Chat</title>
+    <link>https://www.lei.chat/series/gpu-driver/</link>
+    <description>Recent content in gpu-driver on Lei Chat</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>&amp;copy; 2018 - 2021 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
+</copyright>
+    <lastBuildDate>Mon, 05 Jul 2021 18:20:07 -0400</lastBuildDate><atom:link href="https://www.lei.chat/series/gpu-driver/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Android/Linux GPU Drivers: Internals and Resources</title>
+      <link>https://www.lei.chat/posts/android-linux-gpu-drivers-internals-and-resources/</link>
+      <pubDate>Mon, 05 Jul 2021 18:20:07 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/posts/android-linux-gpu-drivers-internals-and-resources/</guid>
+      <description>&lt;p&gt;Recently I have been working on a library that needs to directly interact with
+GPU kernel drivers from various vendors on Android/Linux systems. Compared to
+various GPU APIs, information at this level is quite sparse; so it is not a
+straightforward task, to say the least, and ends up requiring me to piece
+multiple sources together to figure out the details. So I&amp;rsquo;m logging these driver
+internals and resources down in case it can be useful to others that are
+interested in these low-level bits.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
