@@ -8,11 +8,11 @@
     <language>en</language>
     <copyright>&amp;copy; 2018 - 2021 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Mon, 05 Jul 2021 18:20:07 -0400</lastBuildDate><atom:link href="https://www.lei.chat/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 08 Jul 2021 19:16:41 -0400</lastBuildDate><atom:link href="https://www.lei.chat/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>adreno</title>
       <link>https://www.lei.chat/tags/adreno/</link>
-      <pubDate>Mon, 05 Jul 2021 18:20:07 -0400</pubDate>
+      <pubDate>Thu, 08 Jul 2021 19:16:41 -0400</pubDate>
       
       <guid>https://www.lei.chat/tags/adreno/</guid>
       <description></description>
@@ -21,16 +21,34 @@
     <item>
       <title>android</title>
       <link>https://www.lei.chat/tags/android/</link>
-      <pubDate>Mon, 05 Jul 2021 18:20:07 -0400</pubDate>
+      <pubDate>Thu, 08 Jul 2021 19:16:41 -0400</pubDate>
       
       <guid>https://www.lei.chat/tags/android/</guid>
       <description></description>
     </item>
     
     <item>
+      <title>code</title>
+      <link>https://www.lei.chat/tags/code/</link>
+      <pubDate>Thu, 08 Jul 2021 19:16:41 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/code/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>counter</title>
+      <link>https://www.lei.chat/tags/counter/</link>
+      <pubDate>Thu, 08 Jul 2021 19:16:41 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/counter/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>driver</title>
       <link>https://www.lei.chat/tags/driver/</link>
-      <pubDate>Mon, 05 Jul 2021 18:20:07 -0400</pubDate>
+      <pubDate>Thu, 08 Jul 2021 19:16:41 -0400</pubDate>
       
       <guid>https://www.lei.chat/tags/driver/</guid>
       <description></description>
@@ -39,9 +57,54 @@
     <item>
       <title>gpu</title>
       <link>https://www.lei.chat/tags/gpu/</link>
-      <pubDate>Mon, 05 Jul 2021 18:20:07 -0400</pubDate>
+      <pubDate>Thu, 08 Jul 2021 19:16:41 -0400</pubDate>
       
       <guid>https://www.lei.chat/tags/gpu/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kernel</title>
+      <link>https://www.lei.chat/tags/kernel/</link>
+      <pubDate>Thu, 08 Jul 2021 19:16:41 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/kernel/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>linux</title>
+      <link>https://www.lei.chat/tags/linux/</link>
+      <pubDate>Thu, 08 Jul 2021 19:16:41 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/linux/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>mali</title>
+      <link>https://www.lei.chat/tags/mali/</link>
+      <pubDate>Thu, 08 Jul 2021 19:16:41 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/mali/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>performance</title>
+      <link>https://www.lei.chat/tags/performance/</link>
+      <pubDate>Thu, 08 Jul 2021 19:16:41 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/performance/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>walkthrough</title>
+      <link>https://www.lei.chat/tags/walkthrough/</link>
+      <pubDate>Thu, 08 Jul 2021 19:16:41 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/walkthrough/</guid>
       <description></description>
     </item>
     
@@ -51,33 +114,6 @@
       <pubDate>Mon, 05 Jul 2021 18:20:07 -0400</pubDate>
       
       <guid>https://www.lei.chat/tags/internal/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>kernel</title>
-      <link>https://www.lei.chat/tags/kernel/</link>
-      <pubDate>Mon, 05 Jul 2021 18:20:07 -0400</pubDate>
-      
-      <guid>https://www.lei.chat/tags/kernel/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>linux</title>
-      <link>https://www.lei.chat/tags/linux/</link>
-      <pubDate>Mon, 05 Jul 2021 18:20:07 -0400</pubDate>
-      
-      <guid>https://www.lei.chat/tags/linux/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>mali</title>
-      <link>https://www.lei.chat/tags/mali/</link>
-      <pubDate>Mon, 05 Jul 2021 18:20:07 -0400</pubDate>
-      
-      <guid>https://www.lei.chat/tags/mali/</guid>
       <description></description>
     </item>
     

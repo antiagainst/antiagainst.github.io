@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang='en' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Sampling Performance Counters from Mobile GPU Drivers | Lei.Chat()</title>
+
+<meta name="generator" content="Hugo Eureka 0.8.0" />
+<link rel="stylesheet" href="https://www.lei.chat/css/eureka.min.css">
+<script defer src="https://www.lei.chat/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/bash.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/c.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cmake.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cpp.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/glsl.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/javascript.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/llvm.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/python.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/shell.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-109525036-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-109525036-1');
+</script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="Hardware performance counter details in Adreno/Mali kernel mode drivers and how to query them from user mode application">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Posts",
+      "item":"https://www.lei.chat/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Sampling Performance Counters from Mobile GPU Drivers",
+      "item":"https://www.lei.chat/posts/sampling-performance-counters-from-gpu-drivers/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.lei.chat/posts/sampling-performance-counters-from-gpu-drivers/"
+    },
+    "headline": "Sampling Performance Counters from Mobile GPU Drivers | Lei.Chat()","datePublished": "2021-07-08T19:16:41-04:00",
+    "dateModified": "2021-07-08T19:16:41-04:00",
+    "wordCount":  2081 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "Lei Zhang",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.lei.chat/images/avatar.png"
+        }
+        },
+    "description": "Hardware performance counter details in Adreno\/Mali kernel mode drivers and how to query them from user mode application"
+}
+</script><meta property="og:title" content="Sampling Performance Counters from Mobile GPU Drivers | Lei.Chat()" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="https://www.lei.chat/images/avatar.png">
+
+
+<meta property="og:url" content="https://www.lei.chat/posts/sampling-performance-counters-from-gpu-drivers/" />
+
+
+
+<meta property="og:description" content="Hardware performance counter details in Adreno/Mali kernel mode drivers and how to query them from user mode application" />
+
+
+
+<meta property="og:locale" content="en" />
+
+
+
+
+<meta property="og:site_name" content="Lei.Chat()" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2021-07-08T19:16:41-04:00" />
+
+
+<meta property="article:modified_time" content="2021-07-08T19:16:41-04:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="gpu" />
+
+<meta property="article:tag" content="driver" />
+
+<meta property="article:tag" content="performance" />
+
+<meta property="article:tag" content="counter" />
+
+<meta property="article:tag" content="adreno" />
+
+<meta property="article:tag" content="mali" />
+
+
+
+
+
+
+
+
+
+
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/android-linux-gpu-drivers-internals-and-resources/" />
+
+
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Lei.Chat()</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">Posts</a>
+            <a href="/authors/me" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">About</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">Light</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">Dark</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">Auto</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">Sampling Performance Counters from Mobile GPU Drivers</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2021-07-08</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>10 min read</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="https://www.lei.chat/categories/gpu-driver/" class="hover:text-eureka">gpu-driver</a>
+        
+        
+        <span>, </span>
+        <a href="https://www.lei.chat/categories/gpu-performance/" class="hover:text-eureka">gpu-performance</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="https://www.lei.chat/series/gpu-driver/" class="hover:text-eureka">gpu-driver</a>
+        
+    </div>
+    
+</div>
+        
+        <div class="content">
+            <p>In a <a href="../android-linux-gpu-drivers-internals-and-resources">previous blog post</a> I gave a general introduction
+to GPU driver internals in Android/Linux systems. Following up with it, today
+I will explain how a specific functionality, hardware performance counter
+(perf counter) queries, is handled in both Qualcomm Adreno and ARM Mali drivers,
+by walking through the kernel driver source code.</p>
+<h2 id="rationale-a-perf-counter-sampling-library">Rationale: A Perf Counter Sampling Library</h2>
+<p>But, why looking into perf counters? What&rsquo;s interesting about them? Perf
+counters are special processor registers showing various metrics about the
+processor. They are crucial for helping understanding software performance
+issues and making the best use of hardware.</p>
+<p>But it also comes down to a library that I&rsquo;ve been working on recently. So
+please allow me to digress a bit here. 😊</p>
+<p>Unlike CPU, in the GPU world we have many different GPU architectures from
+quite a few hardware vendors. To understand the fine performance details,
+typically we need to resort to vendor-specific tools like <a href="https://gpuopen.com/rgp/">AMD Radeon GPU
+Profiler</a>, <a href="https://developer.arm.com/tools-and-software/graphics-and-gaming/arm-mobile-studio">ARM Mobile Studio</a>,
+<a href="https://developer.nvidia.com/nsight-graphics">NVIDIA Nsight</a>, <a href="https://developer.qualcomm.com/software/snapdragon-profiler">Qualcomm Snapdragon Profiler</a>.
+They are really all-encompassing tool suites, providing many utilities and
+aiming for profiling the whole system. If you only care about one vendor or
+one GPU architecture and would just like an integrated solution, then they
+are great. But if you need to support multiple vendors and/or have your
+own profiling solution in the development flow, e.g., for better automation,
+then not so great: managing an IDE-like GUI application for each vendor is not
+really fun.</p>
+<p>So I have been working on a lightweight and embeddable library for sampling GPU
+perf counters as an alternative solution. It should support multiple vendors.
+For performance (as we normally sample perf counters at a very high frequency),
+the plan is to directly interact with the GPU kernel driver. This is actually
+inspired by <a href="https://github.com/ARM-software/HWCPipe">HWCPipe</a>, which is a great resource showing how it is done
+for ARM Mali GPUs. However, some of its design choices (e.g., mandatory C++
+features like STL and exceptions) renders it unsuitable for my needs. The
+biggest issue, though, is that it does not support other vendors. So this
+motivates me to write my own.</p>
+<p>Anyway, I should probably use another blog post once I&rsquo;ve the library ready.
+Now switching back to the main topic for today: perf counters in drivers.</p>
+<h2 id="methodology">Methodology</h2>
+<p>We will be looking at perf counters for both Qualcomm Adreno and ARM Mali GPUs.
+It requires reading the kernel driver source code, which we cannot find in the
+upstream Linux kernel source tree. Instead they are released by the Android OEMs
+shipping products with these GPUs.</p>
+<p>Here, I&rsquo;ll use the code released by Samsung for their Galaxy S21 series.
+Depending on the market, Galaxy S21 contains either the Snapdragon 888 (e.g.,
+devices with model number SM-G991U) or the Exynos 2100 (e.g., devices with model
+number G-991B) SoC. I downloaded the kernel code from Samsung&rsquo;s <a href="https://opensource.samsung.com/">open source
+website</a> and put them on GitHub (<a href="https://github.com/antiagainst/SM-G991U">SM-G991U</a>,
+<a href="https://github.com/antiagainst/SM-G991B">SM-G991B</a>) so that I can grab links to use in this post.</p>
+<p>As explained in my previous blog post, GPU drivers use common frameworks and
+have similar structure in <a href="../android-linux-gpu-drivers-internals-and-resources/#driver-implementation">their implementation</a>. That gives
+us anchors to read the source code. For example, we can search for <code>module_init</code>
+in the driver&rsquo;s directory to find out the entry point for the whole module.
+Similarly, <code>platform_driver_register</code>&rsquo;s argument defines the driver&rsquo;s major
+traits, including the name, which hardware device to match, and so on.</p>
+<p>With all of the above, we can look into each GPU now.</p>
+<h2 id="adreno-gpu">Adreno GPU</h2>
+<p>First let&rsquo;s have some fun reading the kernel code.</p>
+<h3 id="kernel-code-walkthrough">Kernel code walkthrough</h3>
+<p>The kernel driver for Adreno GPUs are called KGSL, short for Kernel Graphics
+Support Layer. It is written as a loadable kernel module and uses the platform
+driver framework. So the anchors mentioned in the above section work; <code>grep</code>ping
+them will show that the <code>drivers/gpu/msm/adreno.c</code> <a href="https://github.com/antiagainst/SM-G991U/blob/5d6ce4e8104d46193026a1352c967a05c361efcf/drivers/gpu/msm/adreno.c">file</a> is the main
+file<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> pulling everything together and containing various
+function pointers.</p>
+<h4 id="devicedriver-information">Device/driver information</h4>
+<p>Within it, <code>adreno_platform_driver</code> is the struct defining the driver:</p>
+<pre><code class="language-c">static struct platform_driver adreno_platform_driver = {
+  .probe = adreno_probe,
+  .remove = adreno_remove,
+  .driver = {
+    .name = &quot;kgsl-3d&quot;,
+    .pm = &amp;adreno_pm_ops,
+    .of_match_table = of_match_ptr(adreno_match_table),
+  }
+};
+</code></pre>
+<p>That&rsquo;s where the driver name, <code>kgsl-3d</code>, comes from; and it&rsquo;s matching against
+devices specified in the <code>adreno_match_table</code><sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>:</p>
+<pre><code class="language-c">static const struct of_device_id adreno_match_table[] = {
+  { .compatible = &quot;qcom,kgsl-3d0&quot;, .data = &amp;device_3d0 },
+  { },
+};
+</code></pre>
+<p>The <code>.compatible</code> field is the interesting one; it follows the
+<code>&lt;vendor&gt;,&lt;device&gt;</code> format. So the driver is compatible with devices from vendor
+<code>qcom</code> and with the name <code>kgsl-3d0</code>. Such devices can be
+<a href="https://www.kernel.org/doc/html/latest/driver-api/driver-model/platform.html#device-naming-and-driver-binding">bound</a> to and managed by this driver.</p>
+<p>Thus far these are all pretty straightforward stuff; but I just wanted to point
+them out so we are on a solid footing regarding the device/driver names.</p>
+<p>Details about the device, if you want to understand more, can be found via
+searching <code>kgsl-3d0</code> in the kernel codebase, because they need to expose that
+name in the <code>compatible</code> field in their Device Tree Source files. For example,
+Adreno 660 is defined in the <code>arch/arm64/boot/dts/vendor/qcom/lahaina-gpu.dtsi</code>
+<a href="https://github.com/antiagainst/SM-G991U/blob/5d6ce4e8104d46193026a1352c967a05c361efcf/arch/arm64/boot/dts/vendor/qcom/lahaina-gpu.dtsi">file</a><sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>. The doc for the fields in it can be found in
+the <code>arch/arm64/boot/dts/vendor/bindings/gpu/adreno.txt</code> <a href="https://github.com/antiagainst/SM-G991U/blob/5d6ce4e8104d46193026a1352c967a05c361efcf/arch/arm64/boot/dts/vendor/bindings/gpu/adreno.txt">file</a>.
+Low level details are unlikely useful to us there; but the power levels can be
+interesting as it defines the frequencies we can see for the GPU.</p>
+<p>Let&rsquo;s continue to look at device driver binding, which is done in the
+<code>andreno_probe</code> <a href="https://github.com/antiagainst/SM-G991U/blob/5d6ce4e8104d46193026a1352c967a05c361efcf/drivers/gpu/msm/adreno.c#L3897-L3908">function</a>. That shows that the driver is
+actually an aggregate driver; it uses <a href="https://www.kernel.org/doc/html/latest/driver-api/component.html#c.component_match_add_release">component helpers</a>
+to pull in components like <a href="https://www.kernel.org/doc/Documentation/devicetree/bindings/display/msm/gmu.txt">Graphics Management Unit</a>. Anyway, eventually
+it calls the <code>adreno_bind</code> <a href="https://github.com/antiagainst/SM-G991U/blob/5d6ce4e8104d46193026a1352c967a05c361efcf/drivers/gpu/msm/adreno.c#L1470-L1486">function</a>, which then in turn calls
+the GPU core specific <code>probe</code> function:</p>
+<pre><code class="language-c">static int adreno_bind(struct device *dev)
+{
+  struct platform_device *pdev = to_platform_device(dev);
+  const struct adreno_gpu_core *gpucore;
+  // ...
+
+  return gpucore-&gt;gpudev-&gt;probe(pdev, chipid, gpucore);
+}
+</code></pre>
+<h4 id="gpu-core-definition">GPU core definition</h4>
+<p>We are approaching the meaty definitions&ndash;the <code>adreno_gpu_core</code>
+<a href="https://github.com/antiagainst/SM-G991U/blob/5d6ce4e8104d46193026a1352c967a05c361efcf/drivers/gpu/msm/adreno.h#L372-L384">struct</a>:</p>
+<pre><code class="language-c">struct adreno_gpu_core {
+  enum adreno_gpurev gpurev;
+  unsigned int core, major, minor, patchid;
+  const char *compatible;
+  unsigned long features;
+  struct adreno_gpudev *gpudev;
+  const struct adreno_perfcounters *perfcounters;
+  // ...
+};
+
+</code></pre>
+<p>Yes, <code>perfcounters</code>! But before looking into that, also worth noting is the
+<code>adreno_gpudev</code> <a href="https://github.com/antiagainst/SM-G991U/blob/5d6ce4e8104d46193026a1352c967a05c361efcf/drivers/gpu/msm/adreno.h#L757-L826">struct</a> inside. It&rsquo;s a huge struct
+containing GPU core specific function pointers, including the <code>probe</code> function
+mentioned earlier.</p>
+<p>Looking at where <code>adreno_gpu_core</code> are referenced, we can find the full list
+of Adreno GPU core definitions in the <code>drivers/gpu/msm/adreno-gpulist.h</code>
+<a href="https://github.com/antiagainst/SM-G991U/blob/5d6ce4e8104d46193026a1352c967a05c361efcf/drivers/gpu/msm/adreno-gpulist.h">file</a>. This is basically the main file containing pointers to
+various GPU core facts. From it we can see, for example, for A6XX GPU series,
+the perf counters are defined in the <code>adreno_a6xx_perfcounters</code> variable, in
+the <code>drivers/gpu/msm/adreno_a6xx_perfcounter.c</code> <a href="https://github.com/antiagainst/SM-G991U/blob/5d6ce4e8104d46193026a1352c967a05c361efcf/drivers/gpu/msm/adreno_a6xx_perfcounter.c">file</a>.
+There we can find all the perf counter groups.</p>
+<p>(It might seem that we are going through a rather convoluted approach here to
+discover this, as we might be able to directly find such information by trying
+to find source files with keywords related to perf counters. But I generally
+feel the above is better as it is more principled and can be used to discover
+whatever you&rsquo;d like to know. The same holds for the following analysis.)</p>
+<h4 id="ioctl-interface">Ioctl interface</h4>
+<p>Okay, now we know there are quite a few perf counter groups. But still, how
+do we query them from the kernel? That comes to the <code>ioctl</code> system call.</p>
+<p>If we follow what we left previously, the <code>adreno_bind</code> function calls the GPU
+core specific <code>probe</code> function. If we look a concrete one, e.g., the
+<code>a6xx_probe</code> function that is <a href="https://github.com/antiagainst/SM-G991U/blob/5d6ce4e8104d46193026a1352c967a05c361efcf/drivers/gpu/msm/adreno_a6xx.c#L2465">registered</a> to the
+<code>adreno_a6xx_gpudev</code> struct, it calls the <code>a6xx_probe_common</code> function, and
+then in turn calls the <code>adreno_device_probe</code> <a href="https://github.com/antiagainst/SM-G991U/blob/5d6ce4e8104d46193026a1352c967a05c361efcf/drivers/gpu/msm/adreno.c#L1316-L1468">function</a>,
+which then in turn calls the <code>adreno_setup_device</code>
+<a href="https://github.com/antiagainst/SM-G991U/blob/5d6ce4e8104d46193026a1352c967a05c361efcf/drivers/gpu/msm/adreno.c#L1276-L1308">function</a>. <code>adreno_setup_device</code> references a
+<code>adreno_functable</code> <a href="https://github.com/antiagainst/SM-G991U/blob/5d6ce4e8104d46193026a1352c967a05c361efcf/drivers/gpu/msm/adreno.c#L3807-L3852">struct</a>. There, we have a bunch of
+function pointers, including the one for ioctl: the <code>adreno_ioctl</code>
+<a href="https://github.com/antiagainst/SM-G991U/blob/5d6ce4e8104d46193026a1352c967a05c361efcf/drivers/gpu/msm/adreno_ioctl.c#L225-L230">function</a>. It actually only handles a few ioctl commands,
+all listed in the <code>adreno_ioctl_funcs</code> <a href="https://github.com/antiagainst/SM-G991U/blob/5d6ce4e8104d46193026a1352c967a05c361efcf/drivers/gpu/msm/adreno_ioctl.c#L216-L223">struct</a> and all
+related to perf counters:</p>
+<pre><code class="language-c">static struct kgsl_ioctl adreno_ioctl_funcs[] = {
+  { IOCTL_KGSL_PERFCOUNTER_GET, adreno_ioctl_perfcounter_get },
+  { IOCTL_KGSL_PERFCOUNTER_PUT, adreno_ioctl_perfcounter_put },
+  { IOCTL_KGSL_PERFCOUNTER_QUERY, adreno_ioctl_perfcounter_query },
+  { IOCTL_KGSL_PERFCOUNTER_READ, adreno_ioctl_perfcounter_read },
+  { IOCTL_KGSL_PREEMPTIONCOUNTER_QUERY, adreno_ioctl_preemption_counters_query },
+};
+</code></pre>
+<p>Searching the command symbols, we find they are all defined in the
+<code>include/uapi/linux/msm_kgsl.h</code> <a href="https://github.com/antiagainst/SM-G991U/blob/5d6ce4e8104d46193026a1352c967a05c361efcf/include/uapi/linux/msm_kgsl.h">header</a>. <code>uapi</code> means APIs for
+userspace here, so that matches. After reading the related ioctl struct
+<a href="https://github.com/antiagainst/SM-G991U/blob/5d6ce4e8104d46193026a1352c967a05c361efcf/include/uapi/linux/msm_kgsl.h#L965-L1069">comments</a>, it&rsquo;s relatively clear that we need to
+issue</p>
+<ul>
+<li><code>IOCTL_KGSL_PERFCOUNTER_GET</code> for activating the desired perf counters we want.
+There is a limit on how many counters we can enable per group. (The limit is
+reflected by how many <code>adreno_perfcount_register</code>s we have per group. They
+can be found in, for example, the <code>adreno_a6xx_perfcounter.c</code> file.)</li>
+<li><code>IOCTL_KGSL_PERFCOUNTER_PUT</code> for deactivating perf counters after done.</li>
+<li><code>IOCTL_KGSL_PERFCOUNTER_READ</code> for sampling perf counters.</li>
+</ul>
+<p>And the full list of perf counter groups is also <a href="https://github.com/antiagainst/SM-G991U/blob/5d6ce4e8104d46193026a1352c967a05c361efcf/include/uapi/linux/msm_kgsl.h#L431-L474">defined</a>
+in the same header file.</p>
+<h3 id="perf-counters">Perf counters</h3>
+<p>I hope the above is interesting. Thus far we know the ioctl commands to use for
+interacting with the kernel driver and we know there are quite a few perf
+counter groups. But we still don&rsquo;t know what those exact counters are! That&rsquo;s
+where the open source Freedreno driver comes as super helpful. In its
+<a href="https://github.com/freedreno/envytools">envytool</a> subproject, we can directly find all the perf counters in
+an XML database. For example, for the A6XX series, it would be the
+<code>registers/adreno/a6xx.xml</code> <a href="https://github.com/freedreno/envytools/blob/d88cafa3ac3ea651ad2a756067d64a378b4355a5/registers/adreno/a6xx.xml">file</a>. It contains
+<a href="https://github.com/freedreno/envytools/blob/d88cafa3ac3ea651ad2a756067d64a378b4355a5/registers/adreno/a6xx.xml#L273-L862">enums</a> whose names end with <code>perfcounter_select</code> and
+that&rsquo;s what we want.</p>
+<p>Up to this point, we basically have all the information we need. Now we can put
+everything together as a proof of concept. I created a <a href="https://gist.github.com/antiagainst/fa15bad3d024f6520786863aa4ec05ab">Gist</a> for
+it to sample a hardcoded list of counters for 100 iterations. Everything seems
+fine.</p>
+<h2 id="mali-gpu">Mali GPU</h2>
+<p>Due to the existence of the HWCPipe project, we can actually know how to sample
+perf counters from the kernel directly. But the above methodology and steps
+still apply. (And to truly understand the interaction, it&rsquo;s inevitable to read
+the kernel code.) I&rsquo;ll just point out some key points regarding the Mali driver
+code here.</p>
+<h3 id="kernel-api-versions">Kernel API Versions</h3>
+<p>Compared to Adreno GPUs, the driver code for Mali GPU is actually much more
+complex: you can find <a href="https://github.com/antiagainst/SM-G991B/tree/3ff623ab0e336fce19468f7a6f9ae9f88a486c64/drivers/gpu/arm">multiple copies</a> of the driver at
+different versions; and for the same copy, it&rsquo;s using a <a href="https://github.com/antiagainst/SM-G991B/blob/5971a12600f91a101beab6acccc70720a05248c0/drivers/gpu/arm/bv_r26p0/jm/mali_kbase_jm_ioctl.h#L29-L115">versioned
+API</a>! This actually makes sense. Compared to Adreno, which
+is only used by Qualcomm, Mali GPUs are licensed to various SoC vendors as IP
+blocks. Different vendors have different needs that ARM needs to serve, thus
+requiring the kernel code to structure like this way.</p>
+<p>But it does mean more steps to interact with the kernel driver. We need to
+additionally negotiate the API version and set up the API context.</p>
+<h3 id="gpu-characteristics">GPU characteristics</h3>
+<p>Figuring out the exact GPU characteristics is also harder, as Mali GPUs are
+configurable (again for satisfying different SoC vendors' needs). There can
+be a varying number of cores or L2 cache slices. So that all needs to be
+factored in to properly calculate the final perf counter value. To make things
+even obscure, unlike Adreno GPUs where we can get the GPU ID like the
+marketing product name (Adreno 540/650/etc.), <a href="https://github.com/antiagainst/SM-G991B/blob/5971a12600f91a101beab6acccc70720a05248c0/drivers/gpu/arm/bv_r26p0/gpu/mali_kbase_gpu_id.h#L91-L108">GPU ID</a> reported by
+the Mali kernel driver has nothing to do with the marking name (Mali
+G57/G78/etc.). These GPU properties are all packed as key value pairs and
+returned as a flat buffer when using ioctl to <a href="https://github.com/antiagainst/SM-G991B/blob/5971a12600f91a101beab6acccc70720a05248c0/drivers/gpu/arm/bv_r26p0/mali_kbase_ioctl.h#L63-L96">query</a> them.
+To show how it&rsquo;s done, here is a <a href="https://gist.github.com/antiagainst/4d41366254102aa53745d306686dcce6">Gist</a> file dumping some
+interesting properties of Mali GPUs.</p>
+<h3 id="perf-counters-1">Perf counters</h3>
+<p>Perf counters in the Mali kernel driver go into a separate API entry point.
+Unlike Adreno, where we use the main device file descriptor to handle perf
+counters, for Mali GPUs we need to request another dedicated file descriptor
+from the driver for perf counters. The
+<code>drivers/gpu/arm/bv_r26p0/mali_kbase_ioctl.h</code> <a href="https://github.com/antiagainst/SM-G991B/blob/5971a12600f91a101beab6acccc70720a05248c0/drivers/gpu/arm/bv_r26p0/mali_kbase_ioctl.h">file</a> contains
+top-level ioctl commands, including the ioctl <a href="https://github.com/antiagainst/SM-G991B/blob/5971a12600f91a101beab6acccc70720a05248c0/drivers/gpu/arm/bv_r26p0/mali_kbase_ioctl.h#L166-L182">command</a> for
+setting up perf counter reader. The ioctl commands for perf counters are in the
+<code>drivers/gpu/arm/bv_r26p0/mali_kbase_hwcnt_reader.h</code> <a href="https://github.com/antiagainst/SM-G991B/blob/5971a12600f91a101beab6acccc70720a05248c0/drivers/gpu/arm/bv_r26p0/mali_kbase_hwcnt_reader.h">file</a>.
+The ioctl entry point <a href="https://github.com/antiagainst/SM-G991B/blob/5971a12600f91a101beab6acccc70720a05248c0/drivers/gpu/arm/bv_r26p0/mali_kbase_vinstr.c#L924-L994">function</a> is
+<code>kbasep_vinstr_hwcnt_reader_ioctl</code>.</p>
+<p>Each functionality block (job manager, tiler, shader core, memory) in a Mali
+always returns a fixed-size block containing 64 counters. But the exact meaning
+of each counter <a href="https://github.com/ARM-software/HWCPipe/blob/6b76f3252e532c35ec9aef70858030f266c46064/vendor/arm/mali/hwc_names.hpp">varies per device</a>.
+What&rsquo;s nice, though, is that ARM publishes very detailed
+<a href="https://developer.arm.com/ip-products/graphics-and-multimedia/mali-gpus/mali-performance-counters">explanations</a> of their perf counters. So no need for guess
+work. 😊</p>
+<h2 id="closing-remarks">Closing Remarks</h2>
+<p>That&rsquo;s it. Thanks for reading through! Hopefully this provides useful
+information for you. It just happens that I need to understand perf counters
+so I&rsquo;m using them as examples here. But really, this blog post is more to show
+that by inspecting the kernel code we can gain a lot of insights into those
+mobile GPUs.</p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p>Note that there is also an <code>drivers/gpu/drm/msm</code>
+directory; but that&rsquo;s for the <a href="../android-linux-gpu-drivers-internals-and-resources/#driver-resources">open source drivers</a>.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p>In case you are curious, <code>of</code> stands for &ldquo;Open Firmware&rdquo;. The
+Open Firmware Project defines the <a href="https://en.wikipedia.org/wiki/Devicetree">device tree</a>.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p>&ldquo;Lahaina&rdquo; is Snapdragon 888&rsquo;s codename.&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+        </div>
+        
+        <div class="my-4">
+    
+    <a href="https://www.lei.chat/tags/gpu/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#gpu</a>
+    
+    <a href="https://www.lei.chat/tags/driver/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#driver</a>
+    
+    <a href="https://www.lei.chat/tags/performance/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#performance</a>
+    
+    <a href="https://www.lei.chat/tags/counter/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#counter</a>
+    
+    <a href="https://www.lei.chat/tags/adreno/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#adreno</a>
+    
+    <a href="https://www.lei.chat/tags/mali/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#mali</a>
+    
+    <a href="https://www.lei.chat/tags/android/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#android</a>
+    
+    <a href="https://www.lei.chat/tags/linux/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#linux</a>
+    
+    <a href="https://www.lei.chat/tags/kernel/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#kernel</a>
+    
+    <a href="https://www.lei.chat/tags/code/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#code</a>
+    
+    <a href="https://www.lei.chat/tags/walkthrough/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#walkthrough</a>
+    
+</div>
+        
+        
+        
+
+
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">Next</span>
+        <a href="https://www.lei.chat/posts/android-linux-gpu-drivers-internals-and-resources/" class="block">Android/Linux GPU Drivers: Internals and Resources</a>
+        
+    </div>
+</div>
+
+        
+
+
+
+  <script id="utterances" src="https://utteranc.es/client.js"
+            issue-term=title
+            repo=antiagainst/antiagainst.github.io
+              theme=preferred-color-scheme
+        crossorigin="anonymous"
+        async>
+</script>
+<script>
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+      document.getElementById('utterances').setAttribute('theme', 'github-dark')
+    }
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: light)").matches) || storageColorScheme == "Light") {
+      document.getElementById('utterances').setAttribute('theme', 'github-light')
+    }
+</script>
+
+
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+<div class="bg-secondary-bg rounded p-6">
+    <h3 class="text-lg font-semibold mb-4">Series of Posts</h3>
+    <div class="content">
+        
+        
+        <a href="https://www.lei.chat/posts/sampling-performance-counters-from-gpu-drivers/">Sampling Performance Counters from Mobile GPU Drivers</a>
+        <br />
+        
+        <a href="https://www.lei.chat/posts/android-linux-gpu-drivers-internals-and-resources/">Android/Linux GPU Drivers: Internals and Resources</a>
+        <br />
+        
+        
+    </div>
+</div>
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">On This Page</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#rationale-a-perf-counter-sampling-library">Rationale: A Perf Counter Sampling Library</a></li>
+    <li><a href="#methodology">Methodology</a></li>
+    <li><a href="#adreno-gpu">Adreno GPU</a>
+      <ul>
+        <li><a href="#kernel-code-walkthrough">Kernel code walkthrough</a>
+          <ul>
+            <li><a href="#devicedriver-information">Device/driver information</a></li>
+            <li><a href="#gpu-core-definition">GPU core definition</a></li>
+            <li><a href="#ioctl-interface">Ioctl interface</a></li>
+          </ul>
+        </li>
+        <li><a href="#perf-counters">Perf counters</a></li>
+      </ul>
+    </li>
+    <li><a href="#mali-gpu">Mali GPU</a>
+      <ul>
+        <li><a href="#kernel-api-versions">Kernel API Versions</a></li>
+        <li><a href="#gpu-characteristics">GPU characteristics</a></li>
+        <li><a href="#perf-counters-1">Perf counters</a></li>
+      </ul>
+    </li>
+    <li><a href="#closing-remarks">Closing Remarks</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded p-6">
+        <h2 class="text-lg font-semibold mb-4">See Also</h2>
+        <div class="content">
+            
+            <a href="https://www.lei.chat/posts/android-linux-gpu-drivers-internals-and-resources/">Android/Linux GPU Drivers: Internals and Resources</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/what-is-vulkan-compute/">What is Vulkan Compute?</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/shader-toolchain-hlsl-in-vulkan/">Shader Toolchain: HLSL in Vulkan</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/hlsl-for-vulkan-semantic-strings-and-location-numbers/">HLSL for Vulkan: Semantic Strings and Location Numbers</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/hlsl-for-vulkan-resources/">HLSL for Vulkan: Resources</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/hlsl-for-vulkan-matrices/">HLSL for Vulkan: Matrices</a>
+            <br />
+            
+        </div>
+    </div>
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2018 - 2021 <a href="https://www.lei.chat/">Lei Zhang</a>
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

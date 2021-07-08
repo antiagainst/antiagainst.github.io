@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>performance on Lei.Chat()</title>
+    <link>https://www.lei.chat/tags/performance/</link>
+    <description>Recent content in performance on Lei.Chat()</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>&amp;copy; 2018 - 2021 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
+</copyright>
+    <lastBuildDate>Thu, 08 Jul 2021 19:16:41 -0400</lastBuildDate><atom:link href="https://www.lei.chat/tags/performance/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Sampling Performance Counters from Mobile GPU Drivers</title>
+      <link>https://www.lei.chat/posts/sampling-performance-counters-from-gpu-drivers/</link>
+      <pubDate>Thu, 08 Jul 2021 19:16:41 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/posts/sampling-performance-counters-from-gpu-drivers/</guid>
+      <description>&lt;p&gt;In a &lt;a href=&#34;../android-linux-gpu-drivers-internals-and-resources&#34;&gt;previous blog post&lt;/a&gt; I gave a general introduction
+to GPU driver internals in Android/Linux systems. Following up with it, today
+I will explain how a specific functionality, hardware performance counter
+(perf counter) queries, is handled in both Qualcomm Adreno and ARM Mali drivers,
+by walking through the kernel driver source code.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
