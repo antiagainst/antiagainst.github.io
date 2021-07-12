@@ -119,8 +119,8 @@
         "@id": "https://www.lei.chat/posts/sampling-performance-counters-from-gpu-drivers/"
     },
     "headline": "Sampling Performance Counters from Mobile GPU Drivers | Lei.Chat()","datePublished": "2021-07-08T19:16:41-04:00",
-    "dateModified": "2021-07-08T19:16:41-04:00",
-    "wordCount":  2081 ,
+    "dateModified": "2021-07-12T18:04:28-04:00",
+    "wordCount":  2107 ,
     "publisher": {
         "@type": "Person",
         "name": "Lei Zhang",
@@ -161,7 +161,7 @@
 <meta property="article:published_time" content="2021-07-08T19:16:41-04:00" />
 
 
-<meta property="article:modified_time" content="2021-07-08T19:16:41-04:00" />
+<meta property="article:modified_time" content="2021-07-12T18:04:28-04:00" />
 
 
 
@@ -504,7 +504,7 @@ perf counters from the kernel directly. But the above methodology and steps
 still apply. (And to truly understand the interaction, it&rsquo;s inevitable to read
 the kernel code.) I&rsquo;ll just point out some key points regarding the Mali driver
 code here.</p>
-<h3 id="kernel-api-versions">Kernel API Versions</h3>
+<h3 id="kernel-api-versions">Kernel API versions</h3>
 <p>Compared to Adreno GPUs, the driver code for Mali GPU is actually much more
 complex: you can find <a href="https://github.com/antiagainst/SM-G991B/tree/3ff623ab0e336fce19468f7a6f9ae9f88a486c64/drivers/gpu/arm">multiple copies</a> of the driver at
 different versions; and for the same copy, it&rsquo;s using a <a href="https://github.com/antiagainst/SM-G991B/blob/5971a12600f91a101beab6acccc70720a05248c0/drivers/gpu/arm/bv_r26p0/jm/mali_kbase_jm_ioctl.h#L29-L115">versioned
@@ -537,12 +537,14 @@ setting up perf counter reader. The ioctl commands for perf counters are in the
 <code>drivers/gpu/arm/bv_r26p0/mali_kbase_hwcnt_reader.h</code> <a href="https://github.com/antiagainst/SM-G991B/blob/5971a12600f91a101beab6acccc70720a05248c0/drivers/gpu/arm/bv_r26p0/mali_kbase_hwcnt_reader.h">file</a>.
 The ioctl entry point <a href="https://github.com/antiagainst/SM-G991B/blob/5971a12600f91a101beab6acccc70720a05248c0/drivers/gpu/arm/bv_r26p0/mali_kbase_vinstr.c#L924-L994">function</a> is
 <code>kbasep_vinstr_hwcnt_reader_ioctl</code>.</p>
-<p>Each functionality block (job manager, tiler, shader core, memory) in a Mali
-always returns a fixed-size block containing 64 counters. But the exact meaning
-of each counter <a href="https://github.com/ARM-software/HWCPipe/blob/6b76f3252e532c35ec9aef70858030f266c46064/vendor/arm/mali/hwc_names.hpp">varies per device</a>.
-What&rsquo;s nice, though, is that ARM publishes very detailed
-<a href="https://developer.arm.com/ip-products/graphics-and-multimedia/mali-gpus/mali-performance-counters">explanations</a> of their perf counters. So no need for guess
-work. 😊</p>
+<p>In a Mali GPU, there are four functionality blocks (job manager, tiler, shader
+core, memory) that can emit perf counters. Each functionality block always
+returns a fixed-size block containing 64 counters. All the perf counters are
+packed into a continuous buffer, whose layout is detailed
+<a href="https://github.com/antiagainst/SM-G991B/blob/5971a12600f91a101beab6acccc70720a05248c0/drivers/gpu/arm/bv_r26p0/mali_kbase_hwcnt_gpu.c#L171-L271">here</a>. But the exact meaning of each counter <a href="https://github.com/ARM-software/HWCPipe/blob/60de48bbdcba7ceb7a2d95df720bd659802e11e5/misc/gator-counter-definitions/MaliHwCntrNames.h">varies
+per device</a>. What&rsquo;s nice, though, is that ARM publishes
+very detailed <a href="https://developer.arm.com/ip-products/graphics-and-multimedia/mali-gpus/mali-performance-counters">explanations</a> of their perf counters. So no need
+for guess work. 😊</p>
 <h2 id="closing-remarks">Closing Remarks</h2>
 <p>That&rsquo;s it. Thanks for reading through! Hopefully this provides useful
 information for you. It just happens that I need to understand perf counters
@@ -677,7 +679,7 @@ Open Firmware Project defines the <a href="https://en.wikipedia.org/wiki/Devicet
     </li>
     <li><a href="#mali-gpu">Mali GPU</a>
       <ul>
-        <li><a href="#kernel-api-versions">Kernel API Versions</a></li>
+        <li><a href="#kernel-api-versions">Kernel API versions</a></li>
         <li><a href="#gpu-characteristics">GPU characteristics</a></li>
         <li><a href="#perf-counters-1">Perf counters</a></li>
       </ul>
