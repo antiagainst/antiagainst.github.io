@@ -119,8 +119,8 @@
         "@id": "https://www.lei.chat/posts/edge-mobile-ml-inference-challenges/"
     },
     "headline": "Edge\/Mobile ML Inference Challenges | Lei.Chat()","datePublished": "2021-07-17T13:48:27-04:00",
-    "dateModified": "2021-07-17T13:48:27-04:00",
-    "wordCount":  2146 ,
+    "dateModified": "2021-07-18T09:09:26-04:00",
+    "wordCount":  2240 ,
     "publisher": {
         "@type": "Person",
         "name": "Lei Zhang",
@@ -161,7 +161,7 @@
 <meta property="article:published_time" content="2021-07-17T13:48:27-04:00" />
 
 
-<meta property="article:modified_time" content="2021-07-17T13:48:27-04:00" />
+<meta property="article:modified_time" content="2021-07-18T09:09:26-04:00" />
 
 
 
@@ -449,7 +449,9 @@ For AI accelerators, it entirely relies on vendor-specific toolchains to only
 target very specific SoCs.</li>
 <li><strong>Layered system</strong>. There are app sandboxes and multiple levels of
 abstractions. They are meant for security or trying to hide chip or hardware
-differences, but they introduce additional costs and performance unstability.</li>
+differences, but they introduce performance instability and additional costs,
+which can very well exceed the original computation cost if the workload is
+small.</li>
 <li><strong>Deployment constraints</strong>. Unlike in the datacenter, where we can deploy new
 infrastructure or models in whatever manner, mobile devices typically update
 apps thru app stores, with the user&rsquo;s control. Bandwidth and size is really
@@ -460,7 +462,7 @@ a concern here, in addition to runtime performance and efficiency.</li>
 <a href="https://research.fb.com/wp-content/uploads/2018/12/Machine-Learning-at-Facebook-Understanding-Inference-at-the-Edge.pdf">&ldquo;Machine Learning at Facebook: Understanding Inference at the Edge&rdquo;</a>
 in late 2018 and speaks of many of the same challenges with concrete numbers,
 particularly on the system and usability side.
-I highly suggest you to give it a read. I&rsquo;ll quote some of their key points
+I highly suggest you give it a read. I&rsquo;ll quote some of their key points
 in the following section.</p>
 <h3 id="summary">Summary</h3>
 <p>Basically, the challenges can be divided into two categories: those dictate
@@ -472,33 +474,43 @@ design and efficient implementation. For the former:</p>
 only 30 SoCs with more than 1% coverage and their joint coverage is only 51%;
 225 SoCs are still just covering 95%.&rdquo; Without a proper way to handle this,
 we are either restricted to a limited subset, or we cannot utilize the full
-power of each phone.</li>
+power of each phone. Hardware fragmentation causes this.</li>
 <li><strong>Programmability</strong> is a primary roadblock for fully utilizing mobile SoCs
 other than CPUs. It&rsquo;s great to see various SoCs have dedicated AI accelerators
 sporting a fantastic FLOPS number, but the reality is they are hardly used,
 due to toolchain issues and portability: only major mobile and chipset vendors
 have AI accelerators. Lots of effort is needed to deploy models and a
 different SoC means redo the work again. Facebook reported in their paper that
-they resort to mainly using CPU because that&rsquo;s the most available and reliable.</li>
+they resort to mainly using CPU because that&rsquo;s the most available and reliable.
+<a href="#heterogeneous-and-fragmented-system">Heterogeneous and fragmented system</a>
+as a whole causes programmability issues.</li>
 <li><strong>Stack robustness</strong>. Even GPU is not well used on mobile phones, due to the
 inconsistent and buggy GPU stack for OpenGL ES, and OpenCL not officially
-supported in Android Open Source Project.</li>
+supported in Android Open Source Project. Having a robust stack helps
+deliver an <a href="#end-to-end-real-time-solution-for-small-workloads">end-to-end real-time solution for small
+workloads</a>.</li>
 </ul>
-<p>For the latter:</p>
+<p>The second category requires the solution to be:</p>
 <ul>
-<li>An <strong>end-to-end deployment solution</strong> is great for the model life cycle. The
-more streamlined and the less manual interaction from research to deployment,
-the better.</li>
-<li><strong>Efficiency</strong> at every dimension (energy, runtime, size, etc.) is needed.
+<li>An <strong>end-to-end configurable deployment solution</strong> is great for the model
+life cycle. The more streamlined and the less manual interaction from research
+to deployment, the better. This helps software stack fragmentation, deep
+integration with app logic, and deployment constraints.</li>
+<li><strong>All dimension efficiency</strong> is needed, including energy, runtime, size, etc.
 The solution should be performant and use the least resources possible to be
-friendly to others.</li>
+friendly to others. Efficiency helps the small and variable workload sizes,
+work distribution and chip utilization, and
+<a href="#resource-constrained-environment">resource constrained environment</a>.</li>
 <li><strong>Predictability</strong> is a very important factor to consider for mobile inference
-to avoid perceivable lag to cause negative experience in real-time workloads.</li>
+to avoid perceivable lag to cause negative experience in real-time workloads.
+This helps latency sensitivity.</li>
 </ul>
 <h2 id="how-to-address">How to Address</h2>
 <p>So, inference at the edge is juggling among many constraints and trying to find
 a balance. It&rsquo;s bad to just paint the sky as grey without giving a way out.</p>
-<p>In <a href="https://github.com/google/iree">IREE</a>, we are developing an end-to-end compiler for generating both
+<p>Generally, compilers are proven to be great at both handling heterogeneity
+and achieving efficiency.
+In <a href="https://github.com/google/iree">IREE</a>, we are developing an end-to-end compiler for generating both
 kernels and scheduling logic to handle heterogeneity and programmability.
 For GPU we use Vulkan, which is a very thin abstraction, to gain the most
 control of the stack and achieve performance and predictability. These are
