@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang='en' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Edge/Mobile ML Inference Challenges | Lei.Chat()</title>
+
+<meta name="generator" content="Hugo Eureka 0.8.0" />
+<link rel="stylesheet" href="https://www.lei.chat/css/eureka.min.css">
+<script defer src="https://www.lei.chat/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/bash.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/c.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cmake.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cpp.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/glsl.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/javascript.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/llvm.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/python.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/shell.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-109525036-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-109525036-1');
+</script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="These days if you would like to learn about machine learning, there are
+abundant great resources on the web discussing model architectures and how to
+code and train them.
+Materials about inference, though, are generally much harder to find,
+especially for edge and mobile. You might ask, inference is just the forward
+pass of training, so how hard can it be? Actually, it faces lots of unique
+challenges, to the extent that we are basically solving completely different
+major problems.
+I have been working on inference at the edge for a while, so let me capture
+them in this blog post, by contrasting training and inference in the cloud.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Posts",
+      "item":"https://www.lei.chat/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Edge/Mobile ML Inference Challenges",
+      "item":"https://www.lei.chat/posts/edge-mobile-ml-inference-challenges/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.lei.chat/posts/edge-mobile-ml-inference-challenges/"
+    },
+    "headline": "Edge\/Mobile ML Inference Challenges | Lei.Chat()","datePublished": "2021-07-17T13:48:27-04:00",
+    "dateModified": "2021-07-17T13:48:27-04:00",
+    "wordCount":  2146 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "Lei Zhang",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.lei.chat/images/avatar.png"
+        }
+        },
+    "description": "\u003cp\u003eThese days if you would like to learn about machine learning, there are\nabundant great resources on the web discussing model architectures and how to\ncode and train them.\nMaterials about inference, though, are generally much harder to find,\nespecially for edge and mobile. You might ask, inference is just the forward\npass of training, so how hard can it be? Actually, it faces lots of unique\nchallenges, to the extent that we are basically solving completely different\nmajor problems.\nI have been working on inference at the edge for a while, so let me capture\nthem in this blog post, by contrasting training and inference in the cloud.\u003c\/p\u003e"
+}
+</script><meta property="og:title" content="Edge/Mobile ML Inference Challenges | Lei.Chat()" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="https://www.lei.chat/images/avatar.png">
+
+
+<meta property="og:url" content="https://www.lei.chat/posts/edge-mobile-ml-inference-challenges/" />
+
+
+
+
+<meta property="og:description" content="These days if you would like to learn about machine learning, there are
+abundant great resources on the web discussing model architectures and how to
+code and train them.
+Materials about inference, though, are generally much harder to find,
+especially for edge and mobile. You might ask, inference is just the forward
+pass of training, so how hard can it be? Actually, it faces lots of unique
+challenges, to the extent that we are basically solving completely different
+major problems.
+I have been working on inference at the edge for a while, so let me capture
+them in this blog post, by contrasting training and inference in the cloud." />
+
+
+
+
+<meta property="og:locale" content="en" />
+
+
+
+
+<meta property="og:site_name" content="Lei.Chat()" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2021-07-17T13:48:27-04:00" />
+
+
+<meta property="article:modified_time" content="2021-07-17T13:48:27-04:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="edge" />
+
+<meta property="article:tag" content="mobile" />
+
+<meta property="article:tag" content="ml" />
+
+<meta property="article:tag" content="inference" />
+
+<meta property="article:tag" content="challenge" />
+
+<meta property="article:tag" content="cloud" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Lei.Chat()</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">Posts</a>
+            <a href="/authors/me" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">About</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">Light</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">Dark</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">Auto</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">Edge/Mobile ML Inference Challenges</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2021-07-17</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>11 min read</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="https://www.lei.chat/categories/android/" class="hover:text-eureka">android</a>
+        
+        
+        <span>, </span>
+        <a href="https://www.lei.chat/categories/ml-inference/" class="hover:text-eureka">ml-inference</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="https://www.lei.chat/series/android/" class="hover:text-eureka">android</a>
+        
+        
+        <span>, </span>
+        <a href="https://www.lei.chat/series/ml-inference/" class="hover:text-eureka">ml-inference</a>
+        
+    </div>
+    
+</div>
+        
+        <div class="content">
+            <p>These days if you would like to learn about machine learning, there are
+abundant great resources on the web discussing model architectures and how to
+code and train them.
+Materials about inference, though, are generally much harder to find,
+especially for edge and mobile. You might ask, inference is just the forward
+pass of training, so how hard can it be? Actually, it faces lots of unique
+challenges, to the extent that we are basically solving completely different
+major problems.
+I have been working on inference at the edge for a while, so let me capture
+them in this blog post, by contrasting training and inference in the cloud.</p>
+<h2 id="ml-training">ML Training</h2>
+<p>Training, especially if depending on gradient descent and back propagation, is
+by nature highly iterative. The core to the algorithm is two loops; they iterate
+over epochs and batches, and perform forward loss calculation and backward loss
+distribution. This structure and the need to update parameters after each
+iteration really stresses system utilization, as it means full of control flows
+and synchronization, both are bad for any sort of chips<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>.</p>
+<p>Fortunately, today for ML we are typically performing deep learning with neural
+networks, which require a large amount of data to fit, so batching can help to
+improve chip utilization. Still, the algorithm nature together with the
+increasing needs to handle millions or billions of parameters from enormous
+models means training is more and more a datacenter endeavor involving machine
+clusters with plentiful GPUs or dedicated AI accelerators.<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<p>At this scale, we are really discussing distributed systems and should
+use the mindset and tools there. Although, the unique nature of deep learning
+and its training algorithm do introduce new dimensions for consideration:
+we need to balance between training speed and model accuracy; we can tolerate
+the parameter/gradient inconsistency between different workers; we need to make
+sure the generality of the model, and so on.
+So we trade off among data or model parallelism, AllReduce or parameter server,
+synchronous or asynchronous update, and such.</p>
+<h2 id="ml-inference">ML Inference</h2>
+<p>Inference just performs the forward calculation on one or a few data points.
+It&rsquo;s much less data and compute intensive than training, so it can run either
+in the cloud or on some edge devices.
+These two deployment scenarios have quite different characteristics to affect
+trade-offs again.</p>
+<p>Inference in the cloud allows aggregating requests from everywhere. This gives
+it similar characteristics like training. We can sustain high GPU or AI
+accelerator utilization with a single task via batching.
+As long as there are enough requests, the inference task can be the only
+computation happening on a chip and acquire all of its resources yet still
+maintain high utilization.</p>
+<p>Under such circumstances, effectively we are mostly GPU or accelerator bound.
+This is where it makes more economic sense to develop all sorts of customized
+chips to accelerate a specific task because that&rsquo;s really the bottleneck.
+More FLOPS helps throughput a lot.</p>
+<p>However, due to latency and security concerns, inference at the edge is more
+compelling. Inference at the edge is a quite different problem.</p>
+<h2 id="mobile-inference-challenges">Mobile Inference Challenges</h2>
+<p>Fundamentally, edge devices, with mobile phones as a prominent example, have
+an environment that we don&rsquo;t control. Unlike in the cloud, where we can feel
+free to choose whatever stack for building a solution and iterate on it in
+whatever manner, we can pretty much only take what&rsquo;s in a mobile phone&rsquo;s stack
+just as it is. Changes may be requested and made, but it&rsquo;s a lengthy procedure
+and at the mercy of many parties in the mobile phone vendor chain.
+Let&rsquo;s look at the various challenges we face in mobile inference.</p>
+<h3 id="resource-constrained-environment">Resource constrained environment</h3>
+<p>Mobile phones are very much resource constrained. They are powered by batteries
+and have much less powerful CPUs/GPUs than the cloud.
+What&rsquo;s more, these limited resources are to support a host of apps running
+simultaneously. So we are fighting with:</p>
+<ul>
+<li><strong>App and task multi-tenancy</strong>. All the running apps and tasks compete for the
+limited resource. Foreground iterative tasks have priority in order to
+maintain the smoothness of the whole system.</li>
+<li><strong>Power consumption and heat dissipation</strong>. The form factor of the mobile
+phone determines that there is a limit on total battery power. An app or task
+cannot freely draw as much power as we want. We also cannot push the phone to
+extremes (like, beyond 4 Watt) for a long time because that will hit the
+phone&rsquo;s ability to dissipate heat and then we will see throttling.</li>
+<li><strong>Operating system scheduling and throttling</strong>. Even though current phones
+have CPUs up to 1+3+4 cores, typically we cannot expect the task to be
+scheduled on big cores if it&rsquo;s short-lived (like less than 50 ms).
+If it indeed takes longer, then it might be placed on some big core by the OS,
+but now there is the problem of power consumption&mdash;big cores draw much more
+power (like, 5x) than small ones. So again it might not sustain for a long
+time before we see throttling again; it&rsquo;s really for a short burst.
+Multithreading with multiple big cores is hardly possible.
+This is for the CPU. GPUs are better at handling lots of requests and maintain
+high throughput. So if we are not running games, GPUs are generally more than
+enough to render the UI and run some ML inference workload at the same time.
+But the OS might not clock it at the highest for energy considerations too.</li>
+</ul>
+<h3 id="end-to-end-real-time-solution-for-small-workloads">End-to-end real-time solution for small workloads</h3>
+<p>Also, while training and cloud inference can have the flexibility to focus on
+one specific task (even if it&rsquo;s a subtask) and be conducted offline in a
+batched manner, inference at the edge typically needs to be incorporated into
+an end-to-end solution and serve in real time.
+For example, to perform face unlocking, there are multiple models involved,
+e.g., one for detecting a face from image frames captured by the camera at a
+high FPS, one for matching the detected face, and potentially with additional
+processing like cropping, rotating, and others. All of these need to happen
+in a blink of an eye after you pick up your phone. So we have:</p>
+<ul>
+<li><strong>Small and variable workload sizes</strong>: Inference on a phone typically handles
+one data point (one image, one language sentence, one audio sequence, etc.).
+The workload can be too small to justify the startup cost of GPUs or other
+accelerators and to hide the inefficiencies in other places of the
+GPU/accelerator stack. We might be able to batch a bit like the cloud, but
+that&rsquo;s only possible for tasks not sensitive to latency.</li>
+<li><strong>Work distribution and chip utilization</strong>. Because of the workload
+characteristics, mobile ML need to be smart at deciding how to run a model,
+depending on the model itself (e.g., whether it contains enough computation
+to even worth dispatch to the GPU) and the current state of the system
+(e.g., screen on/off, overheating or not, CPU/GPU load, etc.).</li>
+<li><strong>Latency sensitivity</strong>. Typically a user interacts with the phone in
+real-time; any noticeable lag can cause negative experience. So the response
+should be immediate.</li>
+<li><strong>Deep integration with app logic</strong>. ML inference is just a component of the
+app. So it should be built with that mindset and be non-intrusive wherever
+possible. It should not force design choices on the app; instead, options
+should be provided to let the app suit its own needs.</li>
+</ul>
+<p>Most of the challenges discussed thus far are not concerns for training and
+inference in the cloud. Even for those that are, like work distribution
+and chip utilization, we can in a sense ignore it and &ldquo;hide&rdquo; the inefficiency
+via brute force&mdash;just throw in more machines with more GPUs. That is not an
+option for the edge for sure.</p>
+<h3 id="heterogeneous-and-fragmented-system">Heterogeneous and fragmented system</h3>
+<p>If you think the above is still manageable as we just need to be very careful
+and write efficient and performant libraries, hear me out, the above list is
+just to get started. 😊</p>
+<p>The above points are just the nature of mobile devices and inference.
+Considering more on the system and implementation side, we also need to fight:</p>
+<ul>
+<li><strong>Hardware fragmentation</strong>. CPUs are okay here; it&rsquo;s basically ARMv8 nowadays.
+For GPU, We have Qualcomm Adreno, ARM Mali, Imagination PowerVR, and <a href="https://www.anandtech.com/show/16728/amd-samsung-exynos-rt-vrs">soon
+AMD RDNA</a>. Each has multiple generations.
+And they are packed into a SoC. So more variants. Then the SoC is assembled
+into the final phone by device OEMs. Even more variants. CPUs and GPUs are
+general compute devices; it&rsquo;s already overwhelming. If we additionally put
+various AI accelerators into the picture, it&rsquo;s just daunting.</li>
+<li><strong>Software stack fragmentation</strong>. There are quite a few ML frameworks; models
+authored with them typically need to be converted before deployment. So a
+different path for each such framework.
+There are Android and iOS. For Android, there is the notorious version
+fragmentation issue.
+Together with hardware fragmentation, we have a compounding problem. Even for
+the same SoC, we can have GPU drivers at different versions, which may lack
+certain functionalities or have various bugs.
+So yeah, thus far the device configuration space for GPU has really grown into
+many dimensions: GPU architecture, SoC, Android, version, driver version.
+For AI accelerators, it entirely relies on vendor-specific toolchains to only
+target very specific SoCs.</li>
+<li><strong>Layered system</strong>. There are app sandboxes and multiple levels of
+abstractions. They are meant for security or trying to hide chip or hardware
+differences, but they introduce additional costs and performance unstability.</li>
+<li><strong>Deployment constraints</strong>. Unlike in the datacenter, where we can deploy new
+infrastructure or models in whatever manner, mobile devices typically update
+apps thru app stores, with the user&rsquo;s control. Bandwidth and size is really
+a concern here, in addition to runtime performance and efficiency.</li>
+</ul>
+<h3 id="facebooks-survey">Facebook&rsquo;s survey</h3>
+<p>And it&rsquo;s not only me trying to scare you or something. Facebook published
+<a href="https://research.fb.com/wp-content/uploads/2018/12/Machine-Learning-at-Facebook-Understanding-Inference-at-the-Edge.pdf">&ldquo;Machine Learning at Facebook: Understanding Inference at the Edge&rdquo;</a>
+in late 2018 and speaks of many of the same challenges with concrete numbers,
+particularly on the system and usability side.
+I highly suggest you to give it a read. I&rsquo;ll quote some of their key points
+in the following section.</p>
+<h3 id="summary">Summary</h3>
+<p>Basically, the challenges can be divided into two categories: those dictate
+whether we can do ML at all and those require us to have very thoughtful
+design and efficient implementation. For the former:</p>
+<ul>
+<li><strong>Heterogeneity</strong> is a fundamental characteristic in the mobile world.
+&ldquo;The most-commonly used SoC has less than 4% of the market share; there are
+only 30 SoCs with more than 1% coverage and their joint coverage is only 51%;
+225 SoCs are still just covering 95%.&rdquo; Without a proper way to handle this,
+we are either restricted to a limited subset, or we cannot utilize the full
+power of each phone.</li>
+<li><strong>Programmability</strong> is a primary roadblock for fully utilizing mobile SoCs
+other than CPUs. It&rsquo;s great to see various SoCs have dedicated AI accelerators
+sporting a fantastic FLOPS number, but the reality is they are hardly used,
+due to toolchain issues and portability: only major mobile and chipset vendors
+have AI accelerators. Lots of effort is needed to deploy models and a
+different SoC means redo the work again. Facebook reported in their paper that
+they resort to mainly using CPU because that&rsquo;s the most available and reliable.</li>
+<li><strong>Stack robustness</strong>. Even GPU is not well used on mobile phones, due to the
+inconsistent and buggy GPU stack for OpenGL ES, and OpenCL not officially
+supported in Android Open Source Project.</li>
+</ul>
+<p>For the latter:</p>
+<ul>
+<li>An <strong>end-to-end deployment solution</strong> is great for the model life cycle. The
+more streamlined and the less manual interaction from research to deployment,
+the better.</li>
+<li><strong>Efficiency</strong> at every dimension (energy, runtime, size, etc.) is needed.
+The solution should be performant and use the least resources possible to be
+friendly to others.</li>
+<li><strong>Predictability</strong> is a very important factor to consider for mobile inference
+to avoid perceivable lag to cause negative experience in real-time workloads.</li>
+</ul>
+<h2 id="how-to-address">How to Address</h2>
+<p>So, inference at the edge is juggling among many constraints and trying to find
+a balance. It&rsquo;s bad to just paint the sky as grey without giving a way out.</p>
+<p>In <a href="https://github.com/google/iree">IREE</a>, we are developing an end-to-end compiler for generating both
+kernels and scheduling logic to handle heterogeneity and programmability.
+For GPU we use Vulkan, which is a very thin abstraction, to gain the most
+control of the stack and achieve performance and predictability. These are
+topics worth their own blog posts; This one is fairly long already, so I&rsquo;ll
+just stop here. Till next time! 😊</p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p>Practically it is less so for control flow on CPUs. Branch
+prediction on CPUs are quite good these days, at the cost of complicated
+hardware logic. But still, CPUs also love streamlined code, especially for
+utilizing SIMD functionalities.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p>For edge devices we sometimes also want to train. But that&rsquo;s
+mostly fine tuning a previously trained model to fit a specific task or user.
+The vast majority of the parameters are frozen for such cases.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+        </div>
+        
+        <div class="my-4">
+    
+    <a href="https://www.lei.chat/tags/edge/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#edge</a>
+    
+    <a href="https://www.lei.chat/tags/mobile/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#mobile</a>
+    
+    <a href="https://www.lei.chat/tags/ml/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#ml</a>
+    
+    <a href="https://www.lei.chat/tags/inference/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#inference</a>
+    
+    <a href="https://www.lei.chat/tags/challenge/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#challenge</a>
+    
+    <a href="https://www.lei.chat/tags/cloud/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#cloud</a>
+    
+    <a href="https://www.lei.chat/tags/training/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#training</a>
+    
+    <a href="https://www.lei.chat/tags/android/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#android</a>
+    
+    <a href="https://www.lei.chat/tags/heterogeneity/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#heterogeneity</a>
+    
+    <a href="https://www.lei.chat/tags/fragmentation/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#fragmentation</a>
+    
+    <a href="https://www.lei.chat/tags/deployment/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#deployment</a>
+    
+    <a href="https://www.lei.chat/tags/constraint/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#constraint</a>
+    
+</div>
+        
+        
+        
+
+
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">Next</span>
+        <a href="https://www.lei.chat/posts/sampling-performance-counters-from-gpu-drivers/" class="block">Sampling Performance Counters from Mobile GPU Drivers</a>
+        
+    </div>
+</div>
+
+        
+
+
+
+  <script id="utterances" src="https://utteranc.es/client.js"
+            issue-term=title
+            repo=antiagainst/antiagainst.github.io
+              theme=preferred-color-scheme
+        crossorigin="anonymous"
+        async>
+</script>
+<script>
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+      document.getElementById('utterances').setAttribute('theme', 'github-dark')
+    }
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: light)").matches) || storageColorScheme == "Light") {
+      document.getElementById('utterances').setAttribute('theme', 'github-light')
+    }
+</script>
+
+
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+<div class="bg-secondary-bg rounded p-6">
+    <h3 class="text-lg font-semibold mb-4">Series of Posts</h3>
+    <div class="content">
+        
+        
+        <a href="https://www.lei.chat/posts/edge-mobile-ml-inference-challenges/">Edge/Mobile ML Inference Challenges</a>
+        <br />
+        
+        
+        
+        <a href="https://www.lei.chat/posts/edge-mobile-ml-inference-challenges/">Edge/Mobile ML Inference Challenges</a>
+        <br />
+        
+        
+    </div>
+</div>
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">On This Page</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#ml-training">ML Training</a></li>
+    <li><a href="#ml-inference">ML Inference</a></li>
+    <li><a href="#mobile-inference-challenges">Mobile Inference Challenges</a>
+      <ul>
+        <li><a href="#resource-constrained-environment">Resource constrained environment</a></li>
+        <li><a href="#end-to-end-real-time-solution-for-small-workloads">End-to-end real-time solution for small workloads</a></li>
+        <li><a href="#heterogeneous-and-fragmented-system">Heterogeneous and fragmented system</a></li>
+        <li><a href="#facebooks-survey">Facebook&rsquo;s survey</a></li>
+        <li><a href="#summary">Summary</a></li>
+      </ul>
+    </li>
+    <li><a href="#how-to-address">How to Address</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded p-6">
+        <h2 class="text-lg font-semibold mb-4">See Also</h2>
+        <div class="content">
+            
+            <a href="https://www.lei.chat/posts/sampling-performance-counters-from-gpu-drivers/">Sampling Performance Counters from Mobile GPU Drivers</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/android-linux-gpu-drivers-internals-and-resources/">Android/Linux GPU Drivers: Internals and Resources</a>
+            <br />
+            
+        </div>
+    </div>
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2018 - 2021 <a href="https://www.lei.chat/">Lei Zhang</a>
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

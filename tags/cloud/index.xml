@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>cloud on Lei.Chat()</title>
+    <link>https://www.lei.chat/tags/cloud/</link>
+    <description>Recent content in cloud on Lei.Chat()</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>&amp;copy; 2018 - 2021 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
+</copyright>
+    <lastBuildDate>Sat, 17 Jul 2021 13:48:27 -0400</lastBuildDate><atom:link href="https://www.lei.chat/tags/cloud/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Edge/Mobile ML Inference Challenges</title>
+      <link>https://www.lei.chat/posts/edge-mobile-ml-inference-challenges/</link>
+      <pubDate>Sat, 17 Jul 2021 13:48:27 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/posts/edge-mobile-ml-inference-challenges/</guid>
+      <description>&lt;p&gt;These days if you would like to learn about machine learning, there are
+abundant great resources on the web discussing model architectures and how to
+code and train them.
+Materials about inference, though, are generally much harder to find,
+especially for edge and mobile. You might ask, inference is just the forward
+pass of training, so how hard can it be? Actually, it faces lots of unique
+challenges, to the extent that we are basically solving completely different
+major problems.
+I have been working on inference at the edge for a while, so let me capture
+them in this blog post, by contrasting training and inference in the cloud.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

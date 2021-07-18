@@ -8,7 +8,25 @@
     <language>en</language>
     <copyright>&amp;copy; 2018 - 2021 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Thu, 08 Jul 2021 19:16:41 -0400</lastBuildDate><atom:link href="https://www.lei.chat/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 17 Jul 2021 13:48:27 -0400</lastBuildDate><atom:link href="https://www.lei.chat/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Edge/Mobile ML Inference Challenges</title>
+      <link>https://www.lei.chat/posts/edge-mobile-ml-inference-challenges/</link>
+      <pubDate>Sat, 17 Jul 2021 13:48:27 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/posts/edge-mobile-ml-inference-challenges/</guid>
+      <description>&lt;p&gt;These days if you would like to learn about machine learning, there are
+abundant great resources on the web discussing model architectures and how to
+code and train them.
+Materials about inference, though, are generally much harder to find,
+especially for edge and mobile. You might ask, inference is just the forward
+pass of training, so how hard can it be? Actually, it faces lots of unique
+challenges, to the extent that we are basically solving completely different
+major problems.
+I have been working on inference at the edge for a while, so let me capture
+them in this blog post, by contrasting training and inference in the cloud.&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Sampling Performance Counters from Mobile GPU Drivers</title>
       <link>https://www.lei.chat/posts/sampling-performance-counters-from-gpu-drivers/</link>
@@ -32,7 +50,7 @@ by walking through the kernel driver source code.&lt;/p&gt;</description>
 GPU kernel drivers from various vendors on Android/Linux systems. Compared to
 various GPU APIs, information at this level is quite sparse; so it is not a
 straightforward task, to say the least, and ends up requiring me to piece
-multiple sources together to figure out the details. So I&amp;rsquo;m logging these driver
+multiple sources together to figure out the details. So I am logging these driver
 internals and resources down in case it can be useful to others that are
 interested in these low-level bits.&lt;/p&gt;</description>
     </item>
