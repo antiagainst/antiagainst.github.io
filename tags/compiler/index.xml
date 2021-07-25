@@ -8,7 +8,23 @@
     <language>en</language>
     <copyright>&amp;copy; 2018 - 2021 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Sat, 12 May 2018 17:44:14 -0400</lastBuildDate><atom:link href="https://www.lei.chat/tags/compiler/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 25 Jul 2021 11:25:26 -0400</lastBuildDate><atom:link href="https://www.lei.chat/tags/compiler/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>GPGPU, ML Inference, and Vulkan Compute</title>
+      <link>https://www.lei.chat/posts/gpgpu-ml-inference-and-vulkan-compute/</link>
+      <pubDate>Sun, 25 Jul 2021 11:25:26 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/posts/gpgpu-ml-inference-and-vulkan-compute/</guid>
+      <description>&lt;p&gt;Nowadays GPUs are utilized for both graphics rendering and general-purpose
+compute (GPGPU). For the latter, CUDA is the indisputable leading solution.
+Though, with so many other GPU vendors, the quest for a GPGPU standard never
+stops. OpenCL was a great attempt and is used widely; but still it falls
+short on many aspects.
+Given the success of Vulkan in graphics and it being both a graphics and
+compute API, one would wonder whether it can actually be the next-generation
+GPGPU standard. I certainly believe so; but the road is not full of roses.&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Shader Toolchain: HLSL in Vulkan</title>
       <link>https://www.lei.chat/posts/shader-toolchain-hlsl-in-vulkan/</link>

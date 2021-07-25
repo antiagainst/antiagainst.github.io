@@ -8,11 +8,11 @@
     <language>en</language>
     <copyright>&amp;copy; 2018 - 2021 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Sat, 17 Jul 2021 13:48:27 -0400</lastBuildDate><atom:link href="https://www.lei.chat/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 25 Jul 2021 11:25:26 -0400</lastBuildDate><atom:link href="https://www.lei.chat/categories/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>android</title>
       <link>https://www.lei.chat/categories/android/</link>
-      <pubDate>Sat, 17 Jul 2021 13:48:27 -0400</pubDate>
+      <pubDate>Sun, 25 Jul 2021 11:25:26 -0400</pubDate>
       
       <guid>https://www.lei.chat/categories/android/</guid>
       <description></description>
@@ -21,9 +21,18 @@
     <item>
       <title>ml-inference</title>
       <link>https://www.lei.chat/categories/ml-inference/</link>
-      <pubDate>Sat, 17 Jul 2021 13:48:27 -0400</pubDate>
+      <pubDate>Sun, 25 Jul 2021 11:25:26 -0400</pubDate>
       
       <guid>https://www.lei.chat/categories/ml-inference/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>vulkan-compute</title>
+      <link>https://www.lei.chat/categories/vulkan-compute/</link>
+      <pubDate>Sun, 25 Jul 2021 11:25:26 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/categories/vulkan-compute/</guid>
       <description></description>
     </item>
     
@@ -51,15 +60,6 @@
       <pubDate>Mon, 05 Jul 2021 18:20:07 -0400</pubDate>
       
       <guid>https://www.lei.chat/categories/linux/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>vulkan-compute</title>
-      <link>https://www.lei.chat/categories/vulkan-compute/</link>
-      <pubDate>Fri, 25 Jun 2021 10:15:58 -0400</pubDate>
-      
-      <guid>https://www.lei.chat/categories/vulkan-compute/</guid>
       <description></description>
     </item>
     

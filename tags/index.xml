@@ -8,13 +8,148 @@
     <language>en</language>
     <copyright>&amp;copy; 2018 - 2021 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Sat, 17 Jul 2021 13:48:27 -0400</lastBuildDate><atom:link href="https://www.lei.chat/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 25 Jul 2021 11:25:26 -0400</lastBuildDate><atom:link href="https://www.lei.chat/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>android</title>
       <link>https://www.lei.chat/tags/android/</link>
-      <pubDate>Sat, 17 Jul 2021 13:48:27 -0400</pubDate>
+      <pubDate>Sun, 25 Jul 2021 11:25:26 -0400</pubDate>
       
       <guid>https://www.lei.chat/tags/android/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>business</title>
+      <link>https://www.lei.chat/tags/business/</link>
+      <pubDate>Sun, 25 Jul 2021 11:25:26 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/business/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>compiler</title>
+      <link>https://www.lei.chat/tags/compiler/</link>
+      <pubDate>Sun, 25 Jul 2021 11:25:26 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/compiler/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>compute</title>
+      <link>https://www.lei.chat/tags/compute/</link>
+      <pubDate>Sun, 25 Jul 2021 11:25:26 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/compute/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>cuda</title>
+      <link>https://www.lei.chat/tags/cuda/</link>
+      <pubDate>Sun, 25 Jul 2021 11:25:26 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/cuda/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>driver</title>
+      <link>https://www.lei.chat/tags/driver/</link>
+      <pubDate>Sun, 25 Jul 2021 11:25:26 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/driver/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ecosystem</title>
+      <link>https://www.lei.chat/tags/ecosystem/</link>
+      <pubDate>Sun, 25 Jul 2021 11:25:26 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/ecosystem/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>edge</title>
+      <link>https://www.lei.chat/tags/edge/</link>
+      <pubDate>Sun, 25 Jul 2021 11:25:26 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/edge/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>gpgpu</title>
+      <link>https://www.lei.chat/tags/gpgpu/</link>
+      <pubDate>Sun, 25 Jul 2021 11:25:26 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/gpgpu/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>inference</title>
+      <link>https://www.lei.chat/tags/inference/</link>
+      <pubDate>Sun, 25 Jul 2021 11:25:26 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/inference/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ml</title>
+      <link>https://www.lei.chat/tags/ml/</link>
+      <pubDate>Sun, 25 Jul 2021 11:25:26 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/ml/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>mobile</title>
+      <link>https://www.lei.chat/tags/mobile/</link>
+      <pubDate>Sun, 25 Jul 2021 11:25:26 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/mobile/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>opencl</title>
+      <link>https://www.lei.chat/tags/opencl/</link>
+      <pubDate>Sun, 25 Jul 2021 11:25:26 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/opencl/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>standard</title>
+      <link>https://www.lei.chat/tags/standard/</link>
+      <pubDate>Sun, 25 Jul 2021 11:25:26 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/standard/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>technology</title>
+      <link>https://www.lei.chat/tags/technology/</link>
+      <pubDate>Sun, 25 Jul 2021 11:25:26 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/technology/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>vulkan</title>
+      <link>https://www.lei.chat/tags/vulkan/</link>
+      <pubDate>Sun, 25 Jul 2021 11:25:26 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/tags/vulkan/</guid>
       <description></description>
     </item>
     
@@ -55,15 +190,6 @@
     </item>
     
     <item>
-      <title>edge</title>
-      <link>https://www.lei.chat/tags/edge/</link>
-      <pubDate>Sat, 17 Jul 2021 13:48:27 -0400</pubDate>
-      
-      <guid>https://www.lei.chat/tags/edge/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>fragmentation</title>
       <link>https://www.lei.chat/tags/fragmentation/</link>
       <pubDate>Sat, 17 Jul 2021 13:48:27 -0400</pubDate>
@@ -78,33 +204,6 @@
       <pubDate>Sat, 17 Jul 2021 13:48:27 -0400</pubDate>
       
       <guid>https://www.lei.chat/tags/heterogeneity/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>inference</title>
-      <link>https://www.lei.chat/tags/inference/</link>
-      <pubDate>Sat, 17 Jul 2021 13:48:27 -0400</pubDate>
-      
-      <guid>https://www.lei.chat/tags/inference/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>ml</title>
-      <link>https://www.lei.chat/tags/ml/</link>
-      <pubDate>Sat, 17 Jul 2021 13:48:27 -0400</pubDate>
-      
-      <guid>https://www.lei.chat/tags/ml/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>mobile</title>
-      <link>https://www.lei.chat/tags/mobile/</link>
-      <pubDate>Sat, 17 Jul 2021 13:48:27 -0400</pubDate>
-      
-      <guid>https://www.lei.chat/tags/mobile/</guid>
       <description></description>
     </item>
     
@@ -141,15 +240,6 @@
       <pubDate>Thu, 08 Jul 2021 19:16:41 -0400</pubDate>
       
       <guid>https://www.lei.chat/tags/counter/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>driver</title>
-      <link>https://www.lei.chat/tags/driver/</link>
-      <pubDate>Thu, 08 Jul 2021 19:16:41 -0400</pubDate>
-      
-      <guid>https://www.lei.chat/tags/driver/</guid>
       <description></description>
     </item>
     
@@ -244,15 +334,6 @@
     </item>
     
     <item>
-      <title>compute</title>
-      <link>https://www.lei.chat/tags/compute/</link>
-      <pubDate>Fri, 25 Jun 2021 10:15:58 -0400</pubDate>
-      
-      <guid>https://www.lei.chat/tags/compute/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>pipeline</title>
       <link>https://www.lei.chat/tags/pipeline/</link>
       <pubDate>Fri, 25 Jun 2021 10:15:58 -0400</pubDate>
@@ -285,24 +366,6 @@
       <pubDate>Fri, 25 Jun 2021 10:15:58 -0400</pubDate>
       
       <guid>https://www.lei.chat/tags/tutorial/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>vulkan</title>
-      <link>https://www.lei.chat/tags/vulkan/</link>
-      <pubDate>Fri, 25 Jun 2021 10:15:58 -0400</pubDate>
-      
-      <guid>https://www.lei.chat/tags/vulkan/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>compiler</title>
-      <link>https://www.lei.chat/tags/compiler/</link>
-      <pubDate>Sat, 12 May 2018 17:44:14 -0400</pubDate>
-      
-      <guid>https://www.lei.chat/tags/compiler/</guid>
       <description></description>
     </item>
     

@@ -8,7 +8,16 @@
     <language>en</language>
     <copyright>&amp;copy; 2018 - 2021 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Sat, 17 Jul 2021 13:48:27 -0400</lastBuildDate><atom:link href="https://www.lei.chat/series/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 25 Jul 2021 11:25:26 -0400</lastBuildDate><atom:link href="https://www.lei.chat/series/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>vulkan-compute</title>
+      <link>https://www.lei.chat/series/vulkan-compute/</link>
+      <pubDate>Sun, 25 Jul 2021 11:25:26 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/series/vulkan-compute/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>ml-inference</title>
       <link>https://www.lei.chat/series/ml-inference/</link>
@@ -24,15 +33,6 @@
       <pubDate>Thu, 08 Jul 2021 19:16:41 -0400</pubDate>
       
       <guid>https://www.lei.chat/series/gpu-driver/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>vulkan-compute</title>
-      <link>https://www.lei.chat/series/vulkan-compute/</link>
-      <pubDate>Fri, 25 Jun 2021 10:15:58 -0400</pubDate>
-      
-      <guid>https://www.lei.chat/series/vulkan-compute/</guid>
       <description></description>
     </item>
     

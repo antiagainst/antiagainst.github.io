@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang='en' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>GPGPU, ML Inference, and Vulkan Compute | Lei.Chat()</title>
+
+<meta name="generator" content="Hugo Eureka 0.8.0" />
+<link rel="stylesheet" href="https://www.lei.chat/css/eureka.min.css">
+<script defer src="https://www.lei.chat/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/bash.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/c.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cmake.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cpp.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/glsl.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/javascript.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/llvm.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/python.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/shell.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-109525036-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-109525036-1');
+</script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_32x32_fill_box_center_2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_180x180_fill_box_center_2.png">
+
+<meta name="description"
+  content="Vulkan (compute) has the potential to be the next-generation GPGPU standard for various GPUs to support various domains; one immediate compelling application, is machine learning inference for resource-constrained scenarios like in mobile/edge devices and for gaming. This blog post explains the technical and business aspects behind and discusses the challenges and status.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Posts",
+      "item":"https://www.lei.chat/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"GPGPU, ML Inference, and Vulkan Compute",
+      "item":"https://www.lei.chat/posts/gpgpu-ml-inference-and-vulkan-compute/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.lei.chat/posts/gpgpu-ml-inference-and-vulkan-compute/"
+    },
+    "headline": "GPGPU, ML Inference, and Vulkan Compute | Lei.Chat()","datePublished": "2021-07-25T11:25:26-04:00",
+    "dateModified": "2021-07-25T11:25:26-04:00",
+    "wordCount":  3922 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "Lei Zhang",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.lei.chat/images/avatar.png"
+        }
+        },
+    "description": "Vulkan (compute) has the potential to be the next-generation GPGPU standard for various GPUs to support various domains; one immediate compelling application, is machine learning inference for resource-constrained scenarios like in mobile\/edge devices and for gaming. This blog post explains the technical and business aspects behind and discusses the challenges and status."
+}
+</script><meta property="og:title" content="GPGPU, ML Inference, and Vulkan Compute | Lei.Chat()" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="https://www.lei.chat/images/avatar.png">
+
+
+<meta property="og:url" content="https://www.lei.chat/posts/gpgpu-ml-inference-and-vulkan-compute/" />
+
+
+
+<meta property="og:description" content="Vulkan (compute) has the potential to be the next-generation GPGPU standard for various GPUs to support various domains; one immediate compelling application, is machine learning inference for resource-constrained scenarios like in mobile/edge devices and for gaming. This blog post explains the technical and business aspects behind and discusses the challenges and status." />
+
+
+
+<meta property="og:locale" content="en" />
+
+
+
+
+<meta property="og:site_name" content="Lei.Chat()" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2021-07-25T11:25:26-04:00" />
+
+
+<meta property="article:modified_time" content="2021-07-25T11:25:26-04:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="vulkan" />
+
+<meta property="article:tag" content="compute" />
+
+<meta property="article:tag" content="gpgpu" />
+
+<meta property="article:tag" content="ml" />
+
+<meta property="article:tag" content="inference" />
+
+<meta property="article:tag" content="edge" />
+
+
+
+
+
+
+
+
+
+
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/what-is-vulkan-compute/" />
+
+
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Lei.Chat()</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">Posts</a>
+            <a href="/authors/me" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">About</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">Light</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">Dark</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">Auto</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">GPGPU, ML Inference, and Vulkan Compute</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2021-07-25</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>19 min read</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="https://www.lei.chat/categories/android/" class="hover:text-eureka">android</a>
+        
+        
+        <span>, </span>
+        <a href="https://www.lei.chat/categories/ml-inference/" class="hover:text-eureka">ml-inference</a>
+        
+        
+        <span>, </span>
+        <a href="https://www.lei.chat/categories/vulkan-compute/" class="hover:text-eureka">vulkan-compute</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="https://www.lei.chat/series/vulkan-compute/" class="hover:text-eureka">vulkan-compute</a>
+        
+    </div>
+    
+</div>
+        
+        <div class="content">
+            <p>Nowadays GPUs are utilized for both graphics rendering and general-purpose
+compute (GPGPU). For the latter, CUDA is the indisputable leading solution.
+Though, with so many other GPU vendors, the quest for a GPGPU standard never
+stops. OpenCL was a great attempt and is used widely; but still it falls
+short on many aspects.
+Given the success of Vulkan in graphics and it being both a graphics and
+compute API, one would wonder whether it can actually be the next-generation
+GPGPU standard. I certainly believe so; but the road is not full of roses.</p>
+<p>Please don&rsquo;t disagree yet. 😊 Generally speaking, compute can mean anything.
+Even for GPGPU, there are a variety of domains and applications. These are all
+broad and multifaceted topics; we might be thinking/talking about different
+aspects. So let me be more specific:</p>
+<p>I believe Vulkan (compute) has the potential to be the next-generation GPGPU
+standard for various GPUs to support various domains; one immediate compelling
+application, though, is machine learning inference for resource-constrained
+scenarios like in mobile/edge devices and for gaming. Fulfilling it, Vulkan
+(compute) will gain further ground as a GPGPU standard and trickle down to
+more domains and applications.</p>
+<p>I&rsquo;ll explain the rationale and status next so hopefully afterwards you&rsquo;ll find
+the above is reasonable. Before that, please feel free to grab your snacks
+because due to the topics in question, this blog post is inevitably broad and
+lengthy; I may be a bit free form here and there and handwave or even speculate
+a bit sometimes.</p>
+<h2 id="intro-to-vulkan-graphics-and-compute">Intro to Vulkan: graphics and compute</h2>
+<p>Just in case you are not that familiar with Vulkan, here is a super quick
+introduction:</p>
+<p>Vulkan is a modern cross-platform GPU API for both graphics and compute;
+it gives developer explicit control (over object lifetime management,
+different memory allocation strategies and mechanisms, workload composition and
+reuse, clear dependency specification, fine-grained synchronization, etc.) in
+order to achieve low overhead (via slim drivers with predictable behavior and
+little magic, etc.) and high efficiency (via better multiple threading support,
+various pooling objects, clear cost on each API calls, etc.).</p>
+<p>Since its introduction five years ago, Vulkan has been enjoying great adoption
+and witnessing a thriving ecosystem for graphics. It is becoming the common
+abstraction layer—there are many <a href="https://www.khronos.org/assets/uploads/apis/Vulkan-1-2-Launch_Jan20.pdf">open source projects</a>
+that implement other APIs on top of Vulkan for porting existing applications, or
+that implement Vulkan on top of other APIs for using one API to rule all
+platforms.</p>
+<p>The success in graphics certainly makes Vulkan widely accessible on various
+platforms and helps it to gain traction for pure compute, which is what I&rsquo;ll
+mostly talk about today.
+In Vulkan, graphics specific bits are optional; there is a clean subset for
+pure compute. I wrote about it in a <a href="../what-is-vulkan-compute/">previous blog post</a>,
+please feel free to check it out to learn more.
+From now on, I&rsquo;ll just use &ldquo;Vulkan compute&rdquo; to mean the subset for pure compute.</p>
+<p>With this background, now we can chat about GPGPU and ML inference.
+In general, GPGPU is an <em>ecosystem</em>. Ecosystems are formed when collections of
+interested parties develop solutions to serve everyone together. That naturally
+entails <em>technology</em> and <em>business</em>.</p>
+<h2 id="the-technical-aspect">The Technical Aspect</h2>
+<p>Normally technical discussions are straightforward because whether a solution
+has technical merits are most of the time clear to see.
+However, it is under the assumption that we have properly defined the problem
+to solve and understood the constraints it entailed.
+Reasonable technical decisions to address one problem might be totally off
+for others. So it&rsquo;s worth it to pin down the domain and problem first.</p>
+<h3 id="domain-and-problem">Domain and problem</h3>
+<p>For GPGPU, there are a lot of <a href="https://en.wikipedia.org/wiki/General-purpose_computing_on_graphics_processing_units#Applications">domains and applications</a>. Vulkan
+starts to gain traction in multiple ones already, for example,
+<a href="https://www.khronos.org/news/permalink/ffmpeg-4.3-released-with-vulkan-support">audio/video</a>, <a href="https://github.com/DTolm/VkFFT">FFT</a>. But today I&rsquo;ll mainly talk
+about machine learning, where I have direct experience.</p>
+<p>ML itself is a large enough domain to see different areas and use cases.
+First, there is the split between training and inference. Then, for inference,
+it can happen either in the cloud or at the edge.
+In a <a href="../edge-mobile-ml-inference-challenges/">previous blog post</a> I contrasted their different
+characteristics and particularly explained the unique challenges for edge
+inference. Please feel free to take a look for the details.
+I&rsquo;ll rephrase the parts relevant to GPUs here because it&rsquo;s necessary context
+to understand why Vulkan compute&rsquo;s technical merits matter.</p>
+<h4 id="cloud-ml-training-and-inference">Cloud ML training and inference</h4>
+<p>Training needs to process a huge amount of data. That allows effective batching
+to exploit GPU parallelism. For inference in the cloud, because we can aggregate
+requests from everywhere, we can also effectively batch them.
+This characteristic allows training and inference in the cloud to sustain high
+GPU utilization relatively easily, so for them we are mostly GPU bound.
+Under such circumstances, the specific API for driving the GPU does not matter
+much technically.
+(Though there might exist business reasons like using GPUs from different
+vendors. I&rsquo;m getting ahead of myself here.)</p>
+<h4 id="edge-ml-inference">Edge ML inference</h4>
+<p>Inference at the edge is a completely different problem. For training and
+inference in the cloud, we pretty much have ultimate control and can choose
+whatever technology stack and iterate the model and infrastructure in
+whatever fashion.
+Inference at the edge, especially on mobile devices, has little control over
+the environment and system; we can basically only take what&rsquo;s there as it is.</p>
+<p>Mobile devices, especially for Android, have highly fragmented hardware.
+For GPUs, we have Qualcomm Adreno, ARM Mali, Imagination PowerVR, and <a href="https://www.anandtech.com/show/16728/amd-samsung-exynos-rt-vrs">soon
+AMD RDNA</a>. Each has multiple generations.
+Then they are packed into different SoCs and assembled into different final
+phones, so more variants. Together with the notorious Android version
+fragmentation problem, even for the same SoC, we can see GPU drivers at
+different versions.</p>
+<p>This heterogeneity and fragmentation is additionally coupled with GPU
+software stack quality issues. Both OpenGL and OpenCL feature a thick
+driver stack (including full compilers for kernels/shaders and implicit
+runtime status tracking and validation) and do not have strong conformance
+test suites. That results in different bugs or inconsistent performance
+among different devices, and unpredictable performance on the same device.</p>
+<p>The above challenges together make it very hard to utilize OpenGL/OpenCL
+for ubiquitous mobile inference. There are more problems if we look at
+the nature of inference on mobile devices.</p>
+<p>Inference happening on the mobile device really needs to be efficient
+and predictable. Mobile phones have very limited resources (both energy and
+computation) to be shared by all running apps and tasks. So we cannot
+blessedly ignore power draw and assume all computation capability.
+And they are real-time interactive devices. Unstable performance can cause
+perceivable lag and negative user experience.
+OpenGL/OpenCL&rsquo;s thick driver stack can hinder efficiency and predictability.</p>
+<p>Also, inference workloads at the edge are typically of small and variable
+sizes; we frequently just handle one image, one language sentence, or one
+audio sequence. This is quite different from games (which OpenGL is designed
+for) and high performance compute (which OpenCL aims at), where by nature
+there are lots of tasks and data to handle.</p>
+<p>Because of the different characteristics, we cannot simply adopt what works for
+training and inference in the cloud. Like, having a fat runtime claiming the
+whole GPU, dispatching different flavors of hand-written ops, and synchronizing
+after each one is not optimal as it does not play nice with app multi-tenancy,
+cannot scale to all the hardware architectures and software variants, and does
+not give us the most performance due to aggressive synchronization hurting small
+workloads.</p>
+<p>We need to have another solution that meets the needs of edge&mdash;a thin runtime
+on a bare metal GPU stack to gain the most control for eliminating
+inefficiency and unpredictability, and a compiler for generating kernels to
+handle the proliferation of hardware architectures. This is where Vulkan is
+a great fit.
+Next let&rsquo;s look more into this, after clearing one more thing.</p>
+<h4 id="ml-in-gaming">ML in gaming</h4>
+<p>I mentioned gaming in my original claim and I haven&rsquo;t forgotten about it.
+Essentially gaming is where we see similar constraints like inference at the
+edge. There is a super tight latency envelope we need to meet. To render at
+a minimum 30 FPS, each frame can only take ~30 ms. That&rsquo;s everything.
+Typically graphics rendering already takes the majority. To slot some ML
+inference (e.g., <a href="https://stadia.dev/blog/behind-the-scenes-with-stadias-style-transfer-ml/">style transfer</a>) in, it must be using
+the same API, as the cost across APIs is just prohibitive, regardless of whether
+the user has a different API environment set up.</p>
+<p>On the other hand, the concerted evolution from implicit APIs (OpenGL,
+Direct3D 11) to explicit ones (Vulkan, Direct3D 12, Metal) in the whole
+graphics industry is a testimony of thin GPU stacks for performance under
+tight constraints and with limited resources. We really need to take control
+as much as possible, and don&rsquo;t let too much abstraction get in the way.</p>
+<h3 id="vulkan-compute-for-ml">Vulkan compute for ML</h3>
+<p>Apologies for the long introduction and context in the above; they are really
+essential for understanding the problem space and developing the proper
+trade-off criteria. As generally for computation, we have a solution spectrum
+(custom hardware → compiled software → interpreted software) offering
+different trade-offs between performance and programmability/portability.
+Although the whole computation world is layered up with abstractions, they
+do introduce additional costs, which can be problematic for places where
+we are under a lot of constraints and still want predictable performance.</p>
+<!--
+On one end of the spectrum, we have custom hardware, which is generally the
+but the least programmable or portable. On the other end, we can have software
+approaches that assumes the least from the environment and brings everything
+it needs by itself, e.g., like Java/Python virtual machines and Docker.
+This allows to abstract the differences among platforms and OSes for
+great portability and development productivity but they normally cannot reach
+the peak performance, at least without extensive optimization or special
+tunnel. Abstractions are nice but they do introduce extra costs.
+Note again that there is no right or wrong here; it's just what are the goals
+we want to hit.
+
+Then in the middle there is the compiler approach, which tries to provide
+programmability, portability, and development productitivty and at the same
+time give really good performance for targetted hardware.
+-->
+<p>In the spectrum, Vulkan chooses the lowest possible API abstraction and the
+largest possible offline kernel compilation.</p>
+<h4 id="explicit-control-with-bare-minimal-drivers">Explicit control with bare minimal drivers</h4>
+<p>In Vulkan most of the time the concepts map directly to hardware mechanisms.
+This gives developers explicit control over basically everything and results
+in a bare minimal driver.</p>
+<p>As an example, for buffers, the backing memory (<code>VkMemory</code>) and buffer handle
+(<code>VkBuffer</code>) are separate objects. To use them in a kernel, the buffer needs
+to be bound to the compute pipeline via a descriptor set (<code>VkDescriptorSet</code>),
+which has its own layouts (<code>VkDescriptorSetLayout</code>).
+There are many other examples, like Vulkan does not try to hide the cache
+inconsistency and requires the developer to <a href="https://themaister.net/blog/2019/08/14/yet-another-blog-explaining-vulkan-synchronization/#:~:text=passes%20from%20execution.-,Memory%20barriers,-Now%20that%20we">explicitly manage them via
+barriers</a>.</p>
+<p>In general, Vulkan requires developers to explicitly manage all object&rsquo;s
+lifetime and memory, and perform all synchronization where necessary, as
+by default everything can run out of order. (This is where it differs
+greatly with CUDA/OpenCL, where by default kernels launched into the same
+stream are guaranteed to complete in submission order.)</p>
+<p>This level of explicitness certainly hurts programmability. (Compilers can
+come to the rescue though.) But it does mean developers have the ultimate
+control now. They are real GPU resource objects, or they are really how the
+GPU functions under the hood. So there is a cost to create/use/destroy them.</p>
+<p>Note that as long as there are abstractions, there is no escape from
+translating high-level abstractions down as that&rsquo;s not how the hardware works.
+It&rsquo;s either the developer or the driver.
+By exposing them, developers can handle them more appropriately than the driver,
+as developers know the app logic the best and can create/destroy at the proper
+time and batch/pool them, while the driver is most of the time just guessing
+and trying to be smart.</p>
+<p>Explicit control results in an ultra thin driver without general applicable
+&ldquo;magic&rdquo; and improves performance and predictability.</p>
+<h4 id="largest-possible-offline-compilation">Largest possible offline compilation</h4>
+<p>Vulkan uses SPIR-V for expressing kernels. SPIR-V is a binary intermediate
+language like LLVM IR. It&rsquo;s consumed by the driver compiler for the
+last-mile architecture-specific compilation.</p>
+<p>This put the whole kernel compiler frontend outside of the driver.
+So it eliminates a whole host of compiler frontend bugs from the driver and
+enables even thinner drivers and predictable performance.
+Furthermore, now we can directly target Vulkan/SPIR-V with other high-level
+languages. HLSL is already enabled for graphics. For ML, directly compiling
+TensorFlow/PyTorch models is now possible (and a reality).</p>
+<p>Compilers are the proven approach to handle hardware heterogeneity. They can
+offer performance together with programmability. With the overwhelming
+heterogeneity we see in mobile GPUs, there is no other easy way to achieve
+both.</p>
+<p>In contrast, for OpenGL/OpenCL, we send the whole source code string to the
+driver, which contains a full-blown compiler. That causes lots of
+functionality and performance consistency issues.
+Also using if-else to <a href="https://github.com/tensorflow/tensorflow/blob/cebf3c9763571396ed8b2dd726fcdae2b0359052/tensorflow/lite/delegates/gpu/cl/cl_operation.cc"><code>#define</code> kernel variables</a> and
+<a href="https://github.com/tensorflow/tensorflow/blob/50ffbda75d9eb6b13a642be3defb4d07af0c6f00/tensorflow/lite/delegates/gpu/common/tasks/depthwise_conv_3x3.cc#L55">concatenate source code strings</a> to handle different cases at
+runtime really has a limit regarding how much we can achieve.</p>
+<h4 id="cpu-friendliness-and-best-practices">CPU friendliness and best practices</h4>
+<p>Yeah, we are talking about GPUs. But the CPU is still important as that&rsquo;s
+where workloads are prepared (and where all the GPU API calls are executed).
+Due to the particular nature of edge ML inference, the importance of having
+efficient CPU code is even higher as the GPU is typically starved.</p>
+<p>Vulkan is designed according to modern CPU architectures and programming
+best practices. It has great multithreading support, various pooling objects
+for amortizing costs, and proper separation between development and runtime.
+For example, functionalities previously done by the driver at runtime,
+like API parameter validation, are now completely a development time concept
+with validation layers. There is no runtime cost.</p>
+<h4 id="robust-gpu-software-stack">Robust GPU software stack</h4>
+<p>The thin driver helps a lot to have a robust software stack. Another aspect
+that contributes to this is that Vulkan has an extensive conformance test
+suite (CTS) from day one. All core Vulkan functionalities are required to
+have corresponding CTS tests.
+To make things even nicer, Android has its own additional tests.
+While it certainly cannot catch all the issues, it&rsquo;s a great guard,
+especially after years development.
+OpenCL wasn&rsquo;t doing good on this front&mdash;it&rsquo;s initially released 2009; but
+its CTS wasn&rsquo;t available in open source until 2017.</p>
+<h4 id="addressing-mobile-ml-inference-challenges">Addressing mobile ML inference challenges</h4>
+<p>Okay now let&rsquo;s look particularly at how Vulkan addresses mobile ML inference
+challenges.</p>
+<ul>
+<li>Heterogeneity is handled via Vulkan&rsquo;s extensive mechanisms for different
+hardware&mdash;layers, extensions, features, and limits.
+This all happens within the same interface and framework.
+Putting kernel compilation offline as much as possible makes it possible
+to have systems generate code to best utilize different architectures
+without having unpleasant string manipulation in the codebase.</li>
+<li>Overall, thin drivers help a lot with GPU stack quality.
+GPU drivers used to have many issues during the initial days when Vulkan
+was brought up.
+But now they are much better due to thin drivers and better CTS.</li>
+<li>Programmability is where Vulkan lacks. However, for ML, we don&rsquo;t program
+in a shading language anyway; the models are authored in Python at a much
+higher level. Compilers help to address the issue, even for the verbose
+runtime API code! (I won&rsquo;t go into details here but the explicitness of
+the Vulkan API is really good as a compiler target as each API has a clear
+cost. Note that don&rsquo;t be intimidated by compilers; they are essentially
+just translating programs from one form into another. Anything of similar
+nature can be thought of as a compiler.)</li>
+<li>Performance and predictability are now more at the hands of the developers.
+There is much less magic and overhead in the stack that developers cannot
+control. Now it&rsquo;s possible to utilize both the GPU and the CPU better for
+running ML workloads of small scales.</li>
+</ul>
+<p>Okay, this wraps up the discussion on the technical side. Everything seems quite
+promising thus far (if you agree). Next onto business, where things start to
+shape up differently.
+For business, usually there are even less about right and wrong and things
+can change quickly.</p>
+<h2 id="the-business-aspect">The Business Aspect</h2>
+<!--
+While it's illuminating and enjoyable to argue about techincal details,
+it could occupy us and cause neglect of the other major influencing factor,
+that is, business. There are many examples where technically superior solutions
+gain little adoption and/or eventually fade away, because of business.
+-->
+<p>The broad GPGPU ecosystem is again huge. Given I&rsquo;m talking about inference
+at the edge, I&rsquo;ll again restrict it to the Android ecosystem for now.
+Many parties are involved&mdash;GPU vendors, the Android platform holder,
+device manufacturers (Android OEMs), app developers (either companies
+or individuals), and end users.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<!--
+The way to understand business is basically to see who is the user and/or
+pays the money.
+-->
+<!--
+Many parties are involved in the GPGPU ecosystem: GPU vendors, platform holders,
+device manufacturers, and users like companies with troves of data, research
+institutions, developers for applications with demanding compute needs, and
+others. Each of them is doing its own business (either for profit or other
+purposes) and want to be successful in its own way.
+-->
+<h3 id="the-platform-holder">The platform holder</h3>
+<p>Let&rsquo;s look at the platform holder first as for frameworks and APIs, the platform
+holder is very influential.</p>
+<p>Android is held by the Android Open Source Project (AOSP), led by Google. For
+an open OS that suffers a lot from fragmentation issues, one of the top concerns
+is to reduce the fragmentation and improve consistency. GPUs are exceptionally
+the case here; as it&rsquo;s used for gaming and that&rsquo;s where a lot of users
+extensively care and where a huge amount of developer revenue comes from.</p>
+<p>But we already know that the GPU landscape is fairly diverse. Past experience
+with OpenGL in that landscape is not pleasant. The functionality and performance
+inconsistency is causing lots of headaches and pains for developers targeting
+the broad Android market and gives Android a bad name. That&rsquo;s hard lessons
+learnt. That&rsquo;s why OpenCL is not officially supported in AOSP. One OpenGL is
+difficult enough; throwing in OpenCL means doubling all the issues.</p>
+<p>That&rsquo;s also why Android tries to consolidate and have one true GPU API&mdash;Vulkan.
+With its low level nature, in the long run, both OpenGL and OpenCL can be
+emulated via software, which can be updated much more easily, and so GPU
+vendors just need to implement one driver. Strong focus on Vulkan CTS should
+help alleviate consistency issues.</p>
+<p>So using Vulkan compute for ML inference is quite aligned here.
+But ultimately, Android is an open system and Android OEMs can feel free to
+customize.</p>
+<h3 id="android-oems">Android OEMs</h3>
+<p>Android OEMs decide which GPU to buy and the drivers for the final phone.
+So they actually have the ultimate control.
+The goal is to sell more devices to end users. But how? Why would an end user
+choose one phone over another? It&rsquo;s differentiation.
+So it&rsquo;s pretty common to see Android devices boasting about photography,
+gaming, or AI prowess.</p>
+<p>This is where things start to become tricky. It&rsquo;s nice to have one GPU API
+to rule them all. But because of the existing ecosystem around OpenGL
+for gaming and OpenCL for compute, OEMs are still forced to support them.
+So that&rsquo;s why actually OpenCL is indeed shipped in many phones.</p>
+<p>Now with Vulkan it&rsquo;s more work, at least in the short term. So it&rsquo;s
+understandable that the OEM will have less resource for each or lack incentives.
+There is no good way to improve the situation quickly as it&rsquo;s essentially
+ecosystem evolution. That only resolves with time&mdash;old phones will gradually
+phase out, Vulkan will be more and more prevalent, and software OpenGL/OpenCL
+implementations will become more and more stable and performant.</p>
+<h3 id="app-developers">App developers</h3>
+<p>For app developers, the goal is to deploy to as many devices and reach as many
+end users as possible. The difficulty for them, though, is fragmentation;
+it&rsquo;s just beyond typical app developers' ability to handle. So the safe bet
+is just to use what&rsquo;s readily there and more reliable&mdash;the CPU. Or at least
+that&rsquo;s what Facebook <a href="https://ai.facebook.com/research/publications/machine-learning-at-facebook-understanding-inference-at-the-edge/">does</a>; not even GPU, let alone dedicated
+accelerators.</p>
+<p>So we have a chicken and egg problem. Developers are less likely to use unless
+the software stack is robust and performant enough, but without developer
+interests, platforms and OEMs can be less motivated to address the system
+issues.
+There is again no good way to change quickly. It only improves with time as we
+see a more stable GPU stack and better accelerator toolchain support.</p>
+<!--
+
+So it's pretty common to see Android devices boasting about photography,
+gaming, or AI prowess. Neither of these are simple topics, but still, in order
+to make it easy to grasp for end users, we have various benchmarks giving a
+single number. It's hardly representative for the real-world usage, but the
+business drive is there to hit high in benchmarks.
+-->
+<!--
+### GPU vendors
+
+For GPU vendors, like other chip vendors, the business is to make profit by
+selling chips to Android OEMs. So Android OEMs wield great power over GPU
+vendors.
+
+Developing chips incur subsantial amount of risk---a vendor
+needs to plan years ahead and design against future technology. If anything
+goes in an unexpected way, the ripple effect can derail the whole
+design/production pipeline for a long time. Intel's recent struggle is an
+example here. And the success needs to be sustainable; one generation is not
+to be celebrated for long. So it's a ceaseless cycle easily consuming the
+majority of the resources.
+
+But, customers don't simply buy silicon; they buy a solution for their
+computation needs. That naturally means a software stack for utiling the
+silicon. Now that's the challenging part. Software development has very
+different characteristics from hardware development; the more upper the layers,
+the more so. It requires different mindsets and people with different skills.
+And for an ecosystem, the investment can take an even longer time to bear
+fruit. Until then, everything is just pure cost. With all these challgenes,
+it's no wonder that software support from hardware companies can sometimes be
+subpar, because the lack of incentives or skills there.
+
+On the other side, if a vendor is determined and has good strategy, investment,
+and execution in place for sufficient time, it can really differentiate itself
+and the payoff can be massive. Yeah, you know what examples I'm talking
+about---CUDA (and also Apple in the broader sense). While it's enticing to
+follow suite and build the whole software stack so to differentiate and charge a
+much higher margin, the reality is full of obstacles. In addition to the
+challenges mentioned above, there is not much interest and drive directly from
+customers. For customers that need to support multiple vendors, the preference
+is to use an abstraction; for customers that can stick with a proprietary
+solution from one vendor, the market leader is typically chosen for
+its product and ecosystem.
+
+So it makes more economical sense to implement a standard so that together we
+can have one ecosystem that everyone can leverage. A vendor can immediately
+selling products this way. (Of course, a vendor
+is still free to invest in its own proprietary solution in parallel. One could
+argue that makes strategical sense here if the company is truly devoted. I
+might seem going against my own argument here, but really, for business, it's
+less about right and wrong; it's more about trade-off. And even that can shift.
+Oops.)
+-->
+<h2 id="challenges-status-and-looking-forward">Challenges, Status, and Looking Forward</h2>
+<p>Okay, I&rsquo;ve outlined both the technical and business aspect for Vulkan compute
+as a solution for edge ML inference, as one important GPGPU domain.
+Technically it makes a lot of sense, but for business there are various issues.</p>
+<p>However, if we look closely, it basically boils down to an immature ecosystem.
+Vulkan is still mainly used for graphics rendering. Using its compute subset
+for ML is still something of a relatively early stage. So we are seeing all
+typical issues of a new ecosystem.</p>
+<p>But it&rsquo;s getting more and more real for sure&mdash;we see various great mobile AI
+inference frameworks use Vulkan compute to drive the GPU, including
+Tencent <a href="https://github.com/Tencent/ncnn">ncnn</a>, Alibaba <a href="https://github.com/alibaba/MNN">MNN</a>, and recently <a href="https://pytorch.org/blog/prototype-features-now-available-apis-for-hardware-accelerated-mobile-and-arm64-builds/#pytorch-mobile-gpu-support">PyTorch
+Mobile</a>. ncnn is exceptional here as its model/feature coverage
+and its production usage in Tencent apps.</p>
+<p>The existing framework still uses the Vulkan API like OpenCL though. They have
+hand-written kernels authored in GLSL for high-level ML ops.
+In <a href="https://github.com/google/iree">IREE</a> we believe there is a more native way to utilize Vulkan compute
+for its full potential. It requires to fully go down the compilation road
+to generate both GPU kernels and CPU API calls.
+The Vulkan API calls are meant to be generated by higher level abstractions
+(it can be game engines) suiting the specific problem domain, and the SPIR-V
+kernels should be compiled directly from domain-specific language.</p>
+<p>Going down this road means much more infrastructure investment. We need to
+build the full compilation stack, rather than leveraging existing ones.
+But it&rsquo;s worth it considering the benefits it brings.
+So, taking a step back to look at the whole stack (across specification and
+drivers, operating systems, compilers, programming languages, frameworks,
+toolchain) and capture the status of the world:</p>
+<ul>
+<li>After five years since Vulkan&rsquo;s initial release, GPU drivers are in a much
+better shape nowadays. They are more stable and reliable.
+And the nice thing is given it&rsquo;s also used by graphics, there is a strong
+tendency to be better and better.
+Still there are problematic parts right now, like low adoption of certain
+key extensions (e.g., timeline semaphore), restrictive SPIR-V programming
+model (e.g. pointer casting), and other compute specific functionalities to
+make ML even better.
+For this, Vulkan ML TSG is working on it.</li>
+<li>Vulkan are getting better and better coverage in Android devices. As of early
+2021, <a href="https://developer.android.com/about/dashboards#Vulkan">36%+</a> devices support Vulkan 1.1. That seems not
+much but note that Android captures <a href="https://www.idc.com/promo/smartphone-market-share">80%+</a> market share
+and has <a href="https://www.theverge.com/2021/5/18/22440813/android-devices-active-number-smartphones-google-2021">3 billions+</a> of active devices.
+So for the absolute number, it&rsquo;s massive.
+But given using compute for ML is still in its early stage, there is no
+special optimization towards this. It&rsquo;s actually not surprising to see
+various issues, like pure Vulkan compute isn&rsquo;t treated as favorably as
+OpenCL workloads by the scheduler.</li>
+<li>We need a new compiler stack from ML frameworks down to SPIR-V and Vulkan.
+It&rsquo;s structurally there: the kernel compilation functionalities are mainly
+in <a href="https://mlir.llvm.org/docs/Dialects/SPIR-V/">MLIR</a> while the API side is in <a href="https://github.com/google/iree">IREE</a>. Right now it
+can compile quite a few vision and language models end-to-end (from
+TensorFlow SavedModels). Getting it optimized towards each GPU architecture
+is a long fight though.</li>
+<li>For programming languages and frameworks, there is no need to invent new ones;
+there are already plenty. Thanks to the compiler approach, supporting either
+new programming languages and frameworks is much less work.</li>
+<li>Toolchain for pure Vulkan compute is lagging behind. Existing debuggers
+and profilers are mainly for graphics usage; they have the assumption of
+render loops and presentation. For Android, there is the additional assumption
+of a full-blown app. But for pure Vulkan compute on Android, we would like to
+use the command-line under the <code>adb</code> environment for productivity.
+Lack of handy tools actually shows as the most annoying part in our
+development.</li>
+</ul>
+<p>I&rsquo;ll just stop here as this blog post is already fairly lengthy. Thanks for
+reading it through and apologies for all the hand waving and speculation.
+Hopefully this blog post, together with the <a href="../what-is-vulkan-compute/">previous one</a> in
+this series, lays down enough backgrounds and contexts about Vulkan compute for
+ML inference.
+In future blog posts I will expand on more of the challenges and also talk about
+how to optimize towards different mobile GPU architectures.</p>
+<p>Using Vulkan compute for edge ML inference is certainly a very promising and
+thrilling direction. I&rsquo;m very happy that I can be a part and contribute to it.
+Hopefully this eventually pushes the frontier towards better utilizing edge GPUs
+for ML inference ubiquitously!</p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p>There are also SoC vendors. But they are typically either the
+GPU vendor (e.g., Qualcomm) or the Android OEM (e.g., Samsung) at the same time.
+I&rsquo;ll omit them for simplicity.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+        </div>
+        
+        <div class="my-4">
+    
+    <a href="https://www.lei.chat/tags/vulkan/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#vulkan</a>
+    
+    <a href="https://www.lei.chat/tags/compute/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#compute</a>
+    
+    <a href="https://www.lei.chat/tags/gpgpu/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#gpgpu</a>
+    
+    <a href="https://www.lei.chat/tags/ml/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#ml</a>
+    
+    <a href="https://www.lei.chat/tags/inference/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#inference</a>
+    
+    <a href="https://www.lei.chat/tags/edge/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#edge</a>
+    
+    <a href="https://www.lei.chat/tags/mobile/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#mobile</a>
+    
+    <a href="https://www.lei.chat/tags/android/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#android</a>
+    
+    <a href="https://www.lei.chat/tags/standard/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#standard</a>
+    
+    <a href="https://www.lei.chat/tags/ecosystem/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#ecosystem</a>
+    
+    <a href="https://www.lei.chat/tags/cuda/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#cuda</a>
+    
+    <a href="https://www.lei.chat/tags/opencl/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#opencl</a>
+    
+    <a href="https://www.lei.chat/tags/driver/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#driver</a>
+    
+    <a href="https://www.lei.chat/tags/compiler/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#compiler</a>
+    
+    <a href="https://www.lei.chat/tags/technology/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#technology</a>
+    
+    <a href="https://www.lei.chat/tags/business/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#business</a>
+    
+</div>
+        
+        
+        
+
+
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">Next</span>
+        <a href="https://www.lei.chat/posts/edge-mobile-ml-inference-challenges/" class="block">Edge/Mobile ML Inference Challenges</a>
+        
+    </div>
+</div>
+
+        
+
+
+
+  <script id="utterances" src="https://utteranc.es/client.js"
+            issue-term=title
+            repo=antiagainst/antiagainst.github.io
+              theme=preferred-color-scheme
+        crossorigin="anonymous"
+        async>
+</script>
+<script>
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+      document.getElementById('utterances').setAttribute('theme', 'github-dark')
+    }
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: light)").matches) || storageColorScheme == "Light") {
+      document.getElementById('utterances').setAttribute('theme', 'github-light')
+    }
+</script>
+
+
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+<div class="bg-secondary-bg rounded p-6">
+    <h3 class="text-lg font-semibold mb-4">Series of Posts</h3>
+    <div class="content">
+        
+        
+        <a href="https://www.lei.chat/posts/gpgpu-ml-inference-and-vulkan-compute/">GPGPU, ML Inference, and Vulkan Compute</a>
+        <br />
+        
+        <a href="https://www.lei.chat/posts/what-is-vulkan-compute/">What is Vulkan Compute?</a>
+        <br />
+        
+        
+    </div>
+</div>
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">On This Page</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#intro-to-vulkan-graphics-and-compute">Intro to Vulkan: graphics and compute</a></li>
+    <li><a href="#the-technical-aspect">The Technical Aspect</a>
+      <ul>
+        <li><a href="#domain-and-problem">Domain and problem</a>
+          <ul>
+            <li><a href="#cloud-ml-training-and-inference">Cloud ML training and inference</a></li>
+            <li><a href="#edge-ml-inference">Edge ML inference</a></li>
+            <li><a href="#ml-in-gaming">ML in gaming</a></li>
+          </ul>
+        </li>
+        <li><a href="#vulkan-compute-for-ml">Vulkan compute for ML</a>
+          <ul>
+            <li><a href="#explicit-control-with-bare-minimal-drivers">Explicit control with bare minimal drivers</a></li>
+            <li><a href="#largest-possible-offline-compilation">Largest possible offline compilation</a></li>
+            <li><a href="#cpu-friendliness-and-best-practices">CPU friendliness and best practices</a></li>
+            <li><a href="#robust-gpu-software-stack">Robust GPU software stack</a></li>
+            <li><a href="#addressing-mobile-ml-inference-challenges">Addressing mobile ML inference challenges</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#the-business-aspect">The Business Aspect</a>
+      <ul>
+        <li><a href="#the-platform-holder">The platform holder</a></li>
+        <li><a href="#android-oems">Android OEMs</a></li>
+        <li><a href="#app-developers">App developers</a></li>
+      </ul>
+    </li>
+    <li><a href="#challenges-status-and-looking-forward">Challenges, Status, and Looking Forward</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded p-6">
+        <h2 class="text-lg font-semibold mb-4">See Also</h2>
+        <div class="content">
+            
+            <a href="https://www.lei.chat/posts/edge-mobile-ml-inference-challenges/">Edge/Mobile ML Inference Challenges</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/sampling-performance-counters-from-gpu-drivers/">Sampling Performance Counters from Mobile GPU Drivers</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/android-linux-gpu-drivers-internals-and-resources/">Android/Linux GPU Drivers: Internals and Resources</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/what-is-vulkan-compute/">What is Vulkan Compute?</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/shader-toolchain-hlsl-in-vulkan/">Shader Toolchain: HLSL in Vulkan</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/hlsl-for-vulkan-semantic-strings-and-location-numbers/">HLSL for Vulkan: Semantic Strings and Location Numbers</a>
+            <br />
+            
+        </div>
+    </div>
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2018 - 2021 <a href="https://www.lei.chat/">Lei Zhang</a>
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>
