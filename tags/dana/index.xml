@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>dana on Lei.Chat()</title>
+    <link>https://www.lei.chat/tags/dana/</link>
+    <description>Recent content in dana on Lei.Chat()</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>&amp;copy; 2018 - 2021 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
+</copyright>
+    <lastBuildDate>Sat, 21 Aug 2021 22:47:43 -0400</lastBuildDate><atom:link href="https://www.lei.chat/tags/dana/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Android Native Library Benchmarking Pipeline for Open Source Projects</title>
+      <link>https://www.lei.chat/posts/android-native-library-benchmarking-pipeline-for-open-source-projects/</link>
+      <pubDate>Sat, 21 Aug 2021 22:47:43 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/posts/android-native-library-benchmarking-pipeline-for-open-source-projects/</guid>
+      <description>&lt;p&gt;Today I would like to describe one way to build a scalable and frictionless
+benchmarking pipeline for Android native libraries, aiming to support different
+benchmark and device variants.
+It is for open source projects, so it composes public services, commonly
+free under such conditions.
+The ingredients are cloud virtual machines for building, local single board
+computers (e.g., Raspberry Pi) for hosting Android devices and executing
+benchmarks, a &lt;a href=&#34;https://github.com/google/dana&#34;&gt;Dana&lt;/a&gt; server for keeping track of benchmark results of
+landed changes, and Python scripts for posting benchmark comparisons to pull
+requests.
+A &lt;a href=&#34;https://buildkite.com&#34;&gt;Buildkite&lt;/a&gt; pipeline chains them together and drives the full flow.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang='en' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Android Native Library Benchmarking Pipeline for Open Source Projects | Lei.Chat()</title>
+
+<meta name="generator" content="Hugo Eureka 0.8.0" />
+<link rel="stylesheet" href="https://www.lei.chat/css/eureka.min.css">
+<script defer src="https://www.lei.chat/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/bash.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/c.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cmake.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cpp.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/glsl.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/javascript.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/llvm.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/python.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/shell.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-109525036-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-109525036-1');
+</script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="Today I would like to describe one way to build a scalable and frictionless
+benchmarking pipeline for Android native libraries, aiming to support different
+benchmark and device variants.
+It is for open source projects, so it composes public services, commonly
+free under such conditions.
+The ingredients are cloud virtual machines for building, local single board
+computers (e.g., Raspberry Pi) for hosting Android devices and executing
+benchmarks, a Dana server for keeping track of benchmark results of
+landed changes, and Python scripts for posting benchmark comparisons to pull
+requests.
+A Buildkite pipeline chains them together and drives the full flow.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Posts",
+      "item":"https://www.lei.chat/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Android Native Library Benchmarking Pipeline for Open Source Projects",
+      "item":"https://www.lei.chat/posts/android-native-library-benchmarking-pipeline-for-open-source-projects/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.lei.chat/posts/android-native-library-benchmarking-pipeline-for-open-source-projects/"
+    },
+    "headline": "Android Native Library Benchmarking Pipeline for Open Source Projects | Lei.Chat()","datePublished": "2021-08-21T22:47:43-04:00",
+    "dateModified": "2021-08-21T22:47:43-04:00",
+    "wordCount":  1774 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "Lei Zhang",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.lei.chat/images/avatar.png"
+        }
+        },
+    "description": "\u003cp\u003eToday I would like to describe one way to build a scalable and frictionless\nbenchmarking pipeline for Android native libraries, aiming to support different\nbenchmark and device variants.\nIt is for open source projects, so it composes public services, commonly\nfree under such conditions.\nThe ingredients are cloud virtual machines for building, local single board\ncomputers (e.g., Raspberry Pi) for hosting Android devices and executing\nbenchmarks, a \u003ca href=\u0022https:\/\/github.com\/google\/dana\u0022\u003eDana\u003c\/a\u003e server for keeping track of benchmark results of\nlanded changes, and Python scripts for posting benchmark comparisons to pull\nrequests.\nA \u003ca href=\u0022https:\/\/buildkite.com\u0022\u003eBuildkite\u003c\/a\u003e pipeline chains them together and drives the full flow.\u003c\/p\u003e"
+}
+</script><meta property="og:title" content="Android Native Library Benchmarking Pipeline for Open Source Projects | Lei.Chat()" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="https://www.lei.chat/images/avatar.png">
+
+
+<meta property="og:url" content="https://www.lei.chat/posts/android-native-library-benchmarking-pipeline-for-open-source-projects/" />
+
+
+
+
+<meta property="og:description" content="Today I would like to describe one way to build a scalable and frictionless
+benchmarking pipeline for Android native libraries, aiming to support different
+benchmark and device variants.
+It is for open source projects, so it composes public services, commonly
+free under such conditions.
+The ingredients are cloud virtual machines for building, local single board
+computers (e.g., Raspberry Pi) for hosting Android devices and executing
+benchmarks, a Dana server for keeping track of benchmark results of
+landed changes, and Python scripts for posting benchmark comparisons to pull
+requests.
+A Buildkite pipeline chains them together and drives the full flow." />
+
+
+
+
+<meta property="og:locale" content="en" />
+
+
+
+
+<meta property="og:site_name" content="Lei.Chat()" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2021-08-21T22:47:43-04:00" />
+
+
+<meta property="article:modified_time" content="2021-08-21T22:47:43-04:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="android" />
+
+<meta property="article:tag" content="benchmarking" />
+
+<meta property="article:tag" content="pipeline" />
+
+<meta property="article:tag" content="oss" />
+
+<meta property="article:tag" content="github" />
+
+<meta property="article:tag" content="buildkite" />
+
+
+
+
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/sampling-performance-counters-from-gpu-drivers/" />
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/gpgpu-ml-inference-and-vulkan-compute/" />
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/edge-mobile-ml-inference-challenges/" />
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/android-linux-gpu-drivers-internals-and-resources/" />
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/what-is-vulkan-compute/" />
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Lei.Chat()</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">Posts</a>
+            <a href="/authors/me" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">About</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">Light</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">Dark</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">Auto</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">Android Native Library Benchmarking Pipeline for Open Source Projects</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2021-08-21</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>9 min read</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="https://www.lei.chat/categories/android/" class="hover:text-eureka">android</a>
+        
+        
+        <span>, </span>
+        <a href="https://www.lei.chat/categories/infrastructure/" class="hover:text-eureka">infrastructure</a>
+        
+    </div>
+    
+
+    
+</div>
+        
+        <div class="content">
+            <p>Today I would like to describe one way to build a scalable and frictionless
+benchmarking pipeline for Android native libraries, aiming to support different
+benchmark and device variants.
+It is for open source projects, so it composes public services, commonly
+free under such conditions.
+The ingredients are cloud virtual machines for building, local single board
+computers (e.g., Raspberry Pi) for hosting Android devices and executing
+benchmarks, a <a href="https://github.com/google/dana">Dana</a> server for keeping track of benchmark results of
+landed changes, and Python scripts for posting benchmark comparisons to pull
+requests.
+A <a href="https://buildkite.com">Buildkite</a> pipeline chains them together and drives the full flow.</p>
+<p>The importance of benchmarking on real devices goes without saying for libraries
+that care about performance.
+ML inference is one such case, especially on mobile devices, where we have
+limited resources yet want real-time interactions.
+Benchmarking such libraries on mobile devices, especially Android, is quite
+difficult, due to its special development flow and overwhelming number of
+device variants. A good benchmarking pipeline should be resilient and offer
+extensibility and productivity.</p>
+<p>Before going into details, I just want to note again that the solution described
+here is for native libraries, that is, C/C++ binaries, instead of full Java
+apps.
+Although native libraries are meant to be integrated into some Java app
+eventually, they are built using the Android NDK and normally do not require
+Android Studio as the development environment.
+It&rsquo;s common to develop these native libraries with normal C/C++ flow and
+test/benchmark them under the <code>adb</code> environment, which is better for automation
+and continuous integration.</p>
+<h2 id="requirements-and-goals">Requirements and Goals</h2>
+<p>This solution is built for <a href="https://github.com/google/iree">IREE</a>, an end-to-end ML compiler and runtime,
+where edge/mobile devices are one of the main deployment scenarios.
+So in the following I&rsquo;ll use IREE&rsquo;s pipeline as an example.
+While some of the considerations may be specific to IREE, the general idea and
+pipeline should be widely applicable.</p>
+<h3 id="open-source">Open source</h3>
+<p>First and foremost, the pipeline should follow the open source way, as we are
+building it for an open source project. We would like to adopt public services
+and make information universally accessible. This avoids requiring learning
+project-specific infrastructure and allows easy understanding and debugging
+issues.</p>
+<h3 id="scalable">Scalable</h3>
+<p>The benchmarking pipeline needs to be scalable across multiple dimensions.
+Clearly there are various ML models and Android phones.
+For IREE, we additionally want to support various CPUs, GPUs, and dedicated
+accelerators on a phone. Like other systems handling heterogeneous devices,
+IREE uses a hardware abstraction layer (HAL) to handle them all.
+Each such compute device can be driven by one or multiple HAL
+&ldquo;drivers&rdquo;<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>,
+for example, <a href="https://github.com/google/iree/tree/main/iree/hal/dylib">Dylib</a>/<a href="https://github.com/google/iree/tree/main/iree/hal/vmvx">VMVX</a> for CPU,
+<a href="https://github.com/google/iree/tree/main/iree/hal/vulkan">Vulkan</a> for GPU.
+Therefore, drivers fall into its own dimension.
+That&rsquo;s still not all of it. For the same ML model, compute device, and driver,
+we can have multiple benchmark modes, like big/little cores, the number of
+threads for CPU. So in summary, we have at least 1) ML models, 2) Android
+phones, 3) Compute devices, 4) IREE HAL drivers, 5) Benchmark modes.</p>
+<p>Any of the above dimensions can see new variants. In order to be scalable,
+they need to be detached, so that adding one variant in one dimension does
+not affect others, and accumulate, so that products involving the new variants
+are automatically generated.</p>
+<p>Actually, the above dimensions largely fall into two categories.
+ML models, IREE HAL drivers, and benchmark modes are on the software side.
+They can be scaled relatively easily. Android phones and compute devices
+involve real hardware; that&rsquo;s harder.</p>
+<h3 id="frictionless">Frictionless</h3>
+<p>The benchmarking pipeline also needs to be frictionless. It should integrate
+into the normal development flow and avoid manual steps as much as possible.
+We would like to have the ability to try out changes on pull requests, and
+we also need a tool to track performance of landed commits and perform
+regression analysis. They should come as neglectable additional cost though.</p>
+<h2 id="the-pipeline">The Pipeline</h2>
+<p>The whole pipeline contains three main steps:</p>
+<ol>
+<li>Benchmark artifact generation: building benchmark binaries and model
+artifacts for all the target phones.</li>
+<li>Benchmark execution: filtering and executing all suitable benchmarks on
+a target phone.</li>
+<li>Benchmark result presentation: either posting on pull requests or pushing
+to the Dana server.</li>
+</ol>
+<h3 id="buildkite">Buildkite</h3>
+<p>We use <a href="https://buildkite.com">Buildkite</a> as the harness for the full pipeline.
+Buildkite is a public continuous integration platform that employs a
+server-client architecture. buildkite.com is the central coordinator that
+listens to GitHub webhook events and dispatches CI jobs to Buildkite agents.</p>
+<p>Buildkite itself does not provide agents; each project using Buildkite brings
+its own agent. Buildkite agents can run on many platforms (Linux, macOS,
+Windows, etc.) so it enables a project to compile and run on all of them.
+A project can register as many agents to the Buildkite server as it wants and
+these agents can focus on performing different tasks. These agents are just
+normal programs; they can effectively execute whatever code. So it&rsquo;s very
+flexible.</p>
+<p>Each step in a Buildkite pipeline can be performed by a different Buildkite
+agent. The Buildkite server selects the agent to run a step by looking at the
+required agent tags and matches it against all available agents and chooses
+whichever is available.</p>
+<p>Just for your convenience to understand the full flow,
+<a href="https://github.com/google/iree/blob/b8a469b731ed665d999b0097d09090944533f773/build_tools/buildkite/cmake/android/arm64-v8a/benchmark2.yml">here</a> is the benchmark pipeline&rsquo;s YAML file,
+with an <a href="https://buildkite.com/iree/iree-benchmark/builds/763">example</a> run for landed commits and another
+<a href="https://buildkite.com/iree/iree-benchmark/builds/749">example</a> for a pull request.</p>
+<h3 id="benchmark-artifact-generation">Benchmark artifact generation</h3>
+<p>The first step is generating the benchmark binary and model artifacts.
+This step does not need to access the exact to-be-benchmarked device; we can
+just generate all interested configurations.</p>
+<p>However, this step is resource demanding. For IREE, it&rsquo;s especially so because
+we need to compile both TensorFlow and LLVM. So it&rsquo;s impractical to happen
+locally for each device to be benchmarked. Instead we aggregate the generation
+and use powerful cloud virtual machines.</p>
+<p>That means managing all the build environment by ourselves though. Docker is
+very helpful for such a purpose. It also has the benefit that we can handle
+the build environment via code changes, as we can check in the Dockerfiles
+and reference different docker SHAs in Buildkite pipeline&rsquo;s YAML file.</p>
+<p>The generated artifacts are then uploaded to the Buildkite server. They are
+loater downloaded for use by the execution step.</p>
+<h3 id="benchmark-execution">Benchmark execution</h3>
+<p>With the benchmark artifacts generated, the next step is to execute them to
+collect benchmark numbers. This step needs access to concrete devices.</p>
+<p>Devices can have CPU/GPU of different architectures. In the first artifact
+generation step, many architectures are targeted.
+So for this step, we need to add scripts to probe the benchmark device,
+filter those generated artifacts, and execute suitable benchmarks on the
+device.</p>
+<p>How to probe the device is specific to the operating system. For Android,
+we can use <code>adb shell cat /proc/cpuinfo</code> and <code>adb shell cmd gpu vkjson</code> to
+get information regarding the CPU/GPU.
+With the detailed product/architecture, e.g., ARMv8.2-A/Adreno-640/Mali-G78,
+we can filter the generated artifacts to execute benchmarks.</p>
+<p>Filtering the generated artifacts will mean that in the first generation step
+the artifacts are placed in a well defined file directory structure (or some
+other mechanisms, e.g., a file containing various details). So some naming
+conventions are needed here.</p>
+<p>Apparently we cannot perform these tasks on the Android devices themselves.
+Using SBCs like Raspberry Pi as the host is a great solution here, because the
+task is not resource demanding. SBCs can handle them well with a familiar Linux
+environment. <code>adb</code> is used to communicate with Android devices.</p>
+<p><a href="https://github.com/google/iree/blob/b8a469b731ed665d999b0097d09090944533f773/build_tools/android/run_benchmarks.py">Here</a> is the Python script for the above.</p>
+<p>With this probing and filtering mechanism, we can achieve scalability at the
+device level. Each time we add a new device for benchmarking, the script will
+automatically filter artifacts for it to run. And with Buildkite&rsquo;s distributed
+agent architecture, it means anybody can plug in new devices from anywhere
+(assuming they have the proper agent token).</p>
+<p>In IREE we use <a href="https://github.com/google/benchmark">Google Benchmark</a> as the benchmarking
+library. It allows dumping the results in the JSON format. Benchmark results
+from execution at each Buildkite agent are uploaded to the Buildkite server
+as JSON files, containing all the details.
+Then they are aggregated and presented in the next step.</p>
+<h3 id="benchmark-result-presentation">Benchmark result presentation</h3>
+<p>In the final step, a Buildkite agent in the cloud downloads all benchmark
+results and presents them. Depending on whether this is run for landed commits
+or pull requests, it means pushing to a dashboard or posting as pull request
+comments.</p>
+<h4 id="publishing-results-to-dashboard">Publishing results to dashboard</h4>
+<p>We&rsquo;d like to have a dashboard for historical benchmark results. A couple of
+merits we are expecting from it:</p>
+<ul>
+<li>It should provide some API so it&rsquo;s easy to integrate with Buildkite.</li>
+<li>It should be benchmarking centric and provide an intuitive and customizable
+UI.</li>
+<li>It should provide good regression analysis flows.</li>
+</ul>
+<p>There seems to be no existing services fulfilling this. Fortunately, the open
+source <a href="https://github.com/google/dana">Dana</a> project ticks the above boxes, so we are hosting our own
+Dana server at <a href="https://perf.iree.dev">https://perf.iree.dev</a>. It exposes <a href="https://github.com/google/dana/blob/main/docs/Apis.md">APIs</a> for updating
+or querying benchmark results. So we just teach the Buildkite agent in this
+step about the API token and then let it call the corresponding APIs.</p>
+<p>If you are interested in the details, the Python scripts can be found
+<a href="https://github.com/google/iree/blob/b8a469b731ed665d999b0097d09090944533f773/build_tools/android/upload_benchmarks_to_dashboard.py">here</a>.</p>
+<p>Dana requires an identifier for each benchmark. Considering all the
+extensibility points and forward compatibility, in IREE, we use the
+following scheme to identify a benchmark:</p>
+<pre><code>&lt;model-name&gt; `[` &lt;model-tag&gt;.. `]` `(` &lt;model-source&gt; `)`
+&lt;benchmark-mode&gt;.. `with` &lt;iree-driver&gt;
+`@` &lt;phone-model&gt; `(` &lt;target-architecture&gt; `)`
+</code></pre>
+<p>For example, &ldquo;MobileNetV2 [fp32,imagenet] (TensorFlow) full-inference with
+IREE-Vulkan @ Pixel-4 (GPU-Adreno-640)&rdquo;. It&rsquo;s a bit lengthy, but it clearly
+shows all important details about the benchmark.</p>
+<p>These benchmark identifiers can be trivially constructed from the benchmark
+result JSON files, which contain all the information.</p>
+<h4 id="posting-on-pull-requests">Posting on pull requests</h4>
+<p>Being able to invoke benchmarking on a pull request is super helpful to try
+out new functionalities and guard against performance regression proactively.
+In IREE, we use a <code>buildkite:benchmark</code> GitHub label to manually trigger
+benchmarks on specific pull requests. Adding one label is trivial and that&rsquo;s
+all one needs to do; after all benchmark results are available, the Buildkite
+agent will post them as pull request comments (<a href="https://github.com/google/iree/pull/6777#issuecomment-902142769">example</a>),
+in a nice and concise way, diff&rsquo;ing against previous known results.
+So this is frictionless.</p>
+<p>This, of course, requires calling GitHub APIs. For example,
+<a href="https://docs.github.com/en/rest/reference/issues#create-an-issue-comment">creating</a>/<a href="https://docs.github.com/en/rest/reference/issues#update-an-issue-comment">updating</a>
+a pull request comment. (Yeah they are for issues, but it also works for pull
+requests.) In order to avoid clutter on the pull request, the full benchmark
+result is pushed to Gist, only an abbreviated version is posted to pull
+requests.</p>
+<p>The Python scripts can be found <a href="https://github.com/google/iree/blob/b8a469b731ed665d999b0097d09090944533f773/build_tools/android/post_benchmarks_as_pr_comment.py">here</a>.</p>
+<h2 id="closing-remarks">Closing Remarks</h2>
+<p>That&rsquo;s it. Hopefully this can be helpful to you if you are also shopping for
+a solution to fulfill similar needs.</p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p>You can think of them as device-specific concrete
+implementations of HAL abstractions.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+        </div>
+        
+        <div class="my-4">
+    
+    <a href="https://www.lei.chat/tags/android/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#android</a>
+    
+    <a href="https://www.lei.chat/tags/benchmarking/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#benchmarking</a>
+    
+    <a href="https://www.lei.chat/tags/pipeline/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#pipeline</a>
+    
+    <a href="https://www.lei.chat/tags/oss/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#oss</a>
+    
+    <a href="https://www.lei.chat/tags/github/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#github</a>
+    
+    <a href="https://www.lei.chat/tags/buildkite/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#buildkite</a>
+    
+    <a href="https://www.lei.chat/tags/dana/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#dana</a>
+    
+    <a href="https://www.lei.chat/tags/performance/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#performance</a>
+    
+</div>
+        
+        
+        
+
+
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">Next</span>
+        <a href="https://www.lei.chat/posts/gpgpu-ml-inference-and-vulkan-compute/" class="block">GPGPU, ML Inference, and Vulkan Compute</a>
+        
+    </div>
+</div>
+
+        
+
+
+
+  <script id="utterances" src="https://utteranc.es/client.js"
+            issue-term=title
+            repo=antiagainst/antiagainst.github.io
+              theme=preferred-color-scheme
+        crossorigin="anonymous"
+        async>
+</script>
+<script>
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+      document.getElementById('utterances').setAttribute('theme', 'github-dark')
+    }
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: light)").matches) || storageColorScheme == "Light") {
+      document.getElementById('utterances').setAttribute('theme', 'github-light')
+    }
+</script>
+
+
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">On This Page</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#requirements-and-goals">Requirements and Goals</a>
+      <ul>
+        <li><a href="#open-source">Open source</a></li>
+        <li><a href="#scalable">Scalable</a></li>
+        <li><a href="#frictionless">Frictionless</a></li>
+      </ul>
+    </li>
+    <li><a href="#the-pipeline">The Pipeline</a>
+      <ul>
+        <li><a href="#buildkite">Buildkite</a></li>
+        <li><a href="#benchmark-artifact-generation">Benchmark artifact generation</a></li>
+        <li><a href="#benchmark-execution">Benchmark execution</a></li>
+        <li><a href="#benchmark-result-presentation">Benchmark result presentation</a>
+          <ul>
+            <li><a href="#publishing-results-to-dashboard">Publishing results to dashboard</a></li>
+            <li><a href="#posting-on-pull-requests">Posting on pull requests</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#closing-remarks">Closing Remarks</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded p-6">
+        <h2 class="text-lg font-semibold mb-4">See Also</h2>
+        <div class="content">
+            
+            <a href="https://www.lei.chat/posts/sampling-performance-counters-from-gpu-drivers/">Sampling Performance Counters from Mobile GPU Drivers</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/gpgpu-ml-inference-and-vulkan-compute/">GPGPU, ML Inference, and Vulkan Compute</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/edge-mobile-ml-inference-challenges/">Edge/Mobile ML Inference Challenges</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/android-linux-gpu-drivers-internals-and-resources/">Android/Linux GPU Drivers: Internals and Resources</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/what-is-vulkan-compute/">What is Vulkan Compute?</a>
+            <br />
+            
+        </div>
+    </div>
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2018 - 2021 <a href="https://www.lei.chat/">Lei Zhang</a>
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

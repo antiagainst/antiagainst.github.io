@@ -3,15 +3,51 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://www.lei.chat/tags/android/</loc>
-    <lastmod>2021-07-25T11:25:26-04:00</lastmod>
+    <lastmod>2021-08-21T22:47:43-04:00</lastmod>
   </url><url>
     <loc>https://www.lei.chat/categories/android/</loc>
-    <lastmod>2021-07-25T11:25:26-04:00</lastmod>
+    <lastmod>2021-08-21T22:47:43-04:00</lastmod>
   </url><url>
-    <loc>https://www.lei.chat/tags/business/</loc>
-    <lastmod>2021-07-25T11:25:26-04:00</lastmod>
+    <loc>https://www.lei.chat/posts/android-native-library-benchmarking-pipeline-for-open-source-projects/</loc>
+    <lastmod>2021-08-21T22:47:43-04:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/tags/benchmarking/</loc>
+    <lastmod>2021-08-21T22:47:43-04:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/tags/buildkite/</loc>
+    <lastmod>2021-08-21T22:47:43-04:00</lastmod>
   </url><url>
     <loc>https://www.lei.chat/categories/</loc>
+    <lastmod>2021-08-21T22:47:43-04:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/tags/dana/</loc>
+    <lastmod>2021-08-21T22:47:43-04:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/tags/github/</loc>
+    <lastmod>2021-08-21T22:47:43-04:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/categories/infrastructure/</loc>
+    <lastmod>2021-08-21T22:47:43-04:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/</loc>
+    <lastmod>2021-08-21T22:47:43-04:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/tags/oss/</loc>
+    <lastmod>2021-08-21T22:47:43-04:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/tags/performance/</loc>
+    <lastmod>2021-08-21T22:47:43-04:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/tags/pipeline/</loc>
+    <lastmod>2021-08-21T22:47:43-04:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/posts/</loc>
+    <lastmod>2021-08-21T22:47:43-04:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/tags/</loc>
+    <lastmod>2021-08-21T22:47:43-04:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/tags/business/</loc>
     <lastmod>2021-07-25T11:25:26-04:00</lastmod>
   </url><url>
     <loc>https://www.lei.chat/tags/compiler/</loc>
@@ -41,9 +77,6 @@
     <loc>https://www.lei.chat/tags/inference/</loc>
     <lastmod>2021-07-25T11:25:26-04:00</lastmod>
   </url><url>
-    <loc>https://www.lei.chat/</loc>
-    <lastmod>2021-07-25T11:25:26-04:00</lastmod>
-  </url><url>
     <loc>https://www.lei.chat/tags/ml/</loc>
     <lastmod>2021-07-25T11:25:26-04:00</lastmod>
   </url><url>
@@ -56,16 +89,10 @@
     <loc>https://www.lei.chat/tags/opencl/</loc>
     <lastmod>2021-07-25T11:25:26-04:00</lastmod>
   </url><url>
-    <loc>https://www.lei.chat/posts/</loc>
-    <lastmod>2021-07-25T11:25:26-04:00</lastmod>
-  </url><url>
     <loc>https://www.lei.chat/series/</loc>
     <lastmod>2021-07-25T11:25:26-04:00</lastmod>
   </url><url>
     <loc>https://www.lei.chat/tags/standard/</loc>
-    <lastmod>2021-07-25T11:25:26-04:00</lastmod>
-  </url><url>
-    <loc>https://www.lei.chat/tags/</loc>
     <lastmod>2021-07-25T11:25:26-04:00</lastmod>
   </url><url>
     <loc>https://www.lei.chat/tags/technology/</loc>
@@ -137,9 +164,6 @@
     <loc>https://www.lei.chat/tags/mali/</loc>
     <lastmod>2021-07-12T18:04:28-04:00</lastmod>
   </url><url>
-    <loc>https://www.lei.chat/tags/performance/</loc>
-    <lastmod>2021-07-12T18:04:28-04:00</lastmod>
-  </url><url>
     <loc>https://www.lei.chat/posts/sampling-performance-counters-from-gpu-drivers/</loc>
     <lastmod>2021-07-12T18:04:28-04:00</lastmod>
   </url><url>
@@ -162,9 +186,6 @@
     <lastmod>2021-07-07T15:53:29-04:00</lastmod>
   </url><url>
     <loc>https://www.lei.chat/tags/api/</loc>
-    <lastmod>2021-07-12T18:04:28-04:00</lastmod>
-  </url><url>
-    <loc>https://www.lei.chat/tags/pipeline/</loc>
     <lastmod>2021-07-12T18:04:28-04:00</lastmod>
   </url><url>
     <loc>https://www.lei.chat/tags/structure/</loc>

@@ -8,13 +8,22 @@
     <language>en</language>
     <copyright>&amp;copy; 2018 - 2021 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Sun, 25 Jul 2021 11:25:26 -0400</lastBuildDate><atom:link href="https://www.lei.chat/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 21 Aug 2021 22:47:43 -0400</lastBuildDate><atom:link href="https://www.lei.chat/categories/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>android</title>
       <link>https://www.lei.chat/categories/android/</link>
-      <pubDate>Sun, 25 Jul 2021 11:25:26 -0400</pubDate>
+      <pubDate>Sat, 21 Aug 2021 22:47:43 -0400</pubDate>
       
       <guid>https://www.lei.chat/categories/android/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>infrastructure</title>
+      <link>https://www.lei.chat/categories/infrastructure/</link>
+      <pubDate>Sat, 21 Aug 2021 22:47:43 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/categories/infrastructure/</guid>
       <description></description>
     </item>
     

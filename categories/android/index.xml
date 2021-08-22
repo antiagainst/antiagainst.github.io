@@ -8,7 +8,26 @@
     <language>en</language>
     <copyright>&amp;copy; 2018 - 2021 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Sun, 25 Jul 2021 11:25:26 -0400</lastBuildDate><atom:link href="https://www.lei.chat/categories/android/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 21 Aug 2021 22:47:43 -0400</lastBuildDate><atom:link href="https://www.lei.chat/categories/android/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Android Native Library Benchmarking Pipeline for Open Source Projects</title>
+      <link>https://www.lei.chat/posts/android-native-library-benchmarking-pipeline-for-open-source-projects/</link>
+      <pubDate>Sat, 21 Aug 2021 22:47:43 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/posts/android-native-library-benchmarking-pipeline-for-open-source-projects/</guid>
+      <description>&lt;p&gt;Today I would like to describe one way to build a scalable and frictionless
+benchmarking pipeline for Android native libraries, aiming to support different
+benchmark and device variants.
+It is for open source projects, so it composes public services, commonly
+free under such conditions.
+The ingredients are cloud virtual machines for building, local single board
+computers (e.g., Raspberry Pi) for hosting Android devices and executing
+benchmarks, a &lt;a href=&#34;https://github.com/google/dana&#34;&gt;Dana&lt;/a&gt; server for keeping track of benchmark results of
+landed changes, and Python scripts for posting benchmark comparisons to pull
+requests.
+A &lt;a href=&#34;https://buildkite.com&#34;&gt;Buildkite&lt;/a&gt; pipeline chains them together and drives the full flow.&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>GPGPU, ML Inference, and Vulkan Compute</title>
       <link>https://www.lei.chat/posts/gpgpu-ml-inference-and-vulkan-compute/</link>
