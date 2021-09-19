@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>gpu-codegen on Lei.Chat()</title>
+    <link>https://www.lei.chat/series/gpu-codegen/</link>
+    <description>Recent content in gpu-codegen on Lei.Chat()</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>&amp;copy; 2018 - 2021 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
+</copyright>
+    <lastBuildDate>Sun, 19 Sep 2021 19:17:07 -0400</lastBuildDate><atom:link href="https://www.lei.chat/series/gpu-codegen/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>CodeGen Performant Convolution Kernels for Mobile GPUs</title>
+      <link>https://www.lei.chat/posts/codegen-performant-convolution-kernels-for-mobile-gpus/</link>
+      <pubDate>Sun, 19 Sep 2021 19:17:07 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/posts/codegen-performant-convolution-kernels-for-mobile-gpus/</guid>
+      <description>&lt;p&gt;This blog post talks about how to generate performant code for convolution ops
+using MLIR’s multiple levels of abstractions and transformations.
+I initially created it for targeting ARM Mali GPUs in IREE. But given it is
+just direct tiling and vectorization, it should be widely applicable.&lt;/p&gt;
+&lt;p&gt;I will walk through the lowering steps, so if you are interested to know how to
+organize MLIR’s various dialects/patterns together to achieve similar tasks,
+this blog post might also be useful.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

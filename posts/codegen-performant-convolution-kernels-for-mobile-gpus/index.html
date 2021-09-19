@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang='en' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>CodeGen Performant Convolution Kernels for Mobile GPUs | Lei.Chat()</title>
+
+<meta name="generator" content="Hugo Eureka 0.8.0" />
+<link rel="stylesheet" href="https://www.lei.chat/css/eureka.min.css">
+<script defer src="https://www.lei.chat/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/bash.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/c.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cmake.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cpp.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/glsl.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/javascript.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/llvm.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/python.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/shell.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-109525036-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-109525036-1');
+</script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="This blog post talks about how to generate performant code for convolution ops
+using MLIR’s multiple levels of abstractions and transformations.
+I initially created it for targeting ARM Mali GPUs in IREE. But given it is
+just direct tiling and vectorization, it should be widely applicable.
+I will walk through the lowering steps, so if you are interested to know how to
+organize MLIR’s various dialects/patterns together to achieve similar tasks,
+this blog post might also be useful.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Posts",
+      "item":"https://www.lei.chat/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"CodeGen Performant Convolution Kernels for Mobile GPUs",
+      "item":"https://www.lei.chat/posts/codegen-performant-convolution-kernels-for-mobile-gpus/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.lei.chat/posts/codegen-performant-convolution-kernels-for-mobile-gpus/"
+    },
+    "headline": "CodeGen Performant Convolution Kernels for Mobile GPUs | Lei.Chat()","datePublished": "2021-09-19T19:17:07-04:00",
+    "dateModified": "2021-09-19T19:17:07-04:00",
+    "wordCount":  7524 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "Lei Zhang",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.lei.chat/images/avatar.png"
+        }
+        },
+    "description": "\u003cp\u003eThis blog post talks about how to generate performant code for convolution ops\nusing MLIR’s multiple levels of abstractions and transformations.\nI initially created it for targeting ARM Mali GPUs in IREE. But given it is\njust direct tiling and vectorization, it should be widely applicable.\u003c\/p\u003e\n\u003cp\u003eI will walk through the lowering steps, so if you are interested to know how to\norganize MLIR’s various dialects\/patterns together to achieve similar tasks,\nthis blog post might also be useful.\u003c\/p\u003e"
+}
+</script><meta property="og:title" content="CodeGen Performant Convolution Kernels for Mobile GPUs | Lei.Chat()" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="https://www.lei.chat/images/avatar.png">
+
+
+<meta property="og:url" content="https://www.lei.chat/posts/codegen-performant-convolution-kernels-for-mobile-gpus/" />
+
+
+
+
+<meta property="og:description" content="This blog post talks about how to generate performant code for convolution ops
+using MLIR’s multiple levels of abstractions and transformations.
+I initially created it for targeting ARM Mali GPUs in IREE. But given it is
+just direct tiling and vectorization, it should be widely applicable.
+I will walk through the lowering steps, so if you are interested to know how to
+organize MLIR’s various dialects/patterns together to achieve similar tasks,
+this blog post might also be useful." />
+
+
+
+
+<meta property="og:locale" content="en" />
+
+
+
+
+<meta property="og:site_name" content="Lei.Chat()" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2021-09-19T19:17:07-04:00" />
+
+
+<meta property="article:modified_time" content="2021-09-19T19:17:07-04:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="convolution" />
+
+<meta property="article:tag" content="kernel" />
+
+<meta property="article:tag" content="compiler" />
+
+<meta property="article:tag" content="codegen" />
+
+<meta property="article:tag" content="mobile" />
+
+<meta property="article:tag" content="arm" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Lei.Chat()</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">Posts</a>
+            <a href="/authors/me" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">About</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">Light</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">Dark</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">Auto</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">CodeGen Performant Convolution Kernels for Mobile GPUs</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2021-09-19</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>36 min read</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="https://www.lei.chat/categories/android/" class="hover:text-eureka">android</a>
+        
+        
+        <span>, </span>
+        <a href="https://www.lei.chat/categories/ml-inference/" class="hover:text-eureka">ml-inference</a>
+        
+        
+        <span>, </span>
+        <a href="https://www.lei.chat/categories/gpu-performance/" class="hover:text-eureka">gpu-performance</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="https://www.lei.chat/series/gpu-codegen/" class="hover:text-eureka">gpu-codegen</a>
+        
+    </div>
+    
+</div>
+        
+        <div class="content">
+            <p>This blog post talks about how to generate performant code for convolution ops
+using MLIR’s multiple levels of abstractions and transformations.
+I initially created it for targeting ARM Mali GPUs in IREE. But given it is
+just direct tiling and vectorization, it should be widely applicable.</p>
+<p>I will walk through the lowering steps, so if you are interested to know how to
+organize MLIR’s various dialects/patterns together to achieve similar tasks,
+this blog post might also be useful.</p>
+<h2 id="background-and-scope">Background and Scope</h2>
+<p>The goal is to generate performant code for convolution ops to target mobile
+GPUs. The problem spaces on both sides are huge, therefore it&rsquo;s worth limiting
+our scope so that we can have the best solution for each well-defined subproblem
+and bite off the big one piece by piece.</p>
+<h3 id="convolution-ops">Convolution ops</h3>
+<p>There are <a href="https://towardsdatascience.com/a-comprehensive-introduction-to-different-types-of-convolutions-in-deep-learning-669281e58215">many flavors of convolution ops</a>. They can have vastly
+different data access patterns and some variants (e.g., depthwise/dilated
+convolution) are inherently adversarial for GPU utilization (without layout
+adjustment and other optimizations).</p>
+<p>In this blog post, I will be focusing on the basic version of convolution,
+which is still widely used in various mobile vision models.
+To make sure we are on the same page regarding terminology,
+specifically, we apply a 4-D filter tensor <code>Filter</code> on a 4-D input tensor
+<code>Input</code> to generate the 4-D output tensor <code>Output</code>. <code>Input</code> follows layout
+(<code>N</code>, <code>IH</code>, <code>IW</code>, <code>IC</code>). <code>Filter</code> follows layout (<code>FH</code>, <code>FW</code>, <code>IC</code>, <code>OC</code>).
+<code>Output</code> follows layout (<code>N</code>, <code>OH</code>, <code>OW</code>, <code>OC</code>). For now we assume there is
+no padding and dilation. (Handling padding is complicated enough to merit its
+own blog posts.)</p>
+<h3 id="mobile-gpus">Mobile GPUs</h3>
+<p>In the mobile world, GPUs can come from several vendors. Apple has its own
+solution for iOS devices. For Android, Qualcomm Adreno and ARM Mali are notable
+ones. There are also others like Imagination PowerVR, and AMD is entering the
+mobile world too.
+Although they are all tiled architectures so we can target all of them
+uniformly, they differ on important characteristics to require special treatment
+here and there.</p>
+<p>For example, here we will focus on Mali GPUs, which do not have dedicated
+on-chip shared memory. You can still use shared memory for sure, but it&rsquo;s just
+plain normal system memory.
+So optimizations like promoting to shared memory (which we commonly see when
+targeting NVIDIA/AMD GPUs) actually won&rsquo;t be helpful or even can be harmful
+to performance.</p>
+<h3 id="general-gpu-kernel-optimization">General GPU kernel optimization</h3>
+<p>The goal of GPU kernel optimization is to approach theoretical peak performance
+as much as possible. Pure theoretical peak performance is hard to achieve, if
+ever possible. In reality, arguably 50%-80% is already good enough. And there
+are diminishing returns as we approach closer and closer to the peak.</p>
+<p>In general, approaching the theoretical peak means to saturate computation
+units, which requires to <strong>1) prepare data fast</strong> and <strong>2) issue enough
+computation</strong>.</p>
+<p>For the first, commonly we want to <strong>1) exploit data locality</strong>, which typically
+means tiling. On top of that we want to have <strong>1b) good load/store patterns</strong>.
+For global memory, that is to perform 4-element load/store cyclically
+for adjacent GPU threads. This is particularly important to Mali GPUs.
+Then we want to <strong>1c) reuse data in fast memory</strong>. For Mali GPUs we don&rsquo;t have
+dedicated shared memory so that leaves us to only registers. We can preload
+shareable data and cache intermediate data in registers. But we also want to
+control the number of registers each thread uses to avoid spilling. There is
+a trade off here (as always).</p>
+<p>For the second, lots of tricks. But in general we <strong>prefer streamlined
+vectorized code with as little flow control as possible</strong>.
+This way we can fill the GPU compute pipelines as much as possible without many
+bubbles. GPUs are parallel machines with thousands of threads easily, but each
+one of them is just a very naive slow in-order &ldquo;CPU thread&rdquo;<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>.</p>
+<h2 id="overall-codegen-strategy">Overall CodeGen Strategy</h2>
+<p>Based on the previous section, clearly there is a large gap between what we see
+as the source convolution op and what the target hardware excels at executing.
+The former is quite high-level, abstract, and dynamic. The latter wants
+low-level, concrete, and static. Our task here is to bridge the gap.
+It&rsquo;s doable in one step; we can hand write whatever GPU kernel code for whatever
+source convolution ops. The difficulty is composability, extensibility, and
+maintainability. It is painful for others to understand or modify.</p>
+<p>Here are where compiler code generation and particularly the multiple-level
+nature of MLIR are great. Like how we typically approach all computer problems,
+we can create different abstractions to break down the problem and create
+solutions for isolated tasks to make them composible, extensible, and easy
+to maintain.</p>
+<p>Looking at the problem we have at hand again, a convolution op is a standalone
+entity computing on n-D tensors. We want to break it down to
+the level that GPU favors&mdash;computation over 4-element 1-D vectors. If it&rsquo;s just
+one thread, we need to wrap the 1-D vector computation inside some loops so that
+we can solve the whole original workload.
+But GPUs provide so many threads. We can then divide and conquer by partitioning
+the original workload and distribute them to different workgroups/workitems.</p>
+<h3 id="tiling-and-distribution">Tiling and distribution</h3>
+<p>Therefore, the general idea is to tile and distribute the original convolution
+op. We have three levels in the compute hierarchy: workgroup, subgroup/warp,
+and workitem. As said before for Mali GPUs there is no dedicated on-chip shared
+memory so it&rsquo;s not helpful to utilize that as a way to exchange data among
+different subgroups. So we will just tile and distribute to workgroups and
+workitems.</p>
+<p>This tiling and distribution should partition the convolution <code>Output</code>, as
+all its dimensions are parallel ones&mdash;each output element can be computed
+independently from others. This is great for GPU, which is just a massive
+parallel machine that was initially designed to shade pixels on screens.</p>
+<h3 id="vectorization-and-unrolling">Vectorization and unrolling</h3>
+<p>After tiling and distribution, each GPU thread just handles a subset of the
+<code>Output</code> elements, effectively a much smaller scale convolution here.
+Considering the general kernel optimizations, tiling helps to exploit data
+locality. At the workitem level, we need to consider the rest.
+We&rsquo;d want vectorized code here, both for load/store and computation.
+We&rsquo;d want to use registers to cache commonly used inputs and intermediate
+results. We&rsquo;d want to unroll loops to generate enough streamlined code.
+Let&rsquo;s see how we can achieve these goals.</p>
+<ul>
+<li>Each workitem should fully compute all convolution <code>Output</code> elements it is
+responsible for in one run. All <code>Output</code> elements are independent so
+the workitem doesn&rsquo;t need to wait for anything. Fully computing allows us to
+use registers to hold intermediate results and only write out once finally.</li>
+<li>Convolution <code>Filter</code> is needed for computing all <code>Output</code> elements. We can
+preload it to registers to reduce memory requests and boost reuse.</li>
+<li>In order to have a good vectorized memory load/store pattern, the distribution
+should be cyclic and each thread should be in charge of 4 consecutive
+elements in memory.
+That is, thread (<code>0</code>/<code>1</code>/<code>2</code>/<code>3</code>/etc., <code>y</code>, <code>z</code>) should handle elements
+<code>0</code>-<code>3</code>/<code>4</code>-<code>7</code>/<code>8</code>-<code>11</code>/<code>12</code>-<code>15</code>/etc. This is actually where the convolution
+layout matters.
+As said before, our convolution <code>Input</code>/<code>Filter</code>/<code>Output</code> follows the
+(<code>N</code>, <code>IH</code>, <code>IW</code>, <code>IC</code>)/(<code>FH</code>, <code>FW</code>, <code>IC</code>, <code>OC</code>)/(<code>N</code>, <code>OH</code>, <code>OW</code>, <code>OC</code>)
+layout. We partition the <code>Output</code>. So we can achieve the nice access
+pattern for <code>Output</code> and therefore <code>Filter</code> (which also has <code>OC</code> as its
+innermost dimension), but not <code>Input</code>. <code>Input</code> has <code>IC</code> as its innermost
+dimension. That&rsquo;s a reduction dimension; a thread needs to read through the
+full memory span consecutively. Often it&rsquo;s not as small as 4.
+(For vision models, it&rsquo;s typically larger and larger as we extract more and
+more high-level features.)
+So we don&rsquo;t have consecutive threads always reading consecutive
+4-element chunks. That breaks the pattern.</li>
+<li>Vectorized computation is sort of natural if we can distribute properly
+(making sure each thread handles 4x elements for the innermost dimension)
+and perform vectorized load/store.</li>
+<li>For unrolling, among all the dimensions, <code>OH</code>, <code>OW</code>, and <code>OC</code> are sufficient.
+We partitioned along these dimensions so they have known small static values.
+Therefore, both feasible and controllable. We can materialize loops for
+other dimensions (<code>FH</code>, <code>FW</code>, and <code>IC</code>).</li>
+</ul>
+<p>Putting the above together, here is a sketch of the vectorized kernel for one
+workitem (taken from <a href="https://github.com/google/uVkCompute/blob/1d79a1e/benchmarks/convolution/conv2d_tiled.glsl">here</a>):</p>
+<pre><code class="language-glsl">// Each thread/invocation calculates (IVC_OH * IVC_OW * IVC_OC * 4) output elements.
+VEC4TYPE O[IVC_OH][IVC_OW][IVC_OC];
+
+// Use registers to keep the filter for this tile to increase data reuse.
+VEC4TYPE F[4][IVC_OC];
+
+uvec3 wgID = gl_WorkGroupID;
+uvec3 threadID = gl_LocalInvocationID;
+uvec3 threadCount = gl_WorkGroupSize;
+
+uint wgBaseOC = wgID.x * WG_TILE_OC; // Workgroup base output channel
+uint wgBaseOW = wgID.y * WG_TILE_OW; // Workgroup base output width
+uint wgBaseOH = wgID.z * WG_TILE_OH; // Workgroup base output height
+
+// Initialize the output for this batch to zero.
+[[unroll]] for (uint i = 0; i &lt; IVC_OH; ++i)
+  [[unroll]] for (uint j = 0; j &lt; IVC_OW; ++j)
+    [[unroll]] for (uint k = 0; k &lt; IVC_OC; ++k)
+      O[i][j][k] = VEC4TYPE(0.f, 0.f, 0.f, 0.f);
+
+for (uint fh = 0; fh &lt; FH; ++fh) {
+  for (uint fw = 0; fw &lt; FW; ++fw) {
+    // Tile input channel with each tile having 4 elements.
+    for (uint ic = 0; ic &lt; IC; ic += 4) {
+      // Load the filter for this input channel tile.
+      [[unroll]] for (uint i = 0; i &lt; 4; ++i)
+        [[unroll]] for (uint j = 0; j &lt; IVC_OC; ++j)
+          uint oc = (threadID.x + threadCount.x * j) * 4 + wgBaseOC;
+          F[i][j] = Filter.data[filterCoordToOffset(fh, fw, ic + i, oc)];
+
+      // Load this input channel tile and perform dot product with filters
+      // for different output elements.
+      [[unroll]] for (uint i = 0; i &lt; IVC_OH; ++i) {
+        uint oh = i + threadID.z * IVC_OH + wgBaseOH;
+        [[unroll]] for (uint j = 0; j &lt; IVC_OW; ++j) {
+          uint ow = j + threadID.y * IVC_OW + wgBaseOW;
+          VEC4TYPE feature = Input.data[inputCoordToOffset(oh * SH + fh, ow * SW + fw, ic)];
+          [[unroll]] for (uint k = 0; k &lt; IVC_OC; ++k) {
+            O[i][j][k] += VEC4TYPE(feature.x, feature.x, feature.x, feature.x) * F[0][k];
+            O[i][j][k] += VEC4TYPE(feature.y, feature.y, feature.y, feature.y) * F[1][k];
+            O[i][j][k] += VEC4TYPE(feature.z, feature.z, feature.z, feature.z) * F[2][k];
+            O[i][j][k] += VEC4TYPE(feature.w, feature.w, feature.w, feature.w) * F[3][k];
+          }
+        }
+      }
+    }
+  }
+}
+
+// Write out the computed output elements.
+[[unroll]] for (uint i = 0; i &lt; IVC_OH; ++i) {
+  uint oh = i + threadID.z * IVC_OH + wgBaseOH;
+  [[unroll]] for (uint j = 0; j &lt; IVC_OW; ++j) {
+    uint ow = j + threadID.y * IVC_OW + wgBaseOW;
+    [[unroll]] for (uint k = 0; k &lt; IVC_OC; ++k) {
+      uint oc = (threadID.x + threadCount.x * k) * 4 + wgBaseOC;
+      Output.data[outputCoordToOffset(oh, ow, oc)] = O[i][j][k];
+    }
+  }
+}
+</code></pre>
+<p>In the above, we keep the current <code>Output</code> batch in <code>O</code> and preload the
+<code>Filter</code> batch in <code>F</code>. We loop over <code>FH</code> and <code>FW</code>, and perform FMA along <code>IC</code>.
+For <code>IC</code>, although we cannot achieve the perfect memory load pattern, we still
+try to handle 4 elements each time. This isn&rsquo;t strictly required though.
+Effectively we can read one scalar element each time and FMA it to each <code>Output</code>
+element. It supports cases like <code>IC</code> == 3, which happens for the initial image
+where we typically have 3 channels (RGB).</p>
+<p>The above code is taken from the <a href="https://github.com/google/uVkCompute">µVkCompute</a>, where one can directly
+write kernels with simple Vulkan compute pipelines to try out different CodeGen
+strategies. You can find the runnable code <a href="https://github.com/google/uVkCompute/blob/1d79a1e/benchmarks/convolution/conv2d_tiled.glsl">there</a>, which also
+has a packed fp16 version. Invoking it on Samsung Galaxy S21 (Exynos 2100, Mali
+G78 MP14):</p>
+<pre><code>&gt; adb shell /data/local/tmp/conv2d_mali_valhall --latency_measure_mode=gpu_timestamp
+
+2021-09-12T16:03:26-04:00
+Running /data/local/tmp/conv2d_mali_valhall
+Run on (8 X 2210 MHz CPU s)
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Benchmark                                                                                                         Time             CPU   Iterations UserCounters...
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Mali-G78/Input[1x258x258x16]xFilter[3x3x16x256]/Stride[1x1]/Tile[1x16x16]/WGSize[4x4x1]/f32/manual_time       13431 us          837 us           53 FLOps=359.761G/s
+Mali-G78/Input[1x258x258x16]xFilter[3x3x16x256]/Stride[1x1]/Tile[2x8x16]/WGSize[4x4x1]/f32/manual_time        13489 us          711 us           52 FLOps=358.216G/s
+Mali-G78/Input[1x258x258x16]xFilter[3x3x16x256]/Stride[1x1]/Tile[4x4x16]/WGSize[4x4x1]/f32/manual_time        14216 us          757 us           49 FLOps=339.894G/s
+Mali-G78/Input[1x258x258x16]xFilter[3x3x16x256]/Stride[1x1]/Tile[2x8x16]/WGSize[4x2x2]/f32/manual_time        13337 us          433 us           53 FLOps=362.281G/s
+Mali-G78/Input[1x258x258x16]xFilter[3x3x16x256]/Stride[1x1]/Tile[4x4x16]/WGSize[4x2x2]/f32/manual_time        13681 us          678 us           51 FLOps=353.184G/s
+Mali-G78/Input[1x258x258x16]xFilter[3x3x16x256]/Stride[1x1]/Tile[8x2x16]/WGSize[4x2x2]/f32/manual_time        13544 us          550 us           52 FLOps=356.754G/s
+...
+Mali-G78/Input[1x258x258x16]xFilter[3x3x16x256]/Stride[1x1]/Tile[2x4x32]/WGSize[4x2x2]/f16/manual_time         8405 us          520 us           83 FLOps=574.908G/s
+Mali-G78/Input[1x258x258x16]xFilter[3x3x16x256]/Stride[1x1]/Tile[2x8x32]/WGSize[4x2x2]/f16/manual_time         6019 us          412 us          119 FLOps=802.734G/s
+Mali-G78/Input[1x258x258x16]xFilter[3x3x16x256]/Stride[1x1]/Tile[4x4x32]/WGSize[4x2x2]/f16/manual_time         6243 us          846 us          117 FLOps=773.904G/s
+Mali-G78/Input[1x258x258x16]xFilter[3x3x16x256]/Stride[1x1]/Tile[8x2x32]/WGSize[4x2x2]/f16/manual_time         6169 us          794 us          119 FLOps=783.25G/s
+...
+</code></pre>
+<p>The theoretical peak is roughly 760<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>/1520 GFLOps for fp32/fp16.
+So this is achieving 50% utilization. Not so bad with straightforward tiling
+and direct vectorization.</p>
+<p>Okay, thus far we have a clear overall CodeGen strategy and know what the
+inner kernel should be. Let&rsquo;s see how we can generate in such a way with MLIR.</p>
+<h2 id="the-mliriree-codegen-flow">The MLIR/IREE CodeGen Flow</h2>
+<p>In MLIR we have many dialects, modelling abstractions at different levels.
+The ones involved here are <a href="https://github.com/tensorflow/mlir-hlo"><code>mhlo</code></a>, <a href="https://mlir.llvm.org/docs/Dialects/Linalg/"><code>linalg</code></a>,
+<a href="https://mlir.llvm.org/docs/Dialects/Vector/"><code>vector</code></a>, <a href="https://mlir.llvm.org/docs/Dialects/SCFDialect/"><code>scf</code></a>, and <a href="https://mlir.llvm.org/docs/Dialects/SPIR-V/"><code>spirv</code></a>.
+I won&rsquo;t go into details about them; you can reference their documentation by
+following the embedded links. Just mentioning how they are used in our flow:</p>
+<ul>
+<li><code>mhlo</code>: input dialect for models authored in TensorFlow.</li>
+<li><code>linalg</code>: core dialect that models linalg algebra computations on n-D
+tensors or buffers. We use to it perform tiling and distribution.</li>
+<li><code>vector</code>: core dialect for modelling n-D static-shaped vectors. We use it
+to perform vectorization and vector level optimizations like load-store
+forwarding.</li>
+<li><code>scf</code>: for loops around computation.</li>
+<li><code>spirv</code>: final output dialect for generated kernels.</li>
+</ul>
+<p>The journey starts with the following source convolution:</p>
+<pre><code>func @conv(%input: tensor&lt;1x225x225x3xf32&gt;, %filter: tensor&lt;3x3x3x32xf32&gt;)
+          -&gt; tensor&lt;1x112x112x32xf32&gt; {
+  %0 = mhlo.convolution(%input, %filter)
+            dim_numbers = [b, 0, 1, f]x[0, 1, i, o]-&gt;[b, 0, 1, f],
+            window = {stride = [2, 2], pad = [[0, 0], [0, 0]], rhs_dilate = [1, 1]}
+            {batch_group_count = 1 : i64, feature_group_count = 1 : i64}
+            : (tensor&lt;1x225x225x3xf32&gt;, tensor&lt;3x3x3x32xf32&gt;) -&gt; tensor&lt;1x112x112x32xf32&gt;
+  return %0 : tensor&lt;1x112x112x32xf32&gt;
+}
+</code></pre>
+<p>If you&rsquo;d like to see the flow by yourself, you can <a href="https://google.github.io/iree/building-from-source/getting-started/">compile
+<code>iree-translate</code></a> and invoke it on the above function with the
+following command:</p>
+<pre><code class="language-shell">iree/tools/iree-translate \
+  -iree-input-type=mhlo \
+  -iree-mlir-to-vm-bytecode-module \
+  -iree-hal-target-backends=vulkan-spirv \
+  -iree-vulkan-target-triple=valhall-unknown-android11 \
+  -print-ir-after-all \
+  -mlir-print-local-scope \
+  conv.mlir -o iree.vmfb &amp;&gt; conv-conversion.mlir
+</code></pre>
+<p>The IREE codebase changes very quickly. I use <a href="https://github.com/google/iree/commit/080cbc466214c698bf6086d7bc1fc205ade2706c">IREE@<code>080cbc46</code></a> in
+this blog post (for both IR snippets and code pointers). If you&rsquo;d like to see
+the exact same result, you can check that commit out.
+I also put the full dump in a <a href="https://gist.github.com/antiagainst/f84a6d261b05385a2eeed42e6c6f1a1f">Gist</a> that you can use as a reference.</p>
+<h3 id="mhlo-to-linalg-conversion"><code>mhlo</code> to <code>linalg</code> conversion</h3>
+<p>The first major step is to convert <code>mhlo.convolution</code> into a <code>linalg.conv</code> op.
+This is done via the <a href="https://github.com/google/iree/blob/080cbc46/iree/compiler/InputConversion/MHLO/MHLOToLinalgOnTensors.cpp"><code>ConvertMHLOToLinalgOnTensors</code> pass</a>.</p>
+<pre><code>// -----// IR Dump After ConvertMHLOToLinalgOnTensors //----- //
+func @conv(%arg0: !hal.buffer_view, %arg1: !hal.buffer_view)
+          -&gt; !hal.buffer_view attributes {iree.abi.stub} {
+  %0 = hal.tensor.cast %arg0 : !hal.buffer_view -&gt; tensor&lt;1x225x225x3xf32&gt;
+  %1 = hal.tensor.cast %arg1 : !hal.buffer_view -&gt; tensor&lt;3x3x3x32xf32&gt;
+  %2 = linalg.init_tensor [1, 112, 112, 32] : tensor&lt;1x112x112x32xf32&gt;
+  %cst = constant 0.000000e+00 : f32
+  %3 = linalg.fill(%cst, %2) : f32, tensor&lt;1x112x112x32xf32&gt; -&gt; tensor&lt;1x112x112x32xf32&gt;
+  %4 = linalg.conv_2d_nhwc_hwcf {
+         dilations = dense&lt;1&gt; : tensor&lt;2xi64&gt;,
+         strides = dense&lt;2&gt; : tensor&lt;2xi64&gt;
+       }
+       ins(%0, %1 : tensor&lt;1x225x225x3xf32&gt;, tensor&lt;3x3x3x32xf32&gt;)
+       outs(%3 : tensor&lt;1x112x112x32xf32&gt;)
+       -&gt; tensor&lt;1x112x112x32xf32&gt;
+  %5 = hal.tensor.cast %4 : tensor&lt;1x112x112x32xf32&gt; -&gt; !hal.buffer_view
+  return %5 : !hal.buffer_view
+}
+</code></pre>
+<p>There isn&rsquo;t much to say here. It&rsquo;s basically pattern matching against the
+source <code>mhlo</code> convolution op, check its various attributes, and emit the
+suitable <code>linalg</code> convolution op.</p>
+<p>Unlike <code>mhlo</code>, where we have one single <code>convolution</code> op supporting many
+different configurations, in <code>linalg</code>, there are many different ops for
+different flavors of convolution, e.g., <code>linalg.conv_1d_nwc_wcf</code>,
+<code>linalg.conv_2d_nhwc_hwcf</code>. They are all called <a href="https://mlir.llvm.org/docs/Dialects/Linalg/#named-payload-carrying-opsa-namenamed_opsa">named ops</a>.
+It&rsquo;s <a href="https://mlir.llvm.org/docs/Dialects/Linalg/OpDSL/">simple to define</a> a new named op in <code>linalg</code>. They serve
+as the anchor for pattern matching and specialization for CodeGen or library
+calls.</p>
+<p>But named ops aren&rsquo;t core to <code>linalg</code>; actually they are just named versions of
+the <a href="https://mlir.llvm.org/docs/Dialects/Linalg/#linalggeneric-mlirlinalggenericop"><code>linalg.generic</code> op</a> of particular forms.
+<code>linalg.generic</code> has an implicit loop nest in it. It carries an affine map
+for each operand/result. The affine map defines the access pattern to the
+corresponding operand/result in the implicit loop nest.
+The payload in the loop nest is explicitly captured as a MLIR region to the
+<code>linalg.generic</code> op.</p>
+<p>Due to this structured representation, loop transformations are quite
+straightforward because by definition the op is a perfect loop nest and there
+is no explicit loop nest to match/manipulate for transformations.
+You can read more about this in the <a href="https://mlir.llvm.org/docs/Dialects/Linalg/#payload-carrying-opsa-namepayload_opsa">documentation</a>.</p>
+<h3 id="tiling-and-distributing-to-workgroups">Tiling and distributing to workgroups</h3>
+<p>Now we can start the first level tiling and distribution.
+In IREE this is done via the <a href="https://github.com/google/iree/blob/080cbc466214c698bf6086d7bc1fc205ade2706c/iree/compiler/Dialect/Flow/Transforms/DispatchLinalgOnTensors.cpp"><code>DispatchLinalgOnTensors</code>
+pass</a>. What we need to do is to utilize the
+<a href="https://github.com/llvm/llvm-project/blob/d9e46beace3120fbc4810dda5c3ed88f93e862a4/mlir/include/mlir/Dialect/Linalg/Transforms/Transforms.h#L553"><code>LinalgBaseTilingPattern</code></a> with a proper
+<a href="https://github.com/llvm/llvm-project/blob/d9e46beace3120fbc4810dda5c3ed88f93e862a4/mlir/include/mlir/Dialect/Linalg/Transforms/Transforms.h#L459"><code>LinalgTilingOptions</code></a>, which controls aspects like</p>
+<ul>
+<li>whether we want to tile/partition along each loop and what the tile size is,</li>
+<li>if we want to distribute, what the processor IDs are and how to distribute,</li>
+<li>what kind of loops to generate,</li>
+<li>etc.</li>
+</ul>
+<p>You can find the example configuration for IREE&rsquo;s workgroup tiling
+<a href="https://github.com/google/iree/blob/080cbc466214c698bf6086d7bc1fc205ade2706c/iree/compiler/Dialect/Flow/Transforms/DispatchLinalgOnTensors.cpp#L1235-L1239">here</a>.
+In IREE tiling to workgroup is initially done in an abstract way where we use
+symbolic values like <code>flow.dispatch.workgroup.size</code> for tiling sizes, and
+<code>flow.dispatch.workgroup.id</code>/<code>flow.dispatch.workgroup.count</code> for processor
+IDs/counts. Right now we generate <code>scf.for</code> loops. So with the linked
+configuration, the tiled code looks like:</p>
+<pre><code>// -----// IR Dump After DispatchLinalgOnTensors //----- //
+func @conv(%arg0: !hal.buffer_view, %arg1: !hal.buffer_view)
+          -&gt; !hal.buffer_view attributes {iree.abi.stub} {
+  %c32 = constant 32 : index
+  %c112 = constant 112 : index
+  %0 = hal.tensor.cast %arg0 : !hal.buffer_view -&gt; tensor&lt;1x225x225x3xf32&gt;
+  %1 = hal.tensor.cast %arg1 : !hal.buffer_view -&gt; tensor&lt;3x3x3x32xf32&gt;
+  %2 = flow.dispatch.workgroups[%c32, %c112, %c112](%0, %1)
+       : (tensor&lt;1x225x225x3xf32&gt;, tensor&lt;3x3x3x32xf32&gt;) -&gt; tensor&lt;1x112x112x32xf32&gt; =
+       (%arg2: !flow.dispatch.tensor&lt;readonly:1x225x225x3xf32&gt;,
+        %arg3: !flow.dispatch.tensor&lt;readonly:3x3x3x32xf32&gt;,
+        %arg4: !flow.dispatch.tensor&lt;writeonly:1x112x112x32xf32&gt;) {
+    %cst = constant 0.000000e+00 : f32
+    %c112_0 = constant 112 : index
+    %c32_1 = constant 32 : index
+    %4 = linalg.init_tensor [1, 112, 112, 32] : tensor&lt;1x112x112x32xf32&gt;
+    %workgroup_size_0 = flow.dispatch.workgroup.size[0] : index
+    %workgroup_size_1 = flow.dispatch.workgroup.size[1] : index
+    %workgroup_size_2 = flow.dispatch.workgroup.size[2] : index
+    %workgroup_id_0 = flow.dispatch.workgroup.id[0] : index
+    %workgroup_count_0 = flow.dispatch.workgroup.count[0] : index
+    %workgroup_id_1 = flow.dispatch.workgroup.id[1] : index
+    %workgroup_count_1 = flow.dispatch.workgroup.count[1] : index
+    %workgroup_id_2 = flow.dispatch.workgroup.id[2] : index
+    %workgroup_count_2 = flow.dispatch.workgroup.count[2] : index
+    %5 = affine.apply affine_map&lt;()[s0, s1] -&gt; (s0 * s1)&gt;()[%workgroup_id_2, %workgroup_size_2]
+    %6 = affine.apply affine_map&lt;()[s0, s1] -&gt; (s0 * s1)&gt;()[%workgroup_count_2, %workgroup_size_2]
+    scf.for %arg5 = %5 to %c112_0 step %6 {
+      %7 = affine.apply affine_map&lt;()[s0, s1] -&gt; (s0 * s1)&gt;()[%workgroup_id_1, %workgroup_size_1]
+      %8 = affine.apply affine_map&lt;()[s0, s1] -&gt; (s0 * s1)&gt;()[%workgroup_count_1, %workgroup_size_1]
+      scf.for %arg6 = %7 to %c112_0 step %8 {
+        %9 = affine.apply affine_map&lt;()[s0, s1] -&gt; (s0 * s1)&gt;()[%workgroup_id_0, %workgroup_size_0]
+        %10 = affine.apply affine_map&lt;()[s0, s1] -&gt; (s0 * s1)&gt;()[%workgroup_count_0, %workgroup_size_0]
+        scf.for %arg7 = %9 to %c32_1 step %10 {
+          %11 = affine.apply affine_map&lt;(d0) -&gt; (d0 * 2)&gt;(%arg5)
+          %12 = affine.min affine_map&lt;(d0, d1) -&gt; (d0 * 2 + 1, d1 * -2 + 227)&gt;(%workgroup_size_2, %arg5)
+          %13 = affine.apply affine_map&lt;(d0) -&gt; (d0 * 2)&gt;(%arg6)
+          %14 = affine.min affine_map&lt;(d0, d1) -&gt; (d0 * 2 + 1, d1 * -2 + 227)&gt;(%workgroup_size_1, %arg6)
+          %15 = flow.dispatch.tensor.load %arg2,
+                  offsets = [0, %11, %13, 0], sizes = [1, %12, %14, 3], strides = [1, 1, 1, 1]
+          %16 = affine.min affine_map&lt;(d0, d1) -&gt; (d0, -d1 + 32)&gt;(%workgroup_size_0, %arg7)
+          %17 = flow.dispatch.tensor.load %arg3,
+                  offsets = [0, 0, 0, %arg7], sizes = [3, 3, 3, %16], strides = [1, 1, 1, 1]
+          %18 = affine.min affine_map&lt;(d0, d1) -&gt; (d0, -d1 + 112)&gt;(%workgroup_size_2, %arg5)
+          %19 = affine.min affine_map&lt;(d0, d1) -&gt; (d0, -d1 + 112)&gt;(%workgroup_size_1, %arg6)
+          %20 = affine.min affine_map&lt;(d0, d1) -&gt; (d0, -d1 + 32)&gt;(%workgroup_size_0, %arg7)
+          %21 = affine.min affine_map&lt;(d0, d1) -&gt; (-d0 + 112, d1)&gt;(%arg5, %workgroup_size_2)
+          %22 = affine.min affine_map&lt;(d0, d1) -&gt; (-d0 + 112, d1)&gt;(%arg6, %workgroup_size_1)
+          %23 = affine.min affine_map&lt;(d0, d1) -&gt; (-d0 + 32, d1)&gt;(%arg7, %workgroup_size_0)
+          %24 = tensor.extract_slice %4[0, %arg5, %arg6, %arg7] [1, %21, %22, %23] [1, 1, 1, 1]
+                : tensor&lt;1x112x112x32xf32&gt; to tensor&lt;1x?x?x?xf32&gt;
+          %25 = linalg.fill(%cst, %24) : f32, tensor&lt;1x?x?x?xf32&gt; -&gt; tensor&lt;1x?x?x?xf32&gt;
+          %26 = linalg.conv_2d_nhwc_hwcf {
+                  __internal_linalg_transform__ = &quot;workgroup&quot;,
+                  dilations = dense&lt;1&gt; : tensor&lt;2xi64&gt;,
+                  strides = dense&lt;2&gt; : tensor&lt;2xi64&gt;
+                }
+                ins(%15, %17 : tensor&lt;1x?x?x3xf32&gt;, tensor&lt;3x3x3x?xf32&gt;)
+                outs(%25 : tensor&lt;1x?x?x?xf32&gt;) -&gt; tensor&lt;1x?x?x?xf32&gt;
+          flow.dispatch.tensor.store %26, %arg4,
+            offsets = [0, %arg5, %arg6, %arg7], sizes = [1, %18, %19, %20], strides = [1, 1, 1, 1]
+        }
+      }
+    }
+    flow.return
+  }
+  %3 = hal.tensor.cast %2 : tensor&lt;1x112x112x32xf32&gt; -&gt; !hal.buffer_view
+  return %3 : !hal.buffer_view
+}
+</code></pre>
+<p>I&rsquo;ve trimmed the raw output down a bit (by removing some type annotations), but
+still the IR snippet becomes lengthy from now on, given we are going to lower
+abstractions.</p>
+<p>We can see in the above, there are three loops that partition along <code>OH</code>, <code>OW</code>,
+and <code>OC</code> dimensions, and distribute to workgroup <code>z</code>, <code>y</code>, <code>x</code> dimensions.
+We have a <code>linalg.conv_2d_nhwc_hwcf</code> op working on a smaller scale tile inside
+the loop nest, together with the <code>linalg.fill</code> for its output initialization.
+The <code>affine.apply</code>/<code>affine.min</code> ops inside the loop nest is for calculating
+the tile indices and sizes to make sure we don&rsquo;t go out of bound.</p>
+<p>This performs the first level tiling.
+The abstract tiling is meant for handling both CPU and GPU in a uniform way;
+under such circumstances, we cannot determine the concrete configuration.</p>
+<p>Afterwards, we are down to the CodeGen path for GPU specifically. We need to
+start injecting static information to simplify the IR (particularly those
+<code>affine.apply</code>/<code>affine.min</code> ops).
+We can find a concrete tiling and workgroup size scheme to perfectly partition
+the convolution <code>Output</code>. Here, that&rsquo;s using workgroup size (8, 2, 1) and
+letting each workgroup process a <code>1x8x32</code> (<code>OHxOWxOC</code>) <code>Output</code>
+patch.<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>.</p>
+<p>Performing bufferization and injecting such information, we can get:</p>
+<pre><code>// -----// IR Dump After SPIRVRemoveOneTripTiledLoop //----- //
+func @conv_dispatch_0() {
+  %c0 = constant 0 : index
+  %c112 = constant 112 : index
+  %cst = constant 0.000000e+00 : f32
+  %0 = hal.interface.binding.subspan @io::@s0b0_ro_external[%c0] : memref&lt;1x225x225x3xf32&gt;
+  %1 = hal.interface.binding.subspan @io::@s0b1_ro_external[%c0] : memref&lt;3x3x3x32xf32&gt;
+  %2 = hal.interface.binding.subspan @io::@s0b2_xw_external[%c0] : memref&lt;1x112x112x32xf32&gt;
+  %workgroup_id_x = hal.interface.workgroup.id[0] : index
+  %workgroup_id_y = hal.interface.workgroup.id[1] : index
+  %workgroup_id_z = hal.interface.workgroup.id[2] : index
+  scf.for %arg0 = %workgroup_id_z to %c112 step %c112 {
+    %3 = affine.apply affine_map&lt;()[s0] -&gt; (s0 * 8)&gt;()[%workgroup_id_y]
+    %4 = affine.apply affine_map&lt;()[s0] -&gt; (s0 * 32)&gt;()[%workgroup_id_x]
+    %5 = affine.apply affine_map&lt;(d0) -&gt; (d0 * 2)&gt;(%arg0)
+    %6 = affine.min affine_map&lt;(d0) -&gt; (3, d0 * -2 + 227)&gt;(%arg0)
+    %7 = affine.apply affine_map&lt;(d0) -&gt; (d0 * 2)&gt;(%3)
+    %8 = affine.min affine_map&lt;(d0) -&gt; (17, d0 * -2 + 227)&gt;(%3)
+    %9 = memref.subview %0[0, %5, %7, 0] [1, %6, %8, 3] [1, 1, 1, 1] : ...
+    %10 = affine.min affine_map&lt;(d0) -&gt; (32, -d0 + 32)&gt;(%4)
+    %11 = memref.subview %1[0, 0, 0, %4] [3, 3, 3, %10] [1, 1, 1, 1] : ...
+    %12 = affine.min affine_map&lt;(d0) -&gt; (1, -d0 + 112)&gt;(%arg0)
+    %13 = affine.min affine_map&lt;(d0) -&gt; (8, -d0 + 112)&gt;(%3)
+    %14 = memref.subview %2[0, %arg0, %3, %4] [1, %12, %13, %10] [1, 1, 1, 1] : ...
+    linalg.fill(%cst, %14) ...
+    linalg.conv_2d_nhwc_hwcf {
+      __internal_linalg_transform__ = &quot;workgroup&quot;,
+      dilations = dense&lt;1&gt; : tensor&lt;2xi64&gt;,
+      lowering.config = {tileSizes = [[0, 1, 8, 32], [], [0, 1, 4, 4]]},
+      strides = dense&lt;2&gt; : tensor&lt;2xi64&gt;
+    } ins(%9, %11 : ...) outs(%14 : ...&gt;)
+  }
+  return
+}
+</code></pre>
+<p>It&rsquo;s much cleaner right now. The outer 1-trip loops are basically gone.
+Next up to the second level tiling and distributing to workitems.</p>
+<h3 id="tiling-and-distributing-to-workitems">Tiling and distributing to workitems</h3>
+<p>This is done by the <a href="https://github.com/google/iree/blob/080cbc466214c698bf6086d7bc1fc205ade2706c/iree/compiler/Codegen/SPIRV/SPIRVTileAndDistribute.cpp"><code>SPIRVTileAndDistribute</code> pass</a>.
+It&rsquo;s quite similar to the first level tiling and distribution. It&rsquo;s just a
+matter of setting the <a href="https://github.com/google/iree/blob/080cbc466214c698bf6086d7bc1fc205ade2706c/iree/compiler/Codegen/SPIRV/SPIRVTileAndDistribute.cpp#L175-L179">proper <code>LinalgTilingOptions</code></a>.</p>
+<p>In the above step we choose workgroup size (8, 2, 1) and let each workgroup
+handle a <code>1x8x32</code> (<code>OHxOWxOC</code>) <code>Output</code> patch. So naturally, a thread handles a
+<code>1x4x4</code> <code>Output</code> patch. Use such static information we can fold quite a few
+<code>affine</code> ops away and generate the following IR:</p>
+<pre><code>// -----// IR Dump After SPIRVTileAndDistribute //----- //
+func @conv_dispatch_0() {
+  %c0 = constant 0 : index
+  %c112 = constant 112 : index
+  %cst = constant 0.000000e+00 : f32
+  %c3 = constant 3 : index
+  %c1 = constant 1 : index
+  %0 = hal.interface.binding.subspan @io::@s0b0_ro_external[%c0] : memref&lt;1x225x225x3xf32&gt;
+  %1 = hal.interface.binding.subspan @io::@s0b1_ro_external[%c0] : memref&lt;3x3x3x32xf32&gt;
+  %2 = hal.interface.binding.subspan @io::@s0b2_xw_external[%c0] : memref&lt;1x112x112x32xf32&gt;
+  %workgroup_id_x = hal.interface.workgroup.id[0] : index
+  %workgroup_id_y = hal.interface.workgroup.id[1] : index
+  %workgroup_id_z = hal.interface.workgroup.id[2] : index
+  scf.for %arg0 = %workgroup_id_z to %c112 step %c112 {
+    %3 = affine.apply affine_map&lt;()[s0] -&gt; (s0 * 8)&gt;()[%workgroup_id_y]
+    %4 = affine.apply affine_map&lt;()[s0] -&gt; (s0 * 32)&gt;()[%workgroup_id_x]
+    %5 = affine.apply affine_map&lt;(d0) -&gt; (d0 * 2)&gt;(%arg0)
+    %6 = affine.apply affine_map&lt;()[s0] -&gt; (s0 * 16)&gt;()[%workgroup_id_y]
+    %7 = memref.subview %0[0, %5, %6, 0] [1, 3, 17, 3] [1, 1, 1, 1]
+         : memref&lt;1x225x225x3xf32&gt; to memref&lt;1x3x17x3xf32, ...&gt;
+    %8 = memref.subview %1[0, 0, 0, %4] [3, 3, 3, 32] [1, 1, 1, 1]
+         : memref&lt;3x3x3x32xf32&gt; to memref&lt;3x3x3x32xf32, ...&gt;
+    %9 = memref.subview %2[0, %arg0, %3, %4] [1, 1, 8, 32] [1, 1, 1, 1]
+         : memref&lt;1x112x112x32xf32&gt; to memref&lt;1x1x8x32xf32, ...&gt;
+    %10 = &quot;gpu.thread_id&quot;() {dimension = &quot;x&quot;} : () -&gt; index
+    %11 = &quot;gpu.thread_id&quot;() {dimension = &quot;y&quot;} : () -&gt; index
+    %12 = &quot;gpu.thread_id&quot;() {dimension = &quot;z&quot;} : () -&gt; index
+    %13 = affine.apply affine_map&lt;()[s0] -&gt; (s0 * 4)&gt;()[%11]
+    %14 = affine.apply affine_map&lt;()[s0] -&gt; (s0 * 4)&gt;()[%10]
+    %15 = memref.subview %9[0, %12, %13, %14] [1, 1, 4, 4] [1, 1, 1, 1]
+          : memref&lt;1x1x8x32xf32, ...&gt; to memref&lt;1x1x4x4xf32, ...&gt;
+    linalg.fill(%cst, %15) ...
+    %16 = &quot;gpu.thread_id&quot;() {dimension = &quot;x&quot;} : () -&gt; index
+    %17 = &quot;gpu.thread_id&quot;() {dimension = &quot;y&quot;} : () -&gt; index
+    %18 = &quot;gpu.thread_id&quot;() {dimension = &quot;z&quot;} : () -&gt; index
+    %19 = affine.apply affine_map&lt;()[s0] -&gt; (s0 * 4)&gt;()[%17]
+    %20 = affine.apply affine_map&lt;()[s0] -&gt; (s0 * 4)&gt;()[%16]
+    %21 = affine.apply affine_map&lt;()[s0] -&gt; (s0 * 2)&gt;()[%18]
+    %22 = affine.apply affine_map&lt;()[s0] -&gt; (s0 * 8)&gt;()[%17]
+    %23 = memref.subview %7[0, %21, %22, 0] [1, 3, 9, 3] [1, 1, 1, 1]
+          : memref&lt;1x3x17x3xf32, ...&gt; to memref&lt;1x3x9x3xf32, ...&gt;
+    %24 = memref.subview %8[0, 0, 0, %20] [3, 3, 3, 4] [1, 1, 1, 1]
+          : memref&lt;3x3x3x32xf32, ...&gt; to memref&lt;3x3x3x4xf32, ...&gt;
+    %25 = memref.subview %9[0, %18, %19, %20] [1, 1, 4, 4] [1, 1, 1, 1]
+          : memref&lt;1x1x8x32xf32, ...&gt; to memref&lt;1x1x4x4xf32, ...&gt;
+    scf.for %arg1 = %c0 to %c3 step %c1 {
+      scf.for %arg2 = %c0 to %c3 step %c1 {
+        %26 = memref.subview %23[0, %arg1, %arg2, 0] [1, 1, 7, 3] [1, 1, 1, 1]
+              : memref&lt;1x3x9x3xf32, ...&gt; to memref&lt;1x1x7x3xf32, ...&gt;
+        %27 = memref.subview %24[%arg1, %arg2, 0, 0] [1, 1, 3, 4] [1, 1, 1, 1]
+              : memref&lt;3x3x3x4xf32, ...&gt; to memref&lt;1x1x3x4xf32, ...&gt;
+        linalg.conv_2d_nhwc_hwcf {
+          __internal_linalg_transform__ = &quot;vectorize&quot;,
+          dilations = dense&lt;1&gt; : tensor&lt;2xi64&gt;,
+          lowering.config = {tileSizes = [[0, 1, 8, 32], [], [0, 1, 4, 4]]},
+          strides = dense&lt;2&gt; : tensor&lt;2xi64&gt;
+        }
+        ins(%26, %27 : memref&lt;1x1x7x3xf32, ...&gt;, memref&lt;1x1x3x4xf32, ...&gt;)
+        outs(%25 : memref&lt;1x1x4x4xf32, ...&gt;)
+      }
+    }
+  }
+  return
+}
+</code></pre>
+<p>Unlike the first level, there are no loops generated as we already distributed
+them to workitems.</p>
+<p>Okay now in the innermost level we have a <code>linalg.conv_2d_nhwc_hwcf</code> op working
+on a <code>1x1x4x4</code> <code>Output</code> batch. That&rsquo;s exactly the smaller scale case we are
+looking for to vectorize.</p>
+<h3 id="final-vectorization-and-unrolling">Final vectorization and unrolling</h3>
+<p>We can directly vectorize the inner <code>linalg.conv_2d_nhwc_hwcf</code> op now following
+the logic in <a href="#vectorization-and-unrolling">vectorization and unrolling</a> section.</p>
+<p>Right now the pattern is <a href="https://github.com/google/iree/blob/080cbc466214c698bf6086d7bc1fc205ade2706c/iree/compiler/Codegen/Common/VectorizeConv.cpp">implemented in IREE</a>; I&rsquo;ll
+upstream it to the MLIR repo later. It&rsquo;s relatively straightforward given we are
+handling a well-defined small-scale problem here. With it and a bunch of other
+patterns pulled in the <a href="https://github.com/google/iree/blob/080cbc466214c698bf6086d7bc1fc205ade2706c/iree/compiler/Codegen/SPIRV/SPIRVVectorize.cpp"><code>SPIRVVectorize</code> pass</a>, we have:</p>
+<pre><code>// -----// IR Dump After SPIRVVectorize //----- //
+func @conv_dispatch_0() {
+  %c0 = constant 0 : index
+  %c112 = constant 112 : index
+  %c3 = constant 3 : index
+  %c1 = constant 1 : index
+  %cst = constant dense&lt;0.000000e+00&gt; : vector&lt;1x1x4x4xf32&gt;
+  %c4 = constant 4 : index
+  %c2 = constant 2 : index
+  %c6 = constant 6 : index
+  %cst_0 = constant 0.000000e+00 : f32
+  %cst_1 = constant dense&lt;0.000000e+00&gt; : vector&lt;1x4xf32&gt;
+  %0 = hal.interface.binding.subspan @io::@s0b0_ro_external[%c0] : memref&lt;1x225x225x3xf32&gt;
+  %1 = hal.interface.binding.subspan @io::@s0b1_ro_external[%c0] : memref&lt;3x3x3x32xf32&gt;
+  %2 = hal.interface.binding.subspan @io::@s0b2_xw_external[%c0] : memref&lt;1x112x112x32xf32&gt;
+  %workgroup_id_x = hal.interface.workgroup.id[0] : index
+  %workgroup_id_y = hal.interface.workgroup.id[1] : index
+  %workgroup_id_z = hal.interface.workgroup.id[2] : index
+  %3 = affine.apply affine_map&lt;()[s0] -&gt; (s0 * 8)&gt;()[%workgroup_id_y]
+  %4 = affine.apply affine_map&lt;()[s0] -&gt; (s0 * 32)&gt;()[%workgroup_id_x]
+  %5 = affine.apply affine_map&lt;()[s0] -&gt; (s0 * 16)&gt;()[%workgroup_id_y]
+  %6 = memref.subview %1[0, 0, 0, %4] [3, 3, 3, 32] [1, 1, 1, 1] : memref&lt;3x3x3x32xf32&gt; to memref&lt;3x3x3x32xf32, ...&gt;
+  %7 = &quot;gpu.thread_id&quot;() {dimension = &quot;x&quot;} : () -&gt; index
+  %8 = &quot;gpu.thread_id&quot;() {dimension = &quot;y&quot;} : () -&gt; index
+  %9 = &quot;gpu.thread_id&quot;() {dimension = &quot;z&quot;} : () -&gt; index
+  %10 = affine.apply affine_map&lt;()[s0] -&gt; (s0 * 4)&gt;()[%8]
+  %11 = affine.apply affine_map&lt;()[s0] -&gt; (s0 * 4)&gt;()[%7]
+  %12 = vector.extract_strided_slice %cst {offsets = [0, 0, 0, 0], sizes = [1, 1, 1, 4], strides = [1, 1, 1, 1]}
+        : vector&lt;1x1x4x4xf32&gt; to vector&lt;1x1x1x4xf32&gt;
+  %13 = vector.extract_strided_slice %cst {offsets = [0, 0, 1, 0], sizes = [1, 1, 1, 4], strides = [1, 1, 1, 1]}
+        : vector&lt;1x1x4x4xf32&gt; to vector&lt;1x1x1x4xf32&gt;
+  %14 = vector.extract_strided_slice %cst {offsets = [0, 0, 2, 0], sizes = [1, 1, 1, 4], strides = [1, 1, 1, 1]}
+        : vector&lt;1x1x4x4xf32&gt; to vector&lt;1x1x1x4xf32&gt;
+  %15 = vector.extract_strided_slice %cst {offsets = [0, 0, 3, 0], sizes = [1, 1, 1, 4], strides = [1, 1, 1, 1]}
+        : vector&lt;1x1x4x4xf32&gt; to vector&lt;1x1x1x4xf32&gt;
+  %16 = &quot;gpu.thread_id&quot;() {dimension = &quot;x&quot;} : () -&gt; index
+  %17 = &quot;gpu.thread_id&quot;() {dimension = &quot;y&quot;} : () -&gt; index
+  %18 = &quot;gpu.thread_id&quot;() {dimension = &quot;z&quot;} : () -&gt; index
+  %19 = affine.apply affine_map&lt;()[s0] -&gt; (s0 * 4)&gt;()[%17]
+  %20 = affine.apply affine_map&lt;()[s0] -&gt; (s0 * 4)&gt;()[%16]
+  %21 = affine.apply affine_map&lt;()[s0] -&gt; (s0 * 2)&gt;()[%18]
+  %22 = affine.apply affine_map&lt;()[s0] -&gt; (s0 * 8)&gt;()[%17]
+  %23 = memref.subview %6[0, 0, 0, %20] [3, 3, 3, 4] [1, 1, 1, 1] : memref&lt;3x3x3x32xf32, ...&gt; to memref&lt;3x3x3x4xf32, ...&gt;
+  scf.for %arg0 = %workgroup_id_z to %c112 step %c112 {
+    %24 = affine.apply affine_map&lt;(d0) -&gt; (d0 * 2)&gt;(%arg0)
+    %25 = memref.subview %0[0, %24, %5, 0] [1, 3, 17, 3] [1, 1, 1, 1] : memref&lt;1x225x225x3xf32&gt; to memref&lt;1x3x17x3xf32, ...&gt;
+    %26 = memref.subview %2[0, %arg0, %3, %4] [1, 1, 8, 32] [1, 1, 1, 1] : memref&lt;1x112x112x32xf32&gt; to memref&lt;1x1x8x32xf32, ...&gt;
+    %27 = memref.subview %26[0, %9, %10, %11] [1, 1, 4, 4] [1, 1, 1, 1] : memref&lt;1x1x8x32xf32, ...&gt; to memref&lt;1x1x4x4xf32, ...&gt;
+    vector.transfer_write %12, %27[%c0, %c0, %c0, %c0] {in_bounds = [true, true, true, true]} : vector&lt;1x1x1x4xf32&gt;, memref&lt;1x1x4x4xf32, ...&gt;
+    vector.transfer_write %13, %27[%c0, %c0, %c1, %c0] {in_bounds = [true, true, true, true]} : vector&lt;1x1x1x4xf32&gt;, memref&lt;1x1x4x4xf32, ...&gt;
+    vector.transfer_write %14, %27[%c0, %c0, %c2, %c0] {in_bounds = [true, true, true, true]} : vector&lt;1x1x1x4xf32&gt;, memref&lt;1x1x4x4xf32, ...&gt;
+    vector.transfer_write %15, %27[%c0, %c0, %c3, %c0] {in_bounds = [true, true, true, true]} : vector&lt;1x1x1x4xf32&gt;, memref&lt;1x1x4x4xf32, ...&gt;
+    %28 = memref.subview %25[0, %21, %22, 0] [1, 3, 9, 3] [1, 1, 1, 1] : memref&lt;1x3x17x3xf32, ...&gt; to memref&lt;1x3x9x3xf32, ...&gt;
+    %29 = memref.subview %26[0, %18, %19, %20] [1, 1, 4, 4] [1, 1, 1, 1] : memref&lt;1x1x8x32xf32, ...&gt; to memref&lt;1x1x4x4xf32, ...&gt;
+    %30 = vector.transfer_read %29[%c0, %c0, %c0, %c0], %cst_0 {in_bounds = [true, true]} : memref&lt;1x1x4x4xf32, ...&gt;, vector&lt;1x4xf32&gt;
+    %31 = vector.transfer_read %29[%c0, %c0, %c1, %c0], %cst_0 {in_bounds = [true, true]} : memref&lt;1x1x4x4xf32, ...&gt;, vector&lt;1x4xf32&gt;
+    %32 = vector.transfer_read %29[%c0, %c0, %c2, %c0], %cst_0 {in_bounds = [true, true]} : memref&lt;1x1x4x4xf32, ...&gt;, vector&lt;1x4xf32&gt;
+    %33 = vector.transfer_read %29[%c0, %c0, %c3, %c0], %cst_0 {in_bounds = [true, true]} : memref&lt;1x1x4x4xf32, ...&gt;, vector&lt;1x4xf32&gt;
+    %34:4 = scf.for %arg1 = %c0 to %c3 step %c1 iter_args(%arg2 = %30, %arg3 = %31, %arg4 = %32, %arg5 = %33)
+            -&gt; (vector&lt;1x4xf32&gt;, vector&lt;1x4xf32&gt;, vector&lt;1x4xf32&gt;, vector&lt;1x4xf32&gt;) {
+      %35:4 = scf.for %arg6 = %c0 to %c3 step %c1 iter_args(%arg7 = %arg2, %arg8 = %arg3, %arg9 = %arg4, %arg10 = %arg5)
+              -&gt; (vector&lt;1x4xf32&gt;, vector&lt;1x4xf32&gt;, vector&lt;1x4xf32&gt;, vector&lt;1x4xf32&gt;) {
+        %36 = memref.subview %28[0, %arg1, %arg6, 0] [1, 1, 7, 3] [1, 1, 1, 1] : memref&lt;1x3x9x3xf32, ...&gt; to memref&lt;1x1x7x3xf32, ...&gt;
+        %37 = memref.subview %23[%arg1, %arg6, 0, 0] [1, 1, 3, 4] [1, 1, 1, 1] : memref&lt;3x3x3x4xf32, ...&gt; to memref&lt;1x1x3x4xf32, ...&gt;
+        %38 = vector.transfer_read %37[%c0, %c0, %c0, %c0], %cst_0 {in_bounds = [true, true]} : memref&lt;1x1x3x4xf32, ...&gt;, vector&lt;1x4xf32&gt;
+        %39 = vector.transfer_read %37[%c0, %c0, %c1, %c0], %cst_0 {in_bounds = [true, true]} : memref&lt;1x1x3x4xf32, ...&gt;, vector&lt;1x4xf32&gt;
+        %40 = vector.transfer_read %37[%c0, %c0, %c2, %c0], %cst_0 {in_bounds = [true, true]} : memref&lt;1x1x3x4xf32, ...&gt;, vector&lt;1x4xf32&gt;
+        %41 = vector.transfer_read %36[%c0, %c0, %c0, %c0], %cst_0 {in_bounds = [true, true]} : memref&lt;1x1x7x3xf32, ...&gt;, vector&lt;1x3xf32&gt;
+        %42 = vector.extract_strided_slice %41 {offsets = [0, 0], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x3xf32&gt; to vector&lt;1x1xf32&gt;
+        %43 = vector.extract %38[0] : vector&lt;1x4xf32&gt;
+        %44 = vector.extract %42[0, 0] : vector&lt;1x1xf32&gt;
+        %45 = splat %44 : vector&lt;4xf32&gt;
+        %46 = vector.extract %arg7[0] : vector&lt;1x4xf32&gt;
+        %47 = vector.fma %45, %43, %46 : vector&lt;4xf32&gt;
+        %48 = vector.extract_strided_slice %41 {offsets = [0, 1], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x3xf32&gt; to vector&lt;1x1xf32&gt;
+        %49 = vector.extract %39[0] : vector&lt;1x4xf32&gt;
+        %50 = vector.extract %48[0, 0] : vector&lt;1x1xf32&gt;
+        %51 = splat %50 : vector&lt;4xf32&gt;
+        %52 = vector.fma %51, %49, %47 : vector&lt;4xf32&gt;
+        %53 = vector.extract_strided_slice %41 {offsets = [0, 2], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x3xf32&gt; to vector&lt;1x1xf32&gt;
+        %54 = vector.extract %40[0] : vector&lt;1x4xf32&gt;
+        %55 = vector.extract %53[0, 0] : vector&lt;1x1xf32&gt;
+        %56 = splat %55 : vector&lt;4xf32&gt;
+        %57 = vector.fma %56, %54, %52 : vector&lt;4xf32&gt;
+        %58 = vector.insert %57, %cst_1 [0] : vector&lt;4xf32&gt; into vector&lt;1x4xf32&gt;
+        %59 = vector.transfer_read %36[%c0, %c0, %c2, %c0], %cst_0 {in_bounds = [true, true]} : memref&lt;1x1x7x3xf32, ...&gt;, vector&lt;1x3xf32&gt;
+        %60 = vector.extract_strided_slice %59 {offsets = [0, 0], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x3xf32&gt; to vector&lt;1x1xf32&gt;
+        %61 = vector.extract %38[0] : vector&lt;1x4xf32&gt;
+        %62 = vector.extract %60[0, 0] : vector&lt;1x1xf32&gt;
+        %63 = splat %62 : vector&lt;4xf32&gt;
+        %64 = vector.extract %arg8[0] : vector&lt;1x4xf32&gt;
+        %65 = vector.fma %63, %61, %64 : vector&lt;4xf32&gt;
+        %66 = vector.extract_strided_slice %59 {offsets = [0, 1], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x3xf32&gt; to vector&lt;1x1xf32&gt;
+        %67 = vector.extract %39[0] : vector&lt;1x4xf32&gt;
+        %68 = vector.extract %66[0, 0] : vector&lt;1x1xf32&gt;
+        %69 = splat %68 : vector&lt;4xf32&gt;
+        %70 = vector.fma %69, %67, %65 : vector&lt;4xf32&gt;
+        %71 = vector.extract_strided_slice %59 {offsets = [0, 2], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x3xf32&gt; to vector&lt;1x1xf32&gt;
+        %72 = vector.extract %40[0] : vector&lt;1x4xf32&gt;
+        %73 = vector.extract %71[0, 0] : vector&lt;1x1xf32&gt;
+        %74 = splat %73 : vector&lt;4xf32&gt;
+        %75 = vector.fma %74, %72, %70 : vector&lt;4xf32&gt;
+        %76 = vector.insert %75, %cst_1 [0] : vector&lt;4xf32&gt; into vector&lt;1x4xf32&gt;
+        %77 = vector.transfer_read %36[%c0, %c0, %c4, %c0], %cst_0 {in_bounds = [true, true]} : memref&lt;1x1x7x3xf32, ...&gt;, vector&lt;1x3xf32&gt;
+        %78 = vector.extract_strided_slice %77 {offsets = [0, 0], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x3xf32&gt; to vector&lt;1x1xf32&gt;
+        %79 = vector.extract %38[0] : vector&lt;1x4xf32&gt;
+        %80 = vector.extract %78[0, 0] : vector&lt;1x1xf32&gt;
+        %81 = splat %80 : vector&lt;4xf32&gt;
+        %82 = vector.extract %arg9[0] : vector&lt;1x4xf32&gt;
+        %83 = vector.fma %81, %79, %82 : vector&lt;4xf32&gt;
+        %84 = vector.extract_strided_slice %77 {offsets = [0, 1], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x3xf32&gt; to vector&lt;1x1xf32&gt;
+        %85 = vector.extract %39[0] : vector&lt;1x4xf32&gt;
+        %86 = vector.extract %84[0, 0] : vector&lt;1x1xf32&gt;
+        %87 = splat %86 : vector&lt;4xf32&gt;
+        %88 = vector.fma %87, %85, %83 : vector&lt;4xf32&gt;
+        %89 = vector.extract_strided_slice %77 {offsets = [0, 2], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x3xf32&gt; to vector&lt;1x1xf32&gt;
+        %90 = vector.extract %40[0] : vector&lt;1x4xf32&gt;
+        %91 = vector.extract %89[0, 0] : vector&lt;1x1xf32&gt;
+        %92 = splat %91 : vector&lt;4xf32&gt;
+        %93 = vector.fma %92, %90, %88 : vector&lt;4xf32&gt;
+        %94 = vector.insert %93, %cst_1 [0] : vector&lt;4xf32&gt; into vector&lt;1x4xf32&gt;
+        %95 = vector.transfer_read %36[%c0, %c0, %c6, %c0], %cst_0 {in_bounds = [true, true]} : memref&lt;1x1x7x3xf32, ...&gt;, vector&lt;1x3xf32&gt;
+        %96 = vector.extract_strided_slice %95 {offsets = [0, 0], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x3xf32&gt; to vector&lt;1x1xf32&gt;
+        %97 = vector.extract %38[0] : vector&lt;1x4xf32&gt;
+        %98 = vector.extract %96[0, 0] : vector&lt;1x1xf32&gt;
+        %99 = splat %98 : vector&lt;4xf32&gt;
+        %100 = vector.extract %arg10[0] : vector&lt;1x4xf32&gt;
+        %101 = vector.fma %99, %97, %100 : vector&lt;4xf32&gt;
+        %102 = vector.extract_strided_slice %95 {offsets = [0, 1], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x3xf32&gt; to vector&lt;1x1xf32&gt;
+        %103 = vector.extract %39[0] : vector&lt;1x4xf32&gt;
+        %104 = vector.extract %102[0, 0] : vector&lt;1x1xf32&gt;
+        %105 = splat %104 : vector&lt;4xf32&gt;
+        %106 = vector.fma %105, %103, %101 : vector&lt;4xf32&gt;
+        %107 = vector.extract_strided_slice %95 {offsets = [0, 2], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x3xf32&gt; to vector&lt;1x1xf32&gt;
+        %108 = vector.extract %40[0] : vector&lt;1x4xf32&gt;
+        %109 = vector.extract %107[0, 0] : vector&lt;1x1xf32&gt;
+        %110 = splat %109 : vector&lt;4xf32&gt;
+        %111 = vector.fma %110, %108, %106 : vector&lt;4xf32&gt;
+        %112 = vector.insert %111, %cst_1 [0] : vector&lt;4xf32&gt; into vector&lt;1x4xf32&gt;
+        scf.yield %58, %76, %94, %112 : vector&lt;1x4xf32&gt;, vector&lt;1x4xf32&gt;, vector&lt;1x4xf32&gt;, vector&lt;1x4xf32&gt;
+      }
+      scf.yield %35#0, %35#1, %35#2, %35#3 : vector&lt;1x4xf32&gt;, vector&lt;1x4xf32&gt;, vector&lt;1x4xf32&gt;, vector&lt;1x4xf32&gt;
+    }
+    vector.transfer_write %34#3, %29[%c0, %c0, %c3, %c0] {in_bounds = [true, true]} : vector&lt;1x4xf32&gt;, memref&lt;1x1x4x4xf32, ...&gt;
+    vector.transfer_write %34#2, %29[%c0, %c0, %c2, %c0] {in_bounds = [true, true]} : vector&lt;1x4xf32&gt;, memref&lt;1x1x4x4xf32, ...&gt;
+    vector.transfer_write %34#1, %29[%c0, %c0, %c1, %c0] {in_bounds = [true, true]} : vector&lt;1x4xf32&gt;, memref&lt;1x1x4x4xf32, ...&gt;
+    vector.transfer_write %34#0, %29[%c0, %c0, %c0, %c0] {in_bounds = [true, true]} : vector&lt;1x4xf32&gt;, memref&lt;1x1x4x4xf32, ...&gt;
+  }
+  return
+}
+
+</code></pre>
+<p>This is almost it! But the inputs/outputs are still not explicitly vectorized.
+We just need one additional step, done via
+<a href="https://github.com/google/iree/blob/080cbc466214c698bf6086d7bc1fc205ade2706c/iree/compiler/Codegen/SPIRV/SPIRVVectorizeLoadStore.cpp"><code>SPIRVVectorizeLoadStore</code> pass</a>:</p>
+<pre><code>// -----// IR Dump After SPIRVVectorizeLoadStore //----- //
+module  {
+  func @conv_dispatch_0() {
+    %cst = constant dense&lt;0.000000e+00&gt; : vector&lt;1x4xf32&gt;
+    %c1 = constant 1 : index
+    %c3 = constant 3 : index
+    %c112 = constant 112 : index
+    %c0 = constant 0 : index
+    %c32 = constant 32 : index
+    %c16 = constant 16 : index
+    %c4 = constant 4 : index
+    %c2 = constant 2 : index
+    %c8 = constant 8 : index
+    %cst_0 = constant dense&lt;0.000000e+00&gt; : vector&lt;3xf32&gt;
+    %0 = hal.interface.binding.subspan @io::@s0b0_ro_external[%c0] : memref&lt;1x225x225x3xf32&gt;
+    %1 = hal.interface.binding.subspan @io::@s0b1_ro_external[%c0] : memref&lt;3x3x3x8xvector&lt;4xf32&gt;&gt;
+    %2 = hal.interface.binding.subspan @io::@s0b2_xw_external[%c0] : memref&lt;1x112x112x8xvector&lt;4xf32&gt;&gt;
+    %workgroup_id_x = hal.interface.workgroup.id[0] : index
+    %workgroup_id_y = hal.interface.workgroup.id[1] : index
+    %workgroup_id_z = hal.interface.workgroup.id[2] : index
+    %3 = muli %workgroup_id_y, %c8 : index
+    %4 = muli %workgroup_id_x, %c32 : index
+    %5 = muli %workgroup_id_y, %c16 : index
+    %6 = &quot;gpu.thread_id&quot;() {dimension = &quot;x&quot;} : () -&gt; index
+    %7 = &quot;gpu.thread_id&quot;() {dimension = &quot;y&quot;} : () -&gt; index
+    %8 = &quot;gpu.thread_id&quot;() {dimension = &quot;z&quot;} : () -&gt; index
+    %9 = muli %7, %c4 : index
+    %10 = muli %6, %c4 : index
+    %11 = muli %8, %c2 : index
+    %12 = muli %7, %c8 : index
+    scf.for %arg0 = %workgroup_id_z to %c112 step %c112 {
+      %13 = muli %arg0, %c2 : index
+      %14:4 = scf.for %arg1 = %c0 to %c3 step %c1 iter_args(%arg2 = %cst, %arg3 = %cst, %arg4 = %cst, %arg5 = %cst)
+              -&gt; (vector&lt;1x4xf32&gt;, vector&lt;1x4xf32&gt;, vector&lt;1x4xf32&gt;, vector&lt;1x4xf32&gt;) {
+        %29:4 = scf.for %arg6 = %c0 to %c3 step %c1 iter_args(%arg7 = %arg2, %arg8 = %arg3, %arg9 = %arg4, %arg10 = %arg5)
+                -&gt; (vector&lt;1x4xf32&gt;, vector&lt;1x4xf32&gt;, vector&lt;1x4xf32&gt;, vector&lt;1x4xf32&gt;) {
+          %30 = affine.apply affine_map&lt;()[s0, s1] -&gt; (s0 + s1)&gt;()[%4, %10]
+          %31 = divi_signed %30, %c4 : index
+          %32 = memref.load %1[%arg1, %arg6, %c0, %31] : memref&lt;3x3x3x8xvector&lt;4xf32&gt;&gt;
+          %33 = divi_signed %30, %c4 : index
+          %34 = memref.load %1[%arg1, %arg6, %c1, %33] : memref&lt;3x3x3x8xvector&lt;4xf32&gt;&gt;
+          %35 = divi_signed %30, %c4 : index
+          %36 = memref.load %1[%arg1, %arg6, %c2, %35] : memref&lt;3x3x3x8xvector&lt;4xf32&gt;&gt;
+          %37 = affine.apply affine_map&lt;(d0)[s0, s1] -&gt; (d0 + s0 + s1)&gt;(%arg1)[%13, %11]
+          %38 = affine.apply affine_map&lt;(d0)[s0, s1] -&gt; (d0 + s0 + s1)&gt;(%arg6)[%5, %12]
+          %39 = memref.load %0[%c0, %37, %38, %c0] : memref&lt;1x225x225x3xf32&gt;
+          %40 = vector.insert %39, %cst_0 [0] : f32 into vector&lt;3xf32&gt;
+          %41 = memref.load %0[%c0, %37, %38, %c1] : memref&lt;1x225x225x3xf32&gt;
+          %42 = vector.insert %41, %40 [1] : f32 into vector&lt;3xf32&gt;
+          %43 = memref.load %0[%c0, %37, %38, %c2] : memref&lt;1x225x225x3xf32&gt;
+          %44 = vector.insert %43, %42 [2] : f32 into vector&lt;3xf32&gt;
+          %45 = vector.extract_strided_slice %44 {offsets = [0], sizes = [1], strides = [1]} : vector&lt;3xf32&gt; to vector&lt;1xf32&gt;
+          %46 = vector.extract %45[0] : vector&lt;1xf32&gt;
+          %47 = splat %46 : vector&lt;4xf32&gt;
+          %48 = vector.shape_cast %arg7 : vector&lt;1x4xf32&gt; to vector&lt;4xf32&gt;
+          %49 = vector.fma %47, %32, %48 : vector&lt;4xf32&gt;
+          %50 = vector.extract_strided_slice %44 {offsets = [1], sizes = [1], strides = [1]} : vector&lt;3xf32&gt; to vector&lt;1xf32&gt;
+          %51 = vector.extract %50[0] : vector&lt;1xf32&gt;
+          %52 = splat %51 : vector&lt;4xf32&gt;
+          %53 = vector.fma %52, %34, %49 : vector&lt;4xf32&gt;
+          %54 = vector.extract_strided_slice %44 {offsets = [2], sizes = [1], strides = [1]} : vector&lt;3xf32&gt; to vector&lt;1xf32&gt;
+          %55 = vector.extract %54[0] : vector&lt;1xf32&gt;
+          %56 = splat %55 : vector&lt;4xf32&gt;
+          %57 = vector.fma %56, %36, %53 : vector&lt;4xf32&gt;
+          %58 = vector.shape_cast %57 : vector&lt;4xf32&gt; to vector&lt;1x4xf32&gt;
+          %59 = affine.apply affine_map&lt;()[s0, s1, s2] -&gt; (s0 + s1 + s2 + 2)&gt;()[%5, %12, %arg6]
+          %60 = memref.load %0[%c0, %37, %59, %c0] : memref&lt;1x225x225x3xf32&gt;
+          %61 = vector.insert %60, %cst_0 [0] : f32 into vector&lt;3xf32&gt;
+          %62 = memref.load %0[%c0, %37, %59, %c1] : memref&lt;1x225x225x3xf32&gt;
+          %63 = vector.insert %62, %61 [1] : f32 into vector&lt;3xf32&gt;
+          %64 = memref.load %0[%c0, %37, %59, %c2] : memref&lt;1x225x225x3xf32&gt;
+          %65 = vector.insert %64, %63 [2] : f32 into vector&lt;3xf32&gt;
+          %66 = vector.extract_strided_slice %65 {offsets = [0], sizes = [1], strides = [1]} : vector&lt;3xf32&gt; to vector&lt;1xf32&gt;
+          %67 = vector.extract %66[0] : vector&lt;1xf32&gt;
+          %68 = splat %67 : vector&lt;4xf32&gt;
+          %69 = vector.shape_cast %arg8 : vector&lt;1x4xf32&gt; to vector&lt;4xf32&gt;
+          %70 = vector.fma %68, %32, %69 : vector&lt;4xf32&gt;
+          %71 = vector.extract_strided_slice %65 {offsets = [1], sizes = [1], strides = [1]} : vector&lt;3xf32&gt; to vector&lt;1xf32&gt;
+          %72 = vector.extract %71[0] : vector&lt;1xf32&gt;
+          %73 = splat %72 : vector&lt;4xf32&gt;
+          %74 = vector.fma %73, %34, %70 : vector&lt;4xf32&gt;
+          %75 = vector.extract_strided_slice %65 {offsets = [2], sizes = [1], strides = [1]} : vector&lt;3xf32&gt; to vector&lt;1xf32&gt;
+          %76 = vector.extract %75[0] : vector&lt;1xf32&gt;
+          %77 = splat %76 : vector&lt;4xf32&gt;
+          %78 = vector.fma %77, %36, %74 : vector&lt;4xf32&gt;
+          %79 = vector.shape_cast %78 : vector&lt;4xf32&gt; to vector&lt;1x4xf32&gt;
+          %80 = affine.apply affine_map&lt;()[s0, s1, s2] -&gt; (s0 + s1 + s2 + 4)&gt;()[%5, %12, %arg6]
+          %81 = memref.load %0[%c0, %37, %80, %c0] : memref&lt;1x225x225x3xf32&gt;
+          %82 = vector.insert %81, %cst_0 [0] : f32 into vector&lt;3xf32&gt;
+          %83 = memref.load %0[%c0, %37, %80, %c1] : memref&lt;1x225x225x3xf32&gt;
+          %84 = vector.insert %83, %82 [1] : f32 into vector&lt;3xf32&gt;
+          %85 = memref.load %0[%c0, %37, %80, %c2] : memref&lt;1x225x225x3xf32&gt;
+          %86 = vector.insert %85, %84 [2] : f32 into vector&lt;3xf32&gt;
+          %87 = vector.extract_strided_slice %86 {offsets = [0], sizes = [1], strides = [1]} : vector&lt;3xf32&gt; to vector&lt;1xf32&gt;
+          %88 = vector.extract %87[0] : vector&lt;1xf32&gt;
+          %89 = splat %88 : vector&lt;4xf32&gt;
+          %90 = vector.shape_cast %arg9 : vector&lt;1x4xf32&gt; to vector&lt;4xf32&gt;
+          %91 = vector.fma %89, %32, %90 : vector&lt;4xf32&gt;
+          %92 = vector.extract_strided_slice %86 {offsets = [1], sizes = [1], strides = [1]} : vector&lt;3xf32&gt; to vector&lt;1xf32&gt;
+          %93 = vector.extract %92[0] : vector&lt;1xf32&gt;
+          %94 = splat %93 : vector&lt;4xf32&gt;
+          %95 = vector.fma %94, %34, %91 : vector&lt;4xf32&gt;
+          %96 = vector.extract_strided_slice %86 {offsets = [2], sizes = [1], strides = [1]} : vector&lt;3xf32&gt; to vector&lt;1xf32&gt;
+          %97 = vector.extract %96[0] : vector&lt;1xf32&gt;
+          %98 = splat %97 : vector&lt;4xf32&gt;
+          %99 = vector.fma %98, %36, %95 : vector&lt;4xf32&gt;
+          %100 = vector.shape_cast %99 : vector&lt;4xf32&gt; to vector&lt;1x4xf32&gt;
+          %101 = affine.apply affine_map&lt;()[s0, s1, s2] -&gt; (s0 + s1 + s2 + 6)&gt;()[%5, %12, %arg6]
+          %102 = memref.load %0[%c0, %37, %101, %c0] : memref&lt;1x225x225x3xf32&gt;
+          %103 = vector.insert %102, %cst_0 [0] : f32 into vector&lt;3xf32&gt;
+          %104 = memref.load %0[%c0, %37, %101, %c1] : memref&lt;1x225x225x3xf32&gt;
+          %105 = vector.insert %104, %103 [1] : f32 into vector&lt;3xf32&gt;
+          %106 = memref.load %0[%c0, %37, %101, %c2] : memref&lt;1x225x225x3xf32&gt;
+          %107 = vector.insert %106, %105 [2] : f32 into vector&lt;3xf32&gt;
+          %108 = vector.extract_strided_slice %107 {offsets = [0], sizes = [1], strides = [1]} : vector&lt;3xf32&gt; to vector&lt;1xf32&gt;
+          %109 = vector.extract %108[0] : vector&lt;1xf32&gt;
+          %110 = splat %109 : vector&lt;4xf32&gt;
+          %111 = vector.shape_cast %arg10 : vector&lt;1x4xf32&gt; to vector&lt;4xf32&gt;
+          %112 = vector.fma %110, %32, %111 : vector&lt;4xf32&gt;
+          %113 = vector.extract_strided_slice %107 {offsets = [1], sizes = [1], strides = [1]} : vector&lt;3xf32&gt; to vector&lt;1xf32&gt;
+          %114 = vector.extract %113[0] : vector&lt;1xf32&gt;
+          %115 = splat %114 : vector&lt;4xf32&gt;
+          %116 = vector.fma %115, %34, %112 : vector&lt;4xf32&gt;
+          %117 = vector.extract_strided_slice %107 {offsets = [2], sizes = [1], strides = [1]} : vector&lt;3xf32&gt; to vector&lt;1xf32&gt;
+          %118 = vector.extract %117[0] : vector&lt;1xf32&gt;
+          %119 = splat %118 : vector&lt;4xf32&gt;
+          %120 = vector.fma %119, %36, %116 : vector&lt;4xf32&gt;
+          %121 = vector.shape_cast %120 : vector&lt;4xf32&gt; to vector&lt;1x4xf32&gt;
+          scf.yield %58, %79, %100, %121 : vector&lt;1x4xf32&gt;, vector&lt;1x4xf32&gt;, vector&lt;1x4xf32&gt;, vector&lt;1x4xf32&gt;
+        }
+        scf.yield %29#0, %29#1, %29#2, %29#3 : vector&lt;1x4xf32&gt;, vector&lt;1x4xf32&gt;, vector&lt;1x4xf32&gt;, vector&lt;1x4xf32&gt;
+      }
+      %15 = vector.shape_cast %14#3 : vector&lt;1x4xf32&gt; to vector&lt;4xf32&gt;
+      %16 = affine.apply affine_map&lt;()[s0, s1] -&gt; (s0 + s1)&gt;()[%arg0, %8]
+      %17 = affine.apply affine_map&lt;()[s0, s1] -&gt; (s0 + s1 + 3)&gt;()[%3, %9]
+      %18 = affine.apply affine_map&lt;()[s0, s1] -&gt; (s0 + s1)&gt;()[%4, %10]
+      %19 = divi_signed %18, %c4 : index
+      memref.store %15, %2[%c0, %16, %17, %19] : memref&lt;1x112x112x8xvector&lt;4xf32&gt;&gt;
+      %20 = vector.shape_cast %14#2 : vector&lt;1x4xf32&gt; to vector&lt;4xf32&gt;
+      %21 = affine.apply affine_map&lt;()[s0, s1] -&gt; (s0 + s1 + 2)&gt;()[%3, %9]
+      %22 = divi_signed %18, %c4 : index
+      memref.store %20, %2[%c0, %16, %21, %22] : memref&lt;1x112x112x8xvector&lt;4xf32&gt;&gt;
+      %23 = vector.shape_cast %14#1 : vector&lt;1x4xf32&gt; to vector&lt;4xf32&gt;
+      %24 = affine.apply affine_map&lt;()[s0, s1] -&gt; (s0 + s1 + 1)&gt;()[%3, %9]
+      %25 = divi_signed %18, %c4 : index
+      memref.store %23, %2[%c0, %16, %24, %25] : memref&lt;1x112x112x8xvector&lt;4xf32&gt;&gt;
+      %26 = vector.shape_cast %14#0 : vector&lt;1x4xf32&gt; to vector&lt;4xf32&gt;
+      %27 = affine.apply affine_map&lt;()[s0, s1] -&gt; (s0 + s1)&gt;()[%3, %9]
+      %28 = divi_signed %18, %c4 : index
+      memref.store %26, %2[%c0, %16, %27, %28] : memref&lt;1x112x112x8xvector&lt;4xf32&gt;&gt;
+    }
+    return
+  }
+  hal.interface private @io {
+    hal.interface.binding public @s0b0_ro_external, set=0, binding=0, type=&quot;StorageBuffer&quot;, access=&quot;Read&quot;
+    hal.interface.binding public @s0b1_ro_external, set=0, binding=1, type=&quot;StorageBuffer&quot;, access=&quot;Read&quot;
+    hal.interface.binding public @s0b2_xw_external, set=0, binding=2, type=&quot;StorageBuffer&quot;, access=&quot;Write|Discard&quot;
+  }
+}
+</code></pre>
+<p>Now all inputs/outputs load/store and computation are fully vectorized!</p>
+<p>The final step is to convert it to the <code>spirv</code> dialect so that we can serialize
+the kernel and send it to the GPU for execution. It&rsquo;s mostly mechanical so I&rsquo;ll
+omit that here for simplicity.</p>
+<h2 id="summary">Summary</h2>
+<p>In this blog post I introduced an approach to direct tile and vectorize
+convolution ops. It suits GPU architectures, particularly for ARM Mali GPUs.
+Hopefully the IR snippet walkthrough can serve as a good example of how one
+can leverage various dialects/patterns/transforms/utilities in MLIR to
+implement CodeGen flows for high-level ML ops.</p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p>I know I&rsquo;m dancing around the cliff here by making this
+analogy. 😊 But I&rsquo;m assuming familiarity with CPU/GPU thread differences
+and nuances.
+If that&rsquo;s not the case, please feel free to search the Internet as there are
+lots of great articles about this topic.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p>14 (MP) * 2 (SIMD) * 16 (SIMD width) * 2 (FMA) * 850M (Hz)
+= 761600M ~= 760GFLops&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p>The configuration are selected and annotated as
+attributes to the IR by the <a href="https://github.com/google/iree/blob/080cbc466214c698bf6086d7bc1fc205ade2706c/iree/compiler/Codegen/SPIRV/SPIRVLowerExecutableTargetPass.cpp"><code>SPIRVLowerExecutableTargetPass</code>
+pass</a> if your are curious. I&rsquo;ve omitted it here for
+simplicity.&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+        </div>
+        
+        <div class="my-4">
+    
+    <a href="https://www.lei.chat/tags/convolution/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#convolution</a>
+    
+    <a href="https://www.lei.chat/tags/kernel/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#kernel</a>
+    
+    <a href="https://www.lei.chat/tags/compiler/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#compiler</a>
+    
+    <a href="https://www.lei.chat/tags/codegen/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#codegen</a>
+    
+    <a href="https://www.lei.chat/tags/mobile/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#mobile</a>
+    
+    <a href="https://www.lei.chat/tags/arm/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#arm</a>
+    
+    <a href="https://www.lei.chat/tags/mali/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#mali</a>
+    
+    <a href="https://www.lei.chat/tags/gpu/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#gpu</a>
+    
+    <a href="https://www.lei.chat/tags/mlir/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#mlir</a>
+    
+    <a href="https://www.lei.chat/tags/linalg/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#linalg</a>
+    
+    <a href="https://www.lei.chat/tags/vector/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#vector</a>
+    
+    <a href="https://www.lei.chat/tags/spirv/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#spirv</a>
+    
+    <a href="https://www.lei.chat/tags/uvkcompute/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#uvkcompute</a>
+    
+</div>
+        
+        
+        
+
+
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">Next</span>
+        <a href="https://www.lei.chat/posts/android-native-library-benchmarking-pipeline-for-open-source-projects/" class="block">Android Native Library Benchmarking Pipeline for Open Source Projects</a>
+        
+    </div>
+</div>
+
+        
+
+
+
+  <script id="utterances" src="https://utteranc.es/client.js"
+            issue-term=title
+            repo=antiagainst/antiagainst.github.io
+              theme=preferred-color-scheme
+        crossorigin="anonymous"
+        async>
+</script>
+<script>
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+      document.getElementById('utterances').setAttribute('theme', 'github-dark')
+    }
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: light)").matches) || storageColorScheme == "Light") {
+      document.getElementById('utterances').setAttribute('theme', 'github-light')
+    }
+</script>
+
+
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+<div class="bg-secondary-bg rounded p-6">
+    <h3 class="text-lg font-semibold mb-4">Series of Posts</h3>
+    <div class="content">
+        
+        
+        <a href="https://www.lei.chat/posts/codegen-performant-convolution-kernels-for-mobile-gpus/">CodeGen Performant Convolution Kernels for Mobile GPUs</a>
+        <br />
+        
+        
+    </div>
+</div>
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">On This Page</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#background-and-scope">Background and Scope</a>
+      <ul>
+        <li><a href="#convolution-ops">Convolution ops</a></li>
+        <li><a href="#mobile-gpus">Mobile GPUs</a></li>
+        <li><a href="#general-gpu-kernel-optimization">General GPU kernel optimization</a></li>
+      </ul>
+    </li>
+    <li><a href="#overall-codegen-strategy">Overall CodeGen Strategy</a>
+      <ul>
+        <li><a href="#tiling-and-distribution">Tiling and distribution</a></li>
+        <li><a href="#vectorization-and-unrolling">Vectorization and unrolling</a></li>
+      </ul>
+    </li>
+    <li><a href="#the-mliriree-codegen-flow">The MLIR/IREE CodeGen Flow</a>
+      <ul>
+        <li><a href="#mhlo-to-linalg-conversion"><code>mhlo</code> to <code>linalg</code> conversion</a></li>
+        <li><a href="#tiling-and-distributing-to-workgroups">Tiling and distributing to workgroups</a></li>
+        <li><a href="#tiling-and-distributing-to-workitems">Tiling and distributing to workitems</a></li>
+        <li><a href="#final-vectorization-and-unrolling">Final vectorization and unrolling</a></li>
+      </ul>
+    </li>
+    <li><a href="#summary">Summary</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded p-6">
+        <h2 class="text-lg font-semibold mb-4">See Also</h2>
+        <div class="content">
+            
+            <a href="https://www.lei.chat/posts/sampling-performance-counters-from-gpu-drivers/">Sampling Performance Counters from Mobile GPU Drivers</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/android-linux-gpu-drivers-internals-and-resources/">Android/Linux GPU Drivers: Internals and Resources</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/shader-toolchain-hlsl-in-vulkan/">Shader Toolchain: HLSL in Vulkan</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/hlsl-for-vulkan-semantic-strings-and-location-numbers/">HLSL for Vulkan: Semantic Strings and Location Numbers</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/hlsl-for-vulkan-resources/">HLSL for Vulkan: Resources</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/hlsl-for-vulkan-matrices/">HLSL for Vulkan: Matrices</a>
+            <br />
+            
+        </div>
+    </div>
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2018 - 2021 <a href="https://www.lei.chat/">Lei Zhang</a>
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>
