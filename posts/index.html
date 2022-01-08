@@ -5,13 +5,13 @@
 
 <title>Lei.Chat()</title>
 
-<meta name="generator" content="Hugo Eureka 0.8.0" />
+<meta name="generator" content="Hugo Eureka 0.8.4" />
 <link rel="stylesheet" href="https://www.lei.chat/css/eureka.min.css">
 <script defer src="https://www.lei.chat/js/eureka.min.js"></script>
 
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload"
-  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
   as="style" onload="this.onload=null;this.rel='stylesheet'">
 <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
 
@@ -103,65 +103,65 @@
     "itemListElement":[{
             "@type":"ListItem",
             "position":  1 ,
+            "name": "Compilers and IRs: LLVM IR, SPIR-V, and MLIR",
+            "description": "Overall discussion on compilers and IRs (LLVM IR, SPIR-V, and MLIR): why they are in their current manner and how they would evolve",
+            "url": "https://www.lei.chat/posts/compilers-and-irs-llvm-ir-spirv-and-mlir/"
+        },{
+            "@type":"ListItem",
+            "position":  2 ,
             "name": "CodeGen Performant Convolution Kernels for Mobile GPUs",
             "description": "\u003cp\u003eThis blog post talks about how to generate performant code for convolution ops\nusing MLIR’s multiple levels of abstractions and transformations.\nI initially created it for targeting ARM Mali GPUs in IREE. But given it is\njust direct tiling and vectorization, it should be widely applicable.\u003c/p\u003e\n\u003cp\u003eI will walk through the lowering steps, so if you are interested to know how to\norganize MLIR’s various dialects/patterns together to achieve similar tasks,\nthis blog post might also be useful.\u003c/p\u003e",
             "url": "https://www.lei.chat/posts/codegen-performant-convolution-kernels-for-mobile-gpus/"
         },{
             "@type":"ListItem",
-            "position":  2 ,
+            "position":  3 ,
             "name": "Android Native Library Benchmarking Pipeline for Open Source Projects",
             "description": "\u003cp\u003eToday I would like to describe one way to build a scalable and frictionless\nbenchmarking pipeline for Android native libraries, aiming to support different\nbenchmark and device variants.\nIt is for open source projects, so it composes public services, commonly\nfree under such conditions.\nThe ingredients are cloud virtual machines for building, local single board\ncomputers (e.g., Raspberry Pi) for hosting Android devices and executing\nbenchmarks, a \u003ca href=\"https://github.com/google/dana\"\u003eDana\u003c/a\u003e server for keeping track of benchmark results of\nlanded changes, and Python scripts for posting benchmark comparisons to pull\nrequests.\nA \u003ca href=\"https://buildkite.com\"\u003eBuildkite\u003c/a\u003e pipeline chains them together and drives the full flow.\u003c/p\u003e",
             "url": "https://www.lei.chat/posts/android-native-library-benchmarking-pipeline-for-open-source-projects/"
         },{
             "@type":"ListItem",
-            "position":  3 ,
+            "position":  4 ,
             "name": "GPGPU, ML Inference, and Vulkan Compute",
             "description": "Vulkan (compute) has the potential to be the next-generation GPGPU standard for various GPUs to support various domains; one immediate compelling application, is machine learning inference for resource-constrained scenarios like in mobile/edge devices and for gaming. This blog post explains the technical and business aspects behind and discusses the challenges and status.",
             "url": "https://www.lei.chat/posts/gpgpu-ml-inference-and-vulkan-compute/"
         },{
             "@type":"ListItem",
-            "position":  4 ,
+            "position":  5 ,
             "name": "Edge/Mobile ML Inference Challenges",
             "description": "Unique challenges for edge/mobile ML inference, contrasting with training and inference in the cloud",
             "url": "https://www.lei.chat/posts/edge-mobile-ml-inference-challenges/"
         },{
             "@type":"ListItem",
-            "position":  5 ,
+            "position":  6 ,
             "name": "Sampling Performance Counters from Mobile GPU Drivers",
             "description": "Hardware performance counter details in Adreno/Mali kernel mode drivers and how to query them from user mode application",
             "url": "https://www.lei.chat/posts/sampling-performance-counters-from-gpu-drivers/"
         },{
             "@type":"ListItem",
-            "position":  6 ,
+            "position":  7 ,
             "name": "Android/Linux GPU Drivers: Internals and Resources",
             "description": "Internals and resources about GPU user mode and kernel mode drivers in Android/Linux",
             "image": "https://www.lei.chat/posts/android-linux-gpu-drivers-internals-and-resources/gpu-user-kernel-driver.svg",
             "url": "https://www.lei.chat/posts/android-linux-gpu-drivers-internals-and-resources/"
         },{
             "@type":"ListItem",
-            "position":  7 ,
+            "position":  8 ,
             "name": "What is Vulkan Compute?",
             "description": "The compute subset of the Vulkan API",
             "image": "https://www.lei.chat/posts/what-is-vulkan-compute/vulkan-compute-application.svg",
             "url": "https://www.lei.chat/posts/what-is-vulkan-compute/"
         },{
             "@type":"ListItem",
-            "position":  8 ,
+            "position":  9 ,
             "name": "Shader Toolchain: HLSL in Vulkan",
             "description": "Shader Toolchain (HLSL in Vulkan): talk, slides, downloads, and documentation",
             "url": "https://www.lei.chat/posts/shader-toolchain-hlsl-in-vulkan/"
         },{
             "@type":"ListItem",
-            "position":  9 ,
+            "position":  10 ,
             "name": "HLSL for Vulkan: Semantic Strings and Location Numbers",
             "description": "HLSL for Vulkan: translating HLSL semantic strings into SPIR-V location numbers",
             "url": "https://www.lei.chat/posts/hlsl-for-vulkan-semantic-strings-and-location-numbers/"
-        },{
-            "@type":"ListItem",
-            "position":  10 ,
-            "name": "HLSL for Vulkan: Resources",
-            "description": "HLSL for Vulkan: translating HLSL resources into SPIR-V",
-            "url": "https://www.lei.chat/posts/hlsl-for-vulkan-resources/"
         }
     ]
 }
@@ -196,7 +196,7 @@
 
 
 
-<meta property="og:updated_time" content="2021-09-19T19:17:07-04:00" />
+<meta property="og:updated_time" content="2022-01-08T13:58:34-05:00" />
 
 
 
@@ -224,6 +224,9 @@
         class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
         <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
             <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">Posts</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Tags</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Categories</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Series</a>
             <a href="/authors/me" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">About</a>
         </div>
 
@@ -281,6 +284,58 @@
 </article>
 <div class="bg-secondary-bg rounded px-6">
     <div class="overflow-hidden divide-y">
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="https://www.lei.chat/posts/compilers-and-irs-llvm-ir-spirv-and-mlir/" class="font-bold text-xl hover:text-eureka">Compilers and IRs: LLVM IR, SPIR-V, and MLIR</a>
+</div>
+<div class="content">
+  Compilers are often critical components in various development toolchains that boosts developer productivity. A compiler is normally used as a monolithic black box that consumes a high-level source program and produces a semantically-equivalent low-level one. It is still structured inside though; what flows between internal layers are called intermediate representations (IRs).
+IRs are critical to compilers. Like there are many compilers, there are also many IRs in use. I’m fortunate to have direct experience with three major schools of IRs or infrastructures thus far—LLVM IR, SPIR-V, MLIR, particularly extensively for the last two, where I both joined development in an early stage. So I’d like to write a series of blog posts to log down my understanding of compilers and IRs. Hopefully it could be beneficial to others.
+
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2022-01-08</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>27 min read</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="https://www.lei.chat/categories/compiler/" class="hover:text-eureka">compiler</a>
+        
+        
+        <span>, </span>
+        <a href="https://www.lei.chat/categories/ir/" class="hover:text-eureka">ir</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="https://www.lei.chat/series/compiler-development/" class="hover:text-eureka">compiler-development</a>
+        
+    </div>
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
   
   <div class="py-6">
     <div class="flex flex-col-reverse lg:flex-row justify-between">
@@ -748,57 +803,6 @@ I will walk through the lowering steps, so if you are interested to know how to 
 </div>
   </div>
   
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="mb-4">
-  <a href="https://www.lei.chat/posts/hlsl-for-vulkan-resources/" class="font-bold text-xl hover:text-eureka">HLSL for Vulkan: Resources</a>
-</div>
-<div class="content">
-  This blog post discusses how to manage resources in HLSL for Vulkan, using the SPIR-V CodeGen of DirectXShaderCompiler (DXC). It is one of the “HLSL for Vulkan” series.
-
-</div>
-
-<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
-    <div class="mr-6 my-2">
-        <i class="fas fa-calendar mr-1"></i>
-        <span>2018-04-24</span>
-    </div>
-    <div class="mr-6 my-2">
-        <i class="fas fa-clock mr-1"></i>
-        <span>7 min read</span>
-    </div>
-    
-    
-    <div class="mr-6 my-2">
-        <i class="fas fa-folder mr-1"></i>
-        
-        <a href="https://www.lei.chat/categories/vulkan-graphics/" class="hover:text-eureka">vulkan-graphics</a>
-        
-        
-        <span>, </span>
-        <a href="https://www.lei.chat/categories/dxc/" class="hover:text-eureka">dxc</a>
-        
-    </div>
-    
-
-    
-    <div class="mr-6 my-2">
-        <i class="fas fa-th-list mr-1"></i>
-        
-        <a href="https://www.lei.chat/series/hlsl-for-vulkan/" class="hover:text-eureka">hlsl-for-vulkan</a>
-        
-    </div>
-    
-</div>
-
-  </div>
-
-  
-</div>
-  </div>
-  
 </div>
 
 
@@ -806,13 +810,13 @@ I will walk through the lowering steps, so if you are interested to know how to 
 
     <ul class="pagination pagination-default">
       <li class="page-item disabled">
-        <a href="#" aria-disabled="true" aria-label="First" class="page-link" role="button" tabindex="-1"><span aria-hidden="true">&laquo;&laquo;</span></a>
+        <a aria-disabled="true" aria-label="First" class="page-link" role="button" tabindex="-1"><span aria-hidden="true">&laquo;&laquo;</span></a>
       </li>
       <li class="page-item disabled">
-        <a href="#" aria-disabled="true" aria-label="Previous" class="page-link" role="button" tabindex="-1"><span aria-hidden="true">&laquo;</span></a>
+        <a aria-disabled="true" aria-label="Previous" class="page-link" role="button" tabindex="-1"><span aria-hidden="true">&laquo;</span></a>
       </li>
       <li class="page-item active">
-        <a href="#" aria-current="page" aria-label="Page 1" class="page-link" role="button">1</a>
+        <a aria-current="page" aria-label="Page 1" class="page-link" role="button">1</a>
       </li>
       <li class="page-item">
         <a href="/posts/page/2/" aria-label="Page 2" class="page-link" role="button">2</a>

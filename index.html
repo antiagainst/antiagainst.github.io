@@ -5,13 +5,13 @@
 
 <title>Lei.Chat()</title>
 
-<meta name="generator" content="Hugo Eureka 0.8.0" />
+<meta name="generator" content="Hugo Eureka 0.8.4" />
 <link rel="stylesheet" href="https://www.lei.chat/css/eureka.min.css">
 <script defer src="https://www.lei.chat/js/eureka.min.js"></script>
 
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload"
-  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
   as="style" onload="this.onload=null;this.rel='stylesheet'">
 <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
 
@@ -126,7 +126,7 @@
 
 
 
-<meta property="og:updated_time" content="2021-09-19T19:17:07-04:00" />
+<meta property="og:updated_time" content="2022-01-08T13:58:34-05:00" />
 
 
 
@@ -154,6 +154,9 @@
         class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
         <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
             <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Posts</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Tags</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Categories</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Series</a>
             <a href="/authors/me" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">About</a>
         </div>
 
@@ -395,6 +398,60 @@
   
   <div class="w-full ">
     <div class="mb-4">
+  <a href="https://www.lei.chat/posts/compilers-and-irs-llvm-ir-spirv-and-mlir/" class="font-bold text-xl hover:text-eureka">Compilers and IRs: LLVM IR, SPIR-V, and MLIR</a>
+</div>
+<div class="content">
+  Compilers are often critical components in various development toolchains that boosts developer productivity. A compiler is normally used as a monolithic black box that consumes a high-level source program and produces a semantically-equivalent low-level one. It is still structured inside though; what flows between internal layers are called intermediate representations (IRs).
+IRs are critical to compilers. Like there are many compilers, there are also many IRs in use. I’m fortunate to have direct experience with three major schools of IRs or infrastructures thus far—LLVM IR, SPIR-V, MLIR, particularly extensively for the last two, where I both joined development in an early stage. So I’d like to write a series of blog posts to log down my understanding of compilers and IRs. Hopefully it could be beneficial to others.
+
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2022-01-08</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>27 min read</span>
+    </div>
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="https://www.lei.chat/categories/compiler/" class="hover:text-eureka">compiler</a>
+        
+        
+        <span>, </span>
+        <a href="https://www.lei.chat/categories/ir/" class="hover:text-eureka">ir</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="https://www.lei.chat/series/compiler-development/" class="hover:text-eureka">compiler-development</a>
+        
+    </div>
+    
+</div>
+
+  </div>
+
+  
+</div>
+</div>
+</div>
+
+<div class="mb-6">
+  <div class="bg-secondary-bg rounded border hover:shadow-lg transition ease-in-out duration-200 px-6 pt-6 pb-4">
+  <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
   <a href="https://www.lei.chat/posts/codegen-performant-convolution-kernels-for-mobile-gpus/" class="font-bold text-xl hover:text-eureka">CodeGen Performant Convolution Kernels for Mobile GPUs</a>
 </div>
 <div class="content">
@@ -591,63 +648,6 @@ I will walk through the lowering steps, so if you are interested to know how to 
         <i class="fas fa-th-list mr-1"></i>
         
         <a href="https://www.lei.chat/series/ml-inference/" class="hover:text-eureka">ml-inference</a>
-        
-    </div>
-    
-</div>
-
-  </div>
-
-  
-</div>
-</div>
-</div>
-
-<div class="mb-6">
-  <div class="bg-secondary-bg rounded border hover:shadow-lg transition ease-in-out duration-200 px-6 pt-6 pb-4">
-  <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="mb-4">
-  <a href="https://www.lei.chat/posts/sampling-performance-counters-from-gpu-drivers/" class="font-bold text-xl hover:text-eureka">Sampling Performance Counters from Mobile GPU Drivers</a>
-</div>
-<div class="content">
-  In a previous blog post I gave a general introduction to GPU driver internals in Android/Linux systems. Following up with it, today I will explain how a specific functionality, hardware performance counter (perf counter) queries, is handled in both Qualcomm Adreno and ARM Mali drivers, by walking through the kernel driver source code.
-
-</div>
-
-<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
-    <div class="mr-6 my-2">
-        <i class="fas fa-calendar mr-1"></i>
-        <span>2021-07-08</span>
-    </div>
-    <div class="mr-6 my-2">
-        <i class="fas fa-clock mr-1"></i>
-        <span>10 min read</span>
-    </div>
-    
-    
-    <div class="mr-6 my-2">
-        <i class="fas fa-folder mr-1"></i>
-        
-        <a href="https://www.lei.chat/categories/android/" class="hover:text-eureka">android</a>
-        
-        
-        <span>, </span>
-        <a href="https://www.lei.chat/categories/gpu-driver/" class="hover:text-eureka">gpu-driver</a>
-        
-        
-        <span>, </span>
-        <a href="https://www.lei.chat/categories/gpu-performance/" class="hover:text-eureka">gpu-performance</a>
-        
-    </div>
-    
-
-    
-    <div class="mr-6 my-2">
-        <i class="fas fa-th-list mr-1"></i>
-        
-        <a href="https://www.lei.chat/series/gpu-driver/" class="hover:text-eureka">gpu-driver</a>
         
     </div>
     

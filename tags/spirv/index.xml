@@ -8,7 +8,28 @@
     <language>en</language>
     <copyright>&amp;copy; 2018 - 2021 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Sun, 19 Sep 2021 19:17:07 -0400</lastBuildDate><atom:link href="https://www.lei.chat/tags/spirv/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 08 Jan 2022 13:58:34 -0500</lastBuildDate><atom:link href="https://www.lei.chat/tags/spirv/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Compilers and IRs: LLVM IR, SPIR-V, and MLIR</title>
+      <link>https://www.lei.chat/posts/compilers-and-irs-llvm-ir-spirv-and-mlir/</link>
+      <pubDate>Sat, 08 Jan 2022 13:58:34 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/posts/compilers-and-irs-llvm-ir-spirv-and-mlir/</guid>
+      <description>&lt;p&gt;Compilers are often critical components in various development toolchains that
+boosts developer productivity.
+A compiler is normally used as a monolithic black box that consumes a high-level
+source program and produces a semantically-equivalent low-level one.
+It is still structured inside though; what flows between internal layers
+are called intermediate representations (IRs).&lt;/p&gt;
+&lt;p&gt;IRs are critical to compilers. Like there are many compilers, there are also
+many IRs in use.
+I&amp;rsquo;m fortunate to have direct experience with three major schools of IRs or
+infrastructures thus far&amp;mdash;LLVM IR, SPIR-V, MLIR, particularly extensively for
+the last two, where I both joined development in an early stage.
+So I&amp;rsquo;d like to write a series of blog posts to log down my understanding of
+compilers and IRs. Hopefully it could be beneficial to others.&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>CodeGen Performant Convolution Kernels for Mobile GPUs</title>
       <link>https://www.lei.chat/posts/codegen-performant-convolution-kernels-for-mobile-gpus/</link>
