@@ -119,7 +119,7 @@
         "@id": "https://www.lei.chat/posts/compilers-and-irs-llvm-ir-spirv-and-mlir/"
     },
     "headline": "Compilers and IRs: LLVM IR, SPIR-V, and MLIR | Lei.Chat()","datePublished": "2022-01-08T13:58:34-05:00",
-    "dateModified": "2022-01-08T13:58:34-05:00",
+    "dateModified": "2022-01-13T08:14:48-05:00",
     "wordCount":  5617 ,
     "publisher": {
         "@type": "Person",
@@ -161,7 +161,7 @@
 <meta property="article:published_time" content="2022-01-08T13:58:34-05:00" />
 
 
-<meta property="article:modified_time" content="2022-01-08T13:58:34-05:00" />
+<meta property="article:modified_time" content="2022-01-13T08:14:48-05:00" />
 
 
 
@@ -587,7 +587,7 @@ become more and more obvious.</p>
 <p>LLVM IR is centric to the whole LLVM ecosystem. That is the foundation to the
 great decoupling of frontend and backend.
 However, it also means a full flow must pass through via LLVM IR.</p>
-<p>Changing MLIR IR itself needs to meet a very lofty bar nowadays because of its
+<p>Changing LLVM IR itself needs to meet a very lofty bar nowadays because of its
 nature of center of gravity.
 All the tools are expected to process it, and there are so many transformations
 and different organizations' workflows go through it.
@@ -595,7 +595,7 @@ Even if you don&rsquo;t need to plumb through the full flow that frequency, twea
 a small aspect of the IR can still trigger a surprising ripple effect.
 So that naturally means changes are slow and requires extensive discussions and
 sign offs from many stakeholders.
-That is all necessary to guarantee the quality of MLIR IR;
+That is all necessary to guarantee the quality of LLVM IR;
 but if I just have a very isolated need, it would be quite hard to motivate a
 change and justify its landing.</p>
 <p>One way, and also the typical way actually, is just to fork LLVM and keep the
