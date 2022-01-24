@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Categories on Lei.Chat()</title>
+    <link>https://www.lei.chat/zh/categories/</link>
+    <description>Recent content in Categories on Lei.Chat()</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 2018 - 2022 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
+</copyright>
+    <lastBuildDate>Sun, 23 Jan 2022 10:54:37 -0500</lastBuildDate><atom:link href="https://www.lei.chat/zh/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>llvm</title>
+      <link>https://www.lei.chat/zh/categories/llvm/</link>
+      <pubDate>Sun, 23 Jan 2022 10:54:37 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/zh/categories/llvm/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>mlir</title>
+      <link>https://www.lei.chat/zh/categories/mlir/</link>
+      <pubDate>Sun, 23 Jan 2022 10:54:37 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/zh/categories/mlir/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>spirv</title>
+      <link>https://www.lei.chat/zh/categories/spirv/</link>
+      <pubDate>Sun, 23 Jan 2022 10:54:37 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/zh/categories/spirv/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>中间表示</title>
+      <link>https://www.lei.chat/zh/categories/%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA/</link>
+      <pubDate>Sun, 23 Jan 2022 10:54:37 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/zh/categories/%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>编译器</title>
+      <link>https://www.lei.chat/zh/categories/%E7%BC%96%E8%AF%91%E5%99%A8/</link>
+      <pubDate>Sun, 23 Jan 2022 10:54:37 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/zh/categories/%E7%BC%96%E8%AF%91%E5%99%A8/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

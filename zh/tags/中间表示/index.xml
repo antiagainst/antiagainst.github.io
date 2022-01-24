@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>中间表示 on Lei.Chat()</title>
+    <link>https://www.lei.chat/zh/tags/%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA/</link>
+    <description>Recent content in 中间表示 on Lei.Chat()</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <copyright>&amp;copy; 2018 - 2022 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
+</copyright>
+    <lastBuildDate>Sun, 23 Jan 2022 10:54:37 -0500</lastBuildDate><atom:link href="https://www.lei.chat/zh/tags/%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>编译器与中间表示: LLVM IR, SPIR-V, 以及 MLIR</title>
+      <link>https://www.lei.chat/zh/posts/compilers-and-irs-llvm-ir-spirv-and-mlir/</link>
+      <pubDate>Sun, 23 Jan 2022 10:54:37 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/zh/posts/compilers-and-irs-llvm-ir-spirv-and-mlir/</guid>
+      <description>&lt;p&gt;编译器 (compiler) 通常是各种提高开发效率的工具链中不可或缺的部分。
+编译器一般被为黑箱，吃进高层次的源程序，产生语义不变的低层次机器码。
+当然，编译器也是有其内部结构的，中间表示 (intermediate representation)
+串联起编译器内各层级和模块。&lt;/p&gt;
+&lt;p&gt;中间表示对编译器至关重要，也如编译器一样百花齐放。
+我在日常工作中有幸能够涉及三种主流编译器中间表示或者基础设施——LLVM IR, SPIR-V, 以及 MLIR,
+尤其对于后两种，我都参与了早期的开发。
+我打算用一系列文章记录自己对于编译器以及中间表示的理解，希望对感兴趣的人有所帮助。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
