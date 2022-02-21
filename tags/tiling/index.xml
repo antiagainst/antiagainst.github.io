@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>tiling on Lei.Chat()</title>
+    <link>https://www.lei.chat/tags/tiling/</link>
+    <description>Recent content in tiling on Lei.Chat()</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>&amp;copy; 2018 - 2022 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
+</copyright>
+    <lastBuildDate>Sun, 20 Feb 2022 15:21:03 -0500</lastBuildDate><atom:link href="https://www.lei.chat/tags/tiling/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MLIR CodeGen Dialects for Machine Learning Compilers</title>
+      <link>https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/</guid>
+      <description>&lt;p&gt;The &lt;a href=&#34;../compilers-and-irs-llvm-ir-spirv-and-mlir/&#34;&gt;initial blog post&lt;/a&gt; in this series captured my overall take
+on the evolution trends of compilers and IRs.
+It also touched on &lt;a href=&#34;../compilers-and-irs-llvm-ir-spirv-and-mlir/#llvm-ir&#34;&gt;LLVM IR&lt;/a&gt;, &lt;a href=&#34;../compilers-and-irs-llvm-ir-spirv-and-mlir/#spir-v&#34;&gt;SPIR-V&lt;/a&gt;, and
+&lt;a href=&#34;../compilers-and-irs-llvm-ir-spirv-and-mlir/#mlir&#34;&gt;MLIR&lt;/a&gt;, explaining the problems they are addressing and design
+focuses thereof.
+Today I will expand on MLIR and talk about its dialect hierarchy for machine
+learning (ML) compilers systematically.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

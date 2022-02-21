@@ -8,31 +8,265 @@
     <language>en</language>
     <copyright>&amp;copy; 2018 - 2022 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Sun, 23 Jan 2022 10:54:37 -0500</lastBuildDate><atom:link href="https://www.lei.chat/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 20 Feb 2022 15:21:03 -0500</lastBuildDate><atom:link href="https://www.lei.chat/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>arith</title>
+      <link>https://www.lei.chat/tags/arith/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/tags/arith/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>canonicalization</title>
+      <link>https://www.lei.chat/tags/canonicalization/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/tags/canonicalization/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>cf</title>
+      <link>https://www.lei.chat/tags/cf/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/tags/cf/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>codegen</title>
+      <link>https://www.lei.chat/tags/codegen/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/tags/codegen/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>compiler</title>
+      <link>https://www.lei.chat/tags/compiler/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/tags/compiler/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>dialect</title>
+      <link>https://www.lei.chat/tags/dialect/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/tags/dialect/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>distribution</title>
+      <link>https://www.lei.chat/tags/distribution/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/tags/distribution/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>fusion</title>
+      <link>https://www.lei.chat/tags/fusion/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/tags/fusion/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>hierarchy</title>
+      <link>https://www.lei.chat/tags/hierarchy/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/tags/hierarchy/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>hoisting</title>
+      <link>https://www.lei.chat/tags/hoisting/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/tags/hoisting/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>linalg</title>
+      <link>https://www.lei.chat/tags/linalg/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/tags/linalg/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>llvm</title>
       <link>https://www.lei.chat/tags/llvm/</link>
-      <pubDate>Sun, 23 Jan 2022 10:54:37 -0500</pubDate>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
       
       <guid>https://www.lei.chat/tags/llvm/</guid>
       <description></description>
     </item>
     
     <item>
+      <title>math</title>
+      <link>https://www.lei.chat/tags/math/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/tags/math/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>memref</title>
+      <link>https://www.lei.chat/tags/memref/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/tags/memref/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>mhlo</title>
+      <link>https://www.lei.chat/tags/mhlo/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/tags/mhlo/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ml</title>
+      <link>https://www.lei.chat/tags/ml/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/tags/ml/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>mlir</title>
       <link>https://www.lei.chat/tags/mlir/</link>
-      <pubDate>Sun, 23 Jan 2022 10:54:37 -0500</pubDate>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
       
       <guid>https://www.lei.chat/tags/mlir/</guid>
       <description></description>
     </item>
     
     <item>
+      <title>operation</title>
+      <link>https://www.lei.chat/tags/operation/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/tags/operation/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>scf</title>
+      <link>https://www.lei.chat/tags/scf/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/tags/scf/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>spirv</title>
       <link>https://www.lei.chat/tags/spirv/</link>
-      <pubDate>Sun, 23 Jan 2022 10:54:37 -0500</pubDate>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
       
       <guid>https://www.lei.chat/tags/spirv/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>tensor</title>
+      <link>https://www.lei.chat/tags/tensor/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/tags/tensor/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>tf</title>
+      <link>https://www.lei.chat/tags/tf/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/tags/tf/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>tiling</title>
+      <link>https://www.lei.chat/tags/tiling/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/tags/tiling/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>torch</title>
+      <link>https://www.lei.chat/tags/torch/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/tags/torch/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>tosa</title>
+      <link>https://www.lei.chat/tags/tosa/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/tags/tosa/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>type</title>
+      <link>https://www.lei.chat/tags/type/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/tags/type/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>unrolling</title>
+      <link>https://www.lei.chat/tags/unrolling/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/tags/unrolling/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>vector</title>
+      <link>https://www.lei.chat/tags/vector/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/tags/vector/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>vectorization</title>
+      <link>https://www.lei.chat/tags/vectorization/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/tags/vectorization/</guid>
       <description></description>
     </item>
     
@@ -172,15 +406,6 @@
     </item>
     
     <item>
-      <title>compiler</title>
-      <link>https://www.lei.chat/tags/compiler/</link>
-      <pubDate>Sat, 08 Jan 2022 13:58:34 -0500</pubDate>
-      
-      <guid>https://www.lei.chat/tags/compiler/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>correctness</title>
       <link>https://www.lei.chat/tags/correctness/</link>
       <pubDate>Sat, 08 Jan 2022 13:58:34 -0500</pubDate>
@@ -289,15 +514,6 @@
     </item>
     
     <item>
-      <title>codegen</title>
-      <link>https://www.lei.chat/tags/codegen/</link>
-      <pubDate>Sun, 19 Sep 2021 19:17:07 -0400</pubDate>
-      
-      <guid>https://www.lei.chat/tags/codegen/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>convolution</title>
       <link>https://www.lei.chat/tags/convolution/</link>
       <pubDate>Sun, 19 Sep 2021 19:17:07 -0400</pubDate>
@@ -325,15 +541,6 @@
     </item>
     
     <item>
-      <title>linalg</title>
-      <link>https://www.lei.chat/tags/linalg/</link>
-      <pubDate>Sun, 19 Sep 2021 19:17:07 -0400</pubDate>
-      
-      <guid>https://www.lei.chat/tags/linalg/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>mali</title>
       <link>https://www.lei.chat/tags/mali/</link>
       <pubDate>Sun, 19 Sep 2021 19:17:07 -0400</pubDate>
@@ -357,15 +564,6 @@
       <pubDate>Sun, 19 Sep 2021 19:17:07 -0400</pubDate>
       
       <guid>https://www.lei.chat/tags/uvkcompute/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>vector</title>
-      <link>https://www.lei.chat/tags/vector/</link>
-      <pubDate>Sun, 19 Sep 2021 19:17:07 -0400</pubDate>
-      
-      <guid>https://www.lei.chat/tags/vector/</guid>
       <description></description>
     </item>
     
@@ -510,15 +708,6 @@
       <pubDate>Sun, 25 Jul 2021 11:25:26 -0400</pubDate>
       
       <guid>https://www.lei.chat/tags/inference/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>ml</title>
-      <link>https://www.lei.chat/tags/ml/</link>
-      <pubDate>Sun, 25 Jul 2021 11:25:26 -0400</pubDate>
-      
-      <guid>https://www.lei.chat/tags/ml/</guid>
       <description></description>
     </item>
     
