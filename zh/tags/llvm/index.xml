@@ -8,7 +8,18 @@
     <language>zh</language>
     <copyright>&amp;copy; 2018 - 2022 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Sun, 23 Jan 2022 10:54:37 -0500</lastBuildDate><atom:link href="https://www.lei.chat/zh/tags/llvm/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 20 Feb 2022 15:21:03 -0500</lastBuildDate><atom:link href="https://www.lei.chat/zh/tags/llvm/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>机器学习编译器代码生成相关 MLIR Dialect</title>
+      <link>https://www.lei.chat/zh/posts/mlir-codegen-dialects-for-machine-learning-compilers/</link>
+      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/zh/posts/mlir-codegen-dialects-for-machine-learning-compilers/</guid>
+      <description>&lt;p&gt;在&lt;a href=&#34;../compilers-and-irs-llvm-ir-spirv-and-mlir/&#34;&gt;这个系列的首篇文章&lt;/a&gt;中我分享了对编译器和中间表示 (IR) 演进趋势的整体理解，
+也讨论了 &lt;a href=&#34;../compilers-and-irs-llvm-ir-spirv-and-mlir/#llvm-ir&#34;&gt;LLVM IR&lt;/a&gt;, &lt;a href=&#34;../compilers-and-irs-llvm-ir-spirv-and-mlir/#spir-v&#34;&gt;SPIR-V&lt;/a&gt;, 和 &lt;a href=&#34;../compilers-and-irs-llvm-ir-spirv-and-mlir/#mlir&#34;&gt;MLIR&lt;/a&gt; 所要解决的问题以及相应的设计着眼点。
+今天对 MLIR 做进一步展开，分析一下机器学习相关的 dialect 体系。&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>编译器与中间表示: LLVM IR, SPIR-V, 以及 MLIR</title>
       <link>https://www.lei.chat/zh/posts/compilers-and-irs-llvm-ir-spirv-and-mlir/</link>

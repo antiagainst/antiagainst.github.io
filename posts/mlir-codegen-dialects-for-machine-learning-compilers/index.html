@@ -128,7 +128,7 @@ learning (ML) compilers systematically.">
     "image": "https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/codegen-dialect-hierarchy.svg",
     "datePublished": "2022-02-20T15:21:03-05:00",
     "dateModified": "2022-02-20T15:21:03-05:00",
-    "wordCount":  3316 ,
+    "wordCount":  3334 ,
     "publisher": {
         "@type": "Person",
         "name": "Lei Zhang",
@@ -163,6 +163,10 @@ learning (ML) compilers systematically." />
 
 
 <meta property="og:locale" content="en" />
+
+
+
+<meta property="og:locale:alternate" content="zh" />
 
 
 
@@ -251,6 +255,19 @@ learning (ML) compilers systematically." />
                     <span class="px-4 py-1 hover:text-eureka" name="Auto">Auto</span>
                 </div>
             </div>
+            <div class="relative pt-4 pl-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="languageMode">
+                    <i class="fas fa-globe"></i>
+                    <span class="pl-1">English</span>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open-lang">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='languageOptions'>
+                    <a class="px-4 py-1 hover:text-eureka" href="https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/">English</a>
+                    <a class="px-4 py-1 hover:text-eureka" href="https://www.lei.chat/zh/posts/mlir-codegen-dialects-for-machine-learning-compilers/">简体中文</a>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -278,6 +295,7 @@ learning (ML) compilers systematically." />
     document.addEventListener('DOMContentLoaded', () => {
         getcolorscheme();
         switchBurger();
+        switchLanguage()
     });
 </script>
 </div>
@@ -563,7 +581,9 @@ op</a> representing batch matmul and arguably they are not that
 different from <a href="https://mlir.llvm.org/docs/Dialects/Linalg/#linalgbatch_matmul-mlirlinalgbatchmatmulop">the <code>linalg.batch_matmul</code> op</a>,
 the <code>linalg.batch_matmul</code> op has the implicit loop nest making it great for
 transformations like <a href="https://github.com/llvm/llvm-project/blob/14f143c9084fc49b45f30a199dc8a16b7506f959/mlir/lib/Dialect/Linalg/Transforms/FusionOnTensors.cpp#L412"><em>tiling</em> and <em>fusion</em></a>, which are crucial
-for generating code towards tiled-based architectures.</p>
+for generating code towards tiled-based architectures.
+We just need to materialize some loop nests and shrink the scale of <code>linalg</code>
+ops down to slices.</p>
 <p>As an example, say we have the following input ML ops:</p>
 <pre><code>%0 = &quot;tosa.conv2d&quot;(%input, %filter, %bias)
        {dilation = [1, 1], pad = [0, 0, 0, 0], stride = [2, 2]}
