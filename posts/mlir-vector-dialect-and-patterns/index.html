@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang='en' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>MLIR Vector Dialect and Patterns | Lei.Chat()</title>
+
+<meta name="generator" content="Hugo Eureka 0.8.4" />
+<link rel="stylesheet" href="https://www.lei.chat/css/eureka.min.css">
+<script defer src="https://www.lei.chat/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/bash.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/c.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cmake.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cpp.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/glsl.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/javascript.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/llvm.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/python.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/shell.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-109525036-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-109525036-1');
+</script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="The vector dialect and related transformations are crucial components in the
+MLIR CodeGen flow for machine learning (ML).
+Today I will zoom in on it to explain its positioning in the overall
+picture, characteristics, important operations and transformations,
+and best practices of using it based on my experiences.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Posts",
+      "item":"https://www.lei.chat/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"MLIR Vector Dialect and Patterns",
+      "item":"https://www.lei.chat/posts/mlir-vector-dialect-and-patterns/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.lei.chat/posts/mlir-vector-dialect-and-patterns/"
+    },
+    "headline": "MLIR Vector Dialect and Patterns | Lei.Chat()","datePublished": "2022-07-31T15:07:00-07:00",
+    "dateModified": "2022-07-31T15:07:00-07:00",
+    "wordCount":  7560 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "Lei Zhang",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.lei.chat/images/avatar.png"
+        }
+        },
+    "description": "\u003cp\u003eThe \u003ccode\u003evector\u003c\/code\u003e dialect and related transformations are crucial components in the\nMLIR CodeGen flow for machine learning (ML).\nToday I will zoom in on it to explain its positioning in the overall\npicture, characteristics, important operations and transformations,\nand best practices of using it based on my experiences.\u003c\/p\u003e"
+}
+</script><meta property="og:title" content="MLIR Vector Dialect and Patterns | Lei.Chat()" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="https://www.lei.chat/images/avatar.png">
+
+
+<meta property="og:url" content="https://www.lei.chat/posts/mlir-vector-dialect-and-patterns/" />
+
+
+
+
+<meta property="og:description" content="The vector dialect and related transformations are crucial components in the
+MLIR CodeGen flow for machine learning (ML).
+Today I will zoom in on it to explain its positioning in the overall
+picture, characteristics, important operations and transformations,
+and best practices of using it based on my experiences." />
+
+
+
+
+<meta property="og:locale" content="en" />
+
+
+
+
+<meta property="og:site_name" content="Lei.Chat()" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2022-07-31T15:07:00-07:00" />
+
+
+<meta property="article:modified_time" content="2022-07-31T15:07:00-07:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="mlir" />
+
+<meta property="article:tag" content="vector" />
+
+<meta property="article:tag" content="dialect" />
+
+<meta property="article:tag" content="pattern" />
+
+<meta property="article:tag" content="pass" />
+
+<meta property="article:tag" content="transformation" />
+
+
+
+
+
+
+
+
+
+
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/" />
+
+
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/compilers-and-irs-llvm-ir-spirv-and-mlir/" />
+
+
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Lei.Chat()</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">Posts</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Tags</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Categories</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Series</a>
+            <a href="/authors/me" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">About</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">Light</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">Dark</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">Auto</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">MLIR Vector Dialect and Patterns</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2022-07-31</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>36 min read</span>
+    </div>
+    
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="https://www.lei.chat/categories/compiler/" class="hover:text-eureka">compiler</a><span>, </span>
+        
+        
+        <a href="https://www.lei.chat/categories/ir/" class="hover:text-eureka">ir</a><span>, </span>
+        
+        
+        <a href="https://www.lei.chat/categories/mlir/" class="hover:text-eureka">mlir</a><span>, </span>
+        
+        
+        <a href="https://www.lei.chat/categories/ml-inference/" class="hover:text-eureka">ml-inference</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="https://www.lei.chat/series/compiler-development/" class="hover:text-eureka">compiler-development</a>
+        
+    </div>
+    
+</div>
+
+        
+        <div class="content">
+            <p>The <code>vector</code> dialect and related transformations are crucial components in the
+MLIR CodeGen flow for machine learning (ML).
+Today I will zoom in on it to explain its positioning in the overall
+picture, characteristics, important operations and transformations,
+and best practices of using it based on my experiences.</p>
+<h2 id="positioning-and-purpose">Positioning and Purpose</h2>
+<h3 id="positioning">Positioning</h3>
+<p>MLIR CodeGen follows a progressive approach; it has more layers of abstractions
+than other framework or compiler stacks.
+Refreshing the CodeGen flow introduced in the <a href="../mlir-codegen-dialects-for-machine-learning-compilers/#overall-picture">previous blog post</a>
+and highlighting <code>vector</code> dialect related steps:</p>
+<p><img src="vector-dialect-in-codegen-flow.svg" alt="MLIR Vector Dialect in CodeGen Flow" title="MLIR Vector Dialect in CodeGen Flow"></p>
+<h3 id="purpose">Purpose</h3>
+<p>Each layer in the above flow serves its own purpose:</p>
+<ul>
+<li>At the top level, dialects like <code>tf</code>, <code>tflite</code>, and <code>torch</code> are meant for ML
+framework integration; and dialects like <code>mhlo</code> and <code>tosa</code> are meant for
+consolidating flexible framework op sets into (stable) input ML programs.</li>
+<li>Down the stack, dialects like <code>linalg</code> are for tiling the original program and
+mapping to the hardware compute hierarchy.</li>
+<li>Dialects like <code>memref</code> are for handling memory planning and concrete data
+accesses. Its position in the flow is relatively flexible as it can happen
+either before or after the vector abstractions.</li>
+<li>At the bottom of the stack is dialects like <code>llvm</code> or <code>spirv</code> to exit the MLIR
+system for even lower level CodeGen and/or final program serialization.</li>
+</ul>
+<p>The <code>vector</code> dialect and related patterns slot after the original problem tiling
+and mapping to hardware compute units (CPU threads, GPU warps/subgroups, etc.).
+There we are handling a similar yet smaller problem, from the perspective of a
+single SIMD/SIMT compute unit.
+The purpose of the vector level transformations is thus to further break down
+the smaller scale problem and map to hardware registers and native vector
+compute instructions.</p>
+<h2 id="characteristics-and-approaches">Characteristics and Approaches</h2>
+<h3 id="characteristics">Characteristics</h3>
+<p>The positioning and purposes determine there are a few key characteristics of the
+<code>vector</code> dialect:</p>
+<ol>
+<li>Given that we have already tiled the original problem, the dimension sizes
+of each tile are static. So <code>vector</code> dialect operates on static shapes.</li>
+<li>Due to the semantic gap between high-dimension (high-D) tensors from upper
+layers and low-dimension (low-D) native vectors on hardware targets,
+<code>vector</code> dialect itself is &ldquo;multi-level&rdquo;&mdash;it has both target-agnostic and
+target-specific operations.</li>
+</ol>
+<p>Expanding on that, from top to bottom, <code>vector</code> ops can be categorized into
+three levels:</p>
+<ol>
+<li>Target-agnostic ops that operate on high-D vectors.
+These operations (e.g., <code>vector.transfer_read</code> and <code>vector.transfer_write</code>)
+account for various cases and are more general and flexible.
+There are generally no direct hardware instructions for them.
+They serve as the lowering target from upper tensor layers, so that
+vectorizing tensor/buffer ops is mostly mechanical.</li>
+<li>Target-specific ops that operate on low-D vectors.
+These operations may map 1:1 to special hardware native vector instructions
+(e.g., <code>vector.contract</code> over 2-D 16x16 vectors) and serve as snippets to
+match for generating them (e.g., NVIDIA <a href="https://developer.nvidia.com/blog/programming-tensor-cores-cuda-9/">TensorCore wmma
+ops</a>).</li>
+<li>Primitive ops that operate on 1-D vectors.
+These operations (e.g., <code>vector.insertelement</code> and <code>vector.extractelement</code>)
+directly mirror <code>llvm</code>/<code>spirv</code> counterparts.
+They act as the most fine-grained and final form of vector decomposition,
+before existing to <code>llvm</code>/<code>spirv</code> ops as mechanical conversions.</li>
+</ol>
+<p>Note that the boundary between the above categories is a bit blurry;
+sometimes depending on the operand vectors, we can put an op in different
+categories.
+For instance, <code>vector.contract</code> ops on 4-D vectors with transposed indexing maps
+would fit into the first category, as compared to the previous example.
+So this is just a rough division to make understanding the problem and flow
+easier.</p>
+<p>Anyway, putting common <code>vector</code> ops under this structure:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Levels \ Class</th>
+<th style="text-align:center">Load/Store</th>
+<th style="text-align:center">Insert/Extract</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Target-agnostic ops</td>
+<td style="text-align:center"><code>vector.transfer_{read|write}</code></td>
+<td style="text-align:center"><code>vector.{insert|extract}_strided_slice</code></td>
+</tr>
+<tr>
+<td style="text-align:center">Target-specific ops</td>
+<td style="text-align:center"><code>vector.{load|store}</code></td>
+<td style="text-align:center"><code>vector.{insert|extract}</code></td>
+</tr>
+<tr>
+<td style="text-align:center">Primitive ops</td>
+<td style="text-align:center"><code>vector.masked{load|store}</code></td>
+<td style="text-align:center"><code>vector.{insert|extract}element</code></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Levels \ Class</th>
+<th style="text-align:center">Transpose</th>
+<th style="text-align:center">Reduce/Contract</th>
+<th style="text-align:center">Elementwise</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Target-agnostic ops</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><code>vector.contract</code></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:center">Target-specific ops</td>
+<td style="text-align:center"><code>vector.transpose</code></td>
+<td style="text-align:center"><code>vector.multi_reduction</code></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:center">Primitive ops</td>
+<td style="text-align:center"><code>vector.shuffle</code></td>
+<td style="text-align:center"><code>vetor.reduction</code></td>
+<td style="text-align:center"><code>vector.fma</code> and <code>arith</code>/<code>math</code> ops</td>
+</tr>
+</tbody>
+</table>
+<p>The above tables listed <code>vector</code> ops commonly seen in CodeGen flows and indicate
+the conversion direction for those ops.
+(Note that in the above tables for ops that can straddle across categories,
+I put them in the most common category they appear based on my experience.
+Also note that it does not necessarily mean we must go through all levels there;
+e.g., <code>vector.transfer_read</code>/<code>vector.load</code> can generate <code>vector&lt;4xf32&gt;</code> and thus
+directly be converted to <code>memref.load</code>.
+So again this is just a rough division to provide structure and make
+understanding easier.)</p>
+<p>There are also other common <code>vector</code> ops without so many levels, e.g.,
+<code>vector.splat</code> and <code>vector.broadcast</code> for element duplication,
+<code>vector.{gather|scatter}</code> for special data access modes,
+<code>vector.reshape</code> and <code>vector.shape_cast</code> for shape management, and so on.</p>
+<p>The <code>vector</code> dialect has a good overview and rationale <a href="https://mlir.llvm.org/docs/Dialects/Vector/">docs</a> well
+worth a read.</p>
+<h3 id="approaches">Approaches</h3>
+<p>The above characteristics dictate the approaches at the vector level&mdash;static
+shapes enable unrolling as the mechanism for breaking down high-D vectors
+to low-D ones, while different levels of abstractions in the same dialect
+makes it easier to write lowerings after unrolling as mechanical op rewrites
+and canonicalizations.
+Next let&rsquo;s talk about vector transformations in more detail.</p>
+<h2 id="transformations">Transformations</h2>
+<p>Transformations for the vector dialect are written as mechanical op rewrites
+and minimal canonicalization patterns as much as possible.
+The goal is to separate concerns and be composible; minimal patterns also
+makes testing and modification much easier.</p>
+<p>It does, though, complicate developer experience&mdash;we need to orchestrate
+those general and flexible abstractions and minimal patterns in a coherent
+pass. It is tricky to get right. Let&rsquo;s walk through the steps one by one.</p>
+<p>Here I&rsquo;ll use the pipeline for targeting mobile GPUs in
+<a href="https://github.com/iree-org/iree/commit/a8e4c38c"><code>iree-org/iree@a8e4c38c</code></a> and run it on the following matmul and
+convolution:</p>
+<pre><code>func.func @dot(%lhs: tensor&lt;128x256xf32&gt;, %rhs: tensor&lt;256x64xf32&gt;,
+               %sub: tensor&lt;128x64xf32&gt;) -&gt; tensor&lt;128x64xf32&gt; {
+  %0 = &quot;mhlo.dot&quot;(%lhs, %rhs) : (tensor&lt;128x256xf32&gt;, tensor&lt;256x64xf32&gt;) -&gt; tensor&lt;128x64xf32&gt;
+  %1 = mhlo.subtract %0, %sub : tensor&lt;128x64xf32&gt;
+  return %0 : tensor&lt;128x64xf32&gt;
+}
+</code></pre>
+<pre><code>func.func @conv(%input: tensor&lt;1x224x224x3xf32&gt;, %filter: tensor&lt;3x3x3x32xf32&gt;,
+                %sub: tensor&lt;1x112x112x32xf32&gt;) -&gt; tensor&lt;1x112x112x32xf32&gt; {
+  %0 = mhlo.convolution(%input, %filter)
+          dim_numbers = [b, 0, 1, f]x[0, 1, i, o]-&gt;[b, 0, 1, f],
+          window = {stride = [2, 2], pad = [[0, 1], [0, 1]], rhs_dilate = [1, 1]}
+          {batch_group_count = 1 : i64, feature_group_count = 1 : i64}
+        : (tensor&lt;1x224x224x3xf32&gt;, tensor&lt;3x3x3x32xf32&gt;) -&gt; tensor&lt;1x112x112x32xf32&gt;
+  %1 = mhlo.subtract %0, %sub : tensor&lt;1x112x112x32xf32&gt;
+  return %1: tensor&lt;1x112x112x32xf32&gt;
+}
+</code></pre>
+<p>The detailed output (for the CodeGen part) from <code>iree-compile</code> is in
+<a href="https://gist.github.com/antiagainst/d555247460af2e4e153e8087dcde7e80">this gist</a> and <a href="https://gist.github.com/antiagainst/dbdb1535c5cf0972ff50768f5579b0d2">this gist</a>.
+The pass source code is <a href="https://github.com/iree-org/iree/blob/a8e4c38c/compiler/src/iree/compiler/Codegen/SPIRV/SPIRVVectorize.cpp">here</a>.
+While the pipeline is targeting mobile GPUs, it just invokes upstream patterns
+(together with a few local patterns).
+The general flow and order should apply to various other hardware targets.
+(The bonus point of going down the SPIR-V path is that it stresses vector
+transformations, as we cannot rely on the LLVM stack itself to clean up vector
+ops.)</p>
+<p>I&rsquo;ll omit the steps before vectorization. You can see examples in the <a href="https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/#tensors-tiling-and-fusion">previous
+blog post</a>.
+Zooming in on inside the innermost loop for distributing to GPU threads,
+inputs to vectorization for <a href="https://gist.github.com/antiagainst/d555247460af2e4e153e8087dcde7e80#file-mhlo-dot-mlir-L245-L261">matmul</a> and
+<a href="https://gist.github.com/antiagainst/dbdb1535c5cf0972ff50768f5579b0d2#file-mhlo-conv-mlir-L607-L644">convolution</a>:</p>
+<pre><code>%14 = tensor.extract_slice ...
+%15 = tensor.extract_slice %arg5...
+%16 = linalg.fill {...} ins(%cst : f32) outs(%15 : tensor&lt;4x4xf32&gt;) -&gt; tensor&lt;4x4xf32&gt;
+%17 = tensor.extract_slice ...
+%18 = tensor.extract_slice ...
+%19 = scf.for %arg6 = %c0 to %c256 step %c4 iter_args(%arg7 = %16) -&gt; (tensor&lt;4x4xf32&gt;) {
+  %22 = tensor.extract_slice %17[0, %arg6] [4, 4] [1, 1] : tensor&lt;4x256xf32&gt; to tensor&lt;4x4xf32&gt;
+  %23 = tensor.extract_slice %18[%arg6, 0] [4, 4] [1, 1] : tensor&lt;256x4xf32&gt; to tensor&lt;4x4xf32&gt;
+  %24 = linalg.matmul {...}
+        ins(%22, %23 : tensor&lt;4x4xf32&gt;, tensor&lt;4x4xf32&gt;)
+        outs(%arg7 : tensor&lt;4x4xf32&gt;) -&gt; tensor&lt;4x4xf32&gt;
+  scf.yield %24 : tensor&lt;4x4xf32&gt;
+}
+%20 = linalg.generic {
+  indexing_maps = [affine_map&lt;(d0, d1) -&gt; (d0, d1)&gt;, affine_map&lt;(d0, d1) -&gt; (d0, d1)&gt;],
+  iterator_types = [&quot;parallel&quot;, &quot;parallel&quot;]
+} ins(%14 : tensor&lt;4x4xf32&gt;) outs(%19 : tensor&lt;4x4xf32&gt;) attrs =  {...} {
+^bb0(%arg6: f32, %arg7: f32):
+  %22 = arith.subf %arg7, %arg6 : f32
+  linalg.yield %22 : f32
+} -&gt; tensor&lt;4x4xf32&gt;
+%21 = tensor.insert_slice %20 into %arg5...
+</code></pre>
+<pre><code>%26 = tensor.extract_slice ...
+%27 = tensor.extract_slice %arg6...
+%28 = linalg.fill {...} ins(%cst : f32) outs(%27 : tensor&lt;1x1x2x4xf32&gt;) -&gt; tensor&lt;1x1x2x4xf32&gt;
+%35 = tensor.extract_slice ...
+%36 = tensor.extract_slice ...
+%37 = scf.for %arg7 = %c0 to %c3 step %c1 iter_args(%arg8 = %28) -&gt; (tensor&lt;1x1x2x4xf32&gt;) {
+  %40 = scf.for %arg9 = %c0 to %c3 step %c1 iter_args(%arg10 = %arg8) -&gt; (tensor&lt;1x1x2x4xf32&gt;) {
+    %49 = tensor.extract_slice ...
+    %50 = tensor.pad %49 low[0, 0, 0, 0] high[0, %44, %48, 0] {
+    ^bb0(%arg11: index, %arg12: index, %arg13: index, %arg14: index):
+      tensor.yield %cst : f32
+    } : tensor&lt;1x?x?x3xf32&gt; to tensor&lt;1x1x3x3xf32&gt;
+    %51 = tensor.extract_slice ...
+    %52 = linalg.conv_2d_nhwc_hwcf
+          {dilations = dense&lt;1&gt; : tensor&lt;2xi64&gt;, strides = dense&lt;2&gt; : tensor&lt;2xi64&gt;}
+          ins(%50, %51 : tensor&lt;1x1x3x3xf32&gt;, tensor&lt;1x1x3x4xf32&gt;)
+          outs(%arg10 : tensor&lt;1x1x2x4xf32&gt;) -&gt; tensor&lt;1x1x2x4xf32&gt;
+    scf.yield %52 : tensor&lt;1x1x2x4xf32&gt;
+  }
+  scf.yield %40 : tensor&lt;1x1x2x4xf32&gt;
+}
+%38 = linalg.generic {
+  indexing_maps = [
+    affine_map&lt;(d0, d1, d2, d3) -&gt; (d0, d1, d2, d3)&gt;,
+    affine_map&lt;(d0, d1, d2, d3) -&gt; (d0, d1, d2, d3)&gt;
+  ],
+  iterator_types = [&quot;parallel&quot;, &quot;parallel&quot;, &quot;parallel&quot;, &quot;parallel&quot;]
+} ins(%26 : tensor&lt;1x1x2x4xf32&gt;) outs(%37 : tensor&lt;1x1x2x4xf32&gt;) attrs =  {...} {
+^bb0(%arg7: f32, %arg8: f32):
+  %40 = arith.subf %arg8, %arg7 : f32
+  linalg.yield %40 : f32
+} -&gt; tensor&lt;1x1x2x4xf32&gt;
+%39 = tensor.insert_slice %38 into %arg6...
+</code></pre>
+<h3 id="vectorization">Vectorization</h3>
+<p>After tiling, we have static shaped tiles. Vectorization then converts
+these static shaped <code>linalg</code>/<code>tensor</code>/<code>memref</code> ops to vector ops of the same
+shape.
+In the process it creates <code>vector.transfer_read</code> ops to read data from tensors
+or buffers into high-D vectors, creates <code>vector</code>/<code>arith</code>/<code>math</code> ops to compute
+on them, and then creates <code>vector.transfer_write</code> ops to write the result back.</p>
+<p>For <code>linalg</code> structured ops, we actually have one single pattern,
+<a href="https://github.com/llvm/llvm-project/blob/4c186707/mlir/include/mlir/Dialect/Linalg/Transforms/Transforms.h#L925-L948"><code>linalg::LinalgVectorizationPattern</code></a>,
+to vectorize them all.
+This is due to the design behind <code>linalg</code> structured ops&mdash;<a href="https://github.com/llvm/llvm-project/blob/4c186707/mlir/python/mlir/dialects/linalg/opdsl/ops/core_named_ops.py">named
+ops</a> are just &ldquo;syntax sugar&rdquo; over <code>linalg.generic</code> ops,
+so all ops can be vectorized via <a href="https://github.com/llvm/llvm-project/blob/4c186707/mlir/lib/Dialect/Linalg/Transforms/Vectorization.cpp#L614"><code>vectorizeAsLinalgGeneric()</code></a>.
+The only exception is convolution, because of special formed indexing maps
+for input (more on this later).</p>
+<p>For other <code>linalg</code>, <code>tensor</code> or <code>memref</code> ops, vectorization would mean dedicated
+patterns. For example,
+<a href="https://github.com/llvm/llvm-project/blob/4c186707/mlir/include/mlir/Dialect/Linalg/Transforms/Transforms.h#L1209-L1216"><code>linalg::populatePadOpVectorizationPatterns()</code></a>
+collects <code>tensor.pad</code> vectorization patterns.
+I also have <a href="https://github.com/iree-org/iree/blob/a8e4c38c/compiler/src/iree/compiler/Codegen/SPIRV/SPIRVVectorizePad.cpp">another special pattern</a> for vectorizing
+<code>tensor.pad</code> ops with conditional reads in IREE, because the upstream ones
+do not meet my particular needs.</p>
+<p>So in summary, one would need to pull in these upstream vectorization patterns
+to convert their target ops. These pattern can scatter in different
+<code>populate*Patterns()</code> entry points.
+Sometimes one would also need to write customized vectorization patterns.</p>
+<p>After vectorization, outputs for the above
+<a href="https://gist.github.com/antiagainst/d555247460af2e4e153e8087dcde7e80#file-mhlo-dot-mlir-L303-L322">matmul example</a> and
+<a href="https://gist.github.com/antiagainst/dbdb1535c5cf0972ff50768f5579b0d2#file-mhlo-conv-mlir-L763-L848">convolution example</a> look like:</p>
+<pre><code>%14 = tensor.extract_slice ...
+%15 = tensor.extract_slice %arg5...
+%16 = vector.transfer_write %cst, %15[%c0, %c0] {in_bounds = [true, true]} : vector&lt;4x4xf32&gt;, tensor&lt;4x4xf32&gt;
+%17 = tensor.extract_slice ...
+%18 = tensor.extract_slice ...
+%19 = scf.for %arg6 = %c0 to %c256 step %c4 iter_args(%arg7 = %16) -&gt; (tensor&lt;4x4xf32&gt;) {
+  %25 = tensor.extract_slice %17[0, %arg6] [4, 4] [1, 1] : tensor&lt;4x256xf32&gt; to tensor&lt;4x4xf32&gt;
+  %26 = tensor.extract_slice %18[%arg6, 0] [4, 4] [1, 1] : tensor&lt;256x4xf32&gt; to tensor&lt;4x4xf32&gt;
+  %27 = vector.transfer_read %25[%c0, %c0], %cst_0 {in_bounds = [true, true]} : tensor&lt;4x4xf32&gt;, vector&lt;4x4xf32&gt;
+  %28 = vector.transfer_read %26[%c0, %c0], %cst_0 {in_bounds = [true, true]} : tensor&lt;4x4xf32&gt;, vector&lt;4x4xf32&gt;
+  %29 = vector.transfer_read %arg7[%c0, %c0], %cst_0 {in_bounds = [true, true]} : tensor&lt;4x4xf32&gt;, vector&lt;4x4xf32&gt;
+  %30 = vector.contract {
+          indexing_maps = [
+            affine_map&lt;(d0, d1, d2) -&gt; (d0, d2)&gt;,
+            affine_map&lt;(d0, d1, d2) -&gt; (d2, d1)&gt;,
+            affine_map&lt;(d0, d1, d2) -&gt; (d0, d1)&gt;
+          ],
+          iterator_types = [&quot;parallel&quot;, &quot;parallel&quot;, &quot;reduction&quot;],
+          kind = #vector.kind&lt;add&gt;
+        } %27, %28, %29 : vector&lt;4x4xf32&gt;, vector&lt;4x4xf32&gt; into vector&lt;4x4xf32&gt;
+  %31 = vector.transfer_write %30, %arg7[%c0, %c0] {in_bounds = [true, true]} : vector&lt;4x4xf32&gt;, tensor&lt;4x4xf32&gt;
+  scf.yield %31 : tensor&lt;4x4xf32&gt;
+}
+%20 = vector.transfer_read %14[%c0, %c0], %cst_0 {in_bounds = [true, true]} : tensor&lt;4x4xf32&gt;, vector&lt;4x4xf32&gt;
+%21 = vector.transfer_read %19[%c0, %c0], %cst_0 {in_bounds = [true, true]} : tensor&lt;4x4xf32&gt;, vector&lt;4x4xf32&gt;
+%22 = arith.subf %21, %20 : vector&lt;4x4xf32&gt;
+%23 = vector.transfer_write %22, %19[%c0, %c0] {in_bounds = [true, true]} : vector&lt;4x4xf32&gt;, tensor&lt;4x4xf32&gt;
+%24 = tensor.insert_slice %23 into %arg5...
+</code></pre>
+<pre><code>%26 = tensor.extract_slice ...
+%27 = tensor.extract_slice %arg6...
+%28 = vector.transfer_write %cst, %27[%c0, %c0, %c0, %c0] {in_bounds = [true, true, true, true]} : vector&lt;1x1x2x4xf32&gt;, tensor&lt;1x1x2x4xf32&gt;
+%35 = tensor.extract_slice ...
+%36 = tensor.extract_slice ...
+%37 = scf.for %arg7 = %c0 to %c3 step %c1 iter_args(%arg8 = %28) -&gt; (tensor&lt;1x1x2x4xf32&gt;) {
+  %43 = scf.for %arg9 = %c0 to %c3 step %c1 iter_args(%arg10 = %arg8) -&gt; (tensor&lt;1x1x2x4xf32&gt;) {
+    %50 = tensor.extract_slice ...
+    %56 = scf.if ... -&gt; (vector&lt;3xf32&gt;) {
+      %93 = vector.transfer_read %50[%c0, %c0, %c0, %c0], %cst_2 {in_bounds = [true]} : tensor&lt;1x?x?x3xf32&gt;, vector&lt;3xf32&gt;
+      scf.yield %93 : vector&lt;3xf32&gt;
+    } else {
+      scf.yield %cst_1 : vector&lt;3xf32&gt;
+    }
+    %57 = vector.insert_strided_slice %56, %cst_0 {offsets = [0, 0], strides = [1]} : vector&lt;3xf32&gt; into vector&lt;3x3xf32&gt;
+    %61 = scf.if ... -&gt; (vector&lt;3xf32&gt;) {
+      %93 = vector.transfer_read %50[%c0, %c0, %c1, %c0], %cst_2 {in_bounds = [true]} : tensor&lt;1x?x?x3xf32&gt;, vector&lt;3xf32&gt;
+      scf.yield %93 : vector&lt;3xf32&gt;
+    } else {
+      scf.yield %cst_1 : vector&lt;3xf32&gt;
+    }
+    %62 = vector.insert_strided_slice %61, %57 {offsets = [1, 0], strides = [1]} : vector&lt;3xf32&gt; into vector&lt;3x3xf32&gt;
+    %66 = scf.if ... -&gt; (vector&lt;3xf32&gt;) {
+      %93 = vector.transfer_read %50[%c0, %c0, %c2, %c0], %cst_2 {in_bounds = [true]} : tensor&lt;1x?x?x3xf32&gt;, vector&lt;3xf32&gt;
+      scf.yield %93 : vector&lt;3xf32&gt;
+    } else {
+      scf.yield %cst_1 : vector&lt;3xf32&gt;
+    }
+    %67 = vector.insert_strided_slice %66, %62 {offsets = [2, 0], strides = [1]} : vector&lt;3xf32&gt; into vector&lt;3x3xf32&gt;
+    %68 = linalg.init_tensor [1, 1, 3, 3] : tensor&lt;1x1x3x3xf32&gt;
+    %69 = vector.transfer_write %67, %68[%c0, %c0, %c0, %c0] {in_bounds = [true, true]} : vector&lt;3x3xf32&gt;, tensor&lt;1x1x3x3xf32&gt;
+    %70 = tensor.extract_slice %36[%arg7, %arg9, 0, 0] [1, 1, 3, 4] [1, 1, 1, 1] : tensor&lt;3x3x3x4xf32&gt; to tensor&lt;1x1x3x4xf32&gt;
+    %71 = vector.transfer_read %70[%c0, %c0, %c0, %c0], %cst_2 {in_bounds = [true, true]} : tensor&lt;1x1x3x4xf32&gt;, vector&lt;3x4xf32&gt;
+    %72 = vector.extract_strided_slice %71 {offsets = [0, 0], sizes = [1, 4], strides = [1, 1]} : vector&lt;3x4xf32&gt; to vector&lt;1x4xf32&gt;
+    %73 = vector.extract_strided_slice %71 {offsets = [1, 0], sizes = [1, 4], strides = [1, 1]} : vector&lt;3x4xf32&gt; to vector&lt;1x4xf32&gt;
+    %74 = vector.extract_strided_slice %71 {offsets = [2, 0], sizes = [1, 4], strides = [1, 1]} : vector&lt;3x4xf32&gt; to vector&lt;1x4xf32&gt;
+    %75 = vector.transfer_read %69[%c0, %c0, %c0, %c0], %cst_2 {in_bounds = [true, true]} : tensor&lt;1x1x3x3xf32&gt;, vector&lt;1x3xf32&gt;
+    %76 = vector.transfer_read %arg10[%c0, %c0, %c0, %c0], %cst_2 {in_bounds = [true, true]} : tensor&lt;1x1x2x4xf32&gt;, vector&lt;1x4xf32&gt;
+    %77 = vector.extract_strided_slice %75 {offsets = [0, 0], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x3xf32&gt; to vector&lt;1x1xf32&gt;
+    %78 = vector.contract {
+            indexing_maps = [
+              affine_map&lt;(d0, d1, d2) -&gt; (d0, d2)&gt;,
+              affine_map&lt;(d0, d1, d2) -&gt; (d2, d1)&gt;,
+              affine_map&lt;(d0, d1, d2) -&gt; (d0, d1)&gt;
+            ],
+            iterator_types = [&quot;parallel&quot;, &quot;parallel&quot;, &quot;reduction&quot;],
+            kind = #vector.kind&lt;add&gt;
+          } %77, %72, %76 : vector&lt;1x1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;1x4xf32&gt;
+    %79 = vector.extract_strided_slice %75 {offsets = [0, 1], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x3xf32&gt; to vector&lt;1x1xf32&gt;
+    %80 = vector.contract {...} %79, %73, %78 : vector&lt;1x1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;1x4xf32&gt;
+    %81 = vector.extract_strided_slice %75 {offsets = [0, 2], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x3xf32&gt; to vector&lt;1x1xf32&gt;
+    %82 = vector.contract {...} %81, %74, %80 : vector&lt;1x1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;1x4xf32&gt;
+    %83 = vector.transfer_write %82, %arg10[%c0, %c0, %c0, %c0] {in_bounds = [true, true]} : vector&lt;1x4xf32&gt;, tensor&lt;1x1x2x4xf32&gt;
+    %84 = vector.transfer_read %69[%c0, %c0, %c2, %c0], %cst_2 {in_bounds = [true, true]} : tensor&lt;1x1x3x3xf32&gt;, vector&lt;1x3xf32&gt;
+    %85 = vector.transfer_read %arg10[%c0, %c0, %c1, %c0], %cst_2 {in_bounds = [true, true]} : tensor&lt;1x1x2x4xf32&gt;, vector&lt;1x4xf32&gt;
+    %86 = vector.extract_strided_slice %84 {offsets = [0, 0], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x3xf32&gt; to vector&lt;1x1xf32&gt;
+    %87 = vector.contract {...} %86, %72, %85 : vector&lt;1x1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;1x4xf32&gt;
+    %88 = vector.extract_strided_slice %84 {offsets = [0, 1], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x3xf32&gt; to vector&lt;1x1xf32&gt;
+    %89 = vector.contract {...} %88, %73, %87 : vector&lt;1x1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;1x4xf32&gt;
+    %90 = vector.extract_strided_slice %84 {offsets = [0, 2], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x3xf32&gt; to vector&lt;1x1xf32&gt;
+    %91 = vector.contract {...} %90, %74, %89 : vector&lt;1x1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;1x4xf32&gt;
+    %92 = vector.transfer_write %91, %83[%c0, %c0, %c1, %c0] {in_bounds = [true, true]} : vector&lt;1x4xf32&gt;, tensor&lt;1x1x2x4xf32&gt;
+    scf.yield %92 : tensor&lt;1x1x2x4xf32&gt;
+  }
+  scf.yield %43 : tensor&lt;1x1x2x4xf32&gt;
+}
+%38 = vector.transfer_read %26[%c0, %c0, %c0, %c0], %cst_2 {in_bounds = [true, true, true, true]} : tensor&lt;1x1x2x4xf32&gt;, vector&lt;1x1x2x4xf32&gt;
+%39 = vector.transfer_read %37[%c0, %c0, %c0, %c0], %cst_2 {in_bounds = [true, true, true, true]} : tensor&lt;1x1x2x4xf32&gt;, vector&lt;1x1x2x4xf32&gt;
+%40 = arith.subf %39, %38 : vector&lt;1x1x2x4xf32&gt;
+%41 = vector.transfer_write %40, %37[%c0, %c0, %c0, %c0] {in_bounds = [true, true, true, true]} : vector&lt;1x1x2x4xf32&gt;, tensor&lt;1x1x2x4xf32&gt;
+%42 = tensor.insert_slice %41 into %arg6...
+</code></pre>
+<p>Convolution has much more ops generated than matmul, as it&rsquo;s more complicated
+than matmul&mdash;we have fused padding in the above that contributes to all those
+<code>scf.if</code> conditional reads.
+More fundamentally, it&rsquo;s due to the convolution computation.</p>
+<p>Here it&rsquo;s worth touching on one key property of various powerful ops involved
+in the above: they all support using indexing map to express access patterns;
+this includes various <code>linalg</code> structured ops, <code>vector</code> transfer ops, and
+<code>vector.contract</code>.
+These indexing maps are abstractions that can embed transposition, model various
+modes of load/store from memory, and so on.
+Though, there is a difference: <code>vector</code> ops require their indexing maps to
+be projected permutation (i.e., a subset/projection of a symbol-less permutation
+map), while <code>linalg</code> structured ops do not require that.
+It&rsquo;s understandable given that <code>vector</code> ops are more close to the machine model
+so their abstractions are subject to more restrictions and enjoy less
+flexibility than upper layers.</p>
+<p>Looking at indexing maps for <a href="https://github.com/llvm/llvm-project/blob/4c186707/mlir/include/mlir/Dialect/Linalg/IR/LinalgNamedStructuredOps.yaml#L192-L194"><code>linalg.matmul</code></a> and
+<a href="https://github.com/llvm/llvm-project/blob/4c186707/mlir/include/mlir/Dialect/Linalg/IR/LinalgNamedStructuredOps.yaml#L1268-L1273"><code>linalg.conv2d</code></a>:</p>
+<pre><code class="language-mlir">- affine_map&lt;(m, n, k)[s0, s1, s2] -&gt; (m, k)&gt;
+- affine_map&lt;(m, n, k)[s0, s1, s2] -&gt; (k, n)&gt;
+- affine_map&lt;(m, n, k)[s0, s1, s2] -&gt; (m, n)&gt;
+</code></pre>
+<pre><code class="language-mlir">// oh/ow: output height/width, fh/fw: filter height/width
+// sh/sw: stride height/width, dh/dw: dilation height/width
+// ic/oc: input/output channel, n: batch
+- affine_map&lt;(n, oh, ow, oc, fh, fw, ic)[s0, s1, s2, s3, dh, s5, sw, s7, dw, s9, s10]
+  -&gt; (n, oh * sh + fh * dh, ow * sw + fw * dw, ic)&gt;
+- affine_map&lt;(n, oh, ow, oc, fh, fw, ic)[s0, s1, sh, s3, dh, s5, sw, s7, dw, s9, s10]
+  -&gt; (fh, fw, ic, oc)&gt;
+- affine_map&lt;(n, oh, ow, oc, fh, fw, ic)[s0, s1, sh, s3, dh, s5, sw, s7, dw, s9, s10]
+  -&gt; (n, oh, ow, oc)&gt;
+</code></pre>
+<p>Convolution&rsquo;s input has an access pattern of <code>(n, oh * sh + fh * dh, ow * sw + fw * dw, ic)</code>, which is not representable in <code>vector</code> op indexing
+maps.</p>
+<p>Note that one common trick for convolution is to convert 1x1 filter convolutions
+into matmul.
+Following similar thoughts here, if we tile both filter window dimensions by
+tile size 1, the convolution would have a 1x1 filter, which would allow us
+to vectorize it like a matmul!
+From the perspective of indexing maps, 1x1 filter would have <code>fh == fw == 0</code>,
+so the indexing map for input would be <code>(n, oh * sh, ow * sw, ic)</code>, where
+<code>sh</code> and <code>sw</code> are constant.
+That&rsquo;s why we see two extra loops (with induction variable <code>%arg7</code> and <code>%arg9</code>)
+for convolution in the above.</p>
+<p>However, tiling filter window dimensions is just part of the story.
+We still see strided access to convolution input if the stride (<code>sh</code>/<code>sw</code>) is
+not 1.
+So we&rsquo;d need to further unroll along output window dimensions (<code>oh</code>/<code>ow</code>) to
+simplify the problem. Now the input indexing map would become
+<code>(n, &lt;constant&gt;, &lt;constant&gt;, ic)</code>, that&rsquo;s exactly like matmul <code>(m, k)</code>.</p>
+<p>The unrolling along output window dimensions is performed as part of the
+vectorization pattern.
+Normally we would not want to do this, as we would like the vectorization
+pattern to be minimal and mechanical.
+And there are dedicated unrolling vector patterns (which I&rsquo;ll come to later).
+However, for convolution that&rsquo;s not possible right now.
+This remains a place we can improve in the future.</p>
+<p>After vectorization, convolution is also converted to <code>vector.contract</code>.
+Albeit more complicated, it&rsquo;s fundamentally similar to the matmul case.
+So from now on I&rsquo;ll only focus on the matmul case.
+(You can still follow the convolution IR conversion dump <a href="https://gist.github.com/antiagainst/dbdb1535c5cf0972ff50768f5579b0d2">here</a>.)</p>
+<h3 id="unrolling">Unrolling</h3>
+<p>The next major step after vectorization is unrolling.
+As said before, because of static shapes, we can leverage unrolling to decompose
+high-D <code>vector</code> ops to low-D ones.
+This matches the level the <code>vector</code> dialect is modeling and the purpose it&rsquo;s
+serving&mdash;utilizing registers and native vector instructions to the best on
+a single SIMD/SIMT compute unit.
+Unrolling would fit large vectors into hardware target-specific vectors and
+create enough vector operations to occupy SIMD/SIMT units.</p>
+<p>In MLIR, vector unrolling patterns are populated via
+<a href="https://github.com/llvm/llvm-project/blob/4c186707/mlir/include/mlir/Dialect/Vector/Transforms/VectorRewritePatterns.h#L304-L335"><code>vector::populateVectorUnrollPatterns()</code></a> and
+<a href="https://github.com/llvm/llvm-project/blob/4c186707/mlir/lib/Dialect/Vector/Transforms/VectorUnrollDistribute.cpp#L823-L829">implemented</a> separately for different vector ops.
+Unrollable ops implement the <a href="https://github.com/llvm/llvm-project/blob/4c186707/mlir/include/mlir/Interfaces/VectorInterfaces.td#L18-L46"><code>VectorUnrollOpInterface</code></a>
+and specialize the <code>getShapeForUnroll()</code> method to indicate which operand/result
+vector shape should be the anchor (original shape) for unrolling.</p>
+<p>Unrolling is controlled by <a href="https://github.com/llvm/llvm-project/blob/4c186707/mlir/include/mlir/Dialect/Vector/Transforms/VectorRewritePatterns.h#L102-L144"><code>UnrollVectorOptions</code></a>.
+Importantly it has <code>setNativeShapeFn()</code> which accepts a function for specifying
+the native vector size of various <code>vector</code> ops.
+This is where we control the unrolling to break down large vectors.
+For example, for <code>vector.contract</code> we can set sizes for all dimensions to 1,
+except for the last parallel dimension, where we can set as 4.
+This would unroll all <code>vector.contract</code> ops down to 4-element vector and
+so that eventually we can lower it to <code>vector.fma</code> ops.</p>
+<p>Note that unrolling for transfer ops (for memory access) and other ops (for
+computation) might need different rules, especially for GPU.
+For GPU, we typically want to do 128-bit loads for memory coalescing;
+so we&rsquo;d need to consider the element bitwidth to decide the native number of
+elements, e.g., <code>vector&lt;4xf32&gt;</code> for <code>f32</code>, <code>vector&lt;8xf16&gt;</code> for <code>f16</code>.</p>
+<p>Unrolling works by creating a chain of the same <code>vector</code> ops working on smaller
+vectors extracted with <code>vector.extract_strided_slice</code> ops. Results are then
+inserted back to a vector via <code>vector.insert_strided_slice</code> ops to yield the
+original vector shape.
+With it, the matmul example <a href="https://gist.github.com/antiagainst/d555247460af2e4e153e8087dcde7e80#file-mhlo-dot-mlir-L489-L570">becomes</a>:</p>
+<pre><code>%14 = tensor.extract_slice ...
+%15 = tensor.extract_slice %arg5...
+%16 = vector.extract_strided_slice %cst {offsets = [0, 0], sizes = [1, 4], strides = [1, 1]} : vector&lt;4x4xf32&gt; to vector&lt;1x4xf32&gt;
+%17 = vector.transfer_write %16, %15[%c0, %c0] {in_bounds = [true, true]} : vector&lt;1x4xf32&gt;, tensor&lt;4x4xf32&gt;
+%18 = vector.extract_strided_slice %cst {offsets = [1, 0], sizes = [1, 4], strides = [1, 1]} : vector&lt;4x4xf32&gt; to vector&lt;1x4xf32&gt;
+%19 = vector.transfer_write %18, %17[%c1, %c0] {in_bounds = [true, true]} : vector&lt;1x4xf32&gt;, tensor&lt;4x4xf32&gt;
+%20 = vector.extract_strided_slice %cst {offsets = [2, 0], sizes = [1, 4], strides = [1, 1]} : vector&lt;4x4xf32&gt; to vector&lt;1x4xf32&gt;
+%21 = vector.transfer_write %20, %19[%c2, %c0] {in_bounds = [true, true]} : vector&lt;1x4xf32&gt;, tensor&lt;4x4xf32&gt;
+%22 = vector.extract_strided_slice %cst {offsets = [3, 0], sizes = [1, 4], strides = [1, 1]} : vector&lt;4x4xf32&gt; to vector&lt;1x4xf32&gt;
+%23 = vector.transfer_write %22, %21[%c3, %c0] {in_bounds = [true, true]} : vector&lt;1x4xf32&gt;, tensor&lt;4x4xf32&gt;
+%24 = tensor.extract_slice %9[%arg2, 0] [4, 256] [1, 1] : tensor&lt;8x256xf32&gt; to tensor&lt;4x256xf32&gt;
+%25 = tensor.extract_slice %10[0, %arg4] [256, 4] [1, 1] : tensor&lt;256x32xf32&gt; to tensor&lt;256x4xf32&gt;
+%26 = scf.for %arg6 = %c0 to %c256 step %c4 iter_args(%arg7 = %23) -&gt; (tensor&lt;4x4xf32&gt;) {
+  %44 = tensor.extract_slice ...
+  %45 = tensor.extract_slice ...
+  %46 = vector.transfer_read %44[%c0, %c0], %cst_0 {in_bounds = [true, true]} : tensor&lt;4x4xf32&gt;, vector&lt;1x4xf32&gt;
+  %47 = vector.transfer_read %44[%c1, %c0], %cst_0 {in_bounds = [true, true]} : tensor&lt;4x4xf32&gt;, vector&lt;1x4xf32&gt;
+  %48 = vector.transfer_read %44[%c2, %c0], %cst_0 {in_bounds = [true, true]} : tensor&lt;4x4xf32&gt;, vector&lt;1x4xf32&gt;
+  %49 = vector.transfer_read %44[%c3, %c0], %cst_0 {in_bounds = [true, true]} : tensor&lt;4x4xf32&gt;, vector&lt;1x4xf32&gt;
+  %50 = vector.transfer_read %45[%c0, %c0], %cst_0 {in_bounds = [true, true]} : tensor&lt;4x4xf32&gt;, vector&lt;1x4xf32&gt;
+  %51 = vector.transfer_read %45[%c1, %c0], %cst_0 {in_bounds = [true, true]} : tensor&lt;4x4xf32&gt;, vector&lt;1x4xf32&gt;
+  %52 = vector.transfer_read %45[%c2, %c0], %cst_0 {in_bounds = [true, true]} : tensor&lt;4x4xf32&gt;, vector&lt;1x4xf32&gt;
+  %53 = vector.transfer_read %45[%c3, %c0], %cst_0 {in_bounds = [true, true]} : tensor&lt;4x4xf32&gt;, vector&lt;1x4xf32&gt;
+  %54 = vector.transfer_read %arg7[%c0, %c0], %cst_0 {in_bounds = [true, true]} : tensor&lt;4x4xf32&gt;, vector&lt;1x4xf32&gt;
+  %55 = vector.transfer_read %arg7[%c1, %c0], %cst_0 {in_bounds = [true, true]} : tensor&lt;4x4xf32&gt;, vector&lt;1x4xf32&gt;
+  %56 = vector.transfer_read %arg7[%c2, %c0], %cst_0 {in_bounds = [true, true]} : tensor&lt;4x4xf32&gt;, vector&lt;1x4xf32&gt;
+  %57 = vector.transfer_read %arg7[%c3, %c0], %cst_0 {in_bounds = [true, true]} : tensor&lt;4x4xf32&gt;, vector&lt;1x4xf32&gt;
+  %58 = vector.extract_strided_slice %46 {offsets = [0, 0], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x4xf32&gt; to vector&lt;1x1xf32&gt;
+  %59 = vector.contract {...} %58, %50, %54 : vector&lt;1x1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;1x4xf32&gt;
+  %60 = vector.extract_strided_slice %46 {offsets = [0, 1], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x4xf32&gt; to vector&lt;1x1xf32&gt;
+  %61 = vector.contract {...} %60, %51, %59 : vector&lt;1x1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;1x4xf32&gt;
+  %62 = vector.extract_strided_slice %46 {offsets = [0, 2], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x4xf32&gt; to vector&lt;1x1xf32&gt;
+  %63 = vector.contract {...} %62, %52, %61 : vector&lt;1x1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;1x4xf32&gt;
+  %64 = vector.extract_strided_slice %46 {offsets = [0, 3], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x4xf32&gt; to vector&lt;1x1xf32&gt;
+  %65 = vector.contract {...} %64, %53, %63 : vector&lt;1x1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;1x4xf32&gt;
+  %66 = vector.extract_strided_slice %47 {offsets = [0, 0], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x4xf32&gt; to vector&lt;1x1xf32&gt;
+  %67 = vector.contract {...} %66, %50, %55 : vector&lt;1x1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;1x4xf32&gt;
+  %68 = vector.extract_strided_slice %47 {offsets = [0, 1], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x4xf32&gt; to vector&lt;1x1xf32&gt;
+  %69 = vector.contract {...} %68, %51, %67 : vector&lt;1x1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;1x4xf32&gt;
+  %70 = vector.extract_strided_slice %47 {offsets = [0, 2], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x4xf32&gt; to vector&lt;1x1xf32&gt;
+  %71 = vector.contract {...} %70, %52, %69 : vector&lt;1x1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;1x4xf32&gt;
+  %72 = vector.extract_strided_slice %47 {offsets = [0, 3], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x4xf32&gt; to vector&lt;1x1xf32&gt;
+  %73 = vector.contract {...} %72, %53, %71 : vector&lt;1x1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;1x4xf32&gt;
+  %74 = vector.extract_strided_slice %48 {offsets = [0, 0], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x4xf32&gt; to vector&lt;1x1xf32&gt;
+  %75 = vector.contract {...} %74, %50, %56 : vector&lt;1x1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;1x4xf32&gt;
+  %76 = vector.extract_strided_slice %48 {offsets = [0, 1], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x4xf32&gt; to vector&lt;1x1xf32&gt;
+  %77 = vector.contract {...} %76, %51, %75 : vector&lt;1x1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;1x4xf32&gt;
+  %78 = vector.extract_strided_slice %48 {offsets = [0, 2], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x4xf32&gt; to vector&lt;1x1xf32&gt;
+  %79 = vector.contract {...} %78, %52, %77 : vector&lt;1x1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;1x4xf32&gt;
+  %80 = vector.extract_strided_slice %48 {offsets = [0, 3], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x4xf32&gt; to vector&lt;1x1xf32&gt;
+  %81 = vector.contract {...} %80, %53, %79 : vector&lt;1x1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;1x4xf32&gt;
+  %82 = vector.extract_strided_slice %49 {offsets = [0, 0], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x4xf32&gt; to vector&lt;1x1xf32&gt;
+  %83 = vector.contract {...} %82, %50, %57 : vector&lt;1x1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;1x4xf32&gt;
+  %84 = vector.extract_strided_slice %49 {offsets = [0, 1], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x4xf32&gt; to vector&lt;1x1xf32&gt;
+  %85 = vector.contract {...} %84, %51, %83 : vector&lt;1x1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;1x4xf32&gt;
+  %86 = vector.extract_strided_slice %49 {offsets = [0, 2], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x4xf32&gt; to vector&lt;1x1xf32&gt;
+  %87 = vector.contract {...} %86, %52, %85 : vector&lt;1x1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;1x4xf32&gt;
+  %88 = vector.extract_strided_slice %49 {offsets = [0, 3], sizes = [1, 1], strides = [1, 1]} : vector&lt;1x4xf32&gt; to vector&lt;1x1xf32&gt;
+  %89 = vector.contract {...} %88, %53, %87 : vector&lt;1x1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;1x4xf32&gt;
+  %90 = vector.transfer_write %65, %arg7[%c0, %c0] {in_bounds = [true, true]} : vector&lt;1x4xf32&gt;, tensor&lt;4x4xf32&gt;
+  %91 = vector.transfer_write %73, %90[%c1, %c0] {in_bounds = [true, true]} : vector&lt;1x4xf32&gt;, tensor&lt;4x4xf32&gt;
+  %92 = vector.transfer_write %81, %91[%c2, %c0] {in_bounds = [true, true]} : vector&lt;1x4xf32&gt;, tensor&lt;4x4xf32&gt;
+  %93 = vector.transfer_write %89, %92[%c3, %c0] {in_bounds = [true, true]} : vector&lt;1x4xf32&gt;, tensor&lt;4x4xf32&gt;
+  scf.yield %93 : tensor&lt;4x4xf32&gt;
+}
+%27 = vector.transfer_read %14[%c0, %c0], %cst_0 {in_bounds = [true, true]} : tensor&lt;4x4xf32&gt;, vector&lt;1x4xf32&gt;
+%28 = vector.transfer_read %14[%c1, %c0], %cst_0 {in_bounds = [true, true]} : tensor&lt;4x4xf32&gt;, vector&lt;1x4xf32&gt;
+%29 = vector.transfer_read %14[%c2, %c0], %cst_0 {in_bounds = [true, true]} : tensor&lt;4x4xf32&gt;, vector&lt;1x4xf32&gt;
+%30 = vector.transfer_read %14[%c3, %c0], %cst_0 {in_bounds = [true, true]} : tensor&lt;4x4xf32&gt;, vector&lt;1x4xf32&gt;
+%31 = vector.transfer_read %26[%c0, %c0], %cst_0 {in_bounds = [true, true]} : tensor&lt;4x4xf32&gt;, vector&lt;1x4xf32&gt;
+%32 = vector.transfer_read %26[%c1, %c0], %cst_0 {in_bounds = [true, true]} : tensor&lt;4x4xf32&gt;, vector&lt;1x4xf32&gt;
+%33 = vector.transfer_read %26[%c2, %c0], %cst_0 {in_bounds = [true, true]} : tensor&lt;4x4xf32&gt;, vector&lt;1x4xf32&gt;
+%34 = vector.transfer_read %26[%c3, %c0], %cst_0 {in_bounds = [true, true]} : tensor&lt;4x4xf32&gt;, vector&lt;1x4xf32&gt;
+%35 = arith.subf %31, %27 : vector&lt;1x4xf32&gt;
+%36 = arith.subf %32, %28 : vector&lt;1x4xf32&gt;
+%37 = arith.subf %33, %29 : vector&lt;1x4xf32&gt;
+%38 = arith.subf %34, %30 : vector&lt;1x4xf32&gt;
+%39 = vector.transfer_write %35, %26[%c0, %c0] {in_bounds = [true, true]} : vector&lt;1x4xf32&gt;, tensor&lt;4x4xf32&gt;
+%40 = vector.transfer_write %36, %39[%c1, %c0] {in_bounds = [true, true]} : vector&lt;1x4xf32&gt;, tensor&lt;4x4xf32&gt;
+%41 = vector.transfer_write %37, %40[%c2, %c0] {in_bounds = [true, true]} : vector&lt;1x4xf32&gt;, tensor&lt;4x4xf32&gt;
+%42 = vector.transfer_write %38, %41[%c3, %c0] {in_bounds = [true, true]} : vector&lt;1x4xf32&gt;, tensor&lt;4x4xf32&gt;
+%43 = tensor.insert_slice %42 into %arg5...
+</code></pre>
+<p>This is a big step towards the final form, albeit still using high-level
+target-agnostic <code>vector</code> ops.
+There are quite a few cleanups we need to do before lowering those high-level
+ops to low-level target-specific ops:</p>
+<ol>
+<li>These vectors are still more than 1-D, with leading unit dimensions.
+We would like to have just plain 1-D vectors.</li>
+<li>We have <code>vector.transfer_write</code> ops zeroing the output tensor before the
+loop and then <code>vector.transfer_read</code> ops reading it from the tensor for the
+first iteration in the loop.
+This can be avoided by hosting out the transfer ops on the output vector
+and canceling write-read pairs at the beginning.</li>
+</ol>
+<h3 id="handling-high-d-vectors">Handling high-D vectors</h3>
+<p>We need to handle the leading unit dimensions before hoisting&mdash;hoisting
+would make vectors to be loop carried; after that it&rsquo;s not trivial to drop
+leading unit dimensions and perform cleanups, as the loop would become a
+&ldquo;barrier&rdquo; to patterns.</p>
+<p><a href="https://github.com/llvm/llvm-project/blob/4c186707/mlir/lib/Dialect/Vector/Transforms/VectorDropLeadUnitDim.cpp#L438-L447"><code>vector::populateCastAwayVectorLeadingOneDimPatterns()</code></a>
+collects patterns for such purposes.
+We also have separate patterns for different <code>vector</code> ops there.</p>
+<p>For certain cases we might see <code>vector.insert_strided_slice</code> inserting 1-D
+native vectors into high-D larger vectors.
+The above won&rsquo;t handle it; we would need to use
+<a href="https://github.com/llvm/llvm-project/blob/4c186707/mlir/include/mlir/Dialect/Vector/Transforms/VectorRewritePatterns.h#L258-L281"><code>vector::populateVectorInsertExtractStridedSliceDecompositionPatterns()</code></a>
+to break those remaining high-D vector insertions.</p>
+<p>With these, the matmul example now <a href="https://gist.github.com/antiagainst/d555247460af2e4e153e8087dcde7e80#file-mhlo-dot-mlir-L745-L826">becomes</a>:</p>
+<pre><code>%14 = tensor.extract_slice ...
+%15 = tensor.extract_slice %arg5...
+%16 = vector.transfer_write %cst, %15[%c0, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+%17 = vector.transfer_write %cst, %16[%c1, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+%18 = vector.transfer_write %cst, %17[%c2, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+%19 = vector.transfer_write %cst, %18[%c3, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+%20 = tensor.extract_slice ...
+%21 = tensor.extract_slice ...
+%22 = scf.for %arg6 = %c0 to %c256 step %c4 iter_args(%arg7 = %19) -&gt; (tensor&lt;4x4xf32&gt;) {
+  %40 = tensor.extract_slice ...
+  %41 = tensor.extract_slice ...
+  %42 = vector.transfer_read %40[%c0, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %43 = vector.transfer_read %40[%c1, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %44 = vector.transfer_read %40[%c2, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %45 = vector.transfer_read %40[%c3, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %46 = vector.transfer_read %41[%c0, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %47 = vector.broadcast %46 : vector&lt;4xf32&gt; to vector&lt;1x4xf32&gt;
+  %48 = vector.transfer_read %41[%c1, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %49 = vector.broadcast %48 : vector&lt;4xf32&gt; to vector&lt;1x4xf32&gt;
+  %50 = vector.transfer_read %41[%c2, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %51 = vector.broadcast %50 : vector&lt;4xf32&gt; to vector&lt;1x4xf32&gt;
+  %52 = vector.transfer_read %41[%c3, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %53 = vector.broadcast %52 : vector&lt;4xf32&gt; to vector&lt;1x4xf32&gt;
+  %54 = vector.transfer_read %arg7[%c0, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %55 = vector.transfer_read %arg7[%c1, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %56 = vector.transfer_read %arg7[%c2, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %57 = vector.transfer_read %arg7[%c3, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %58 = vector.extract_strided_slice %42 {offsets = [0], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %59 = vector.contract {...} %58, %47, %54 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %60 = vector.extract_strided_slice %42 {offsets = [1], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %61 = vector.contract {...} %60, %49, %59 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %62 = vector.extract_strided_slice %42 {offsets = [2], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %63 = vector.contract {...} %62, %51, %61 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %64 = vector.extract_strided_slice %42 {offsets = [3], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %65 = vector.contract {...} %64, %53, %63 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %66 = vector.extract_strided_slice %43 {offsets = [0], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %67 = vector.contract {...} %66, %47, %55 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %68 = vector.extract_strided_slice %43 {offsets = [1], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %69 = vector.contract {...} %68, %49, %67 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %70 = vector.extract_strided_slice %43 {offsets = [2], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %71 = vector.contract {...} %70, %51, %69 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %72 = vector.extract_strided_slice %43 {offsets = [3], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %73 = vector.contract {...} %72, %53, %71 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %74 = vector.extract_strided_slice %44 {offsets = [0], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %75 = vector.contract {...} %74, %47, %56 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %76 = vector.extract_strided_slice %44 {offsets = [1], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %77 = vector.contract {...} %76, %49, %75 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %78 = vector.extract_strided_slice %44 {offsets = [2], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %79 = vector.contract {...} %78, %51, %77 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %80 = vector.extract_strided_slice %44 {offsets = [3], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %81 = vector.contract {...} %80, %53, %79 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %82 = vector.extract_strided_slice %45 {offsets = [0], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %83 = vector.contract {...} %82, %47, %57 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %84 = vector.extract_strided_slice %45 {offsets = [1], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %85 = vector.contract {...} %84, %49, %83 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %86 = vector.extract_strided_slice %45 {offsets = [2], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %87 = vector.contract {...} %86, %51, %85 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %88 = vector.extract_strided_slice %45 {offsets = [3], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %89 = vector.contract {...} %88, %53, %87 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %90 = vector.transfer_write %65, %arg7[%c0, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+  %91 = vector.transfer_write %73, %90[%c1, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+  %92 = vector.transfer_write %81, %91[%c2, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+  %93 = vector.transfer_write %89, %92[%c3, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+  scf.yield %93 : tensor&lt;4x4xf32&gt;
+}
+%23 = vector.transfer_read %14[%c0, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+%24 = vector.transfer_read %14[%c1, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+%25 = vector.transfer_read %14[%c2, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+%26 = vector.transfer_read %14[%c3, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+%27 = vector.transfer_read %22[%c0, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+%28 = vector.transfer_read %22[%c1, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+%29 = vector.transfer_read %22[%c2, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+%30 = vector.transfer_read %22[%c3, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+%31 = arith.subf %27, %23 : vector&lt;4xf32&gt;
+%32 = arith.subf %28, %24 : vector&lt;4xf32&gt;
+%33 = arith.subf %29, %25 : vector&lt;4xf32&gt;
+%34 = arith.subf %30, %26 : vector&lt;4xf32&gt;
+%35 = vector.transfer_write %31, %22[%c0, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+%36 = vector.transfer_write %32, %35[%c1, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+%37 = vector.transfer_write %33, %36[%c2, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+%38 = vector.transfer_write %34, %37[%c3, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+%39 = tensor.insert_slice %38 into %arg5...
+</code></pre>
+<p>All vectors are 1-D 1/4 elements now! Next we can perform hoisting given the
+clean types.</p>
+<h3 id="hoisting">Hoisting</h3>
+<p>Hoisting transfer ops works by inspecting loop carried tensors to see whether
+we have a <code>vector.transfer_read</code> op at the beginning and a
+<code>vector.transfer_write</code> op at the end.  The indices should be static.
+If so we can hoist such transfer ops out of the loop.
+This is done via <a href="https://github.com/llvm/llvm-project/blob/4c186707/mlir/lib/Dialect/Linalg/Transforms/Hoisting.cpp#L338-L349"><code>linalg::hoistRedundantVectorTransfersOnTensor()</code></a>
+(for tensors) and <a href="https://github.com/llvm/llvm-project/blob/4c186707/mlir/lib/Dialect/Linalg/Transforms/Hoisting.cpp#L401"><code>linalg::hoistRedundantVectorTransfers()</code></a>
+(for buffers).</p>
+<p>With it, now the example <a href="https://gist.github.com/antiagainst/d555247460af2e4e153e8087dcde7e80#file-mhlo-dot-mlir-L872-L944">looks like</a>:</p>
+<pre><code>%15 = tensor.extract_slice ...
+%16 = tensor.extract_slice %arg5...
+%17 = vector.transfer_write %cst, %16[%c0, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+%18 = vector.transfer_write %cst, %17[%c1, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+%19 = vector.transfer_write %cst, %18[%c2, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+%20 = vector.transfer_write %cst, %19[%c3, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+%21 = tensor.extract_slice ...
+%22:4 = scf.for %arg6 = %c0 to %c256 step %c4
+          iter_args(%arg7 = %cst, %arg8 = %cst, %arg9 = %cst, %arg10 = %cst)
+        -&gt; (vector&lt;4xf32&gt;, vector&lt;4xf32&gt;, vector&lt;4xf32&gt;, vector&lt;4xf32&gt;) {
+  %40 = tensor.extract_slice ...
+  %41 = tensor.extract_slice ...
+  %42 = vector.transfer_read %40[%c0, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %43 = vector.transfer_read %40[%c1, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %44 = vector.transfer_read %40[%c2, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %45 = vector.transfer_read %40[%c3, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %46 = vector.transfer_read %41[%c0, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %47 = vector.broadcast %46 : vector&lt;4xf32&gt; to vector&lt;1x4xf32&gt;
+  %48 = vector.transfer_read %41[%c1, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %49 = vector.broadcast %48 : vector&lt;4xf32&gt; to vector&lt;1x4xf32&gt;
+  %50 = vector.transfer_read %41[%c2, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %51 = vector.broadcast %50 : vector&lt;4xf32&gt; to vector&lt;1x4xf32&gt;
+  %52 = vector.transfer_read %41[%c3, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %53 = vector.broadcast %52 : vector&lt;4xf32&gt; to vector&lt;1x4xf32&gt;
+  %54 = vector.extract_strided_slice %42 {offsets = [0], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %55 = vector.contract {...} %54, %47, %arg10 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %56 = vector.extract_strided_slice %42 {offsets = [1], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %57 = vector.contract {...} %56, %49, %55 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %58 = vector.extract_strided_slice %42 {offsets = [2], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %59 = vector.contract {...} %58, %51, %57 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %60 = vector.extract_strided_slice %42 {offsets = [3], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %61 = vector.contract {...} %60, %53, %59 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %62 = vector.extract_strided_slice %43 {offsets = [0], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %63 = vector.contract {...} %62, %47, %arg9 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %64 = vector.extract_strided_slice %43 {offsets = [1], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %65 = vector.contract {...} %64, %49, %63 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %66 = vector.extract_strided_slice %43 {offsets = [2], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %67 = vector.contract {...} %66, %51, %65 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %68 = vector.extract_strided_slice %43 {offsets = [3], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %69 = vector.contract {...} %68, %53, %67 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %70 = vector.extract_strided_slice %44 {offsets = [0], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %71 = vector.contract {...} %70, %47, %arg8 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %72 = vector.extract_strided_slice %44 {offsets = [1], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %73 = vector.contract {...} %72, %49, %71 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %74 = vector.extract_strided_slice %44 {offsets = [2], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %75 = vector.contract {...} %74, %51, %73 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %76 = vector.extract_strided_slice %44 {offsets = [3], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %77 = vector.contract {...} %76, %53, %75 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %78 = vector.extract_strided_slice %45 {offsets = [0], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %79 = vector.contract {...} %78, %47, %arg7 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %80 = vector.extract_strided_slice %45 {offsets = [1], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %81 = vector.contract {...} %80, %49, %79 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %82 = vector.extract_strided_slice %45 {offsets = [2], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %83 = vector.contract {...} %82, %51, %81 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  %84 = vector.extract_strided_slice %45 {offsets = [3], sizes = [1], strides = [1]} : vector&lt;4xf32&gt; to vector&lt;1xf32&gt;
+  %85 = vector.contract {...} %84, %53, %83 : vector&lt;1xf32&gt;, vector&lt;1x4xf32&gt; into vector&lt;4xf32&gt;
+  scf.yield %85, %77, %69, %61 : vector&lt;4xf32&gt;, vector&lt;4xf32&gt;, vector&lt;4xf32&gt;, vector&lt;4xf32&gt;
+}
+%23 = vector.transfer_write %22#3, %20[%c0, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+%24 = vector.transfer_write %22#2, %23[%c1, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+%25 = vector.transfer_write %22#1, %24[%c2, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+%26 = vector.transfer_write %22#0, %25[%c3, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+%27 = vector.transfer_read %15[%c0, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+%28 = vector.transfer_read %15[%c1, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+%29 = vector.transfer_read %15[%c2, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+%30 = vector.transfer_read %15[%c3, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+%31 = arith.subf %22#3, %27 : vector&lt;4xf32&gt;
+%32 = arith.subf %22#2, %28 : vector&lt;4xf32&gt;
+%33 = arith.subf %22#1, %29 : vector&lt;4xf32&gt;
+%34 = arith.subf %22#0, %30 : vector&lt;4xf32&gt;
+%35 = vector.transfer_write %31, %26[%c0, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+%36 = vector.transfer_write %32, %35[%c1, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+%37 = vector.transfer_write %33, %36[%c2, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+%38 = vector.transfer_write %34, %37[%c3, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+%39 = tensor.insert_slice %38 into %arg5...
+</code></pre>
+<p>Now we don&rsquo;t need to go through tensors for initialization at the beginning
+and loop carried values are vectors.</p>
+<p>This is pretty much all the major steps we need for preparing vector ops of the
+final form.
+What&rsquo;s coming next is just lowering those high-level ops down to low-level ones.</p>
+<h3 id="lowering">Lowering</h3>
+<p>This step again needs to collect various patterns for different ops.
+These patterns are in <code>vector::populateVector*LoweringPatterns()</code> variants.
+For example, <code>vector::populateVectorContractLoweringPatterns()</code> for
+<code>vector.contract</code> ops, <code>vector::populateVectorTransposeLoweringPatterns()</code>
+for <code>vector.transpose</code> ops, and so on.
+These patterns allow <a href="https://github.com/llvm/llvm-project/blob/4c186707/mlir/include/mlir/Dialect/Vector/Transforms/VectorRewritePatterns.h#L27-L68">controls</a> over directions of
+the lowering, e.g., whether to lower <code>vector.contract</code> to
+<code>vector.outerproduct</code> (good for GPU) or something else.</p>
+<p>With those lowering patterns and more canonicalization, we have the <a href="https://gist.github.com/antiagainst/d555247460af2e4e153e8087dcde7e80#file-mhlo-dot-mlir-L1384-L1460">final
+form</a> of the IR:</p>
+<pre><code>%15 = tensor.extract_slice ...
+%16 = tensor.extract_slice %arg5...
+%17 = tensor.extract_slice ...
+%18:4 = scf.for %arg6 = %c0 to %c256 step %c4
+          iter_args(%arg7 = %cst, %arg8 = %cst, %arg9 = %cst, %arg10 = %cst)
+        -&gt; (vector&lt;4xf32&gt;, vector&lt;4xf32&gt;, vector&lt;4xf32&gt;, vector&lt;4xf32&gt;) {
+  %32 = tensor.extract_slice %13[0, %arg6] [4, 4] [1, 1] : tensor&lt;4x256xf32&gt; to tensor&lt;4x4xf32&gt;
+  %33 = tensor.extract_slice %17[%arg6, 0] [4, 4] [1, 1] : tensor&lt;256x4xf32&gt; to tensor&lt;4x4xf32&gt;
+  %34 = vector.transfer_read %32[%c0, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %35 = vector.transfer_read %32[%c1, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %36 = vector.transfer_read %32[%c2, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %37 = vector.transfer_read %32[%c3, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %38 = vector.transfer_read %33[%c0, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %39 = vector.transfer_read %33[%c1, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %40 = vector.transfer_read %33[%c2, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %41 = vector.transfer_read %33[%c3, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+  %42 = vector.extract %34[0] : vector&lt;4xf32&gt;
+  %43 = vector.splat %42 : vector&lt;4xf32&gt;
+  %44 = vector.fma %43, %38, %arg10 : vector&lt;4xf32&gt;
+  %45 = vector.extract %34[1] : vector&lt;4xf32&gt;
+  %46 = vector.splat %45 : vector&lt;4xf32&gt;
+  %47 = vector.fma %46, %39, %44 : vector&lt;4xf32&gt;
+  %48 = vector.extract %34[2] : vector&lt;4xf32&gt;
+  %49 = vector.splat %48 : vector&lt;4xf32&gt;
+  %50 = vector.fma %49, %40, %47 : vector&lt;4xf32&gt;
+  %51 = vector.extract %34[3] : vector&lt;4xf32&gt;
+  %52 = vector.splat %51 : vector&lt;4xf32&gt;
+  %53 = vector.fma %52, %41, %50 : vector&lt;4xf32&gt;
+  %54 = vector.extract %35[0] : vector&lt;4xf32&gt;
+  %55 = vector.splat %54 : vector&lt;4xf32&gt;
+  %56 = vector.fma %55, %38, %arg9 : vector&lt;4xf32&gt;
+  %57 = vector.extract %35[1] : vector&lt;4xf32&gt;
+  %58 = vector.splat %57 : vector&lt;4xf32&gt;
+  %59 = vector.fma %58, %39, %56 : vector&lt;4xf32&gt;
+  %60 = vector.extract %35[2] : vector&lt;4xf32&gt;
+  %61 = vector.splat %60 : vector&lt;4xf32&gt;
+  %62 = vector.fma %61, %40, %59 : vector&lt;4xf32&gt;
+  %63 = vector.extract %35[3] : vector&lt;4xf32&gt;
+  %64 = vector.splat %63 : vector&lt;4xf32&gt;
+  %65 = vector.fma %64, %41, %62 : vector&lt;4xf32&gt;
+  %66 = vector.extract %36[0] : vector&lt;4xf32&gt;
+  %67 = vector.splat %66 : vector&lt;4xf32&gt;
+  %68 = vector.fma %67, %38, %arg8 : vector&lt;4xf32&gt;
+  %69 = vector.extract %36[1] : vector&lt;4xf32&gt;
+  %70 = vector.splat %69 : vector&lt;4xf32&gt;
+  %71 = vector.fma %70, %39, %68 : vector&lt;4xf32&gt;
+  %72 = vector.extract %36[2] : vector&lt;4xf32&gt;
+  %73 = vector.splat %72 : vector&lt;4xf32&gt;
+  %74 = vector.fma %73, %40, %71 : vector&lt;4xf32&gt;
+  %75 = vector.extract %36[3] : vector&lt;4xf32&gt;
+  %76 = vector.splat %75 : vector&lt;4xf32&gt;
+  %77 = vector.fma %76, %41, %74 : vector&lt;4xf32&gt;
+  %78 = vector.extract %37[0] : vector&lt;4xf32&gt;
+  %79 = vector.splat %78 : vector&lt;4xf32&gt;
+  %80 = vector.fma %79, %38, %arg7 : vector&lt;4xf32&gt;
+  %81 = vector.extract %37[1] : vector&lt;4xf32&gt;
+  %82 = vector.splat %81 : vector&lt;4xf32&gt;
+  %83 = vector.fma %82, %39, %80 : vector&lt;4xf32&gt;
+  %84 = vector.extract %37[2] : vector&lt;4xf32&gt;
+  %85 = vector.splat %84 : vector&lt;4xf32&gt;
+  %86 = vector.fma %85, %40, %83 : vector&lt;4xf32&gt;
+  %87 = vector.extract %37[3] : vector&lt;4xf32&gt;
+  %88 = vector.splat %87 : vector&lt;4xf32&gt;
+  %89 = vector.fma %88, %41, %86 : vector&lt;4xf32&gt;
+  scf.yield %89, %77, %65, %53 : vector&lt;4xf32&gt;, vector&lt;4xf32&gt;, vector&lt;4xf32&gt;, vector&lt;4xf32&gt;
+}
+%19 = vector.transfer_read %15[%c0, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+%20 = vector.transfer_read %15[%c1, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+%21 = vector.transfer_read %15[%c2, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+%22 = vector.transfer_read %15[%c3, %c0], %cst_0 {in_bounds = [true]} : tensor&lt;4x4xf32&gt;, vector&lt;4xf32&gt;
+%23 = arith.subf %18#3, %19 : vector&lt;4xf32&gt;
+%24 = arith.subf %18#2, %20 : vector&lt;4xf32&gt;
+%25 = arith.subf %18#1, %21 : vector&lt;4xf32&gt;
+%26 = arith.subf %18#0, %22 : vector&lt;4xf32&gt;
+%27 = vector.transfer_write %23, %16[%c0, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+%28 = vector.transfer_write %24, %27[%c1, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+%29 = vector.transfer_write %25, %28[%c2, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+%30 = vector.transfer_write %26, %29[%c3, %c0] {in_bounds = [true]} : vector&lt;4xf32&gt;, tensor&lt;4x4xf32&gt;
+%31 = tensor.insert_slice %30 into %arg5...
+</code></pre>
+<h2 id="closing-words">Closing Words</h2>
+<p>In the above I walked through the steps involved in vector transformations.
+There are still more details not covered.
+To understand those, please feel free to take a look at the <a href="https://github.com/iree-org/iree/blob/a8e4c38c/compiler/src/iree/compiler/Codegen/SPIRV/SPIRVVectorize.cpp">source
+code</a>, which contains comments explaining each step.</p>
+<p>In general <code>vector</code> dialect and patterns are key components in the whole flow
+to CodeGen good code for a single compute unit.
+Properly using it requires careful sequencing of the patterns though.
+Hopefully this blog post provides some hints on how to do that.</p>
+<p>There are also other <code>vector</code> dialect features I didn&rsquo;t cover in the above,
+like using <a href="https://mlir.llvm.org/docs/Dialects/Vector/#vectorwarp_execute_on_lane_0-mlirvectorwarpexecuteonlane0op"><code>vector.warp_execute_on_lane_0</code></a> to
+progressively turn SIMD programming into SIMT by moving ops inside the region
+(for SIMD) outside (for SIMT) to distribute to GPU threads.
+Till next time I guess. 😊</p>
+        </div>
+        
+        <div class="my-4">
+    
+    <a href="https://www.lei.chat/tags/mlir/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>mlir</a>
+    
+    <a href="https://www.lei.chat/tags/vector/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>vector</a>
+    
+    <a href="https://www.lei.chat/tags/dialect/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>dialect</a>
+    
+    <a href="https://www.lei.chat/tags/pattern/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>pattern</a>
+    
+    <a href="https://www.lei.chat/tags/pass/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>pass</a>
+    
+    <a href="https://www.lei.chat/tags/transformation/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>transformation</a>
+    
+    <a href="https://www.lei.chat/tags/linalg/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>linalg</a>
+    
+    <a href="https://www.lei.chat/tags/arith/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>arith</a>
+    
+    <a href="https://www.lei.chat/tags/math/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>math</a>
+    
+    <a href="https://www.lei.chat/tags/vectorization/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>vectorization</a>
+    
+    <a href="https://www.lei.chat/tags/unrolling/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>unrolling</a>
+    
+    <a href="https://www.lei.chat/tags/hoisting/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>hoisting</a>
+    
+    <a href="https://www.lei.chat/tags/lowering/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>lowering</a>
+    
+</div>
+
+        
+        
+        
+
+
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">Next</span>
+        <a href="https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/" class="block">MLIR CodeGen Dialects for Machine Learning Compilers</a>
+        
+    </div>
+</div>
+
+        
+
+
+
+  <script id="utterances" src="https://utteranc.es/client.js"
+            issue-term=title
+            repo=antiagainst/antiagainst.github.io
+              theme=preferred-color-scheme
+        crossorigin="anonymous"
+        async>
+</script>
+<script>
+    if (storageColorScheme == "Light") {
+      document.getElementById('utterances').setAttribute('theme', 'github-light')
+    } else if (storageColorScheme == "Dark") {
+      document.getElementById('utterances').setAttribute('theme', 'github-dark')
+    }
+</script>
+
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+<div class="bg-secondary-bg rounded p-6">
+    <h3 class="text-lg font-semibold mb-4">Series of Posts</h3>
+    <div class="content">
+        
+        
+        <span>1.</span>
+        <a href="https://www.lei.chat/posts/compilers-and-irs-llvm-ir-spirv-and-mlir/">Compilers and IRs: LLVM IR, SPIR-V, and MLIR</a>
+        <br />
+        
+        <span>2.</span>
+        <a href="https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/">MLIR CodeGen Dialects for Machine Learning Compilers</a>
+        <br />
+        
+        <span>3.</span>
+        <a href="https://www.lei.chat/posts/mlir-vector-dialect-and-patterns/">MLIR Vector Dialect and Patterns</a>
+        <br />
+        
+        
+    </div>
+</div>
+
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">On This Page</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#positioning-and-purpose">Positioning and Purpose</a>
+      <ul>
+        <li><a href="#positioning">Positioning</a></li>
+        <li><a href="#purpose">Purpose</a></li>
+      </ul>
+    </li>
+    <li><a href="#characteristics-and-approaches">Characteristics and Approaches</a>
+      <ul>
+        <li><a href="#characteristics">Characteristics</a></li>
+        <li><a href="#approaches">Approaches</a></li>
+      </ul>
+    </li>
+    <li><a href="#transformations">Transformations</a>
+      <ul>
+        <li><a href="#vectorization">Vectorization</a></li>
+        <li><a href="#unrolling">Unrolling</a></li>
+        <li><a href="#handling-high-d-vectors">Handling high-D vectors</a></li>
+        <li><a href="#hoisting">Hoisting</a></li>
+        <li><a href="#lowering">Lowering</a></li>
+      </ul>
+    </li>
+    <li><a href="#closing-words">Closing Words</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded p-6">
+        <h2 class="text-lg font-semibold mb-4">See Also</h2>
+        <div class="content">
+            
+            <a href="https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/">MLIR CodeGen Dialects for Machine Learning Compilers</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/codegen-performant-convolution-kernels-for-mobile-gpus/">CodeGen Performant Convolution Kernels for Mobile GPUs</a>
+            <br />
+            
+            <a href="https://www.lei.chat/zh/posts/compilers-and-irs-llvm-ir-spirv-and-mlir/">编译器与中间表示: LLVM IR, SPIR-V, 以及 MLIR</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/compilers-and-irs-llvm-ir-spirv-and-mlir/">Compilers and IRs: LLVM IR, SPIR-V, and MLIR</a>
+            <br />
+            
+        </div>
+    </div>
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2018 - 2022 <a href="https://www.lei.chat/">Lei Zhang</a>
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>
