@@ -8,7 +8,18 @@
     <language>zh</language>
     <copyright>&amp;copy; 2018 - 2022 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Sun, 20 Feb 2022 15:21:03 -0500</lastBuildDate><atom:link href="https://www.lei.chat/zh/categories/ir/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 31 Jul 2022 15:07:00 -0700</lastBuildDate><atom:link href="https://www.lei.chat/zh/categories/ir/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MLIR Vector Dialect 以及 Patterns</title>
+      <link>https://www.lei.chat/zh/posts/mlir-vector-dialect-and-patterns/</link>
+      <pubDate>Sun, 31 Jul 2022 15:07:00 -0700</pubDate>
+      
+      <guid>https://www.lei.chat/zh/posts/mlir-vector-dialect-and-patterns/</guid>
+      <description>&lt;p&gt;Vector dialect 及其相关变换 (transformation) 是机器学习代码生成流程中的重要一环。
+今天我们来仔细分析一下其定位、设计、特性，并介绍其中的重要操作 (operation) 和变换，
+最后用实例来说明如何恰当使用 vector dialect 相关功能。&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>机器学习编译器代码生成相关 MLIR Dialect</title>
       <link>https://www.lei.chat/zh/posts/mlir-codegen-dialects-for-machine-learning-compilers/</link>

@@ -101,6 +101,16 @@
   </url><url>
     <loc>https://www.lei.chat/tags/lowering/</loc>
     <lastmod>2022-07-31T15:07:00-07:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/tags/lowering/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/tags/lowering/"
+                />
   </url><url>
     <loc>https://www.lei.chat/tags/math/</loc>
     <lastmod>2022-07-31T15:07:00-07:00</lastmod>
@@ -146,12 +156,42 @@
   </url><url>
     <loc>https://www.lei.chat/posts/mlir-vector-dialect-and-patterns/</loc>
     <lastmod>2022-07-31T15:07:00-07:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/posts/mlir-vector-dialect-and-patterns/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/posts/mlir-vector-dialect-and-patterns/"
+                />
   </url><url>
     <loc>https://www.lei.chat/tags/pass/</loc>
     <lastmod>2022-07-31T15:07:00-07:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/tags/pass/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/tags/pass/"
+                />
   </url><url>
     <loc>https://www.lei.chat/tags/pattern/</loc>
     <lastmod>2022-07-31T15:07:00-07:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/tags/pattern/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/tags/pattern/"
+                />
   </url><url>
     <loc>https://www.lei.chat/posts/</loc>
     <lastmod>2022-07-31T15:07:00-07:00</lastmod>
@@ -194,6 +234,16 @@
   </url><url>
     <loc>https://www.lei.chat/tags/transformation/</loc>
     <lastmod>2022-07-31T15:07:00-07:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/tags/transformation/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/tags/transformation/"
+                />
   </url><url>
     <loc>https://www.lei.chat/tags/unrolling/</loc>
     <lastmod>2022-07-31T15:07:00-07:00</lastmod>
