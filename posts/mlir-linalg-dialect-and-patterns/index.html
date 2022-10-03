@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang='en' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>MLIR Linalg Dialect and Patterns | Lei.Chat()</title>
+
+<meta name="generator" content="Hugo Eureka 0.8.4" />
+<link rel="stylesheet" href="https://www.lei.chat/css/eureka.min.css">
+<script defer src="https://www.lei.chat/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/bash.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/c.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cmake.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cpp.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/glsl.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/javascript.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/llvm.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/python.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/shell.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-109525036-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-109525036-1');
+</script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="I explained the Vector dialect and related patterns in the previous blog
+post. In this one let us look at a layer higher and
+talk about the Linalg dialect and transformations around it.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Posts",
+      "item":"https://www.lei.chat/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"MLIR Linalg Dialect and Patterns",
+      "item":"https://www.lei.chat/posts/mlir-linalg-dialect-and-patterns/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.lei.chat/posts/mlir-linalg-dialect-and-patterns/"
+    },
+    "headline": "MLIR Linalg Dialect and Patterns | Lei.Chat()","datePublished": "2022-08-31T14:59:09-07:00",
+    "dateModified": "2022-08-31T14:59:09-07:00",
+    "wordCount":  2730 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "Lei Zhang",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.lei.chat/images/avatar.png"
+        }
+        },
+    "description": "\u003cp\u003eI explained the Vector dialect and related patterns in the \u003ca href=\u0022..\/mlir-vector-dialect-and-patterns\/\u0022\u003eprevious blog\npost\u003c\/a\u003e. In this one let us look at a layer higher and\ntalk about the Linalg dialect and transformations around it.\u003c\/p\u003e"
+}
+</script><meta property="og:title" content="MLIR Linalg Dialect and Patterns | Lei.Chat()" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="https://www.lei.chat/images/avatar.png">
+
+
+<meta property="og:url" content="https://www.lei.chat/posts/mlir-linalg-dialect-and-patterns/" />
+
+
+
+
+<meta property="og:description" content="I explained the Vector dialect and related patterns in the previous blog
+post. In this one let us look at a layer higher and
+talk about the Linalg dialect and transformations around it." />
+
+
+
+
+<meta property="og:locale" content="en" />
+
+
+
+
+<meta property="og:site_name" content="Lei.Chat()" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2022-08-31T14:59:09-07:00" />
+
+
+<meta property="article:modified_time" content="2022-08-31T14:59:09-07:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="mlir" />
+
+<meta property="article:tag" content="linalg" />
+
+<meta property="article:tag" content="dialect" />
+
+<meta property="article:tag" content="pattern" />
+
+<meta property="article:tag" content="transformation" />
+
+<meta property="article:tag" content="tiling" />
+
+
+
+
+
+
+
+
+
+
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/mlir-vector-dialect-and-patterns/" />
+
+
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/" />
+
+
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/compilers-and-irs-llvm-ir-spirv-and-mlir/" />
+
+
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Lei.Chat()</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">Posts</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Tags</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Categories</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Series</a>
+            <a href="/authors/me" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">About</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">Light</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">Dark</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">Auto</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">MLIR Linalg Dialect and Patterns</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2022-08-31</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>13 min read</span>
+    </div>
+    
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="https://www.lei.chat/categories/compiler/" class="hover:text-eureka">compiler</a><span>, </span>
+        
+        
+        <a href="https://www.lei.chat/categories/ir/" class="hover:text-eureka">ir</a><span>, </span>
+        
+        
+        <a href="https://www.lei.chat/categories/mlir/" class="hover:text-eureka">mlir</a><span>, </span>
+        
+        
+        <a href="https://www.lei.chat/categories/ml-inference/" class="hover:text-eureka">ml-inference</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="https://www.lei.chat/series/compiler-development/" class="hover:text-eureka">compiler-development</a>
+        
+    </div>
+    
+</div>
+
+        
+        <div class="content">
+            <p>I explained the Vector dialect and related patterns in the <a href="../mlir-vector-dialect-and-patterns/">previous blog
+post</a>. In this one let us look at a layer higher and
+talk about the Linalg dialect and transformations around it.</p>
+<h2 id="problem-space">Problem Space</h2>
+<p>Machine learning (ML), especially deep learning, actually brings workloads with
+quite regular patterns.
+The whole ML model is typically repeating certain known-good basic blocks,
+optionally in a nested fashion.</p>
+<p>The primitive operations in those basic blocks include dense computation like
+matrix multiplication (matmul) or convolution, which, in their plain definition,
+are perfect loop nests over multiply-accumulation (MAC).
+Given the internal MAC operation, matmul and convolution are just a form of
+<em>reduction</em>.
+It&rsquo;s also common to see direct reductions to find the maximal/minimal/average
+values of a tensor.
+Aside from reduction, another category of computation, which is more
+&ldquo;lightweight&rdquo;, is <em>elementwise</em> operations.
+They are even more well formed and easy to handle.</p>
+<p>Computation is one way to produce tensors in ML model dataflow;
+we can also see pure data shuffling operations.
+Examples are <em>broadcast</em>, <em>transpose</em>, <em>concatenate</em>, which in essence are
+performing <a href="https://eli.thegreenplace.net/2018/affine-transformations/">affine transformations</a> over data element
+indexing.
+More sophisticated data shuffling operations include <em>gather</em>, <em>scatter</em>,
+<em>topK</em>, and others.
+These operations involve non-affine mapping over data element indexing, and
+are more &ldquo;irregular&rdquo; and difficult to handle.</p>
+<p>We know that generally programmable CPUs/GPUs adopt tiled-based architectures,
+and have different levels of memory/cache hierarchies to feed data into
+SIMD/SIMT compute units.
+Even with the memory/cache hierarchy, data access is still much slower than
+compute; so we need to increase data reuse to achieve higher ops per second
+in reality.
+<strong>To best utilize the hardware, we need to tile the problem and distribute
+the workload to different computation units, and maintain a high data reuse
+rate in faster memory/cache level.</strong></p>
+<p>With the above in mind, each of the previous ML operation categories is
+essentially a different problem for code generation (CodeGen).
+For example, square matmul by definition is performing N<sup>2</sup> data
+element access and N<sup>3</sup> MAC; so we reuse a memory access N times.
+Convolution offers even higher reuse intrinsically.
+They are inherently easier to achieve high ops per second.
+On the other hand, there is no data reuse in elementwise operations;
+if done alone, they are always memory bound.
+However, given the great 1:1 mapping nature of elementwise operations,
+we typically fuse them with matmul or convolution to compute &ldquo;for free&rdquo;.
+Pure reduction is an even more challenging problem, especially for massively
+parallel GPUs, which would require dedicated approaches.</p>
+<p>In general, it&rsquo;s clear that for different categories, we need to have different
+strategies.
+Though we don&rsquo;t necessarily want to write a separate compiler flow for each
+different ML operations and target architecture, for software complexity
+management concerns.
+We would like to unify certain problems of similar characteristics into one
+flow.
+However, we cannot go too far down this route&mdash;if we unify everything into
+the same flow, it would mean we can assume nothing and must do everything in
+the most general sense, which would make analyses and transformations extremely
+hard and conservative. So, practical trade-offs in the design.</p>
+<p>That&rsquo;s effectively what the Linalg dialect is trying to achieve.
+<strong>The Linalg dialect tries to strike a balance between the IR generality and
+transform simplicity/effectiveness.
+It focuses on addressing the problems with perfect loop nest and affine element
+indexing, by providing powerful tiling, fusion, and vectorization mechanisms.</strong></p>
+<p>This covers the CodeGen needs for compute ops like matmul/convolution/reduction,
+and data shuffling ops like broadcast/transpose.
+This is already a large portion of ML ops.
+It leaves problems like gather/scatter/etc. aside on purpose, because
+accommodating those would mean relaxing a lot on the assumptions (that is,
+perfect loop nest and affine element indexing) and thus forgoing some very
+powerful mechanisms (e.g., affine composition, back slice analysis) and bringing
+more complexities into the compiler.</p>
+<p>Enough about the rationale. Now let&rsquo;s move on to the design considerations.</p>
+<h2 id="design-considerations">Design Considerations</h2>
+<h3 id="positioning">Positioning</h3>
+<p>The Linalg dialect presents one of the core abstractions for progressive MLIR
+CodeGen in ML compilers.
+Showing the CodeGen hierarchy introduced <a href="../mlir-codegen-dialects-for-machine-learning-compilers/#overall-picture">previously</a> again
+and highlighting the Linalg layer:</p>
+<p><img src="linalg-dialect-in-codegen-flow.svg" alt="MLIR Linalg Dialect in CodeGen Flow" title="MLIR Linalg Dialect in CodeGen Flow"></p>
+<p>Each layer in the above flow serves its own purpose:</p>
+<ul>
+<li>At the top level, dialects like TF, TFLite, and Torch are meant for ML
+framework integration; and dialects like MHLo and TOSA are meant for
+consolidating flexible framework op sets into (stable) input ML programs.</li>
+<li>The Vector dialect, which I discussed in the <a href="../mlir-vector-dialect-and-patterns/">previous blog
+post</a>, aims to compile a tile of the original problem
+to a single compute unit, by mapping to hardware registers and native vector
+compute instructions.</li>
+<li>Dialects like MemRef are for handling memory planning and concrete data
+accesses. Its position in the flow is relatively flexible as it can happen
+either before or after the vector abstractions.</li>
+<li>At the bottom of the stack is dialects like LLVM or SPIR-V to exit the MLIR
+system for even lower level CodeGen and/or final program serialization.</li>
+</ul>
+<p>The Linalg dialect is actually the entry layer for structured MLIR
+CodeGen&mdash;dialects before it are for ML program representation; from Linalg,
+we start to perform transformations to gradually fit hardware targets.</p>
+<p>These transformations include tiling, fusion, distribution, and vectorization.
+Their collective goals are to divide the original problem and assign them
+to different compute units, and later handle the inner tile to the Vector
+dialect for further CodeGen aiming at a single compute unit.</p>
+<h3 id="op-structure-and-categories">Op structure and categories</h3>
+<p>The Linalg dialect&rsquo;s <a href="https://mlir.llvm.org/docs/Dialects/Linalg/">documentation</a> provides high-level
+description of Linalg op structure and categories, in addition to detailed
+semantics for each op. It&rsquo;s highly worth a read. I won&rsquo;t elaborate what&rsquo;s
+explained there, just a quick summary to lay down the foundation for further
+discussion.</p>
+<p>Linalg ops can operate both on tensors and buffers.
+In general, there are two categories of Linalg ops&mdash;structured ones and
+non-structured ones.
+There are very few non-structured Linalg ops, e.g., <code>linalg.index</code>,
+<code>linalg.yield</code>. They are auxiliary; each one is distinct.</p>
+<p>The majority Linalg ops are structured ones, including <code>linalg.matmul</code>,
+<code>linalg.conv_*</code>, <code>linalg.generic</code> and other compute ops.
+Among them, <code>linalg.generic</code> is really the core op; other ops are called
+<a href="https://github.com/llvm/llvm-project/blob/c54bc8b/mlir/python/mlir/dialects/linalg/opdsl/ops/core_named_ops.py"><em>named</em> ops</a> and are effectively syntax sugar over a certain
+<em>instance</em> of <code>linalg.generic</code> ops.
+They all implement <a href="https://github.com/llvm/llvm-project/blob/c54bc8b/mlir/include/mlir/Dialect/Linalg/IR/LinalgInterfaces.td#L181">the <code>LinalgOp</code> interface</a> and have
+uniform representations as <a href="https://mlir.llvm.org/docs/Dialects/Linalg/#high-level-description-of-linalg-opsa-namelinalg_opsa">described</a> in the
+documentation:</p>
+<ul>
+<li>Each op itself is an <em>implicit</em> perfect loop nest, where each loop has
+an <em>explicitly</em> defined iterator type (parallel/reduction/etc.).</li>
+<li>If with tensor semantics, each op result has an associated <em>output operand</em>,
+providing the initial value of the output.
+If with buffer semantics, Linalg ops don&rsquo;t have results; the output
+operand would be directly read-writable buffers.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></li>
+<li>Each input/output operand has an associated indexing map from the implicit
+loop nest to the operand&rsquo;s tensor/buffer, specifying how the operand&rsquo;s
+elements are accessed.
+The loop nest&rsquo;s iteration space is fully derived from the op&rsquo;s operands.</li>
+<li>The computation done is specified as a region, which allows great
+flexibility.</li>
+</ul>
+<p>The above characteristics greatly simplify transformations over Linalg
+ops.
+Often we just need to write one single pattern to target the <code>LinalgOp</code>
+interface.
+Implicit loop nests mean we can typically avoid analyzing and transforming
+loop nests.</p>
+<p>As said in the <a href="#problem-space">Problem Space</a> section, the Linalg dialect
+purposefully only represents ML ops which by definition are perfect loop
+nests with affine element indexing.
+Ops not fitting this pattern would need their own special flows.
+In IREE we have the LinalgExt dialect to experiment modeling those ops
+(including <code>gather</code>, <code>scatter</code>, <code>scan</code>, <code>topk</code>, <code>fft</code>, etc.).
+They are gradually upstreamed and placed in more suitable holding dialects,
+e.g., now we have <code>tensor.gather</code>/<code>tensor.scatter</code> ops in upstream MLIR
+codebase.</p>
+<h2 id="transformations">Transformations</h2>
+<p>The Linalg ops are designed from the beginning to facilitate transformations.
+By purposefully restricting the problems to address, we can make assumptions
+that lead to powerful analysis and transformations.</p>
+<p>Actually the whole structured CodeGen paradigm in MLIR, where the Linalg
+dialect is a core component of it, prefers this kind of <strong>co-designing op
+semantics and transformations and let ops <em>structurally</em> encode and guarantee
+certain properties to simplify analyses and transformations</strong>.</p>
+<p>Important transformations happening at the Linalg level include tiling, fusion,
+distribution, vectorization, and lowering into plain loops.</p>
+<h3 id="tiling">Tiling</h3>
+<p>Tiling is the process of dividing the original problem into smaller ones.
+It is a key step to map the original problem into multiple compute units,
+which are common nowadays for CPUs/GPUs.
+Tiling can happen multiple times, depending on the compute hierarchy of the
+hardware target.
+With tiling, we can also turn a dynamic shaped problem into a static one,
+with a static tile size.
+This is important to enable further Vector level transformations.</p>
+<p>Although we typically perform tiling at the Linalg level, it&rsquo;s not
+fundamentally limited to Linalg ops.
+So in MLIR, tiling is moving to an interface, unsurprisingly, <a href="https://github.com/llvm/llvm-project/blob/c54bc8b/mlir/include/mlir/Interfaces/TilingInterface.td">the
+<code>TilingInterface</code></a>, to allow dividing other dialects'
+ops to map to compute hierarchies.
+(Notably the ops in IREE LinalgExt dialect implements the tiling interface.)
+<a href="https://github.com/llvm/llvm-project/blob/c54bc8b/mlir/lib/Dialect/Linalg/Transforms/TilingInterfaceImpl.cpp">Here</a> is Linalg ops' <code>TilingInterface</code>. implementation.</p>
+<p>Tiling would materialize a loop nest.
+The interface just provides op-specific information about how the particular op
+should be tiled;
+we would need loop ops for the materialized loop nest.
+It&rsquo;s pluggable here, as we can use different kinds of loop ops, e.g., <code>scf.for</code>
+ops (and <a href="https://github.com/llvm/llvm-project/blob/c54bc8b/mlir/lib/Dialect/SCF/Transforms/TileUsingInterface.cpp#L267-L404">here</a> is the code connecting them together).</p>
+<p>It&rsquo;s worth discussing the IR after tiling a bit.
+For the following <code>linalg.matmul</code>:</p>
+<pre><code>func.func @matmul(%lhs : tensor&lt;?x?xf32&gt;, %rhs : tensor&lt;?x?xf32&gt;,
+                  %init : tensor&lt;?x?xf32&gt;) -&gt; tensor&lt;?x?xf32&gt; {
+  %0 = linalg.matmul
+         ins(%lhs, %rhs : tensor&lt;?x?xf32&gt;, tensor&lt;?x?xf32&gt;)
+         outs(%init : tensor&lt;?x?xf32&gt;) -&gt; tensor&lt;?x?xf32&gt;
+  return %0 : tensor&lt;?x?xf32&gt;
+}
+</code></pre>
+<p>Tiling with tile sizes (<code>M</code>, <code>N</code>) = (10, 20):</p>
+<pre><code>func.func @matmul(%lhs: tensor&lt;?x?xf32&gt;, %rhs: tensor&lt;?x?xf32&gt;,
+                  %init: tensor&lt;?x?xf32&gt;) -&gt; tensor&lt;?x?xf32&gt; {
+  %c0 = arith.constant 0 : index
+  %c1 = arith.constant 1 : index
+  %c10 = arith.constant 10 : index
+  %c20 = arith.constant 20 : index
+  %0 = tensor.dim %lhs, %c0 : tensor&lt;?x?xf32&gt;
+  %1 = tensor.dim %lhs, %c1 : tensor&lt;?x?xf32&gt;
+  %2 = tensor.dim %rhs, %c1 : tensor&lt;?x?xf32&gt;
+  %3 = scf.for %arg3 = %c0 to %0 step %c10 iter_args(%arg4 = %init) -&gt; (tensor&lt;?x?xf32&gt;) {
+    %4 = affine.min affine_map&lt;(d0)[s0, s1] -&gt; (20, -d0 + s1)&gt;(%arg3)[%c10, %0]
+    %5 = scf.for %arg5 = %c0 to %2 step %c20 iter_args(%arg6 = %arg4) -&gt; (tensor&lt;?x?xf32&gt;) {
+      %6 = affine.min affine_map&lt;(d0)[s0, s1] -&gt; (30, -d0 + s1)&gt;(%arg5)[%c20, %2]
+      %7 = tensor.extract_slice %lhs[%arg3, 0] [%4, %1] [1, 1]...
+      %8 = tensor.extract_slice %rhs[0, %arg5] [%1, %6] [1, 1]...
+      %9 = tensor.extract_slice %arg6[%arg3, %arg5] [%4, %6] [1, 1]...
+      %10 = linalg.matmul
+              ins(%7, %8 : tensor&lt;?x?xf32&gt;, tensor&lt;?x?xf32&gt;)
+              outs(%9 : tensor&lt;?x?xf32&gt;) -&gt; tensor&lt;?x?xf32&gt;
+      %11 = tensor.insert_slice %10 into %arg6[%arg3, %arg5] [%4, %6] [1, 1]...
+      scf.yield %11 : tensor&lt;?x?xf32&gt;
+    }
+    scf.yield %5 : tensor&lt;?x?xf32&gt;
+  }
+  return %3 : tensor&lt;?x?xf32&gt;
+}
+</code></pre>
+<p>We have a materialized <code>scf.for</code> loop nest, with steps equal to the tile sizes
+we have specified for matmul <code>M</code> and <code>N</code> dimensions.
+In the innermost loop representing the current tile, <code>tensor.extract_slice</code> ops
+define the original input tensors' slices that the current tile will read, while
+the <code>tensor.insert_slice</code> op defines the output tensor&rsquo;s slice that the current
+tile will write.
+<code>affine.min</code> ops are generated to compute the size bounds for each tile.</p>
+<p>There are a few aspects worth calling out:</p>
+<p>Firstly, <code>tensor.extract_slice</code> and <code>tensor.insert_slice</code> defines the input and
+output slices for the tile.
+They still maintain the original dimensionality and capture a 2-D (offset,
+size, stride) tuple.
+Such semantics of <code>tensor.*_slice</code> ops makes it very straightforward to get a
+tile of the original problem and compose further later.
+Tiling itself generates loop nests so we face more details and it is harder to
+go back to the original form; this is a form of <em>lowering</em>.
+However, the <code>tensor.*_slice</code> ops are also an instance of retaining
+high-level information as much as possible and not prematurely lower (and
+linearize the indexing).</p>
+<p>Secondly, we have the same problem, <code>linalg.matmul</code>, in the tiled loop nest,
+just on a smaller scale defined by <code>tensor.*_slice</code> ops.
+If we want to tile again, it would just mean reapplying the same transformation.</p>
+<p>Thirdly, now we have a whole structure to represent the full tiled problem&mdash;the
+loo nest, the <code>tensor.*_slice</code> ops, and the inner <code>linalg</code> op.
+They must work together to preserve the full semantics.
+Such structures can be fragile and prone to breakage in IR transformations.
+So we face the risk of breaking it with, for example, seemingly innocent
+canonicalization patterns.
+(This is right now the case for bufferization&mdash;it requires reserving such
+a structure.)
+This problem is why we have Linalg structured ops and want to embed structures
+in op semantics implicitly from the beginning.
+More needs to be done for this case though.</p>
+<p>Lastly, the <code>tensor.*_slice</code> ops can represent data movement to faster
+memory/cache hierarchy.</p>
+<h3 id="fusion">Fusion</h3>
+<p>We have seen that <code>tensor.*_slice</code> ops help to define the input/output slices
+for tiling.
+Fusion just goes one step further on top of that&mdash;instead of just pulling in
+the consumer op&rsquo;s input slice into the tiled loop nest around the consumer op,
+we pull in the producer op and all its input slices for computing the consumed
+output slice.</p>
+<p>Recall that Linalg ops uses an affine indexing map to encode the access scheme
+for each input/output operand, and the loop bounds are defined by operand
+tensor/buffer shapes.
+Calculating the producer input slices is just composing these affine maps
+and deriving offsets and sizes on each dimension separately.
+This can be achieved via <code>inverse(producerIndexingMap).compose(consumerIndexingMap)</code>
+for permutation producer indexing maps, and elementwise op fusion <a href="https://github.com/llvm/llvm-project/blob/c54bc8b/mlir/lib/Dialect/Linalg/Transforms/ElementwiseOpFusion.cpp#L356">uses this
+approach</a>.
+If via the <code>TilingInterface</code>, the implementation is different and goes through
+<a href="https://github.com/llvm/llvm-project/blob/c54bc8b/mlir/lib/Dialect/Linalg/Utils/Utils.cpp#L990-L1009">the <code>makeTiledShapes</code> utility</a>.
+I won&rsquo;t expand on this; you can see the full <code>scf.for</code> tiling and fusion
+procedure <a href="https://github.com/llvm/llvm-project/blob/c54bc8b/mlir/lib/Dialect/SCF/Transforms/TileUsingInterface.cpp#L415-L589">here</a>.</p>
+<h3 id="distribution">Distribution</h3>
+<p>Distribution is the process of assigning different tiles to different compute
+units.
+It is particularly important for GPUs, where we need to utilize all those
+workgroups and workitems for parallelism.</p>
+<p>The current commonly used approach to perform distribution is providing the
+processor ID and count SSA values when tiling (and fusion).
+Then for the materialized loop nest, we update the loop ranges using those
+processor ID and count SSA values.</p>
+<pre><code>%idy   = gpu.thread_id y
+%dimy  = gpu.block_dim y
+%lby   = affine.apply affine_map&lt;()[s0, s1] -&gt; (s0 * s1)&gt;()[%idy, %c4]
+%stepy = affine.apply affine_map&lt;()[s0, s1] -&gt; (s0 * s1)&gt;()[%dimy, %c4]
+scf.for %ivy = %lby to %c8 step %stepy {
+  %idx   = gpu.thread_id  x
+  %dimx  = gpu.block_dim  x
+  %lbx   = affine.apply affine_map&lt;()[s0, s1] -&gt; (s0 * s1)&gt;()[%idx, %c4]
+  %stepx = affine.apply affine_map&lt;()[s0, s1] -&gt; (s0 * s1)&gt;()[%dimx, %c4]
+  scf.for %arg3 = %lbx to %c32 step %stepx {
+    ...
+  }
+}
+</code></pre>
+<p>Though the above faces an issue.
+It&rsquo;s well defined if we distribute <code>memref</code> tiles&mdash;buffers allow read/write
+to individual elements, so we can perform concurrent updates to the whole
+<code>memref</code>.
+For <code>tensor</code> tiles, it becomes difficult&mdash;a tensor, regardless of the
+dimensionality and shape, is an integrated single value.
+There is no partial update semantics; touching even a single element would
+generate a whole new tensor of the input shape.
+Therefore, the concurrent updates via <code>tensor.insert_slice</code> ops is not well
+defined.
+This problem sort of gets &ldquo;resolved&rdquo; after we bufferize those tensors, but
+still, at the tensor level, we have such a semantic gap.
+So we see upstream experimenting moving to use the new <a href="https://mlir.llvm.org/docs/Dialects/SCFDialect/#scfforeach_thread-mlirscfforeachthreadop"><code>scf.foreach_thread</code>
+op</a>.
+In its region, we leverage <code>scf.foreach_thread.perform_concurrently</code> and
+<code>tensor.parallel_insert_slice</code> to address the issue.</p>
+<h3 id="vectorization">Vectorization</h3>
+<p>Vectorization is the last step in the Linalg lowering flow.
+It bridges the Linalg layer and Vector layer.
+In MLIR, vectorization is not trying to find parallelism by turning scalar
+computation into vector; it&rsquo;s basically mechanically generating vector ops
+of the same shape, and then later do in-dialect lowering to convert those
+high-dimension vectors into low-dimension native ones.
+I&rsquo;ve written about this in the <a href="../mlir-vector-dialect-and-patterns/#vectorization">previous blog post</a>,
+so I won&rsquo;t repeat it again here.</p>
+<h3 id="lowering-to-loops">Lowering to loops</h3>
+<p>Converting to plain loops gives us a fallback lowering path and reference
+implementation for Linalg ops. It can be quite helpful in certain cases.
+Given that Linalg ops are just an implicit loop nest, lowering to loops
+is trivial. We just need to materialize the loop nest and inline the compute
+region.</p>
+<h2 id="closing-words">Closing Words</h2>
+<p>The Linalg dialect presents one of the core abstractions for progressive and
+structured MLIR CodeGen in ML compilers.
+Hopefully this blog post shed some light on its design and key transformations.</p>
+<p>The Linalg dialect is the de facto &ldquo;testbed&rdquo; for quite a few new CodeGen
+techniques, including the transform dialect.
+It evolves fast and can often graduate features to more suitable holding
+dialects and directories.</p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p>So this unifies IR representation for tensors and buffers.
+More importantly, it makes bufferization easier&mdash;we can perform analysis
+and reuse buffers via the output operand and result binding in cases,
+which avoids excessive copies.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+        </div>
+        
+        <div class="my-4">
+    
+    <a href="https://www.lei.chat/tags/mlir/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>mlir</a>
+    
+    <a href="https://www.lei.chat/tags/linalg/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>linalg</a>
+    
+    <a href="https://www.lei.chat/tags/dialect/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>dialect</a>
+    
+    <a href="https://www.lei.chat/tags/pattern/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>pattern</a>
+    
+    <a href="https://www.lei.chat/tags/transformation/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>transformation</a>
+    
+    <a href="https://www.lei.chat/tags/tiling/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>tiling</a>
+    
+    <a href="https://www.lei.chat/tags/fusion/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>fusion</a>
+    
+    <a href="https://www.lei.chat/tags/distribution/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>distribution</a>
+    
+    <a href="https://www.lei.chat/tags/vectorization/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>vectorization</a>
+    
+    <a href="https://www.lei.chat/tags/loop/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>loop</a>
+    
+    <a href="https://www.lei.chat/tags/structure/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>structure</a>
+    
+    <a href="https://www.lei.chat/tags/compiler/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>compiler</a>
+    
+    <a href="https://www.lei.chat/tags/ir/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>ir</a>
+    
+</div>
+
+        
+        
+        
+
+
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">Next</span>
+        <a href="https://www.lei.chat/posts/mlir-vector-dialect-and-patterns/" class="block">MLIR Vector Dialect and Patterns</a>
+        
+    </div>
+</div>
+
+        
+
+
+
+  <script id="utterances" src="https://utteranc.es/client.js"
+            issue-term=title
+            repo=antiagainst/antiagainst.github.io
+              theme=preferred-color-scheme
+        crossorigin="anonymous"
+        async>
+</script>
+<script>
+    if (storageColorScheme == "Light") {
+      document.getElementById('utterances').setAttribute('theme', 'github-light')
+    } else if (storageColorScheme == "Dark") {
+      document.getElementById('utterances').setAttribute('theme', 'github-dark')
+    }
+</script>
+
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+<div class="bg-secondary-bg rounded p-6">
+    <h3 class="text-lg font-semibold mb-4">Series of Posts</h3>
+    <div class="content">
+        
+        
+        <span>1.</span>
+        <a href="https://www.lei.chat/posts/compilers-and-irs-llvm-ir-spirv-and-mlir/">Compilers and IRs: LLVM IR, SPIR-V, and MLIR</a>
+        <br />
+        
+        <span>2.</span>
+        <a href="https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/">MLIR CodeGen Dialects for Machine Learning Compilers</a>
+        <br />
+        
+        <span>3.</span>
+        <a href="https://www.lei.chat/posts/mlir-vector-dialect-and-patterns/">MLIR Vector Dialect and Patterns</a>
+        <br />
+        
+        <span>4.</span>
+        <a href="https://www.lei.chat/posts/mlir-linalg-dialect-and-patterns/">MLIR Linalg Dialect and Patterns</a>
+        <br />
+        
+        
+    </div>
+</div>
+
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">On This Page</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#problem-space">Problem Space</a></li>
+    <li><a href="#design-considerations">Design Considerations</a>
+      <ul>
+        <li><a href="#positioning">Positioning</a></li>
+        <li><a href="#op-structure-and-categories">Op structure and categories</a></li>
+      </ul>
+    </li>
+    <li><a href="#transformations">Transformations</a>
+      <ul>
+        <li><a href="#tiling">Tiling</a></li>
+        <li><a href="#fusion">Fusion</a></li>
+        <li><a href="#distribution">Distribution</a></li>
+        <li><a href="#vectorization">Vectorization</a></li>
+        <li><a href="#lowering-to-loops">Lowering to loops</a></li>
+      </ul>
+    </li>
+    <li><a href="#closing-words">Closing Words</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded p-6">
+        <h2 class="text-lg font-semibold mb-4">See Also</h2>
+        <div class="content">
+            
+            <a href="https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/">MLIR CodeGen Dialects for Machine Learning Compilers</a>
+            <br />
+            
+            <a href="https://www.lei.chat/zh/posts/mlir-codegen-dialects-for-machine-learning-compilers/">机器学习编译器代码生成相关 MLIR Dialect</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/mlir-vector-dialect-and-patterns/">MLIR Vector Dialect and Patterns</a>
+            <br />
+            
+            <a href="https://www.lei.chat/zh/posts/mlir-vector-dialect-and-patterns/">MLIR Vector Dialect 以及 Patterns</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/compilers-and-irs-llvm-ir-spirv-and-mlir/">Compilers and IRs: LLVM IR, SPIR-V, and MLIR</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/codegen-performant-convolution-kernels-for-mobile-gpus/">CodeGen Performant Convolution Kernels for Mobile GPUs</a>
+            <br />
+            
+        </div>
+    </div>
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2018 - 2022 <a href="https://www.lei.chat/">Lei Zhang</a>
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

@@ -8,7 +8,18 @@
     <language>en</language>
     <copyright>&amp;copy; 2018 - 2022 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Fri, 25 Jun 2021 10:15:58 -0400</lastBuildDate><atom:link href="https://www.lei.chat/tags/structure/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 31 Aug 2022 14:59:09 -0700</lastBuildDate><atom:link href="https://www.lei.chat/tags/structure/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MLIR Linalg Dialect and Patterns</title>
+      <link>https://www.lei.chat/posts/mlir-linalg-dialect-and-patterns/</link>
+      <pubDate>Wed, 31 Aug 2022 14:59:09 -0700</pubDate>
+      
+      <guid>https://www.lei.chat/posts/mlir-linalg-dialect-and-patterns/</guid>
+      <description>&lt;p&gt;I explained the Vector dialect and related patterns in the &lt;a href=&#34;../mlir-vector-dialect-and-patterns/&#34;&gt;previous blog
+post&lt;/a&gt;. In this one let us look at a layer higher and
+talk about the Linalg dialect and transformations around it.&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>What is Vulkan Compute?</title>
       <link>https://www.lei.chat/posts/what-is-vulkan-compute/</link>

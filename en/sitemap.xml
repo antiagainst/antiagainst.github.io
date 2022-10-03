@@ -2,6 +2,238 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://www.lei.chat/categories/</loc>
+    <lastmod>2022-08-31T14:59:09-07:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/categories/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/categories/"
+                />
+  </url><url>
+    <loc>https://www.lei.chat/tags/compiler/</loc>
+    <lastmod>2022-08-31T14:59:09-07:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/categories/compiler/</loc>
+    <lastmod>2022-08-31T14:59:09-07:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/series/compiler-development/</loc>
+    <lastmod>2022-08-31T14:59:09-07:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/tags/dialect/</loc>
+    <lastmod>2022-08-31T14:59:09-07:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/tags/dialect/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/tags/dialect/"
+                />
+  </url><url>
+    <loc>https://www.lei.chat/tags/distribution/</loc>
+    <lastmod>2022-08-31T14:59:09-07:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/tags/distribution/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/tags/distribution/"
+                />
+  </url><url>
+    <loc>https://www.lei.chat/tags/fusion/</loc>
+    <lastmod>2022-08-31T14:59:09-07:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/tags/fusion/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/tags/fusion/"
+                />
+  </url><url>
+    <loc>https://www.lei.chat/tags/ir/</loc>
+    <lastmod>2022-08-31T14:59:09-07:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/categories/ir/</loc>
+    <lastmod>2022-08-31T14:59:09-07:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/categories/ir/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/categories/ir/"
+                />
+  </url><url>
+    <loc>https://www.lei.chat/</loc>
+    <lastmod>2022-08-31T14:59:09-07:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/"
+                />
+  </url><url>
+    <loc>https://www.lei.chat/tags/linalg/</loc>
+    <lastmod>2022-08-31T14:59:09-07:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/tags/linalg/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/tags/linalg/"
+                />
+  </url><url>
+    <loc>https://www.lei.chat/tags/loop/</loc>
+    <lastmod>2022-08-31T14:59:09-07:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/categories/ml-inference/</loc>
+    <lastmod>2022-08-31T14:59:09-07:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/tags/mlir/</loc>
+    <lastmod>2022-08-31T14:59:09-07:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/tags/mlir/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/tags/mlir/"
+                />
+  </url><url>
+    <loc>https://www.lei.chat/categories/mlir/</loc>
+    <lastmod>2022-08-31T14:59:09-07:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/categories/mlir/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/categories/mlir/"
+                />
+  </url><url>
+    <loc>https://www.lei.chat/posts/mlir-linalg-dialect-and-patterns/</loc>
+    <lastmod>2022-08-31T14:59:09-07:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/tags/pattern/</loc>
+    <lastmod>2022-08-31T14:59:09-07:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/tags/pattern/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/tags/pattern/"
+                />
+  </url><url>
+    <loc>https://www.lei.chat/posts/</loc>
+    <lastmod>2022-08-31T14:59:09-07:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/posts/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/posts/"
+                />
+  </url><url>
+    <loc>https://www.lei.chat/series/</loc>
+    <lastmod>2022-08-31T14:59:09-07:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/series/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/series/"
+                />
+  </url><url>
+    <loc>https://www.lei.chat/tags/structure/</loc>
+    <lastmod>2022-08-31T14:59:09-07:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/tags/</loc>
+    <lastmod>2022-08-31T14:59:09-07:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/tags/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/tags/"
+                />
+  </url><url>
+    <loc>https://www.lei.chat/tags/tiling/</loc>
+    <lastmod>2022-08-31T14:59:09-07:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/tags/tiling/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/tags/tiling/"
+                />
+  </url><url>
+    <loc>https://www.lei.chat/tags/transformation/</loc>
+    <lastmod>2022-08-31T14:59:09-07:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/tags/transformation/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/tags/transformation/"
+                />
+  </url><url>
+    <loc>https://www.lei.chat/tags/vectorization/</loc>
+    <lastmod>2022-08-31T14:59:09-07:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/tags/vectorization/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/tags/vectorization/"
+                />
+  </url><url>
     <loc>https://www.lei.chat/tags/arith/</loc>
     <lastmod>2022-07-31T15:07:00-07:00</lastmod>
     <xhtml:link
@@ -15,38 +247,6 @@
                 href="https://www.lei.chat/tags/arith/"
                 />
   </url><url>
-    <loc>https://www.lei.chat/categories/</loc>
-    <lastmod>2022-07-31T15:07:00-07:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh"
-                href="https://www.lei.chat/zh/categories/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://www.lei.chat/categories/"
-                />
-  </url><url>
-    <loc>https://www.lei.chat/categories/compiler/</loc>
-    <lastmod>2022-07-31T15:07:00-07:00</lastmod>
-  </url><url>
-    <loc>https://www.lei.chat/series/compiler-development/</loc>
-    <lastmod>2022-07-31T15:07:00-07:00</lastmod>
-  </url><url>
-    <loc>https://www.lei.chat/tags/dialect/</loc>
-    <lastmod>2022-07-31T15:07:00-07:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh"
-                href="https://www.lei.chat/zh/tags/dialect/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://www.lei.chat/tags/dialect/"
-                />
-  </url><url>
     <loc>https://www.lei.chat/tags/hoisting/</loc>
     <lastmod>2022-07-31T15:07:00-07:00</lastmod>
     <xhtml:link
@@ -58,45 +258,6 @@
                 rel="alternate"
                 hreflang="en"
                 href="https://www.lei.chat/tags/hoisting/"
-                />
-  </url><url>
-    <loc>https://www.lei.chat/categories/ir/</loc>
-    <lastmod>2022-07-31T15:07:00-07:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh"
-                href="https://www.lei.chat/zh/categories/ir/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://www.lei.chat/categories/ir/"
-                />
-  </url><url>
-    <loc>https://www.lei.chat/</loc>
-    <lastmod>2022-07-31T15:07:00-07:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh"
-                href="https://www.lei.chat/zh/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://www.lei.chat/"
-                />
-  </url><url>
-    <loc>https://www.lei.chat/tags/linalg/</loc>
-    <lastmod>2022-07-31T15:07:00-07:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh"
-                href="https://www.lei.chat/zh/tags/linalg/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://www.lei.chat/tags/linalg/"
                 />
   </url><url>
     <loc>https://www.lei.chat/tags/lowering/</loc>
@@ -125,35 +286,6 @@
                 href="https://www.lei.chat/tags/math/"
                 />
   </url><url>
-    <loc>https://www.lei.chat/categories/ml-inference/</loc>
-    <lastmod>2022-07-31T15:07:00-07:00</lastmod>
-  </url><url>
-    <loc>https://www.lei.chat/tags/mlir/</loc>
-    <lastmod>2022-07-31T15:07:00-07:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh"
-                href="https://www.lei.chat/zh/tags/mlir/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://www.lei.chat/tags/mlir/"
-                />
-  </url><url>
-    <loc>https://www.lei.chat/categories/mlir/</loc>
-    <lastmod>2022-07-31T15:07:00-07:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh"
-                href="https://www.lei.chat/zh/categories/mlir/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://www.lei.chat/categories/mlir/"
-                />
-  </url><url>
     <loc>https://www.lei.chat/posts/mlir-vector-dialect-and-patterns/</loc>
     <lastmod>2022-07-31T15:07:00-07:00</lastmod>
     <xhtml:link
@@ -167,6 +299,9 @@
                 href="https://www.lei.chat/posts/mlir-vector-dialect-and-patterns/"
                 />
   </url><url>
+    <loc>https://www.lei.chat/zh/posts/mlir-vector-dialect-and-patterns/</loc>
+    <lastmod>2022-07-31T15:07:00-07:00</lastmod>
+  </url><url>
     <loc>https://www.lei.chat/tags/pass/</loc>
     <lastmod>2022-07-31T15:07:00-07:00</lastmod>
     <xhtml:link
@@ -178,71 +313,6 @@
                 rel="alternate"
                 hreflang="en"
                 href="https://www.lei.chat/tags/pass/"
-                />
-  </url><url>
-    <loc>https://www.lei.chat/tags/pattern/</loc>
-    <lastmod>2022-07-31T15:07:00-07:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh"
-                href="https://www.lei.chat/zh/tags/pattern/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://www.lei.chat/tags/pattern/"
-                />
-  </url><url>
-    <loc>https://www.lei.chat/posts/</loc>
-    <lastmod>2022-07-31T15:07:00-07:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh"
-                href="https://www.lei.chat/zh/posts/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://www.lei.chat/posts/"
-                />
-  </url><url>
-    <loc>https://www.lei.chat/series/</loc>
-    <lastmod>2022-07-31T15:07:00-07:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh"
-                href="https://www.lei.chat/zh/series/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://www.lei.chat/series/"
-                />
-  </url><url>
-    <loc>https://www.lei.chat/tags/</loc>
-    <lastmod>2022-07-31T15:07:00-07:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh"
-                href="https://www.lei.chat/zh/tags/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://www.lei.chat/tags/"
-                />
-  </url><url>
-    <loc>https://www.lei.chat/tags/transformation/</loc>
-    <lastmod>2022-07-31T15:07:00-07:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh"
-                href="https://www.lei.chat/zh/tags/transformation/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://www.lei.chat/tags/transformation/"
                 />
   </url><url>
     <loc>https://www.lei.chat/tags/unrolling/</loc>
@@ -271,17 +341,46 @@
                 href="https://www.lei.chat/tags/vector/"
                 />
   </url><url>
-    <loc>https://www.lei.chat/tags/vectorization/</loc>
+    <loc>https://www.lei.chat/zh/</loc>
+    <lastmod>2022-07-31T15:07:00-07:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%8E%A8%E7%90%86/</loc>
     <lastmod>2022-07-31T15:07:00-07:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh"
-                href="https://www.lei.chat/zh/tags/vectorization/"
+                href="https://www.lei.chat/zh/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%8E%A8%E7%90%86/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://www.lei.chat/tags/vectorization/"
+                href="https://www.lei.chat/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%8E%A8%E7%90%86/"
+                />
+  </url><url>
+    <loc>https://www.lei.chat/categories/%E7%BC%96%E8%AF%91%E5%99%A8/</loc>
+    <lastmod>2022-07-31T15:07:00-07:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/categories/%E7%BC%96%E8%AF%91%E5%99%A8/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/categories/%E7%BC%96%E8%AF%91%E5%99%A8/"
+                />
+  </url><url>
+    <loc>https://www.lei.chat/series/%E7%BC%96%E8%AF%91%E5%99%A8%E5%BC%80%E5%8F%91/</loc>
+    <lastmod>2022-07-31T15:07:00-07:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/series/%E7%BC%96%E8%AF%91%E5%99%A8%E5%BC%80%E5%8F%91/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/series/%E7%BC%96%E8%AF%91%E5%99%A8%E5%BC%80%E5%8F%91/"
                 />
   </url><url>
     <loc>https://www.lei.chat/tags/canonicalization/</loc>
@@ -312,35 +411,6 @@
   </url><url>
     <loc>https://www.lei.chat/tags/codegen/</loc>
     <lastmod>2022-02-20T15:21:03-05:00</lastmod>
-  </url><url>
-    <loc>https://www.lei.chat/tags/compiler/</loc>
-    <lastmod>2022-02-20T15:21:03-05:00</lastmod>
-  </url><url>
-    <loc>https://www.lei.chat/tags/distribution/</loc>
-    <lastmod>2022-02-20T15:21:03-05:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh"
-                href="https://www.lei.chat/zh/tags/distribution/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://www.lei.chat/tags/distribution/"
-                />
-  </url><url>
-    <loc>https://www.lei.chat/tags/fusion/</loc>
-    <lastmod>2022-02-20T15:21:03-05:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh"
-                href="https://www.lei.chat/zh/tags/fusion/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://www.lei.chat/tags/fusion/"
-                />
   </url><url>
     <loc>https://www.lei.chat/tags/hierarchy/</loc>
     <lastmod>2022-02-20T15:21:03-05:00</lastmod>
@@ -455,19 +525,6 @@
                 href="https://www.lei.chat/tags/tf/"
                 />
   </url><url>
-    <loc>https://www.lei.chat/tags/tiling/</loc>
-    <lastmod>2022-02-20T15:21:03-05:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh"
-                href="https://www.lei.chat/zh/tags/tiling/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://www.lei.chat/tags/tiling/"
-                />
-  </url><url>
     <loc>https://www.lei.chat/tags/torch/</loc>
     <lastmod>2022-02-20T15:21:03-05:00</lastmod>
     <xhtml:link
@@ -497,6 +554,87 @@
     <loc>https://www.lei.chat/tags/type/</loc>
     <lastmod>2022-02-20T15:21:03-05:00</lastmod>
   </url><url>
+    <loc>https://www.lei.chat/tags/%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90/</loc>
+    <lastmod>2022-02-20T15:21:03-05:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/tags/%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/tags/%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90/"
+                />
+  </url><url>
+    <loc>https://www.lei.chat/tags/%E4%BD%93%E7%B3%BB/</loc>
+    <lastmod>2022-02-20T15:21:03-05:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/tags/%E4%BD%93%E7%B3%BB/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/tags/%E4%BD%93%E7%B3%BB/"
+                />
+  </url><url>
+    <loc>https://www.lei.chat/tags/%E6%93%8D%E4%BD%9C/</loc>
+    <lastmod>2022-02-20T15:21:03-05:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/tags/%E6%93%8D%E4%BD%9C/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/tags/%E6%93%8D%E4%BD%9C/"
+                />
+  </url><url>
+    <loc>https://www.lei.chat/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</loc>
+    <lastmod>2022-02-20T15:21:03-05:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"
+                />
+  </url><url>
+    <loc>https://www.lei.chat/zh/posts/mlir-codegen-dialects-for-machine-learning-compilers/</loc>
+    <lastmod>2022-02-20T15:21:03-05:00</lastmod>
+  </url><url>
+    <loc>https://www.lei.chat/tags/%E7%B1%BB%E5%9E%8B/</loc>
+    <lastmod>2022-02-20T15:21:03-05:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/tags/%E7%B1%BB%E5%9E%8B/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/tags/%E7%B1%BB%E5%9E%8B/"
+                />
+  </url><url>
+    <loc>https://www.lei.chat/tags/%E7%BC%96%E8%AF%91%E5%99%A8/</loc>
+    <lastmod>2022-02-20T15:21:03-05:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="zh"
+                href="https://www.lei.chat/zh/tags/%E7%BC%96%E8%AF%91%E5%99%A8/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://www.lei.chat/tags/%E7%BC%96%E8%AF%91%E5%99%A8/"
+                />
+  </url><url>
     <loc>https://www.lei.chat/categories/llvm/</loc>
     <lastmod>2022-01-23T10:54:37-05:00</lastmod>
     <xhtml:link
@@ -522,9 +660,6 @@
                 hreflang="en"
                 href="https://www.lei.chat/categories/spirv/"
                 />
-  </url><url>
-    <loc>https://www.lei.chat/zh/</loc>
-    <lastmod>2022-01-23T10:54:37-05:00</lastmod>
   </url><url>
     <loc>https://www.lei.chat/tags/%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA/</loc>
     <lastmod>2022-01-23T10:54:37-05:00</lastmod>
@@ -669,47 +804,8 @@
                 href="https://www.lei.chat/tags/%E6%A8%A1%E5%9D%97%E5%8C%96/"
                 />
   </url><url>
-    <loc>https://www.lei.chat/tags/%E7%BC%96%E8%AF%91%E5%99%A8/</loc>
-    <lastmod>2022-01-23T10:54:37-05:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh"
-                href="https://www.lei.chat/zh/tags/%E7%BC%96%E8%AF%91%E5%99%A8/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://www.lei.chat/tags/%E7%BC%96%E8%AF%91%E5%99%A8/"
-                />
-  </url><url>
-    <loc>https://www.lei.chat/categories/%E7%BC%96%E8%AF%91%E5%99%A8/</loc>
-    <lastmod>2022-01-23T10:54:37-05:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh"
-                href="https://www.lei.chat/zh/categories/%E7%BC%96%E8%AF%91%E5%99%A8/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://www.lei.chat/categories/%E7%BC%96%E8%AF%91%E5%99%A8/"
-                />
-  </url><url>
     <loc>https://www.lei.chat/zh/posts/compilers-and-irs-llvm-ir-spirv-and-mlir/</loc>
     <lastmod>2022-01-23T10:54:37-05:00</lastmod>
-  </url><url>
-    <loc>https://www.lei.chat/series/%E7%BC%96%E8%AF%91%E5%99%A8%E5%BC%80%E5%8F%91/</loc>
-    <lastmod>2022-01-23T10:54:37-05:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="zh"
-                href="https://www.lei.chat/zh/series/%E7%BC%96%E8%AF%91%E5%99%A8%E5%BC%80%E5%8F%91/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://www.lei.chat/series/%E7%BC%96%E8%AF%91%E5%99%A8%E5%BC%80%E5%8F%91/"
-                />
   </url><url>
     <loc>https://www.lei.chat/tags/%E8%AE%BE%E8%AE%A1%E7%90%86%E5%BF%B5/</loc>
     <lastmod>2022-01-23T10:54:37-05:00</lastmod>
@@ -766,9 +862,6 @@
     <lastmod>2022-01-23T10:54:37-05:00</lastmod>
   </url><url>
     <loc>https://www.lei.chat/tags/infrastructure/</loc>
-    <lastmod>2022-01-23T10:54:37-05:00</lastmod>
-  </url><url>
-    <loc>https://www.lei.chat/tags/ir/</loc>
     <lastmod>2022-01-23T10:54:37-05:00</lastmod>
   </url><url>
     <loc>https://www.lei.chat/tags/modularization/</loc>
@@ -961,9 +1054,6 @@
     <lastmod>2021-07-07T15:53:29-04:00</lastmod>
   </url><url>
     <loc>https://www.lei.chat/tags/api/</loc>
-    <lastmod>2021-07-12T18:04:28-04:00</lastmod>
-  </url><url>
-    <loc>https://www.lei.chat/tags/structure/</loc>
     <lastmod>2021-07-12T18:04:28-04:00</lastmod>
   </url><url>
     <loc>https://www.lei.chat/tags/synchronization/</loc>
