@@ -8,7 +8,17 @@
     <language>zh</language>
     <copyright>&amp;copy; 2018 - 2022 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Sun, 31 Jul 2022 15:07:00 -0700</lastBuildDate><atom:link href="https://www.lei.chat/zh/tags/dialect/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 01 Sep 2022 14:59:09 -0700</lastBuildDate><atom:link href="https://www.lei.chat/zh/tags/dialect/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MLIR Linalg Dialect 以及 Patterns</title>
+      <link>https://www.lei.chat/zh/posts/mlir-linalg-dialect-and-patterns/</link>
+      <pubDate>Thu, 01 Sep 2022 14:59:09 -0700</pubDate>
+      
+      <guid>https://www.lei.chat/zh/posts/mlir-linalg-dialect-and-patterns/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;../mlir-vector-dialect-and-patterns/&#34;&gt;之前的文章&lt;/a&gt;介绍了 Vector dialect 及其相关 pattern。
+今天我们来看一下上层的 Linalg dialect 以及相关的变换。&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>MLIR Vector Dialect 以及 Patterns</title>
       <link>https://www.lei.chat/zh/posts/mlir-vector-dialect-and-patterns/</link>

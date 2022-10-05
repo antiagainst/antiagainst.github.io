@@ -8,7 +8,43 @@
     <language>en</language>
     <copyright>&amp;copy; 2018 - 2022 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Wed, 31 Aug 2022 14:59:09 -0700</lastBuildDate><atom:link href="https://www.lei.chat/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 01 Sep 2022 14:59:09 -0700</lastBuildDate><atom:link href="https://www.lei.chat/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ir</title>
+      <link>https://www.lei.chat/categories/ir/</link>
+      <pubDate>Thu, 01 Sep 2022 14:59:09 -0700</pubDate>
+      
+      <guid>https://www.lei.chat/categories/ir/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>mlir</title>
+      <link>https://www.lei.chat/categories/mlir/</link>
+      <pubDate>Thu, 01 Sep 2022 14:59:09 -0700</pubDate>
+      
+      <guid>https://www.lei.chat/categories/mlir/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>机器学习推理</title>
+      <link>https://www.lei.chat/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%8E%A8%E7%90%86/</link>
+      <pubDate>Thu, 01 Sep 2022 14:59:09 -0700</pubDate>
+      
+      <guid>https://www.lei.chat/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%8E%A8%E7%90%86/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>编译器</title>
+      <link>https://www.lei.chat/categories/%E7%BC%96%E8%AF%91%E5%99%A8/</link>
+      <pubDate>Thu, 01 Sep 2022 14:59:09 -0700</pubDate>
+      
+      <guid>https://www.lei.chat/categories/%E7%BC%96%E8%AF%91%E5%99%A8/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>compiler</title>
       <link>https://www.lei.chat/categories/compiler/</link>
@@ -19,47 +55,11 @@
     </item>
     
     <item>
-      <title>ir</title>
-      <link>https://www.lei.chat/categories/ir/</link>
-      <pubDate>Wed, 31 Aug 2022 14:59:09 -0700</pubDate>
-      
-      <guid>https://www.lei.chat/categories/ir/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>ml-inference</title>
       <link>https://www.lei.chat/categories/ml-inference/</link>
       <pubDate>Wed, 31 Aug 2022 14:59:09 -0700</pubDate>
       
       <guid>https://www.lei.chat/categories/ml-inference/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>mlir</title>
-      <link>https://www.lei.chat/categories/mlir/</link>
-      <pubDate>Wed, 31 Aug 2022 14:59:09 -0700</pubDate>
-      
-      <guid>https://www.lei.chat/categories/mlir/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>机器学习推理</title>
-      <link>https://www.lei.chat/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%8E%A8%E7%90%86/</link>
-      <pubDate>Sun, 31 Jul 2022 15:07:00 -0700</pubDate>
-      
-      <guid>https://www.lei.chat/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%8E%A8%E7%90%86/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>编译器</title>
-      <link>https://www.lei.chat/categories/%E7%BC%96%E8%AF%91%E5%99%A8/</link>
-      <pubDate>Sun, 31 Jul 2022 15:07:00 -0700</pubDate>
-      
-      <guid>https://www.lei.chat/categories/%E7%BC%96%E8%AF%91%E5%99%A8/</guid>
       <description></description>
     </item>
     
