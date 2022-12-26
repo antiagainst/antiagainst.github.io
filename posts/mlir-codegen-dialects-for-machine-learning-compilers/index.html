@@ -514,7 +514,7 @@ The source model is typically immediately imported into MLIR system with a
 framework-specific dialect, e.g., <a href="https://github.com/tensorflow/tensorflow/tree/1cffc0a1946413f8d0237e67d29891649f789c87/tensorflow/compiler/mlir/tensorflow/ir">the <code>tf</code> dialect</a> for TensorFlow,
 <a href="https://github.com/tensorflow/tensorflow/tree/1cffc0a1946413f8d0237e67d29891649f789c87/tensorflow/compiler/mlir/lite/ir">the <code>tfl</code> dialect</a> for TFLite, and <a href="https://github.com/llvm/torch-mlir/tree/abbde7d439836ab359f64f84ba1f1740f06c765b/include/torch-mlir/Dialect/Torch/IR">the <code>torch</code>
 dialect</a> for PyTorch).
-The purpose of these dialects to to faithfully represent the source model for
+The purpose of these dialects is to faithfully represent the source model for
 the specific framework.
 So they typically directly reside in the framework repo given the tight
 relationship.</p>
@@ -575,7 +575,7 @@ easily.
 Having a consistent structure among various <code>linalg</code> ops simplifies
 transformations because transformations can just be written against indexing
 maps and regions regardless of the specific op.</p>
-<p>The <code>linalg</code> dialect can operate on both tenors and buffers.
+<p>The <code>linalg</code> dialect can operate on both tensors and buffers.
 In MLIR, they are represented by the <code>tensor</code> type and <code>memref</code> type,
 respectively.
 Both are high-level N-D abstractions and can be of dynamic shapes.</p>
@@ -979,6 +979,9 @@ Stay tuned!</p>
         <h2 class="text-lg font-semibold mb-4">See Also</h2>
         <div class="content">
             
+            <a href="https://www.lei.chat/zh/posts/mlir-codegen-dialects-for-machine-learning-compilers/">机器学习编译器代码生成相关 MLIR Dialect</a>
+            <br />
+            
             <a href="https://www.lei.chat/posts/codegen-performant-convolution-kernels-for-mobile-gpus/">CodeGen Performant Convolution Kernels for Mobile GPUs</a>
             <br />
             
@@ -992,9 +995,6 @@ Stay tuned!</p>
             <br />
             
             <a href="https://www.lei.chat/posts/shader-toolchain-hlsl-in-vulkan/">Shader Toolchain: HLSL in Vulkan</a>
-            <br />
-            
-            <a href="https://www.lei.chat/posts/hlsl-for-vulkan-semantic-strings-and-location-numbers/">HLSL for Vulkan: Semantic Strings and Location Numbers</a>
             <br />
             
         </div>
