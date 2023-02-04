@@ -121,7 +121,7 @@
     },
     "headline": "MLIR Linalg Dialect 以及 Patterns | Lei.Chat()","datePublished": "2022-09-01T14:59:09-07:00",
     "dateModified": "2022-09-01T14:59:09-07:00",
-    "wordCount":  5331 ,
+    "wordCount":  5327 ,
     "publisher": {
         "@type": "Person",
         "name": "Lei Zhang",
@@ -462,33 +462,34 @@ MHLO 和 TOSA dialect 则将来自各种框架的五花八门的算子集 (op se
   return %0 : tensor&lt;?x?xf32&gt;
 }
 </code></pre>
-<p>用 (<code>M</code>, <code>N</code>) = (10, 20) 的大小进行分块：</p>
+<p>用 (<code>M</code>, <code>N</code>) = (16, 32) 的大小进行分块：</p>
 <pre><code>func.func @matmul(%lhs: tensor&lt;?x?xf32&gt;, %rhs: tensor&lt;?x?xf32&gt;,
                   %init: tensor&lt;?x?xf32&gt;) -&gt; tensor&lt;?x?xf32&gt; {
   %c0 = arith.constant 0 : index
   %c1 = arith.constant 1 : index
-  %c10 = arith.constant 10 : index
-  %c20 = arith.constant 20 : index
-  %0 = tensor.dim %lhs, %c0 : tensor&lt;?x?xf32&gt;
-  %1 = tensor.dim %lhs, %c1 : tensor&lt;?x?xf32&gt;
-  %2 = tensor.dim %rhs, %c1 : tensor&lt;?x?xf32&gt;
-  %3 = scf.for %arg3 = %c0 to %0 step %c10 iter_args(%arg4 = %init) -&gt; (tensor&lt;?x?xf32&gt;) {
-    %4 = affine.min affine_map&lt;(d0)[s0, s1] -&gt; (20, -d0 + s1)&gt;(%arg3)[%c10, %0]
-    %5 = scf.for %arg5 = %c0 to %2 step %c20 iter_args(%arg6 = %arg4) -&gt; (tensor&lt;?x?xf32&gt;) {
-      %6 = affine.min affine_map&lt;(d0)[s0, s1] -&gt; (30, -d0 + s1)&gt;(%arg5)[%c20, %2]
-      %7 = tensor.extract_slice %lhs[%arg3, 0] [%4, %1] [1, 1]...
-      %8 = tensor.extract_slice %rhs[0, %arg5] [%1, %6] [1, 1]...
-      %9 = tensor.extract_slice %arg6[%arg3, %arg5] [%4, %6] [1, 1]...
-      %10 = linalg.matmul
-              ins(%7, %8 : tensor&lt;?x?xf32&gt;, tensor&lt;?x?xf32&gt;)
-              outs(%9 : tensor&lt;?x?xf32&gt;) -&gt; tensor&lt;?x?xf32&gt;
-      %11 = tensor.insert_slice %10 into %arg6[%arg3, %arg5] [%4, %6] [1, 1]...
-      scf.yield %11 : tensor&lt;?x?xf32&gt;
+  %c16 = arith.constant 16 : index
+  %c32 = arith.constant 32 : index
+  %dimM = tensor.dim %arg0, %c0 : tensor&lt;?x?xf32&gt;
+  %dimK = tensor.dim %arg0, %c1 : tensor&lt;?x?xf32&gt;
+  %dimN = tensor.dim %arg1, %c1 : tensor&lt;?x?xf32&gt;
+  %0 = scf.for %arg3 = %c0 to %dimM step %c16 iter_args(%arg4 = %arg2) -&gt; (tensor&lt;?x?xf32&gt;) {
+    %1 = affine.min affine_map&lt;(d0)[s0] -&gt; (-d0 + s0, 16)&gt;(%arg3)[%dimM]
+    %2 = scf.for %arg5 = %c0 to %dimN step %c32 iter_args(%arg6 = %arg4) -&gt; (tensor&lt;?x?xf32&gt;) {
+      %3 = affine.min affine_map&lt;(d0)[s0] -&gt; (-d0 + s0, 32)&gt;(%arg5)[%dimN]
+      %sliceA = tensor.extract_slice %arg0[%arg3, 0] [%1, %dimK] [1, 1]...
+      %sliceB = tensor.extract_slice %arg1[0, %arg5] [%dimK, %3] [1, 1]...
+      %sliceC = tensor.extract_slice %arg6[%arg3, %arg5] [%1, %3] [1, 1]...
+      %4 = linalg.matmul
+             ins(%sliceA, %sliceB : tensor&lt;?x?xf32&gt;, tensor&lt;?x?xf32&gt;)
+             outs(%sliceC : tensor&lt;?x?xf32&gt;) -&gt; tensor&lt;?x?xf32&gt;
+      %insert = tensor.insert_slice %4 into %arg6[%arg3, %arg5] [%1, %3] [1, 1]...
+      scf.yield %insert : tensor&lt;?x?xf32&gt;
     }
-    scf.yield %5 : tensor&lt;?x?xf32&gt;
+    scf.yield %2 : tensor&lt;?x?xf32&gt;
   }
-  return %3 : tensor&lt;?x?xf32&gt;
+  return %0 : tensor&lt;?x?xf32&gt;
 }
+
 </code></pre>
 <p>上面有显式的 <code>scf.for</code> 嵌套循环产生，循环的步长 (step) 与我们指定的 <code>M</code> 和 <code>N</code> 的分块大小一致。
 在嵌套层循环之内就是一个小分块。

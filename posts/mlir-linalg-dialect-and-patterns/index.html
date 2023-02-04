@@ -122,7 +122,7 @@ talk about the Linalg dialect and transformations around it.">
     },
     "headline": "MLIR Linalg Dialect and Patterns | Lei.Chat()","datePublished": "2022-08-31T14:59:09-07:00",
     "dateModified": "2022-08-31T14:59:09-07:00",
-    "wordCount":  2730 ,
+    "wordCount":  2726 ,
     "publisher": {
         "@type": "Person",
         "name": "Lei Zhang",
@@ -540,32 +540,32 @@ For the following <code>linalg.matmul</code>:</p>
   return %0 : tensor&lt;?x?xf32&gt;
 }
 </code></pre>
-<p>Tiling with tile sizes (<code>M</code>, <code>N</code>) = (10, 20):</p>
+<p>Tiling with tile sizes (<code>M</code>, <code>N</code>) = (16, 32):</p>
 <pre><code>func.func @matmul(%lhs: tensor&lt;?x?xf32&gt;, %rhs: tensor&lt;?x?xf32&gt;,
                   %init: tensor&lt;?x?xf32&gt;) -&gt; tensor&lt;?x?xf32&gt; {
   %c0 = arith.constant 0 : index
   %c1 = arith.constant 1 : index
-  %c10 = arith.constant 10 : index
-  %c20 = arith.constant 20 : index
-  %0 = tensor.dim %lhs, %c0 : tensor&lt;?x?xf32&gt;
-  %1 = tensor.dim %lhs, %c1 : tensor&lt;?x?xf32&gt;
-  %2 = tensor.dim %rhs, %c1 : tensor&lt;?x?xf32&gt;
-  %3 = scf.for %arg3 = %c0 to %0 step %c10 iter_args(%arg4 = %init) -&gt; (tensor&lt;?x?xf32&gt;) {
-    %4 = affine.min affine_map&lt;(d0)[s0, s1] -&gt; (20, -d0 + s1)&gt;(%arg3)[%c10, %0]
-    %5 = scf.for %arg5 = %c0 to %2 step %c20 iter_args(%arg6 = %arg4) -&gt; (tensor&lt;?x?xf32&gt;) {
-      %6 = affine.min affine_map&lt;(d0)[s0, s1] -&gt; (30, -d0 + s1)&gt;(%arg5)[%c20, %2]
-      %7 = tensor.extract_slice %lhs[%arg3, 0] [%4, %1] [1, 1]...
-      %8 = tensor.extract_slice %rhs[0, %arg5] [%1, %6] [1, 1]...
-      %9 = tensor.extract_slice %arg6[%arg3, %arg5] [%4, %6] [1, 1]...
-      %10 = linalg.matmul
-              ins(%7, %8 : tensor&lt;?x?xf32&gt;, tensor&lt;?x?xf32&gt;)
-              outs(%9 : tensor&lt;?x?xf32&gt;) -&gt; tensor&lt;?x?xf32&gt;
-      %11 = tensor.insert_slice %10 into %arg6[%arg3, %arg5] [%4, %6] [1, 1]...
-      scf.yield %11 : tensor&lt;?x?xf32&gt;
+  %c16 = arith.constant 16 : index
+  %c32 = arith.constant 32 : index
+  %dimM = tensor.dim %arg0, %c0 : tensor&lt;?x?xf32&gt;
+  %dimK = tensor.dim %arg0, %c1 : tensor&lt;?x?xf32&gt;
+  %dimN = tensor.dim %arg1, %c1 : tensor&lt;?x?xf32&gt;
+  %0 = scf.for %arg3 = %c0 to %dimM step %c16 iter_args(%arg4 = %arg2) -&gt; (tensor&lt;?x?xf32&gt;) {
+    %1 = affine.min affine_map&lt;(d0)[s0] -&gt; (-d0 + s0, 16)&gt;(%arg3)[%dimM]
+    %2 = scf.for %arg5 = %c0 to %dimN step %c32 iter_args(%arg6 = %arg4) -&gt; (tensor&lt;?x?xf32&gt;) {
+      %3 = affine.min affine_map&lt;(d0)[s0] -&gt; (-d0 + s0, 32)&gt;(%arg5)[%dimN]
+      %sliceA = tensor.extract_slice %arg0[%arg3, 0] [%1, %dimK] [1, 1]...
+      %sliceB = tensor.extract_slice %arg1[0, %arg5] [%dimK, %3] [1, 1]...
+      %sliceC = tensor.extract_slice %arg6[%arg3, %arg5] [%1, %3] [1, 1]...
+      %4 = linalg.matmul
+             ins(%sliceA, %sliceB : tensor&lt;?x?xf32&gt;, tensor&lt;?x?xf32&gt;)
+             outs(%sliceC : tensor&lt;?x?xf32&gt;) -&gt; tensor&lt;?x?xf32&gt;
+      %insert = tensor.insert_slice %4 into %arg6[%arg3, %arg5] [%1, %3] [1, 1]...
+      scf.yield %insert : tensor&lt;?x?xf32&gt;
     }
-    scf.yield %5 : tensor&lt;?x?xf32&gt;
+    scf.yield %2 : tensor&lt;?x?xf32&gt;
   }
-  return %3 : tensor&lt;?x?xf32&gt;
+  return %0 : tensor&lt;?x?xf32&gt;
 }
 </code></pre>
 <p>We have a materialized <code>scf.for</code> loop nest, with steps equal to the tile sizes
@@ -844,9 +844,6 @@ which avoids excessive copies.&#160;<a href="#fnref:1" class="footnote-backref" 
             <a href="https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/">MLIR CodeGen Dialects for Machine Learning Compilers</a>
             <br />
             
-            <a href="https://www.lei.chat/zh/posts/mlir-codegen-dialects-for-machine-learning-compilers/">机器学习编译器代码生成相关 MLIR Dialect</a>
-            <br />
-            
             <a href="https://www.lei.chat/posts/mlir-vector-dialect-and-patterns/">MLIR Vector Dialect and Patterns</a>
             <br />
             
@@ -857,6 +854,9 @@ which avoids excessive copies.&#160;<a href="#fnref:1" class="footnote-backref" 
             <br />
             
             <a href="https://www.lei.chat/zh/posts/compilers-and-irs-llvm-ir-spirv-and-mlir/">编译器与中间表示: LLVM IR, SPIR-V, 以及 MLIR</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/gpgpu-ml-inference-and-vulkan-compute/">GPGPU, ML Inference, and Vulkan Compute</a>
             <br />
             
         </div>
