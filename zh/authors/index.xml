@@ -15,8 +15,8 @@
       
       <guid>https://www.lei.chat/zh/authors/me/</guid>
       <description>About This Website Hello, thanks for your interest in my website. 😊 I try to log down my learnings and thoughts about compilers (SPIR-V, MLIR, etc.), GPU (Vulkan, Metal, etc.), toolchain (ML frameworks, productivity tools, etc.), and others sporadically.
-About Me I&amp;rsquo;m Lei Zhang. I work on machine learning frameworks and compilers within Google.
-Currently my main focus is pushing forward leveraging a compilation-based approach and Vulkan compute for ML inference on GPUs, together with many Google colleagues and open source contributors.</description>
+About Me I&amp;rsquo;m Lei Zhang. I work on machine learning compilers and runtime within Google.
+Currently my main focus is exploring a standards- and compilation-based approach towards ML inference on various GPUs, leveraging GPU APIs like Vulkan and IRs like SPIR-V and the MLIR infrastructure.</description>
     </item>
     
   </channel>

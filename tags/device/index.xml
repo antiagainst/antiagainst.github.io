@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>device on Lei.Chat()</title>
+    <link>https://www.lei.chat/tags/device/</link>
+    <description>Recent content in device on Lei.Chat()</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>&amp;copy; 2018 - 2022 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
+</copyright>
+    <lastBuildDate>Sat, 01 Apr 2023 14:02:36 -0700</lastBuildDate><atom:link href="https://www.lei.chat/tags/device/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Single-node ML Runtime Foundation</title>
+      <link>https://www.lei.chat/posts/single-node-ml-runtime-foundation/</link>
+      <pubDate>Sat, 01 Apr 2023 14:02:36 -0700</pubDate>
+      
+      <guid>https://www.lei.chat/posts/single-node-ml-runtime-foundation/</guid>
+      <description>&lt;p&gt;Previous blog posts overviewed the MLIR dialect hierarchy for &lt;a href=&#34;../mlir-codegen-dialects-for-machine-learning-compilers/&#34;&gt;kernel code
+generation&lt;/a&gt; (CodeGen) and zoomed in on the
+&lt;a href=&#34;../mlir-linalg-dialect-and-patterns/&#34;&gt;Linalg&lt;/a&gt; and &lt;a href=&#34;../mlir-vector-dialect-and-patterns/&#34;&gt;Vector&lt;/a&gt; dialects among them.
+Now I will switch to discuss the runtime side a bit, in order to provide
+a holistic view of MLIR-based machine learning (ML) compilers.
+This one touches the foundation and basics, including the target landscape,
+runtime requirements and designs to meet thereof.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

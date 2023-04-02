@@ -8,22 +8,40 @@
     <language>en</language>
     <copyright>&amp;copy; 2018 - 2022 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Thu, 01 Sep 2022 14:59:09 -0700</lastBuildDate><atom:link href="https://www.lei.chat/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 01 Apr 2023 14:02:36 -0700</lastBuildDate><atom:link href="https://www.lei.chat/categories/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>ir</title>
-      <link>https://www.lei.chat/categories/ir/</link>
-      <pubDate>Thu, 01 Sep 2022 14:59:09 -0700</pubDate>
+      <title>ml-inference</title>
+      <link>https://www.lei.chat/categories/ml-inference/</link>
+      <pubDate>Sat, 01 Apr 2023 14:02:36 -0700</pubDate>
       
-      <guid>https://www.lei.chat/categories/ir/</guid>
+      <guid>https://www.lei.chat/categories/ml-inference/</guid>
       <description></description>
     </item>
     
     <item>
       <title>mlir</title>
       <link>https://www.lei.chat/categories/mlir/</link>
-      <pubDate>Thu, 01 Sep 2022 14:59:09 -0700</pubDate>
+      <pubDate>Sat, 01 Apr 2023 14:02:36 -0700</pubDate>
       
       <guid>https://www.lei.chat/categories/mlir/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>runtime</title>
+      <link>https://www.lei.chat/categories/runtime/</link>
+      <pubDate>Sat, 01 Apr 2023 14:02:36 -0700</pubDate>
+      
+      <guid>https://www.lei.chat/categories/runtime/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ir</title>
+      <link>https://www.lei.chat/categories/ir/</link>
+      <pubDate>Thu, 01 Sep 2022 14:59:09 -0700</pubDate>
+      
+      <guid>https://www.lei.chat/categories/ir/</guid>
       <description></description>
     </item>
     
@@ -51,15 +69,6 @@
       <pubDate>Wed, 31 Aug 2022 14:59:09 -0700</pubDate>
       
       <guid>https://www.lei.chat/categories/compiler/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>ml-inference</title>
-      <link>https://www.lei.chat/categories/ml-inference/</link>
-      <pubDate>Wed, 31 Aug 2022 14:59:09 -0700</pubDate>
-      
-      <guid>https://www.lei.chat/categories/ml-inference/</guid>
       <description></description>
     </item>
     

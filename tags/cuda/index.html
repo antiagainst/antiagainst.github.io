@@ -118,6 +118,12 @@
     "itemListElement":[{
             "@type":"ListItem",
             "position":  1 ,
+            "name": "Single-node ML Runtime Foundation",
+            "description": "\u003cp\u003ePrevious blog posts overviewed the MLIR dialect hierarchy for \u003ca href=\"../mlir-codegen-dialects-for-machine-learning-compilers/\"\u003ekernel code\ngeneration\u003c/a\u003e (CodeGen) and zoomed in on the\n\u003ca href=\"../mlir-linalg-dialect-and-patterns/\"\u003eLinalg\u003c/a\u003e and \u003ca href=\"../mlir-vector-dialect-and-patterns/\"\u003eVector\u003c/a\u003e dialects among them.\nNow I will switch to discuss the runtime side a bit, in order to provide\na holistic view of MLIR-based machine learning (ML) compilers.\nThis one touches the foundation and basics, including the target landscape,\nruntime requirements and designs to meet thereof.\u003c/p\u003e",
+            "url": "https://www.lei.chat/posts/single-node-ml-runtime-foundation/"
+        },{
+            "@type":"ListItem",
+            "position":  2 ,
             "name": "GPGPU, ML Inference, and Vulkan Compute",
             "description": "Vulkan (compute) has the potential to be the next-generation GPGPU standard for various GPUs to support various domains; one immediate compelling application, is machine learning inference for resource-constrained scenarios like in mobile/edge devices and for gaming. This blog post explains the technical and business aspects behind and discusses the challenges and status.",
             "url": "https://www.lei.chat/posts/gpgpu-ml-inference-and-vulkan-compute/"
@@ -155,7 +161,7 @@
 
 
 
-<meta property="og:updated_time" content="2021-07-25T11:25:26-04:00" />
+<meta property="og:updated_time" content="2023-04-01T14:02:36-07:00" />
 
 
 
@@ -252,7 +258,73 @@
         
       
     
+      
+        
+        
+          
+        
+      
+    
     <div class="overflow-hidden divide-y">
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="https://www.lei.chat/posts/single-node-ml-runtime-foundation/" class="font-bold text-xl hover:text-eureka">Single-node ML Runtime Foundation</a>
+</div>
+<div class="content">
+  Previous blog posts overviewed the MLIR dialect hierarchy for kernel code generation (CodeGen) and zoomed in on the Linalg and Vector dialects among them. Now I will switch to discuss the runtime side a bit, in order to provide a holistic view of MLIR-based machine learning (ML) compilers. This one touches the foundation and basics, including the target landscape, runtime requirements and designs to meet thereof.
+
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2023-04-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>18 min read</span>
+    </div>
+    
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="https://www.lei.chat/categories/runtime/" class="hover:text-eureka">runtime</a><span>, </span>
+        
+        
+        <a href="https://www.lei.chat/categories/mlir/" class="hover:text-eureka">mlir</a><span>, </span>
+        
+        
+        <a href="https://www.lei.chat/categories/ml-inference/" class="hover:text-eureka">ml-inference</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="https://www.lei.chat/series/ml-inference/" class="hover:text-eureka">ml-inference</a>
+        
+        
+        <span>, </span>
+        <a href="https://www.lei.chat/series/compiler-development/" class="hover:text-eureka">compiler-development</a>
+        
+    </div>
+    
+</div>
+
+
+  </div>
+
+  
+</div>
+  </div>
   
   <div class="py-6">
     <div class="flex flex-col-reverse lg:flex-row justify-between">

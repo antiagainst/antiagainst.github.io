@@ -118,49 +118,62 @@
     "itemListElement":[{
             "@type":"ListItem",
             "position":  1 ,
+            "name": "Single-node ML Runtime Foundation",
+            "description": "\u003cp\u003ePrevious blog posts overviewed the MLIR dialect hierarchy for \u003ca href=\"../mlir-codegen-dialects-for-machine-learning-compilers/\"\u003ekernel code\ngeneration\u003c/a\u003e (CodeGen) and zoomed in on the\n\u003ca href=\"../mlir-linalg-dialect-and-patterns/\"\u003eLinalg\u003c/a\u003e and \u003ca href=\"../mlir-vector-dialect-and-patterns/\"\u003eVector\u003c/a\u003e dialects among them.\nNow I will switch to discuss the runtime side a bit, in order to provide\na holistic view of MLIR-based machine learning (ML) compilers.\nThis one touches the foundation and basics, including the target landscape,\nruntime requirements and designs to meet thereof.\u003c/p\u003e",
+            "url": "https://www.lei.chat/posts/single-node-ml-runtime-foundation/"
+        },{
+            "@type":"ListItem",
+            "position":  2 ,
             "name": "MLIR CodeGen Dialects for Machine Learning Compilers",
             "description": "\u003cp\u003eThe \u003ca href=\"../compilers-and-irs-llvm-ir-spirv-and-mlir/\"\u003einitial blog post\u003c/a\u003e in this series captured my overall take\non the evolution trends of compilers and IRs.\nIt also touched on \u003ca href=\"../compilers-and-irs-llvm-ir-spirv-and-mlir/#llvm-ir\"\u003eLLVM IR\u003c/a\u003e, \u003ca href=\"../compilers-and-irs-llvm-ir-spirv-and-mlir/#spir-v\"\u003eSPIR-V\u003c/a\u003e, and\n\u003ca href=\"../compilers-and-irs-llvm-ir-spirv-and-mlir/#mlir\"\u003eMLIR\u003c/a\u003e, explaining the problems they are addressing and design\nfocuses thereof.\nToday I will expand on MLIR and talk about its dialect hierarchy for machine\nlearning (ML) compilers systematically.\u003c/p\u003e",
             "image": "https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/codegen-dialect-hierarchy.svg",
             "url": "https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/"
         },{
             "@type":"ListItem",
-            "position":  2 ,
+            "position":  3 ,
+            "name": "机器学习编译器代码生成相关 MLIR Dialect",
+            "description": "\u003cp\u003e在\u003ca href=\"../compilers-and-irs-llvm-ir-spirv-and-mlir/\"\u003e这个系列的首篇文章\u003c/a\u003e中我分享了对编译器和中间表示 (IR) 演进趋势的整体理解，\n也讨论了 \u003ca href=\"../compilers-and-irs-llvm-ir-spirv-and-mlir/#llvm-ir\"\u003eLLVM IR\u003c/a\u003e, \u003ca href=\"../compilers-and-irs-llvm-ir-spirv-and-mlir/#spir-v\"\u003eSPIR-V\u003c/a\u003e, 和 \u003ca href=\"../compilers-and-irs-llvm-ir-spirv-and-mlir/#mlir\"\u003eMLIR\u003c/a\u003e 所要解决的问题以及相应的设计着眼点。\n今天对 MLIR 做进一步展开，分析一下机器学习相关的 dialect 体系。\u003c/p\u003e",
+            "image": "https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/codegen-dialect-hierarchy.svg",
+            "url": "https://www.lei.chat/zh/posts/mlir-codegen-dialects-for-machine-learning-compilers/"
+        },{
+            "@type":"ListItem",
+            "position":  4 ,
             "name": "编译器与中间表示: LLVM IR, SPIR-V, 以及 MLIR",
             "description": "总体介绍编译器和中间表示 (LLVM IR, SPIR-V, and MLIR) 的发展历史和演进趋势",
             "url": "https://www.lei.chat/zh/posts/compilers-and-irs-llvm-ir-spirv-and-mlir/"
         },{
             "@type":"ListItem",
-            "position":  3 ,
+            "position":  5 ,
             "name": "Compilers and IRs: LLVM IR, SPIR-V, and MLIR",
             "description": "Overall discussion on compilers and IRs (LLVM IR, SPIR-V, and MLIR): why they are in their current manner and how they would evolve",
             "url": "https://www.lei.chat/posts/compilers-and-irs-llvm-ir-spirv-and-mlir/"
         },{
             "@type":"ListItem",
-            "position":  4 ,
+            "position":  6 ,
             "name": "CodeGen Performant Convolution Kernels for Mobile GPUs",
             "description": "\u003cp\u003eThis blog post talks about how to generate performant code for convolution ops\nusing MLIR’s multiple levels of abstractions and transformations.\nI initially created it for targeting ARM Mali GPUs in IREE. But given it is\njust direct tiling and vectorization, it should be widely applicable.\u003c/p\u003e\n\u003cp\u003eI will walk through the lowering steps, so if you are interested to know how to\norganize MLIR’s various dialects/patterns together to achieve similar tasks,\nthis blog post might also be useful.\u003c/p\u003e",
             "url": "https://www.lei.chat/posts/codegen-performant-convolution-kernels-for-mobile-gpus/"
         },{
             "@type":"ListItem",
-            "position":  5 ,
+            "position":  7 ,
             "name": "Shader Toolchain: HLSL in Vulkan",
             "description": "Shader Toolchain (HLSL in Vulkan): talk, slides, downloads, and documentation",
             "url": "https://www.lei.chat/posts/shader-toolchain-hlsl-in-vulkan/"
         },{
             "@type":"ListItem",
-            "position":  6 ,
+            "position":  8 ,
             "name": "HLSL for Vulkan: Semantic Strings and Location Numbers",
             "description": "HLSL for Vulkan: translating HLSL semantic strings into SPIR-V location numbers",
             "url": "https://www.lei.chat/posts/hlsl-for-vulkan-semantic-strings-and-location-numbers/"
         },{
             "@type":"ListItem",
-            "position":  7 ,
+            "position":  9 ,
             "name": "HLSL for Vulkan: Resources",
             "description": "HLSL for Vulkan: translating HLSL resources into SPIR-V",
             "url": "https://www.lei.chat/posts/hlsl-for-vulkan-resources/"
         },{
             "@type":"ListItem",
-            "position":  8 ,
+            "position":  10 ,
             "name": "HLSL for Vulkan: Matrices",
             "description": "HLSL for Vulkan: translating HLSL matrices into SPIR-V",
             "url": "https://www.lei.chat/posts/hlsl-for-vulkan-matrices/"
@@ -202,7 +215,7 @@
 
 
 
-<meta property="og:updated_time" content="2022-02-20T15:21:03-05:00" />
+<meta property="og:updated_time" content="2023-04-01T14:02:36-07:00" />
 
 
 
@@ -316,6 +329,18 @@
       
         
         
+          
+        
+      
+    
+      
+        
+        
+      
+    
+      
+        
+        
       
     
       
@@ -361,6 +386,65 @@
       
     
     <div class="overflow-hidden divide-y">
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="https://www.lei.chat/posts/single-node-ml-runtime-foundation/" class="font-bold text-xl hover:text-eureka">Single-node ML Runtime Foundation</a>
+</div>
+<div class="content">
+  Previous blog posts overviewed the MLIR dialect hierarchy for kernel code generation (CodeGen) and zoomed in on the Linalg and Vector dialects among them. Now I will switch to discuss the runtime side a bit, in order to provide a holistic view of MLIR-based machine learning (ML) compilers. This one touches the foundation and basics, including the target landscape, runtime requirements and designs to meet thereof.
+
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2023-04-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>18 min read</span>
+    </div>
+    
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="https://www.lei.chat/categories/runtime/" class="hover:text-eureka">runtime</a><span>, </span>
+        
+        
+        <a href="https://www.lei.chat/categories/mlir/" class="hover:text-eureka">mlir</a><span>, </span>
+        
+        
+        <a href="https://www.lei.chat/categories/ml-inference/" class="hover:text-eureka">ml-inference</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="https://www.lei.chat/series/ml-inference/" class="hover:text-eureka">ml-inference</a>
+        
+        
+        <span>, </span>
+        <a href="https://www.lei.chat/series/compiler-development/" class="hover:text-eureka">compiler-development</a>
+        
+    </div>
+    
+</div>
+
+
+  </div>
+
+  
+</div>
+  </div>
   
   <div class="py-6">
     <div class="flex flex-col-reverse lg:flex-row justify-between">

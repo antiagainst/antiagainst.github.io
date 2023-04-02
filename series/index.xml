@@ -8,22 +8,31 @@
     <language>en</language>
     <copyright>&amp;copy; 2018 - 2022 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Thu, 01 Sep 2022 14:59:09 -0700</lastBuildDate><atom:link href="https://www.lei.chat/series/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 01 Apr 2023 14:02:36 -0700</lastBuildDate><atom:link href="https://www.lei.chat/series/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>compiler-development</title>
+      <link>https://www.lei.chat/series/compiler-development/</link>
+      <pubDate>Sat, 01 Apr 2023 14:02:36 -0700</pubDate>
+      
+      <guid>https://www.lei.chat/series/compiler-development/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ml-inference</title>
+      <link>https://www.lei.chat/series/ml-inference/</link>
+      <pubDate>Sat, 01 Apr 2023 14:02:36 -0700</pubDate>
+      
+      <guid>https://www.lei.chat/series/ml-inference/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>编译器开发</title>
       <link>https://www.lei.chat/series/%E7%BC%96%E8%AF%91%E5%99%A8%E5%BC%80%E5%8F%91/</link>
       <pubDate>Thu, 01 Sep 2022 14:59:09 -0700</pubDate>
       
       <guid>https://www.lei.chat/series/%E7%BC%96%E8%AF%91%E5%99%A8%E5%BC%80%E5%8F%91/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>compiler-development</title>
-      <link>https://www.lei.chat/series/compiler-development/</link>
-      <pubDate>Wed, 31 Aug 2022 14:59:09 -0700</pubDate>
-      
-      <guid>https://www.lei.chat/series/compiler-development/</guid>
       <description></description>
     </item>
     
@@ -42,15 +51,6 @@
       <pubDate>Sun, 25 Jul 2021 11:25:26 -0400</pubDate>
       
       <guid>https://www.lei.chat/series/vulkan-compute/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>ml-inference</title>
-      <link>https://www.lei.chat/series/ml-inference/</link>
-      <pubDate>Sat, 17 Jul 2021 13:48:27 -0400</pubDate>
-      
-      <guid>https://www.lei.chat/series/ml-inference/</guid>
       <description></description>
     </item>
     

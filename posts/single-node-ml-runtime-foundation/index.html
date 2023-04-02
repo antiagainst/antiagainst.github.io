@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang='en' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Single-node ML Runtime Foundation | Lei.Chat()</title>
+
+<meta name="generator" content="Hugo Eureka 0.8.4" />
+<link rel="stylesheet" href="https://www.lei.chat/css/eureka.min.css">
+<script defer src="https://www.lei.chat/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/bash.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/c.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cmake.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cpp.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/glsl.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/javascript.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/llvm.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/python.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/shell.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-109525036-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-109525036-1');
+</script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="Previous blog posts overviewed the MLIR dialect hierarchy for kernel code
+generation (CodeGen) and zoomed in on the
+Linalg and Vector dialects among them.
+Now I will switch to discuss the runtime side a bit, in order to provide
+a holistic view of MLIR-based machine learning (ML) compilers.
+This one touches the foundation and basics, including the target landscape,
+runtime requirements and designs to meet thereof.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Posts",
+      "item":"https://www.lei.chat/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Single-node ML Runtime Foundation",
+      "item":"https://www.lei.chat/posts/single-node-ml-runtime-foundation/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.lei.chat/posts/single-node-ml-runtime-foundation/"
+    },
+    "headline": "Single-node ML Runtime Foundation | Lei.Chat()","datePublished": "2023-04-01T14:02:36-07:00",
+    "dateModified": "2023-04-01T14:02:36-07:00",
+    "wordCount":  3721 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "Lei Zhang",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.lei.chat/images/avatar.png"
+        }
+        },
+    "description": "\u003cp\u003ePrevious blog posts overviewed the MLIR dialect hierarchy for \u003ca href=\u0022..\/mlir-codegen-dialects-for-machine-learning-compilers\/\u0022\u003ekernel code\ngeneration\u003c\/a\u003e (CodeGen) and zoomed in on the\n\u003ca href=\u0022..\/mlir-linalg-dialect-and-patterns\/\u0022\u003eLinalg\u003c\/a\u003e and \u003ca href=\u0022..\/mlir-vector-dialect-and-patterns\/\u0022\u003eVector\u003c\/a\u003e dialects among them.\nNow I will switch to discuss the runtime side a bit, in order to provide\na holistic view of MLIR-based machine learning (ML) compilers.\nThis one touches the foundation and basics, including the target landscape,\nruntime requirements and designs to meet thereof.\u003c\/p\u003e"
+}
+</script><meta property="og:title" content="Single-node ML Runtime Foundation | Lei.Chat()" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="https://www.lei.chat/images/avatar.png">
+
+
+<meta property="og:url" content="https://www.lei.chat/posts/single-node-ml-runtime-foundation/" />
+
+
+
+
+<meta property="og:description" content="Previous blog posts overviewed the MLIR dialect hierarchy for kernel code
+generation (CodeGen) and zoomed in on the
+Linalg and Vector dialects among them.
+Now I will switch to discuss the runtime side a bit, in order to provide
+a holistic view of MLIR-based machine learning (ML) compilers.
+This one touches the foundation and basics, including the target landscape,
+runtime requirements and designs to meet thereof." />
+
+
+
+
+<meta property="og:locale" content="en" />
+
+
+
+
+<meta property="og:site_name" content="Lei.Chat()" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2023-04-01T14:02:36-07:00" />
+
+
+<meta property="article:modified_time" content="2023-04-01T14:02:36-07:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="ml" />
+
+<meta property="article:tag" content="compiler" />
+
+<meta property="article:tag" content="runtime" />
+
+<meta property="article:tag" content="iree" />
+
+<meta property="article:tag" content="single-node" />
+
+<meta property="article:tag" content="landscape" />
+
+
+
+
+
+
+
+
+
+
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/edge-mobile-ml-inference-challenges/" />
+
+
+
+
+
+
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/mlir-linalg-dialect-and-patterns/" />
+
+
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/mlir-vector-dialect-and-patterns/" />
+
+
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/" />
+
+
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/compilers-and-irs-llvm-ir-spirv-and-mlir/" />
+
+
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Lei.Chat()</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">Posts</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Tags</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Categories</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Series</a>
+            <a href="/authors/me" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">About</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">Light</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">Dark</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">Auto</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">Single-node ML Runtime Foundation</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2023-04-01</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>18 min read</span>
+    </div>
+    
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="https://www.lei.chat/categories/runtime/" class="hover:text-eureka">runtime</a><span>, </span>
+        
+        
+        <a href="https://www.lei.chat/categories/mlir/" class="hover:text-eureka">mlir</a><span>, </span>
+        
+        
+        <a href="https://www.lei.chat/categories/ml-inference/" class="hover:text-eureka">ml-inference</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="https://www.lei.chat/series/ml-inference/" class="hover:text-eureka">ml-inference</a>
+        
+        
+        <span>, </span>
+        <a href="https://www.lei.chat/series/compiler-development/" class="hover:text-eureka">compiler-development</a>
+        
+    </div>
+    
+</div>
+
+        
+        <div class="content">
+            <p>Previous blog posts overviewed the MLIR dialect hierarchy for <a href="../mlir-codegen-dialects-for-machine-learning-compilers/">kernel code
+generation</a> (CodeGen) and zoomed in on the
+<a href="../mlir-linalg-dialect-and-patterns/">Linalg</a> and <a href="../mlir-vector-dialect-and-patterns/">Vector</a> dialects among them.
+Now I will switch to discuss the runtime side a bit, in order to provide
+a holistic view of MLIR-based machine learning (ML) compilers.
+This one touches the foundation and basics, including the target landscape,
+runtime requirements and designs to meet thereof.</p>
+<h2 id="ml-system-runtimes">ML System Runtimes</h2>
+<p>The main tasks of a runtime are to manage resources and schedule execution.
+So runtime is a commonly seen concept in ML systems (and beyond), given we
+pretty much have such needs everywhere.
+Every ML system tends to have its own runtime, though it can mean different
+scopes in different contexts.
+We can have runtimes orchestrating ML training workload across multiple nodes
+in a datacenter; we can also have runtimes on a single node dispatching tensor
+operations to a specific accelerator.
+Runtimes of different scopes can nest each other to compose the full stack.</p>
+<h3 id="single-node-runtimes">Single-node runtimes</h3>
+<p>In this blog post, I will focus the discussion onto the <em>single-node runtime</em>,
+which runs on the CPU to manage resources and dispatches ML workload to one or
+more accelerators (CPU, GPU, etc.) in the same node.
+The node is a machine with a form factor of a desktop, laptop, cellphone, or
+whatever.
+It sits at the lowest layer and is the foundation of the hierarchy, so it&rsquo;s
+worth our attention first.
+We can chat about upper layers in future blog posts.</p>
+<p>I will further use <a href="https://github.com/openxla/iree">IREE</a> as an example of such single-node runtimes when
+discussing concrete designs.
+It&rsquo;s certainly not the only runtime based on MLIR techniques, as we will show
+soon&mdash;one would need to decide what machines to target and take opinions on how
+to abstract differences.
+But it was and still is pretty much co-developed together with MLIR itself and
+has evolved mature enough to support real-world cutting edge models like BERT,
+GPT, stable diffusion, and others.
+IREE is also <a href="https://opensource.googleblog.com/2023/03/openxla-is-ready-to-accelerate-and-simplify-ml-development.html">part of the OpenXLA stack</a> now and will become
+a cornerstone to support production use cases in the future.</p>
+<h2 id="landscape-and-requirements">Landscape and Requirements</h2>
+<p>There are a wide range of cases in the single node landscape.
+It can be as powerful as a datacenter machine hosting multiple AMD EPYC CPUs
+and multiple NVIDIA A100 GPUs.
+It can also be as compact as a cellphone where we have a few ARM big.LITTLE
+CPU cores and a Qualcomm Adreno or ARM Mali GPU integrated on the same
+system-on-chip (SoC).</p>
+<p>Different cases would mean different requirements for runtimes.
+Though for better software engineering, we don&rsquo;t want to build a completely
+different runtime for each case; we would like to have one unified stack and
+common codebase to support as many cases as possible and reasonably.
+We can achieve that by <strong>designing according to the more demanding use
+scenarios, and layering properly as a toolbox to allow optionality and
+customization</strong>.
+Supporting many spectrums across a large number of axes and specializing to
+a certain solution point is straightforward than the opposite;
+that is N to 1 is easy, 1 to N is hard.</p>
+<h3 id="cloudserver-vs-edgeclient">Cloud/server vs. edge/client</h3>
+<p>There are many ways we can slice and dice the landscape.
+A common division is cloud/server machines vs. edge/client devices.
+Computation power is of course vastly different; though the more important
+difference from a runtime&rsquo;s perspective is whether we control the
+hardware/software stack.</p>
+<p>In cloud/server machines, we do, and we mostly decide to adopt one or two
+generations of NVIDIA GPUs and the CUDA software stack.
+If we only ever care about this division, it&rsquo;s reasonable to design the runtime
+around the CUDA ecosystem, to gain the most from it.
+It would overfit and render it hard to generalize to accelerators of different
+architectures or even GPUs from other vendors though.
+It&rsquo;s an explicit trade off.</p>
+<p>In edge/client devices, we don&rsquo;t.
+Actually even the end user may not&mdash;building a custom PC might allow the end
+user to select CPUs/GPUs so that&rsquo;s some controls there; cellphones are highly
+integrated devices where there is a long chain of component sourcing not
+involving the end user:
+cellphone original equipment manufacturers (OEMs) source SoCs from SoC vendors,
+which in turn sources CPU/GPU IPs from CPU/GPU IP vendors.</p>
+<p>The result is that in this division, there are tons of device variants,
+featuring different vendors and architectures&mdash;speaking of GPUs, we have AMD,
+Apple, ARM, Imagination, Intel, NVIDIA, Qualcomm, etc., each of them have
+multiple generations of architectures.
+On top of them, there are different platforms, Linux, Windows, macOS, Android,
+iOS, and so on, each mandating its own software stack.
+For example, for native GPU APIs, we have OpenCL/Vulkan for Linux/Android,
+DirectX for Windows, and Metal for macOS/iOS.</p>
+<p>If we care about this division, we clearly need to design proper abstractions
+to handle all these different stacks in order to target them all.
+This is nothing special in the computer world&mdash;we have operating systems or
+various middleware performing similar tasks.
+We have different layers of abstractions trying to hide the variants in lower
+layers to provide common interfaces to upper layers to be manageable.
+The trade off is also about generality and performance, and we favor generality
+in this case; access to more vendor-specific techniques can be harder.</p>
+<h3 id="edgeclient-requirements">Edge/client requirements</h3>
+<p>From the above it should be obvious that edge/client cases are more demanding:
+we need to <strong>1) support multiple vendors with many architecture generations and
+multiple GPU software stacks</strong>.
+If we can have a design that satisfies their needs, it is natural to extend to
+support cloud/server cases as that&rsquo;s pretty much just a special case&mdash;one
+vendor with one or two architecture generations and one GPU software stack.</p>
+<p>Aside from above, the edge/client side also poses additional challenges that
+are typically not a concern for the cloud/server side.
+I&rsquo;ve written about them more extensively in <a href="../edge-mobile-ml-inference-challenges/">a previous blog post</a>
+so I won&rsquo;t elaborate on those aspects again.
+Just to quickly summarize, we need to additionally consider:</p>
+<ul>
+<li>Multiple <a href="https://en.wikipedia.org/wiki/Semiconductor_intellectual_property_core">chip IP blocks</a> with OS dynamic scheduling and
+throttling.
+Especially on a cellphone, the OS continuously schedules tasks and throttles
+chip IP blocks in order to control power consumption and heat dissipation.
+Tasks may transfer among big or little cores; GPUs may be turned on and off
+and run at varying frequencies.
+An responsive runtime would need to to <strong>2) dynamically schedule according to
+system loads</strong>, assigning ML tasks to big/little CPU cores or the GPU on the
+fly.</li>
+<li>Small and variable workload sizes with latency sensitivity.
+In the cloud/server we can rely on large batch sizes to drive GPU utilization.
+On end-user personal devices, ML workloads typically only involve one
+data point (image, language/audio sentence, etc.), and we would like the
+result to be available as quickly as possible for better user experience.
+This requires the runtime to be <strong>3) efficient w.r.t. various dimensions
+involving scheduling, execution, and synchronization</strong>.</li>
+<li>Resource constraints with app and task multi-tenancy.
+In the cloud/server we can have beefy CPUs/GPUs and install lots of RAM;
+the ML runtime can typically assume exclusive usage of the resources.
+For an end-user personal device, all running apps and tasks compete for the
+limited resources.
+Foreground interactive tasks have priority in order to maintain the
+responsiveness of the whole system.
+This requires the runtime to be <strong>4) cooperative w.r.t. resource
+utilization</strong>, e.g., not claiming all GPU memory upfront as a pool for own
+usage, adjusting scheduling to make sure memory footprint stays in check.</li>
+<li>Deployment constraints. Unlike in the cloud/server, edge/client personal
+devices typically have limited storage and apps are updated via app stores.
+So model/runtime size and bandwidth consumption can be a real concern.
+This requires the runtime to be <strong>5) minimal w.r.t. dependency and binary
+size</strong>.</li>
+<li>Deep integration with application logic. ML inference is just a component of
+the final application;
+typically we need to perform preprocessing/postprocessing on input/output
+image/audio/etc. for the full flow.
+This requires the runtime to be <strong>6) non-intrusive, optional, pluggable w.r.t.
+choices</strong>.
+It should not force design choices on the app; instead, options should be
+provided to let the app suit its own needs.</li>
+<li>Security and privacy concerns. Even in the cloud/server, we may have needs
+to isolate workloads from different customers, e.g., fine tuning a foundation
+model with enterprise data from different companies.
+End-user devices contain sensitive personal information that we don&rsquo;t want
+the ML system to be a surface for leaking and exploiting that.
+This requires the runtime to be <strong>7) secure by construction</strong>.</li>
+</ul>
+<p>Although cloud/server might not care much, a runtime satisfying the above needs
+would not hinder and actually can help cloud/server use cases, e.g.,
+multi-vendor support can enable adopting AMD/Intel GPUs in the datacenter,
+cooperative resource utilization reduces the chances of out of memory and crash,
+and so on.
+Actually stepping back even further, the above requirements are also applicable
+to general software engineering, given that ML is not much different than other
+software that crunches numbers.</p>
+<p>In the following discussion I&rsquo;ll refer to the above requirements as [req#N]
+in superscript.</p>
+<h2 id="abstraction-and-architecture">Abstraction and Architecture</h2>
+<p>With the target scope and associated system requirements, we can now look at
+what the proper abstraction levels are and how to architect the runtime
+accordingly.</p>
+<h3 id="host-device-separation">Host-device separation</h3>
+<p>GPUs are not the only kind of accelerators that exist in a node;
+we can also see various forms of tensor/neural processing units and others.
+GPUs are common because of their general purpose and mature software stack.
+Though GPUs cannot run a full ML model entirely; we still need CPUs to manage
+resources and coordinate execution.
+Other accelerators are even so.</p>
+<p>It&rsquo;s natural to adopt a <em>host-device separation</em> to mirror this reality, where
+<strong>the host, i.e., the CPU, schedules work and the device, i.e., accelerators,
+executes it</strong>.
+For example, in CUDA terminologies, the host would perform
+<code>gpu_kernel&lt;&lt;&lt;...&gt;&gt;&gt;(...)</code>, while the device would perform
+<code>__global__ void gpu_kernel(...) {...}</code>.
+For Metal, that would be
+<code>[compute_encoder dispatchThreadGroups:... threadsPerThreadgroup:...]</code>
+together with <code>kernel void gpu_kernel(...) {...}</code> in a <code>.metal</code> file.
+For Vulkan, similarly&mdash;<code>vkCmdDispatch(command_buffer, ...)</code> with
+<code>void main() {...}</code> in a compute shader.</p>
+<p>Note that here accelerators can also be CPUs themselves: the host can be a CPU
+thread dispatching tasks to the &ldquo;device&rdquo;, a thread pool, picking up tasks and
+running kernels to invoke accelerated vector/matrix intrinsics.
+So this gives us a unified architecture.
+It&rsquo;s also an example of N to 1, where using the CPU as the inlined &ldquo;device&rdquo;, is
+straightforward.</p>
+<p>The separation enables flexible organization&mdash;the host and device can co-exist
+in the same process on the same node; the device can also be in another remote
+node, and we just have a device shim in the host process to convey requests and
+communicate results.</p>
+<p><img src="host-device-abstraction.svg" alt="Host Device Abstraction" title="Host Device Abstraction"></p>
+<h3 id="host-vm-abstractions">Host VM abstractions</h3>
+<p>On the host side we have less architectures to handle, notably ARM64, x86_64,
+and the emerging RISC-V.
+Therefore, we also need some abstraction here to handle the differences
+<sup>[req#1]</sup>.</p>
+<p>The abstractions should be lightweight and performant, given the central role
+of CPUs in the overall picture <sup>[req#3]</sup>.
+Furthermore, due to the flexibility of CPU programming model, where we can
+freely cast integers as pointers and access the pointed-to memory, we need
+to be cautious regarding the exposed functionality for security concerns
+<sup>[req#7]</sup>.
+The nice aspect about ML is that we are operating in perfect loop nests within
+bounds, so we just need to provide a logical (i.e., using element offsets)
+rather than physical (i.e., using concrete pointers) memory addressing model.
+We also want to have a curated list of allowed operations to make sure we can
+structurally disable certain exploits.</p>
+<p>The way to achieve this is to <strong>define our own host virtual instruction set and
+virtual machine (VM)</strong> to execute them.
+Dense computation (e.g., matmul, convolution, etc.) of ML models are done via
+accelerators; what&rsquo;s left are really resource tracking and management and shape
+calculation logic.
+So the virtual instruction set needs to have support for resources like buffers
+and their reference counting for lifetime management.
+It also needs to have basic integer arithmetic instructions for size/index
+calculation.</p>
+<p>As discussed before, ML is typically just a part of the full application.
+There are additional needs that cannot be fulfilled by ML, e.g.,
+image preprocessing and postprocessing, model weight/gradient
+uploading/downloading for federated learning, and such.
+We don&rsquo;t want to put hard barriers on the application to isolate components;
+instead we would like to support as those functionalities as plug-in components
+when possible <sup>[req#6]</sup>.
+That would need additional pluggable runtime functionality.
+To support, we would need to register and load custom modules in the host VM.
+This is akin to how operating systems load binaries and shared libraries and
+resolve symbol references.</p>
+<p>With a virtual instruction set we can then use compilers to generate code
+towards it, which effectively means using compilers to plan all the source
+management and workload dispatching.
+Here we just need to expose all those virtual instruction set instructions
+(or, VM ops) to compilers.
+That is very straightforward with MLIR.
+And what comes additionally is, with the the multi-level settings, we can
+further lower those VM ops down to LLVM ops and generate final CPU ISA code
+or C code&mdash;the VM layer is entirely optional <sup>[req#6]</sup>.</p>
+<p>In IREE, we have an optional and pluggable <a href="https://github.com/openxla/iree/tree/main/runtime/src/iree/vm">runtime host VM</a>
+to provide the above functionality, including module loading and symbol
+resolution, execution stack and resource management.
+Its ops are <a href="https://github.com/openxla/iree/tree/main/compiler/src/iree/compiler/Dialect/VM">exposed to the compiler</a>.
+We can define various custom modules for different purposes, including
+<a href="https://github.com/openxla/iree/tree/main/runtime/src/iree/modules">core device HAL and VMVX</a> support and <a href="https://github.com/openxla/iree/tree/main/samples/custom_module">other
+examples</a>.</p>
+<h3 id="device-hal-abstractions">Device HAL abstractions</h3>
+<p>On the device side, as explained there are plenty of accelerators so we
+certainly need abstractions too.
+A good approach is to follow what&rsquo;s mature there, using GPU APIs as a basis.
+Various TPUs/NPUs are still evolving; they will gradually become more and
+more programmable.
+Their APIs will also be more and more akin to GPU ones&mdash;at the end of the
+day, the API is mostly about preparing resources, dispatching workloads,
+and synchronization, which is common across accelerators.
+Right now we have various vendor-specific solutions at different maturity in
+this space;
+a cross-vendor API is needed to make this space more tractable.</p>
+<p>Speaking of GPU APIs, we have various choices, either open standards covering
+many platforms and vendors (e.g., OpenCL, OpenGL, Vulkan), or platform-specific
+APIs (e.g., DirectX for Windows, Metal for Apple platforms), or vendor-specific
+ones (e.g., CUDA for NVIDIA, oneAPI for Intel, ROCm for AMD, etc.).</p>
+<p>Some of these APIs focus more on graphics (e.g., DirectX, Metal, Vulkan,
+etc.), and some are purely for compute (e.g., CUDA, OpenCL, ROCm, etc.).
+They all evolve; today those graphics GPU APIs can handle pure compute,
+including ML, workloads just fine, and the gap with pure compute APIs are
+smaller and smaller.
+I&rsquo;ve written a <a href="../what-is-vulkan-compute/">previous blog post</a> about Vulkan compute
+specifically, please feel free to take a look at the API surface area there.</p>
+<p>Also, in the past few years, graphics GPU APIs have undergone a trend to expose
+lower level abstractions, represented by the introduction of Vulkan, DirectX 12,
+and newer versions of Metal.
+The goal is to give controls to developers, so that we can have thinner drivers
+with less magic, more functionality consistency, and more predictable
+performance.
+It comes with a cost for sure&mdash;those APIs are typically very verbose and
+unwieldy to directly develop against. (Metal is better on this front though.)
+That&rsquo;s actually what we want for a runtime with all those demanding needs
+<sup>[req#3]</sup>, and with a compiler to auto-generate the API calls, the
+downsize won&rsquo;t really be a problem for us!</p>
+<p>Vulkan, DirectX 12, Metal together are typically referred to as the modern
+graphics APIs, and they are quite similar<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>.
+So we can <strong>build a hardware abstraction layer (HAL) based on modern graphics
+and compute APIs</strong>.
+It can naturally provide high-fidelity abstraction of those APIs and inherit
+their benefits, including low level explicit controls, native support on
+various platforms and vendors <sup>[req#5]</sup>, and others.</p>
+<p>IREE&rsquo;s <a href="https://github.com/openxla/iree/tree/main/runtime/src/iree/hal">runtime device HAL</a> follows Vulkan compute, given
+Vulkan was the latest API with a careful thought API surface drawing learnings
+from decades of experience.
+Those HAL ops are also <a href="https://github.com/openxla/iree/tree/main/compiler/src/iree/compiler/Dialect/HAL">exposed to the compiler</a> so that we can
+auto-generate the scheduling there.
+As said before, the core host VM only supports very basic resource management
+and size/index calculation arithmetic, HAL itself is actually registered and
+invoked by the host VM <a href="https://github.com/openxla/iree/tree/main/runtime/src/iree/modules/hal">as a custom module</a> of function
+pointers.</p>
+<p><img src="host-device-layering.svg" alt="Host Device Layering" title="Host Device Layering"></p>
+<h3 id="resource-usage-and-synchronization">Resource usage and synchronization</h3>
+<p>A GPU is a different processor from the CPU.
+It has its own instruction decoding facility and massive hardware parallelism.
+To fully utilize the processor, we would want to push enough workload to the GPU
+to saturate the compute units and reach peak compute performance.</p>
+<p>However, in reality, it is a tough goal to achieve&mdash;memory performance is
+lagging behind compute, and especially in recent years, the gap is larger and
+larger with developments of tensorcore units and alike.
+So we need to use more and more tricks in kernel CodeGen to improve the memory
+throughput and hide the latency, e.g., using coalesced memory transactions,
+leveraging shared memory, performing software pipelining, and so on.
+With enough blood and tears, we can push single GPU kernels, especially matmul,
+to achieve a high percentage of the theoretical peak performance.</p>
+<p>Though, what is often ignored is the bigger picture and the inefficiency of
+runtime and the whole system, especially in multi-layer multi-component
+settings.
+We might create/destroy too many GPU resource objects (e.g., GPU buffers,
+GPU synchronization primitives, etc.) on the critical path.
+Buffers might be copied or we might perform a full device wait going through
+different layers or components.
+Such inefficiencies can easily tank the overall performance<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>
+and overshadow all gains from fast kernel implementations.</p>
+<p>Such challenges call for careful design in ML runtimes.
+Though we are not solving such problems for the first time.
+Developers have been using GPUs for full applications like games for decades.
+Arguably we are facing even more demanding situations there, given that we
+need to handle millions or billions of triangles with mixed rendering and
+compute tasks in real time.
+It&rsquo;s natural to <strong>follow best practices of performant GPU usage for graphics</strong>.</p>
+<p>Examples include allocating GPU resource objects in advance, using resource
+pools to amortize cost, baking rendering/compute pipelines ahead, performing
+fine-grained synchronization according to resource lifetime and usage pattern,
+and so on.
+These are actually all pretty automatable via compilers using lifetime and
+dependency analysis and unification/hoisting transformations.
+IREE&rsquo;s host compiler is just realizing such purposes, which I&rsquo;ll cover in a
+later blog post.</p>
+<p>Other examples include preparing GPU work in advance by recording command
+buffers and chaining as much work as possible to run asynchronously on the GPU.
+This would really help the overall application where we have different steps
+of processing like image cropping, running ML models, and then rendering images
+back to the screen.
+The goal would be to avoid involving GPU as much as possible&mdash;each time we
+involve the CPU we risk waiting on either the CPU or GPU and wasting
+computation power.</p>
+<p>To support such use cases, we can pull more components in the same system
+to break down the boundary that causes buffer copies and forced
+synchronizations.
+There is a limit of how much we can do though, as we cannot rewrite the whole
+world.
+Then the requirement <sup>[req#3, req#6]</sup> would be on the ML runtime to
+<strong>support importing and exporting buffer and synchronization primitives as a
+native functionality</strong>, so that when embedding ML in an application, at least
+the ML component won&rsquo;t be a hard barrier.
+This is plausible because at the end of the day, cross-layer cross-component
+resource passing and synchronization is handled in the OS kernel; different
+layers or APIs are just wrapping OS synchronization primitives, e.g.,
+it&rsquo;s all about <a href="https://docs.kernel.org/driver-api/dma-buf.html"><code>struct dma_fence</code> in Linux</a>.</p>
+<p>IREE follows such asynchronization first and cooperative approach.
+Note that it naturally supports synchronization cases&mdash;we can just play the
+command buffer inline and perform immediate blocking wait on synchronization
+primitives for targets that do not have native support.
+Again, going from more demanding cases to less ones is easy.</p>
+<h3 id="deployment-fat-binaries">Deployment fat binaries</h3>
+<p>We are targeting a diverse single-node landscape.
+Host device separation and proper host/device abstractions lay down the
+foundation for a unified runtime.
+For the device kernels, we want to perform ahead-of-time (AOT) compilation
+to avoid runtime dependency <sup>[req#5]</sup> on just-in-time (JIT) compilers
+and runtime JIT overhead.
+It would mean we go down to the lowest level of kernel representation as
+possible, e.g., machine native instruction for CPU, PTX for CUDA, SPIR-V for
+Vulkan.</p>
+<p>It naturally calls for <strong>using a <a href="https://en.wikipedia.org/wiki/Fat_binary">fat binary</a> deployment format</strong>
+where we contain kernels for multiple vendors and architectures.
+Even for the same vendor architecture, we may decide to specialize different
+kernels for different cases, e.g., large/small matmul, aligned/unaligned shape.
+In the runtime we can probe the hardware capability to decide which kernel to
+dispatch dynamically.
+If we factor in real time system loads, we can dynamically schedule to different
+IP blocks too <sup>[req#2]</sup>!
+The requirement is that we have the same graph partitioning and dispatch
+region formation though, to allow switching kernels for different architectures.</p>
+<p>IREE uses <a href="https://flatbuffers.dev/">FlatBuffers</a> for <a href="https://github.com/openxla/iree/tree/main/runtime/src/iree/schemas">its deployable fat
+binaries</a>, containing both host VM instructions and various device
+kernel code.
+This delivers a self-sufficient encoding of the original ML model, including
+both host scheduling and device execution logic.
+By default IREE uses the <a href="https://github.com/openxla/iree/blob/3137c7e7a49bb2ad2fef313dff2267b7ce639cb6/compiler/src/iree/compiler/Dialect/Flow/Transforms/Passes.cpp#L246-L304">same graph partitioning and dispatch region
+formation</a> scheme to make sure kernels are targeting the
+same source subgraph to be exchangeable.</p>
+<h2 id="closing-words">Closing Words</h2>
+<p>This blog post discussed the single-node landscape and its challenges and
+requirements for a ML runtime.
+To meet the requirements, It further derived the necessary abstractions,
+architectures and designs.
+IREE is what we are building to realize such an envisioned runtime; links are
+provided for its core mechanisms matching the designs.
+Ben Vanik, the architect behind IREE, has a great slide deck
+<a href="https://drive.google.com/file/d/1ikgOdZxnMz1ExqwrAiuTY9exbe3yMWbB/view">here</a> discussing more IREE runtime details.
+Highly recommended if you would like to learn more.</p>
+<p>Hopefully I gave enough explanation of single-node runtime foundation and
+basics, together with why IREE is designed in the current way.
+This hasn&rsquo;t touched how we use compilers to auto-generate host scheduling logic
+yet, i.e., the Flow/Stream/HAL/VM dialects in IREE and their transformations.
+Till the next blog post! 😊</p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://alain.xyz/blog/comparison-of-modern-graphics-apis">This article</a>
+offers a great comparison among these APIs regarding their concepts, in case you
+are familiar with one but not others.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://paulbridger.com/posts/video-analytics-pipeline-tuning/">This article</a>
+offers a great case study of identifying and fixing buffer and synchronization
+issues between CPU and GPU to improve overall performance.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+        </div>
+        
+        <div class="my-4">
+    
+    <a href="https://www.lei.chat/tags/ml/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>ml</a>
+    
+    <a href="https://www.lei.chat/tags/compiler/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>compiler</a>
+    
+    <a href="https://www.lei.chat/tags/runtime/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>runtime</a>
+    
+    <a href="https://www.lei.chat/tags/iree/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>iree</a>
+    
+    <a href="https://www.lei.chat/tags/single-node/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>single-node</a>
+    
+    <a href="https://www.lei.chat/tags/landscape/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>landscape</a>
+    
+    <a href="https://www.lei.chat/tags/requirement/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>requirement</a>
+    
+    <a href="https://www.lei.chat/tags/cloud/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>cloud</a>
+    
+    <a href="https://www.lei.chat/tags/edge/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>edge</a>
+    
+    <a href="https://www.lei.chat/tags/abstraction/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>abstraction</a>
+    
+    <a href="https://www.lei.chat/tags/architecture/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>architecture</a>
+    
+    <a href="https://www.lei.chat/tags/cuda/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>cuda</a>
+    
+    <a href="https://www.lei.chat/tags/vulkan/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>vulkan</a>
+    
+    <a href="https://www.lei.chat/tags/directx/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>directx</a>
+    
+    <a href="https://www.lei.chat/tags/metal/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>metal</a>
+    
+    <a href="https://www.lei.chat/tags/spirv/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>spirv</a>
+    
+    <a href="https://www.lei.chat/tags/vm/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>vm</a>
+    
+    <a href="https://www.lei.chat/tags/cpu/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>cpu</a>
+    
+    <a href="https://www.lei.chat/tags/gpu/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>gpu</a>
+    
+    <a href="https://www.lei.chat/tags/host/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>host</a>
+    
+    <a href="https://www.lei.chat/tags/device/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>device</a>
+    
+    <a href="https://www.lei.chat/tags/synchronization/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>synchronization</a>
+    
+</div>
+
+        
+        
+        
+
+
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">Next</span>
+        <a href="https://www.lei.chat/posts/mlir-linalg-dialect-and-patterns/" class="block">MLIR Linalg Dialect and Patterns</a>
+        
+    </div>
+</div>
+
+        
+
+
+
+  <script id="utterances" src="https://utteranc.es/client.js"
+            issue-term=title
+            repo=antiagainst/antiagainst.github.io
+              theme=preferred-color-scheme
+        crossorigin="anonymous"
+        async>
+</script>
+<script>
+    if (storageColorScheme == "Light") {
+      document.getElementById('utterances').setAttribute('theme', 'github-light')
+    } else if (storageColorScheme == "Dark") {
+      document.getElementById('utterances').setAttribute('theme', 'github-dark')
+    }
+</script>
+
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+<div class="bg-secondary-bg rounded p-6">
+    <h3 class="text-lg font-semibold mb-4">Series of Posts</h3>
+    <div class="content">
+        
+          
+          <span class="font-semibold">
+            <i class="fas fa-th-list mr-1"></i>ml-inference »
+          </span>
+          <br />
+          
+            <span>1.</span>
+            <a href="https://www.lei.chat/posts/edge-mobile-ml-inference-challenges/">Edge/Mobile ML Inference Challenges</a>
+            <br />
+          
+            <span>2.</span>
+            <a href="https://www.lei.chat/posts/single-node-ml-runtime-foundation/">Single-node ML Runtime Foundation</a>
+            <br />
+          
+        
+          
+            <br />
+          
+          <span class="font-semibold">
+            <i class="fas fa-th-list mr-1"></i>compiler-development »
+          </span>
+          <br />
+          
+            <span>1.</span>
+            <a href="https://www.lei.chat/posts/compilers-and-irs-llvm-ir-spirv-and-mlir/">Compilers and IRs: LLVM IR, SPIR-V, and MLIR</a>
+            <br />
+          
+            <span>2.</span>
+            <a href="https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/">MLIR CodeGen Dialects for Machine Learning Compilers</a>
+            <br />
+          
+            <span>3.</span>
+            <a href="https://www.lei.chat/posts/mlir-vector-dialect-and-patterns/">MLIR Vector Dialect and Patterns</a>
+            <br />
+          
+            <span>4.</span>
+            <a href="https://www.lei.chat/posts/mlir-linalg-dialect-and-patterns/">MLIR Linalg Dialect and Patterns</a>
+            <br />
+          
+            <span>5.</span>
+            <a href="https://www.lei.chat/posts/single-node-ml-runtime-foundation/">Single-node ML Runtime Foundation</a>
+            <br />
+          
+        
+    </div>
+</div>
+
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">On This Page</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#ml-system-runtimes">ML System Runtimes</a>
+      <ul>
+        <li><a href="#single-node-runtimes">Single-node runtimes</a></li>
+      </ul>
+    </li>
+    <li><a href="#landscape-and-requirements">Landscape and Requirements</a>
+      <ul>
+        <li><a href="#cloudserver-vs-edgeclient">Cloud/server vs. edge/client</a></li>
+        <li><a href="#edgeclient-requirements">Edge/client requirements</a></li>
+      </ul>
+    </li>
+    <li><a href="#abstraction-and-architecture">Abstraction and Architecture</a>
+      <ul>
+        <li><a href="#host-device-separation">Host-device separation</a></li>
+        <li><a href="#host-vm-abstractions">Host VM abstractions</a></li>
+        <li><a href="#device-hal-abstractions">Device HAL abstractions</a></li>
+        <li><a href="#resource-usage-and-synchronization">Resource usage and synchronization</a></li>
+        <li><a href="#deployment-fat-binaries">Deployment fat binaries</a></li>
+      </ul>
+    </li>
+    <li><a href="#closing-words">Closing Words</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded p-6">
+        <h2 class="text-lg font-semibold mb-4">See Also</h2>
+        <div class="content">
+            
+            <a href="https://www.lei.chat/posts/gpgpu-ml-inference-and-vulkan-compute/">GPGPU, ML Inference, and Vulkan Compute</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/shader-toolchain-hlsl-in-vulkan/">Shader Toolchain: HLSL in Vulkan</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/hlsl-for-vulkan-semantic-strings-and-location-numbers/">HLSL for Vulkan: Semantic Strings and Location Numbers</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/hlsl-for-vulkan-resources/">HLSL for Vulkan: Resources</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/hlsl-for-vulkan-matrices/">HLSL for Vulkan: Matrices</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/">MLIR CodeGen Dialects for Machine Learning Compilers</a>
+            <br />
+            
+        </div>
+    </div>
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2018 - 2022 <a href="https://www.lei.chat/">Lei Zhang</a>
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>
