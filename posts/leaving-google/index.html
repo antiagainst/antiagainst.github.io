@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang='en' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Leaving Google | Lei.Chat()</title>
+
+<meta name="generator" content="Hugo Eureka 0.8.4" />
+<link rel="stylesheet" href="https://www.lei.chat/css/eureka.min.css">
+<script defer src="https://www.lei.chat/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/bash.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/c.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cmake.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cpp.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/glsl.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/javascript.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/llvm.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/python.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/shell.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-109525036-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-109525036-1');
+</script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="Time flies&mdash;almost 9 years have passed since I joined Google.
+Now the time has come for me to leave and move on.
+While here, I&rsquo;m super lucky to mostly work on open source projects that I can
+publicly talk about.
+So at the end of my tenure with Google, I&rsquo;d like to reflect and summarize the
+incredible journey, which I am super grateful for and thoroughly enjoyed,
+before I forget some details.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Posts",
+      "item":"https://www.lei.chat/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Leaving Google",
+      "item":"https://www.lei.chat/posts/leaving-google/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.lei.chat/posts/leaving-google/"
+    },
+    "headline": "Leaving Google | Lei.Chat()","datePublished": "2023-09-26T14:50:03-07:00",
+    "dateModified": "2023-09-26T14:50:03-07:00",
+    "wordCount":  1279 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "Lei Zhang",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.lei.chat/images/avatar.png"
+        }
+        },
+    "description": "\u003cp\u003eTime flies\u0026mdash;almost 9 years have passed since I joined Google.\nNow the time has come for me to leave and move on.\nWhile here, I\u0026rsquo;m super lucky to mostly work on open source projects that I can\npublicly talk about.\nSo at the end of my tenure with Google, I\u0026rsquo;d like to reflect and summarize the\nincredible journey, which I am super grateful for and thoroughly enjoyed,\nbefore I forget some details.\u003c\/p\u003e"
+}
+</script><meta property="og:title" content="Leaving Google | Lei.Chat()" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="https://www.lei.chat/images/avatar.png">
+
+
+<meta property="og:url" content="https://www.lei.chat/posts/leaving-google/" />
+
+
+
+
+<meta property="og:description" content="Time flies&mdash;almost 9 years have passed since I joined Google.
+Now the time has come for me to leave and move on.
+While here, I&rsquo;m super lucky to mostly work on open source projects that I can
+publicly talk about.
+So at the end of my tenure with Google, I&rsquo;d like to reflect and summarize the
+incredible journey, which I am super grateful for and thoroughly enjoyed,
+before I forget some details." />
+
+
+
+
+<meta property="og:locale" content="en" />
+
+
+
+
+<meta property="og:site_name" content="Lei.Chat()" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2023-09-26T14:50:03-07:00" />
+
+
+<meta property="article:modified_time" content="2023-09-26T14:50:03-07:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Lei.Chat()</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">Posts</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Tags</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Categories</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Series</a>
+            <a href="/authors/me" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">About</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">Light</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">Dark</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">Auto</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">Leaving Google</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2023-09-26</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>7 min read</span>
+    </div>
+    
+    
+
+    
+</div>
+
+        
+        <div class="content">
+            <p>Time flies&mdash;almost 9 years have passed since I joined Google.
+Now the time has come for me to leave and move on.
+While here, I&rsquo;m super lucky to mostly work on open source projects that I can
+publicly talk about.
+So at the end of my tenure with Google, I&rsquo;d like to reflect and summarize the
+incredible journey, which I am super grateful for and thoroughly enjoyed,
+before I forget some details.</p>
+<p>Google is the best place I can imagine to start my career after education.
+Over the years, I was extremely fortunate to get to know many great Googlers.
+I&rsquo;ve learnt a ton from everybody and deeply cherish all the great times.
+It has always been the awesome people that makes Google such a fantastic
+place to work!</p>
+<p>Along the way, I am extremely appreciative that I was given the opportunity to
+work on various projects in different organizations (Chrome, Android, Stadia,
+Brain, Cerebra) across two countries (Canada and U.S.)&mdash;</p>
+<h2 id="graphics-compiler-toolchain">Graphics Compiler Toolchain</h2>
+<p>I started with Google to work on GPU graphics compiler toolchain projects.
+This sets the tone for my whole career thus far&mdash;developer tools, especially
+compilers for GPU. :)</p>
+<p>It was the early days for Vulkan and SPIR-V, the industry&rsquo;s next-generation
+(back then) graphics and compute standards; they were still under the wrap in
+stealth development mode.
+Google decided to adopt Vulkan as the graphics API for Android; therefore, such
+investments to improve their toolchains.</p>
+<p>Learned from the messy experiences dealing with SPIR (a LLVM IR derivative),
+SPIR-V totally detaches from LLVM with an entirely separate stack.
+The implication is that we now need to build a full compiler toolchain for it,
+including basic IR assembler, disassembler, parser, and validator, and also
+full-fledged optimizers and compilers.
+The reference frontend language for demonstrating Vulkan features is GLSL,
+a C derivative, but the most actively used frontend language is actually HLSL,
+a C++ derivative.</p>
+<p>I was fortunate to work on all the above pieces and thus witness a full compiler
+stack growing piece by piece:</p>
+<h3 id="spir-v-grammar">SPIR-V grammar</h3>
+<p><a href="https://github.com/KhronosGroup/SPIRV-Headers">KhronosGroup/SPIRV-Headers</a> hosts the machine-readable
+SPIR-V grammar and header files for various programming languages.
+I defined the <a href="https://registry.khronos.org/SPIR-V/specs/unified1/MachineReadableGrammar.html">JSON schema</a> for the grammar and contributed
+the initial JSON encoding.
+The JSON grammar encoding is used in various downstream projects to
+automatically generate SPIR-V instruction processing functionalities.</p>
+<h3 id="spir-v-toolchain">SPIR-V toolchain</h3>
+<p><a href="https://github.com/KhronosGroup/SPIRV-Tools">KhronosGroup/SPIRV-Tools</a> hosts the SPIR-V assembler,
+disassembler, parser, validator, and optimizer.
+<a href="https://github.com/KhronosGroup/glslang">KhronosGroup/glslang</a> hosts the frontend compiler for GLSL to
+SPIR-V, but its command-line experience is not very friendly so we wrapped it
+up in <a href="https://github.com/google/shaderc">google/shaderc</a>.
+I&rsquo;ve made various contributions to these projects; code statistics from GitHub:</p>
+<ul>
+<li>SPIRV-Tools: <a href="https://github.com/KhronosGroup/SPIRV-Tools/graphs/contributors">250 commits, 75,803 ++, 75,392 --</a></li>
+<li>glslang: <a href="https://github.com/KhronosGroup/glslang/graphs/contributors">51 commits, 4,365 ++, 2,175 --</a></li>
+<li>Shaderc: <a href="https://github.com/google/shaderc/graphs/contributors">139 commits, 4,427 ++, 1,786 --</a></li>
+</ul>
+<p>Later, Stadia, which also adopted Vulkan as its only graphics API, needed a HLSL
+to SPIR-V compiler for game studio partners.
+I was fortunate to lead the effort to land a solution in
+<a href="https://github.com/microsoft/DirectXShaderCompiler">microsoft/DirectXShaderCompiler</a>.
+It became the production compiler for Stadia and was eventually
+<a href="https://www.khronos.org/blog/hlsl-first-class-vulkan-shading-language">featured</a> in Vulkan 1.2 release.</p>
+<ul>
+<li>DirectXShaderCompiler: <a href="https://github.com/microsoft/DirectXShaderCompiler/graphs/contributors">416 commits, 81,273 ++, 34,362 --</a></li>
+</ul>
+<p>For a while I was deeply intrigued by the Rust programming language.
+So I created two SPIR-V related projects with Rust in my own spare time:
+<a href="https://github.com/gfx-rs/rspirv">gfx-rs/rspirv</a> is a Rust implementation of SPIR-V module
+processing functionalities, including Rust header, parser, assembler, and
+disassembler;
+<a href="https://github.com/google/shaderc-rs">google/shaderc-rs</a> offers Rust bindings for the shaderc
+library.</p>
+<ul>
+<li>rspirv: <a href="https://github.com/gfx-rs/rspirv/graphs/contributors">334 commits, 64,420 ++, 29,946 --</a></li>
+<li>shaderc-rs: <a href="https://github.com/google/shaderc-rs/graphs/contributors">154 commits, 3,928 ++, 1,538 --</a></li>
+</ul>
+<h3 id="vulkan-projects">Vulkan projects</h3>
+<p>Beyond SPIR-V toolchain, I also contributed to other Vulkan ecosystem projects,
+including <a href="https://github.com/KhronosGroup/VK-GL-CTS">KhronosGroup/VK-GL-CTS</a>, which is the Vulkan conformance
+tests, and <a href="https://github.com/google/gapid">google/gapid</a>, which is a graphics API debugger.</p>
+<ul>
+<li>VK-GL-CTS: <a href="https://github.com/KhronosGroup/VK-GL-CTS/graphs/contributors">35 commits, 24,132 ++, 5,503 --</a></li>
+<li>GAPID: 75 commits, 76,596 ++, 54,110 -- [history lost in initial commit squash]</li>
+</ul>
+<h2 id="ml-compiler-and-runtime">ML Compiler and Runtime</h2>
+<p>Then someday I learnt about a cool project called MLIR, led by Chris Lattner
+and under active development in TensorFlow.
+It aims to develop a reusable and extensible compiler infrastructure,
+notably for ML.
+MLIR was later <a href="https://medium.com/tensorflow/mlir-a-new-intermediate-representation-and-compiler-framework-beba999ed18d">announced</a> to the public and
+<a href="https://blog.google/technology/ai/mlir-accelerating-ai-open-source-infrastructure/">contributed</a> to the LLVM Foundation in 2019.</p>
+<p>Late 2018, I chatted with Chris and joined the team as an early member to
+work on it.
+That closed the graphics chapter and began the ML/compute chapter for me.</p>
+<h3 id="mlir-infrastructure">MLIR infrastructure</h3>
+<p>I contributed to various infrastructure pieces in MLIR, majorly using TableGen
+to define operations and rewrite rules.
+I gave <a href="https://drive.google.com/file/d/1JvirzO_LgUTacs0xZMxzzwWxeGzx-6WK/view">two</a> <a href="https://drive.google.com/file/d/1QqXIwjQb7oqfkS8-hnd0QK7UlNbEYE9q/view">talks</a> regarding them in MLIR
+open design meetings.</p>
+<h3 id="tensorflow-adoption">TensorFlow adoption</h3>
+<p>The TableGen subsystem improvements were driven by the concrete needs from
+TensorFlow adoption, particularly a MLIR-based TensorFlow to TFLite converter.
+I helped to analyze the old TFLite/TOCO converter and added various missing
+pieces to enable it end-to-end initially.
+Aside from the TFLite converter, I also helped to create automatic tools to
+generate op definitions for the TensorFlow dialect, and ported over some
+TensorFlow to XLA HLO op conversion patterns. Code statistics from GitHub:</p>
+<ul>
+<li>TensorFlow: <a href="https://github.com/tensorflow/tensorflow/graphs/contributors">416 commits, 57,620 ++, 28,626 --</a></li>
+</ul>
+<h3 id="iree">IREE</h3>
+<p>While I was in the MLIR team, I also initialized the SPIR-V dialect and various
+conversions to it.
+It paved the way towards using standards and compilers to target GPUs of
+different form factors and from various vendors via MLIR.</p>
+<p>It&rsquo;s extensively used by <a href="https://github.com/openxla/iree">openxla/iree</a>, an MLIR-based end-to-end
+compiler and runtime solution.
+IREE adopts a holistic approach to lower ML models to both host scheduling and
+device execution logic, aiming to provide a smooth deployment story to meet
+the needs of from datacenter to edge.</p>
+<p>IREE basically grew together with MLIR.
+I collaborated with the team from the beginning and joined the team subsequently
+after about a year in the TensorFlow organization.</p>
+<p>During this time, I led various SPIR-V code generation and client-side GPU
+efforts in MLIR and IREE.
+We were able to deliver portability and performance proofs over different GPU
+vendors and platforms, notably MobileBERT on Mali GPUs and <a href="https://www.tomshardware.com/news/stable-diffusion-gpu-benchmarks">stable diffusion
+on AMD GPUs</a>.</p>
+<ul>
+<li>MLIR: <a href="https://github.com/llvm/llvm-project/graphs/contributors">640 commits, 81,339 ++, 34,488 --</a></li>
+<li>IREE: <a href="https://github.com/openxla/iree/graphs/contributors">812 commits, 151,724 ++, 88,376 --</a></li>
+</ul>
+<h3 id="vulkan-standardization">Vulkan standardization</h3>
+<p>Though in ML land GPU basically means NVIDIA.
+The mission of building a cross-vendor widely-applicable solution using
+standards and compilers is never short of challenges.
+During the journey, I also sat in Vulkan ML TSG as the Google representative
+to help on ML related standardization. I gave quite a few presentations there,
+some in private settings, <a href="https://www.khronos.org/assets/uploads/developers/presentations/IREE_targeting_Vulkan_Zhang_May22.pdf">some</a> in public settings.</p>
+<h3 id="vulkan-developer-tools">Vulkan developer tools</h3>
+<p>Developer tool side, there is no cross-vendor solutions for aiding benchmarking
+and profiling, so I created two additional projects to fill the gaps:
+<a href="https://github.com/google/uVkCompute">google/µVkCompute</a> hosts a micro Vulkan compute pipeline and
+a collection of benchmarking compute shaders for compiler code generation path
+finding, <a href="https://github.com/google/hardware-perfcounter">google/hardware-perfcounter</a> hosts a set of
+libraries and utilities for sampling hardware performance counters from the
+kernel directly. The latter is half baked though given I cannot find enough
+time for it.</p>
+<ul>
+<li>µVkCompute: <a href="https://github.com/google/uVKCompute/graphs/contributors">87 commits, 14,536 ++, 3,161 --</a></li>
+<li>hardware-perfcounter: <a href="https://github.com/google/hardware-perfcounter/graphs/contributors">56 commits, 34,826 ++, 21,300 --</a></li>
+</ul>
+<h2 id="whats-next">What&rsquo;s Next</h2>
+<p>During my 9 years in Google, I was so fortunate to work on so many interesting
+projects with so many talented Googlers.
+I&rsquo;m also very lucky to be able to work mostly in the open source; for code
+visible outside, I&rsquo;ve contributed 3k+ commits, with 500k+ additions and 300k+
+deletions in total. What a fun journey!</p>
+<p>The AI era feels more concrete than ever to me.
+The industry is full of energy and dynamics at the moment&mdash;people are
+rethinking different layers of the computation stack.</p>
+<p>Building a scalable and flexible ML compiler and runtime stack to enable
+targeting all kinds of hardware for different needs is still what excites
+me daily.
+I believe IREE has a great potential to be a fundamental piece in the
+future landscape.
+I will help to drive and advance it further by joining <a href="https://nod.ai/">nod.ai</a>. :)</p>
+        </div>
+        
+        
+        
+
+
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">Next</span>
+        <a href="https://www.lei.chat/posts/single-node-ml-runtime-foundation/" class="block">Single-node ML Runtime Foundation</a>
+        
+    </div>
+</div>
+
+        
+
+
+
+  <script id="utterances" src="https://utteranc.es/client.js"
+            issue-term=title
+            repo=antiagainst/antiagainst.github.io
+              theme=preferred-color-scheme
+        crossorigin="anonymous"
+        async>
+</script>
+<script>
+    if (storageColorScheme == "Light") {
+      document.getElementById('utterances').setAttribute('theme', 'github-light')
+    } else if (storageColorScheme == "Dark") {
+      document.getElementById('utterances').setAttribute('theme', 'github-dark')
+    }
+</script>
+
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">On This Page</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#graphics-compiler-toolchain">Graphics Compiler Toolchain</a>
+      <ul>
+        <li><a href="#spir-v-grammar">SPIR-V grammar</a></li>
+        <li><a href="#spir-v-toolchain">SPIR-V toolchain</a></li>
+        <li><a href="#vulkan-projects">Vulkan projects</a></li>
+      </ul>
+    </li>
+    <li><a href="#ml-compiler-and-runtime">ML Compiler and Runtime</a>
+      <ul>
+        <li><a href="#mlir-infrastructure">MLIR infrastructure</a></li>
+        <li><a href="#tensorflow-adoption">TensorFlow adoption</a></li>
+        <li><a href="#iree">IREE</a></li>
+        <li><a href="#vulkan-standardization">Vulkan standardization</a></li>
+        <li><a href="#vulkan-developer-tools">Vulkan developer tools</a></li>
+      </ul>
+    </li>
+    <li><a href="#whats-next">What&rsquo;s Next</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2018 - 2022 <a href="https://www.lei.chat/">Lei Zhang</a>
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>
