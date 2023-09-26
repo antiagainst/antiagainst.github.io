@@ -8,7 +8,22 @@
     <language>en</language>
     <copyright>&amp;copy; 2018 - 2022 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Sat, 01 Apr 2023 14:02:36 -0700</lastBuildDate><atom:link href="https://www.lei.chat/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 26 Sep 2023 14:50:03 -0700</lastBuildDate><atom:link href="https://www.lei.chat/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Leaving Google</title>
+      <link>https://www.lei.chat/posts/leaving-google/</link>
+      <pubDate>Tue, 26 Sep 2023 14:50:03 -0700</pubDate>
+      
+      <guid>https://www.lei.chat/posts/leaving-google/</guid>
+      <description>&lt;p&gt;Time flies&amp;mdash;almost 9 years have passed since I joined Google.
+Now the time has come for me to leave and move on.
+While here, I&amp;rsquo;m super lucky to mostly work on open source projects that I can
+publicly talk about.
+So at the end of my tenure with Google, I&amp;rsquo;d like to reflect and summarize the
+incredible journey, which I am super grateful for and thoroughly enjoyed,
+before I forget some details.&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Single-node ML Runtime Foundation</title>
       <link>https://www.lei.chat/posts/single-node-ml-runtime-foundation/</link>
@@ -59,17 +74,6 @@ and best practices of using it based on my experiences.&lt;/p&gt;</description>
     </item>
     
     <item>
-      <title>MLIR Vector Dialect 以及 Patterns</title>
-      <link>https://www.lei.chat/zh/posts/mlir-vector-dialect-and-patterns/</link>
-      <pubDate>Sun, 31 Jul 2022 15:07:00 -0700</pubDate>
-      
-      <guid>https://www.lei.chat/zh/posts/mlir-vector-dialect-and-patterns/</guid>
-      <description>&lt;p&gt;Vector dialect 及其相关变换 (transformation) 是机器学习代码生成流程中的重要一环。
-今天我们来仔细分析一下其定位、设计、特性，并介绍其中的重要操作 (operation) 和变换，
-最后用实例来说明如何恰当使用 vector dialect 相关功能。&lt;/p&gt;</description>
-    </item>
-    
-    <item>
       <title>MLIR CodeGen Dialects for Machine Learning Compilers</title>
       <link>https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/</link>
       <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
@@ -82,17 +86,6 @@ It also touched on &lt;a href=&#34;../compilers-and-irs-llvm-ir-spirv-and-mlir/#
 focuses thereof.
 Today I will expand on MLIR and talk about its dialect hierarchy for machine
 learning (ML) compilers systematically.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>机器学习编译器代码生成相关 MLIR Dialect</title>
-      <link>https://www.lei.chat/zh/posts/mlir-codegen-dialects-for-machine-learning-compilers/</link>
-      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
-      
-      <guid>https://www.lei.chat/zh/posts/mlir-codegen-dialects-for-machine-learning-compilers/</guid>
-      <description>&lt;p&gt;在&lt;a href=&#34;../compilers-and-irs-llvm-ir-spirv-and-mlir/&#34;&gt;这个系列的首篇文章&lt;/a&gt;中我分享了对编译器和中间表示 (IR) 演进趋势的整体理解，
-也讨论了 &lt;a href=&#34;../compilers-and-irs-llvm-ir-spirv-and-mlir/#llvm-ir&#34;&gt;LLVM IR&lt;/a&gt;, &lt;a href=&#34;../compilers-and-irs-llvm-ir-spirv-and-mlir/#spir-v&#34;&gt;SPIR-V&lt;/a&gt;, 和 &lt;a href=&#34;../compilers-and-irs-llvm-ir-spirv-and-mlir/#mlir&#34;&gt;MLIR&lt;/a&gt; 所要解决的问题以及相应的设计着眼点。
-今天对 MLIR 做进一步展开，分析一下机器学习相关的 dialect 体系。&lt;/p&gt;</description>
     </item>
     
     <item>
