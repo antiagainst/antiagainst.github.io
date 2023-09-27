@@ -37,9 +37,18 @@
     </item>
     
     <item>
+      <title>compiler</title>
+      <link>https://www.lei.chat/categories/compiler/</link>
+      <pubDate>Wed, 31 Aug 2022 14:59:09 -0700</pubDate>
+      
+      <guid>https://www.lei.chat/categories/compiler/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>ir</title>
       <link>https://www.lei.chat/categories/ir/</link>
-      <pubDate>Thu, 01 Sep 2022 14:59:09 -0700</pubDate>
+      <pubDate>Wed, 31 Aug 2022 14:59:09 -0700</pubDate>
       
       <guid>https://www.lei.chat/categories/ir/</guid>
       <description></description>
@@ -48,7 +57,7 @@
     <item>
       <title>机器学习推理</title>
       <link>https://www.lei.chat/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%8E%A8%E7%90%86/</link>
-      <pubDate>Thu, 01 Sep 2022 14:59:09 -0700</pubDate>
+      <pubDate>Sun, 31 Jul 2022 15:07:00 -0700</pubDate>
       
       <guid>https://www.lei.chat/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%8E%A8%E7%90%86/</guid>
       <description></description>
@@ -57,18 +66,9 @@
     <item>
       <title>编译器</title>
       <link>https://www.lei.chat/categories/%E7%BC%96%E8%AF%91%E5%99%A8/</link>
-      <pubDate>Thu, 01 Sep 2022 14:59:09 -0700</pubDate>
+      <pubDate>Sun, 31 Jul 2022 15:07:00 -0700</pubDate>
       
       <guid>https://www.lei.chat/categories/%E7%BC%96%E8%AF%91%E5%99%A8/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>compiler</title>
-      <link>https://www.lei.chat/categories/compiler/</link>
-      <pubDate>Wed, 31 Aug 2022 14:59:09 -0700</pubDate>
-      
-      <guid>https://www.lei.chat/categories/compiler/</guid>
       <description></description>
     </item>
     
