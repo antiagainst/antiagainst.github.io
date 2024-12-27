@@ -19,15 +19,6 @@
     </item>
     
     <item>
-      <title>gpu-performance</title>
-      <link>https://www.lei.chat/categories/gpu-performance/</link>
-      <pubDate>Wed, 25 Dec 2024 15:13:01 -0800</pubDate>
-      
-      <guid>https://www.lei.chat/categories/gpu-performance/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>triton</title>
       <link>https://www.lei.chat/categories/triton/</link>
       <pubDate>Wed, 25 Dec 2024 15:13:01 -0800</pubDate>
@@ -73,24 +64,6 @@
     </item>
     
     <item>
-      <title>机器学习推理</title>
-      <link>https://www.lei.chat/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%8E%A8%E7%90%86/</link>
-      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
-      
-      <guid>https://www.lei.chat/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%8E%A8%E7%90%86/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>编译器</title>
-      <link>https://www.lei.chat/categories/%E7%BC%96%E8%AF%91%E5%99%A8/</link>
-      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
-      
-      <guid>https://www.lei.chat/categories/%E7%BC%96%E8%AF%91%E5%99%A8/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>llvm</title>
       <link>https://www.lei.chat/categories/llvm/</link>
       <pubDate>Sun, 23 Jan 2022 10:54:37 -0500</pubDate>
@@ -118,11 +91,29 @@
     </item>
     
     <item>
+      <title>编译器</title>
+      <link>https://www.lei.chat/categories/%E7%BC%96%E8%AF%91%E5%99%A8/</link>
+      <pubDate>Sun, 23 Jan 2022 10:54:37 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/categories/%E7%BC%96%E8%AF%91%E5%99%A8/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>android</title>
       <link>https://www.lei.chat/categories/android/</link>
       <pubDate>Sun, 19 Sep 2021 19:17:07 -0400</pubDate>
       
       <guid>https://www.lei.chat/categories/android/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>gpu-performance</title>
+      <link>https://www.lei.chat/categories/gpu-performance/</link>
+      <pubDate>Sun, 19 Sep 2021 19:17:07 -0400</pubDate>
+      
+      <guid>https://www.lei.chat/categories/gpu-performance/</guid>
       <description></description>
     </item>
     
