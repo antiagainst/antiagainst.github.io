@@ -118,9 +118,9 @@
     "itemListElement":[{
             "@type":"ListItem",
             "position":  1 ,
-            "name": "MLIR Linalg Dialect 以及 Patterns",
-            "description": "\u003cp\u003e\u003ca href=\"../mlir-vector-dialect-and-patterns/\"\u003e之前的文章\u003c/a\u003e介绍了 Vector dialect 及其相关 pattern。\n今天我们来看一下上层的 Linalg dialect 以及相关的变换。\u003c/p\u003e",
-            "url": "https://www.lei.chat/zh/posts/mlir-linalg-dialect-and-patterns/"
+            "name": "Leaving Google",
+            "description": "\u003cp\u003eTime flies\u0026mdash;almost 9 years have passed since I joined Google.\nNow the time has come for me to leave and move on.\nWhile here, I\u0026rsquo;m super lucky to mostly work on open source projects that I can\npublicly talk about.\nSo at the end of my tenure with Google, I\u0026rsquo;d like to reflect and summarize the\nincredible journey, which I am super grateful for and thoroughly enjoyed,\nbefore I forget some details.\u003c/p\u003e",
+            "url": "https://www.lei.chat/posts/leaving-google/"
         },{
             "@type":"ListItem",
             "position":  2 ,
@@ -136,38 +136,32 @@
         },{
             "@type":"ListItem",
             "position":  4 ,
-            "name": "MLIR Vector Dialect 以及 Patterns",
-            "description": "\u003cp\u003eVector dialect 及其相关变换 (transformation) 是机器学习代码生成流程中的重要一环。\n今天我们来仔细分析一下其定位、设计、特性，并介绍其中的重要操作 (operation) 和变换，\n最后用实例来说明如何恰当使用 vector dialect 相关功能。\u003c/p\u003e",
-            "url": "https://www.lei.chat/zh/posts/mlir-vector-dialect-and-patterns/"
-        },{
-            "@type":"ListItem",
-            "position":  5 ,
             "name": "MLIR CodeGen Dialects for Machine Learning Compilers",
             "description": "\u003cp\u003eThe \u003ca href=\"../compilers-and-irs-llvm-ir-spirv-and-mlir/\"\u003einitial blog post\u003c/a\u003e in this series captured my overall take\non the evolution trends of compilers and IRs.\nIt also touched on \u003ca href=\"../compilers-and-irs-llvm-ir-spirv-and-mlir/#llvm-ir\"\u003eLLVM IR\u003c/a\u003e, \u003ca href=\"../compilers-and-irs-llvm-ir-spirv-and-mlir/#spir-v\"\u003eSPIR-V\u003c/a\u003e, and\n\u003ca href=\"../compilers-and-irs-llvm-ir-spirv-and-mlir/#mlir\"\u003eMLIR\u003c/a\u003e, explaining the problems they are addressing and design\nfocuses thereof.\nToday I will expand on MLIR and talk about its dialect hierarchy for machine\nlearning (ML) compilers systematically.\u003c/p\u003e",
             "image": "https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/codegen-dialect-hierarchy.svg",
             "url": "https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/"
         },{
             "@type":"ListItem",
-            "position":  6 ,
+            "position":  5 ,
             "name": "机器学习编译器代码生成相关 MLIR Dialect",
             "description": "\u003cp\u003e在\u003ca href=\"../compilers-and-irs-llvm-ir-spirv-and-mlir/\"\u003e这个系列的首篇文章\u003c/a\u003e中我分享了对编译器和中间表示 (IR) 演进趋势的整体理解，\n也讨论了 \u003ca href=\"../compilers-and-irs-llvm-ir-spirv-and-mlir/#llvm-ir\"\u003eLLVM IR\u003c/a\u003e, \u003ca href=\"../compilers-and-irs-llvm-ir-spirv-and-mlir/#spir-v\"\u003eSPIR-V\u003c/a\u003e, 和 \u003ca href=\"../compilers-and-irs-llvm-ir-spirv-and-mlir/#mlir\"\u003eMLIR\u003c/a\u003e 所要解决的问题以及相应的设计着眼点。\n今天对 MLIR 做进一步展开，分析一下机器学习相关的 dialect 体系。\u003c/p\u003e",
             "image": "https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/codegen-dialect-hierarchy.svg",
             "url": "https://www.lei.chat/zh/posts/mlir-codegen-dialects-for-machine-learning-compilers/"
         },{
             "@type":"ListItem",
-            "position":  7 ,
+            "position":  6 ,
             "name": "编译器与中间表示: LLVM IR, SPIR-V, 以及 MLIR",
             "description": "总体介绍编译器和中间表示 (LLVM IR, SPIR-V, and MLIR) 的发展历史和演进趋势",
             "url": "https://www.lei.chat/zh/posts/compilers-and-irs-llvm-ir-spirv-and-mlir/"
         },{
             "@type":"ListItem",
-            "position":  8 ,
+            "position":  7 ,
             "name": "Compilers and IRs: LLVM IR, SPIR-V, and MLIR",
             "description": "Overall discussion on compilers and IRs (LLVM IR, SPIR-V, and MLIR): why they are in their current manner and how they would evolve",
             "url": "https://www.lei.chat/posts/compilers-and-irs-llvm-ir-spirv-and-mlir/"
         },{
             "@type":"ListItem",
-            "position":  9 ,
+            "position":  8 ,
             "name": "CodeGen Performant Convolution Kernels for Mobile GPUs",
             "description": "\u003cp\u003eThis blog post talks about how to generate performant code for convolution ops\nusing MLIR’s multiple levels of abstractions and transformations.\nI initially created it for targeting ARM Mali GPUs in IREE. But given it is\njust direct tiling and vectorization, it should be widely applicable.\u003c/p\u003e\n\u003cp\u003eI will walk through the lowering steps, so if you are interested to know how to\norganize MLIR’s various dialects/patterns together to achieve similar tasks,\nthis blog post might also be useful.\u003c/p\u003e",
             "url": "https://www.lei.chat/posts/codegen-performant-convolution-kernels-for-mobile-gpus/"
@@ -209,7 +203,7 @@
 
 
 
-<meta property="og:updated_time" content="2022-09-01T14:59:09-07:00" />
+<meta property="og:updated_time" content="2023-09-26T14:50:03-07:00" />
 
 
 
@@ -316,11 +310,6 @@
       
         
         
-      
-    
-      
-        
-        
           
         
       
@@ -334,6 +323,8 @@
     
       
         
+        
+          
         
       
     
@@ -369,6 +360,40 @@
       
     
     <div class="overflow-hidden divide-y">
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="https://www.lei.chat/posts/leaving-google/" class="font-bold text-xl hover:text-eureka">Leaving Google</a>
+</div>
+<div class="content">
+  Time flies—almost 9 years have passed since I joined Google. Now the time has come for me to leave and move on. While here, I’m super lucky to mostly work on open source projects that I can publicly talk about. So at the end of my tenure with Google, I’d like to reflect and summarize the incredible journey, which I am super grateful for and thoroughly enjoyed, before I forget some details.
+
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2023-09-26</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>7 min read</span>
+    </div>
+    
+    
+
+    
+</div>
+
+
+  </div>
+
+  
+</div>
+  </div>
   
   <div class="py-6">
     <div class="flex flex-col-reverse lg:flex-row justify-between">
@@ -684,7 +709,7 @@ I will walk through the lowering steps, so if you are interested to know how to 
   </main>
   <footer class="pl-scrollbar">
     <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
-    <p class="text-sm text-tertiary-text">&copy; 2018 - 2023 <a href="https://www.lei.chat/">Lei Zhang</a>
+    <p class="text-sm text-tertiary-text">&copy; 2018 - 2025 <a href="https://www.lei.chat/">Lei Zhang</a>
  &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
 </div></div>
   </footer>

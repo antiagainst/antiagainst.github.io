@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang='en' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Triton Compiler Development Tips | Lei.Chat()</title>
+
+<meta name="generator" content="Hugo Eureka 0.8.4" />
+<link rel="stylesheet" href="https://www.lei.chat/css/eureka.min.css">
+<script defer src="https://www.lei.chat/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/bash.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/c.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cmake.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cpp.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/glsl.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/javascript.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/llvm.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/python.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/shell.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-109525036-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-109525036-1');
+</script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="Triton provides an elegant solution to program GPU kernels in Python,
+positioning itself as a critical component in the modern AI software stack.
+To deliver performance and portability, it leverages a compiler, the capability
+of which determines the potential.
+Hacking the compiler internals is not a simple task.
+Here are some tips hopefully useful to folks.
+I&rsquo;ll try to keep this blog post updated periodically.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Posts",
+      "item":"https://www.lei.chat/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Triton Compiler Development Tips",
+      "item":"https://www.lei.chat/posts/triton-compiler-development-tips/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.lei.chat/posts/triton-compiler-development-tips/"
+    },
+    "headline": "Triton Compiler Development Tips | Lei.Chat()","datePublished": "2024-12-25T15:13:01-08:00",
+    "dateModified": "2024-12-25T15:13:01-08:00",
+    "wordCount":  1988 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "Lei Zhang",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.lei.chat/images/avatar.png"
+        }
+        },
+    "description": "\u003cp\u003e\u003ca href=\u0022https:\/\/triton-lang.org\/\u0022\u003eTriton\u003c\/a\u003e provides an elegant solution to program GPU kernels in Python,\npositioning itself as a critical component in the modern AI software stack.\nTo deliver performance and portability, it leverages a compiler, the capability\nof which determines the potential.\nHacking the compiler internals is not a simple task.\nHere are some tips hopefully useful to folks.\nI\u0026rsquo;ll try to keep this blog post updated periodically.\u003c\/p\u003e"
+}
+</script><meta property="og:title" content="Triton Compiler Development Tips | Lei.Chat()" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="https://www.lei.chat/images/avatar.png">
+
+
+<meta property="og:url" content="https://www.lei.chat/posts/triton-compiler-development-tips/" />
+
+
+
+
+<meta property="og:description" content="Triton provides an elegant solution to program GPU kernels in Python,
+positioning itself as a critical component in the modern AI software stack.
+To deliver performance and portability, it leverages a compiler, the capability
+of which determines the potential.
+Hacking the compiler internals is not a simple task.
+Here are some tips hopefully useful to folks.
+I&rsquo;ll try to keep this blog post updated periodically." />
+
+
+
+
+<meta property="og:locale" content="en" />
+
+
+
+
+<meta property="og:site_name" content="Lei.Chat()" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2024-12-25T15:13:01-08:00" />
+
+
+<meta property="article:modified_time" content="2024-12-25T15:13:01-08:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="triton" />
+
+<meta property="article:tag" content="compiler" />
+
+<meta property="article:tag" content="development" />
+
+<meta property="article:tag" content="tips" />
+
+<meta property="article:tag" content="debugging" />
+
+<meta property="article:tag" content="pytorch" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Lei.Chat()</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">Posts</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Tags</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Categories</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Series</a>
+            <a href="/authors/me" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">About</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">Light</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">Dark</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">Auto</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">Triton Compiler Development Tips</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2024-12-25</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>10 min read</span>
+    </div>
+    
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="https://www.lei.chat/categories/compiler/" class="hover:text-eureka">compiler</a><span>, </span>
+        
+        
+        <a href="https://www.lei.chat/categories/triton/" class="hover:text-eureka">triton</a><span>, </span>
+        
+        
+        <a href="https://www.lei.chat/categories/gpu-performance/" class="hover:text-eureka">gpu-performance</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="https://www.lei.chat/series/triton/" class="hover:text-eureka">triton</a>
+        
+    </div>
+    
+</div>
+
+        
+        <div class="content">
+            <p><a href="https://triton-lang.org/">Triton</a> provides an elegant solution to program GPU kernels in Python,
+positioning itself as a critical component in the modern AI software stack.
+To deliver performance and portability, it leverages a compiler, the capability
+of which determines the potential.
+Hacking the compiler internals is not a simple task.
+Here are some tips hopefully useful to folks.
+I&rsquo;ll try to keep this blog post updated periodically.</p>
+<h2 id="building-and-installation">Building and Installation</h2>
+<p>Triton itself focuses on the GPU kernel; Runtime bits like tensor allocation
+and resource management are handled by PyTorch.
+Also PyTorch itself uses Triton for <a href="https://pytorch.org/docs/stable/torch.compiler.html">TorchInductor</a>.
+So Triton is typically installed together with PyTorch.</p>
+<h3 id="using-wheels-from-pytorch">Using wheels from PyTorch</h3>
+<p>PyTorch has a clearly defined <a href="https://github.com/pytorch/pytorch/blob/main/RELEASE.md">releasing scheme</a>.
+Triton&rsquo;s versioning plan is effectively managed by PyTorch.
+For every two minor releases, PyTorch would choose a recent commit from
+Triton&rsquo;s <code>main</code> branch, fix all PyTorch usage breakages, and run extensive
+regression tests in PyTorch for quality control.
+In the meanwhile it may cherry pick some further commits and push to a
+<code>release/M.N.x</code> branch in the Triton repo.
+For <code>release/M.N+1.x</code>, the base commit remains the same, only important
+fixes are cherry picked in.</p>
+<p>PyTorch names the Triton wheel differently depending on the build type (stable
+or nightly) and GPU vendor (NVIDIA or AMD).
+The canonical pypi wheel <code>triton</code> is only used for stable PyTorch releases
+targeting NVIDIA CUDA.
+We can find other combinations <a href="https://github.com/pytorch/pytorch/blob/main/RELEASE.md#triton-dependency-for-the-release">on this page</a>.</p>
+<p>To find which triton commit a specific PyTorch version is depending on, for
+example, v2.5.1, see <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/.ci/docker/ci_commit_pins/triton.txt">PyTorch&rsquo;s source code
+<code>.ci/docker/ci_commit_pins/triton.txt</code></a>.</p>
+<h3 id="building-from-source-via-python">Building from source via Python</h3>
+<p>Though if interested in working on the Triton compiler itself, we need to
+install from the source.
+Triton&rsquo;s <code>README.md</code> has <a href="https://github.com/triton-lang/triton/blob/main/README.md#install-from-source">clear steps to follow</a>.
+I&rsquo;d typically use a Python virtualenv there for better environment isolation.</p>
+<p><code>pip install</code> builds the whole Triton project from <a href="https://github.com/triton-lang/triton/blob/main/python/setup.py">Triton&rsquo;s
+<code>setup.py</code></a>. The script first downloads build dependencies like
+LLVM, NVIDIA toolchain, and pybind11 under <code>$HOME/.triton</code>.
+We can use the <code>TRITON_HOME</code> environment variable to redirect it though.
+It then invokes CMake to build the whole C++ project from the <a href="https://github.com/triton-lang/triton/blob/main/CMakeLists.txt">top level
+<code>CMakeLists.txt</code></a> and packages it up as a Python wheel.</p>
+<p>The packaged Python wheel has the name of <code>triton</code>. It can cause problem for
+pip dependency management if we have another wheel installed from PyTorch
+under a different name, i.e., <code>pytorch-triton</code> or <code>pytorch-triton-rocm</code>&ndash;given
+the overlapping codebase, the locally built <code>triton</code> will overwrite contents
+but may not cover all of them due to version differences.
+So, it&rsquo;s suggested to purge all existing <code>triton</code>, <code>pytorch-triton</code>, and
+<code>pytorch-rocm-rocm</code> wheels beforehand.</p>
+<p>Starting <a href="https://github.com/triton-lang/triton/commit/6c3e9535c44774dfd56357acba9c2183b247f58e">this patch</a>, we can query the installed
+<code>triton</code> commit with <code>pip show triton</code>, which will show something like
+<code>Version: 3.2.0+gitf8b5301a</code>.</p>
+<p>There are a few nice <a href="https://github.com/triton-lang/triton/blob/main/README.md#tips-for-building">tips for building</a> mentioned in
+Triton&rsquo;s <code>README.md</code>.
+A shell function to bake them in would come quite convenient:</p>
+<pre><code class="language-bash">triton-pip-install () {
+  REPO_BASE_DIR=$(git rev-parse --show-toplevel)
+  TRITON_BUILD_WITH_CCACHE=true TRITON_BUILD_WITH_CLANG_LLD=true \
+    pip install --no-build-isolation ${REPO_BASE_DIR}/python
+}
+</code></pre>
+<h3 id="building-from-source-via-cmake">Building from source via CMake</h3>
+<p>Developing the Triton compiler mostly involves touching the C++ codebase for
+various MLIR passes and patterns.
+So I also directly build a <code>Debug</code> version from the <a href="https://github.com/triton-lang/triton/blob/main/CMakeLists.txt">top level
+<code>CMakeLists.txt</code></a>.</p>
+<p>It involves building the LLVM/MLIR in <code>Debug</code> too; there are steps in <a href="https://github.com/triton-lang/triton/blob/main/README.md#building-with-a-custom-llvm">the
+<code>README.md</code></a>, which I also put in a shell function:</p>
+<pre><code class="language-bash"># &lt;source-dir&gt; should be the local checkout directory for
+#   https://github.com/llvm/llvm-project/tree/main/llvm
+# &lt;target-dir&gt; is where to put the compiled LLVM/MLIR artifacts
+triton-configure-mlir() {
+  if (( $# &lt; 3 ))
+  then
+    echo &quot;usage: $0 &lt;source-dir&gt; &lt;target-dir&gt; &lt;build-type&gt;&quot;
+    return 1
+  fi
+
+  SOURCE_DIR=$1; shift
+  TARGET_DIR=$1; shift
+  BUILD_TYPE=$1; shift
+
+  cmake -GNinja \
+    -S ${SOURCE_DIR} -B ${TARGET_DIR} \
+    -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+    -DCMAKE_C_COMPILER=$(which clang) -DCMAKE_CXX_COMPILER=$(which clang++) \
+    -DLLVM_ENABLE_PROJECTS=&quot;llvm;mlir&quot; \
+    -DLLVM_TARGETS_TO_BUILD=&quot;AMDGPU;NVPTX;X86;AArch64&quot;
+}
+</code></pre>
+<p>Then the CMake configuration step for Triton can be captured with a shell
+function:</p>
+<pre><code class="language-bash"># &lt;source-dir&gt; should be the local checkout directory for
+#   https://github.com/triton-lang/triton
+# &lt;target-dir&gt; is where to put the compiled Triton artifacts
+# &lt;mlir-dir&gt; should be the LLVM/MLIR artifacts directory
+triton-cmake() {
+  if (( $# &lt; 4 ))
+  then
+    echo &quot;usage: $0 &lt;source-dir&gt; &lt;target-dir&gt; &lt;build-type&gt; &lt;mlir-dir&gt;&quot;
+    return 1
+  fi
+
+  SOURCE_DIR=$1; shift
+  TARGET_DIR=$1; shift
+  BUILD_TYPE=$1; shift
+  MLIR_DIR=$1;   shift
+
+  if [[ &quot;$(uname)&quot; == &quot;Darwin&quot; ]]; then
+    LINKER_FLAGS=()
+  else
+    LINKER_FLAGS=(
+      &quot;-DCMAKE_EXE_LINKER_FLAGS=-fuse-ld=lld&quot;
+      &quot;-DCMAKE_MODULE_LINKER_FLAGS=-fuse-ld=lld&quot;
+      &quot;-DCMAKE_SHARED_LINKER_FLAGS=-fuse-ld=lld&quot;
+    )
+  fi
+
+  REPO_BASE_DIR=$(git rev-parse --show-toplevel)
+
+  cmake -GNinja \
+    -S ${SOURCE_DIR} -B ${TARGET_DIR} \
+    -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+    -DTRITON_CODEGEN_BACKENDS=&quot;amd;nvidia&quot; \
+    -DLLVM_INCLUDE_DIRS=${MLIR_DIR}/include \
+    -DLLVM_LIBRARY_DIR=${MLIR_DIR}/lib \
+    -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ \
+    -DCMAKE_LINKER=lld ${LINKER_FLAGS[@]} \
+    -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+    -DTRITON_BUILD_PYTHON_MODULE=ON \
+    -DTRITON_BUILD_PROTON=ON \
+    -DCUPTI_INCLUDE_DIR=${REPO_BASE_DIR}/third_party/nvidia/backend/include \
+    -DROCTRACER_INCLUDE_DIR=${REPO_BASE_DIR}/third_party/amd/backend/include \
+    -DJSON_INCLUDE_DIR=$HOME/.triton/json/include
+}
+</code></pre>
+<p>With the above two scripts, setting up a new environment is:</p>
+<pre><code class="language-bash">git clone git@github.com:llvm/llvm-project.git
+triton-configure-mlir llvm-project/llvm build/mlir-debug Debug
+cmake --build build/mlir-debug
+
+git clone git@github.com:triton-lang/triton.git
+# Use triton-pip-install to download dependencies like NIVIDA toolchain
+cd triton &amp;&amp; triton-pip-install &amp;&amp; cd ..
+triton-cmake triton build/triton-debug Debug build/mlir-debug
+cmake --build build/triton-debug
+</code></pre>
+<p>We can also symlink the <code>compile_commands.json</code> file under <code>build/mlir-debug</code>
+to the Triton repo root directory to enable better code completion, if using
+Vim and <a href="https://github.com/ycm-core/YouCompleteMe">YouCompleteMe</a> for example.</p>
+<h2 id="developing">Developing</h2>
+<p>Triton uses MLIR for its internal compiler passes and patterns.
+So it follows MLIR source code structure and adopts naming conventions there.</p>
+<h3 id="source-code-structure">Source code structure</h3>
+<p>The major components are:</p>
+<ul>
+<li><a href="https://github.com/triton-lang/triton/tree/main/python"><code>python/</code></a>: Python frontend codebase
+<ul>
+<li><code>python/triton</code>: Triton&rsquo;s Python API and wheel package source code</li>
+<li><code>python/src</code>: pybind11 stubs to connect with the C++ codebase</li>
+</ul>
+</li>
+<li><a href="https://github.com/triton-lang/triton/tree/main/include/triton"><code>include/triton/</code></a>: main C++ declaration codebase
+<ul>
+<li><code>include/triton/Dialect/</code>: Triton MLIR dialect declarations</li>
+<li><code>include/triton/Conversion/</code>: Triton dialect conversion declarations</li>
+<li><code>include/triton/Analysis/</code>: Triton analysis utility declarations</li>
+</ul>
+</li>
+<li><a href="https://github.com/triton-lang/triton/tree/main/lib"><code>lib/</code></a>: main C++ definition codebase
+<ul>
+<li><code>lib/Dialect/</code>: Triton MLIR dialect definitions</li>
+<li><code>lib/Conversion/</code>: Triton dialect conversion definitions</li>
+<li><code>lib/Analysis/</code>: Triton analysis utility definitions</li>
+</ul>
+</li>
+<li><a href="https://github.com/triton-lang/triton/tree/main/third_party/nvidia"><code>third_party/nvidia</code></a>: NVIDIA backend
+<ul>
+<li>Similar nested directory structure for <code>python/</code>, <code>include/</code>, and <code>lib/</code></li>
+<li><code>third_party/nvidia/backend/</code>: entry points for the NVIDIA backend</li>
+</ul>
+</li>
+<li><a href="https://github.com/triton-lang/triton/tree/main/third_party/amd"><code>third_party/amd</code></a>: AMD backend
+<ul>
+<li>Similar nested directory structure for <code>python/</code>, <code>include/</code>, and <code>lib/</code></li>
+<li><code>third_party/amd/backend/</code>: entry points for the AMD backend</li>
+</ul>
+</li>
+</ul>
+<p>If you are just getting started with the codebase, <code>third_party/*/backend/</code>
+might be the directory you&rsquo;d like to check out first.
+Particularly, the <code>compiler.py</code> file is the backend compiler entry point,
+which contains all compilation stages and pass invocations, for
+<a href="https://github.com/triton-lang/triton/blob/main/third_party/nvidia/backend/compiler.py">NVIDIA</a> and <a href="https://github.com/triton-lang/triton/blob/main/third_party/amd/backend/compiler.py">AMD</a> specifically.</p>
+<h3 id="ir-printing">IR printing</h3>
+<p>IR printing is the basic yet powerful developing technique for compilers.
+Generally for development or debugging, we first try to inspect the full
+compilation flow and check what each pass did to isolate a specific problematic
+pass.
+There is <a href="https://github.com/triton-lang/triton/blob/main/README.md#tips-for-hacking">a bunch of <code>TRITON_*</code> environment variables</a> to help
+IR printing, a good initial combination is</p>
+<pre><code class="language-bash"># For NVIDIA CUDA:
+TRITON_ALWAYS_COMPILE=1 MLIR_ENABLE_DUMP=1 TRITON_DISABLE_LINE_INFO=1 NVPTX_ENABLE_DUMP=1
+
+# For AMD HIP:
+TRITON_ALWAYS_COMPILE=1 MLIR_ENABLE_DUMP=1 TRITON_DISABLE_LINE_INFO=1 AMDGCN_ENABLE_DUMP=1
+</code></pre>
+<p>The above would print the input IR before each pass, for example,</p>
+<pre><code>// -----// IR Dump Before TritonCombineOps (triton-combine) ('builtin.module' operation) //----- //
+...
+// -----// IR Dump Before ConvertTritonToTritonGPU (convert-triton-to-tritongpu) ('builtin.module' operation) //----- //
+...
+// -----// IR Dump Before TritonGPUCoalesce (tritongpu-coalesce) ('builtin.module' operation) //----- //
+...
+</code></pre>
+<p>Once isolated a certain pass, <a href="https://mlir.llvm.org/getting_started/Debugging/">common MLIR tricks</a> apply here.
+We can then use the <code>triton-opt</code> binary under <code>build/triton-debug/bin/</code> to invoke
+the pass, like <code>triton-opt -tritongpu-coalesce</code>, on the input IR, and iterate
+from there on:</p>
+<ul>
+<li>Adding <code>-debug</code> to <code>triton-opt</code> would enable logs from all sorts, from
+the MLIR infra itself and from all passes.</li>
+<li>To filter logs from a specific pass, we can find the source code of that pass
+and see if it has <code>#define DEBUG_TYPE</code> label and use <code>-debug-only=</code> with it.
+The <code>DEBUG_TYPE</code> label typically is the same as the pass name, for example,
+<a href="https://github.com/triton-lang/triton/blob/eb58b22/lib/Dialect/TritonGPU/Transforms/Coalesce.cpp#L14">for the coalescing pass</a>, but it&rsquo;s not guaranteed.</li>
+<li>Sometimes there might be issues in the MLIR infra. Some useful options here
+are <code>-debug-only=dialect-conversion</code> to print dialect conversion logs,
+<code>-debug-only=greedy-rewriter</code> to print greedy rewriter logs, and
+<code>-debug-only=pattern-application</code> to print pattern application details.</li>
+<li><code>-debug-only=</code> accepts multiple <code>DEBUG_TYPE</code> labels concatenated with <code>,</code>.</li>
+</ul>
+<h3 id="jit-compilation-artifacts">JIT compilation artifacts</h3>
+<p>Triton compiles and caches kernels under <code>$HOME/.triton/cache</code>.
+For each kernel, there is a directory with a hex string name <a href="https://github.com/triton-lang/triton/blob/6f5baf6/python/triton/compiler/compiler.py#L232-L233">computed
+from</a> the kernel source code, various parameters, and environment
+details.
+This directory contains various artifacts:</p>
+<pre><code class="language-bash"># For NVIDIA CUDA
+&gt; tree ~/.triton/cache/2DU3OI4VZNGLI3YQB3XY4QSTCMCBAFXIMJYYTJHQWOXONXVQ4QTQ
+├── __grp__matmul_kernel.json
+├── matmul_kernel.cubin
+├── matmul_kernel.json
+├── matmul_kernel.llir
+├── matmul_kernel.ptx
+├── matmul_kernel.ttgir
+└── matmul_kernel.ttir
+
+# For AMD HIP
+&gt; tree ~/.triton/cache/D2VUWRJXYTN4VEIO2EUQMCQFXPQKOLTOR2OGZQ5553XLRWTEN6DQ
+├── __grp__matmul_kernel.json
+├── matmul_kernel.amdgcn
+├── matmul_kernel.hsaco
+├── matmul_kernel.llir
+├── matmul_kernel.ptx
+├── matmul_kernel.ttgir
+└── matmul_kernel.ttir
+</code></pre>
+<p>The file suffix is self-explanatory:</p>
+<ul>
+<li><code>matmul_kernel.json</code> contains metadata for the kernel compilation, e.g.,
+compilation target and the associated <a href="https://github.com/triton-lang/triton/blob/3c058ee/third_party/nvidia/backend/compiler.py#L105-L124"><code>CUDAOptions</code> values</a> or
+<a href="https://github.com/triton-lang/triton/blob/3c058ee/third_party/amd/backend/compiler.py#L44-L66"><code>HIPOptions</code> values</a>.</li>
+<li><code>*.ttir</code>, <code>*.ttgir</code>, <code>*.llir</code> are input IR to the Triton dialect,
+TritonGPU dialect, LLVM conversion stages, respectively.</li>
+<li><code>*.ptx</code> and <code>*.cubin</code> are NVIDIA PTX assembly and final binary blob.</li>
+<li><code>*.amdgcn</code> and <code>*.hsaco</code> are AMD GCN assembly and final binary blob.</li>
+</ul>
+<h3 id="amd-gcn-assembly">AMD GCN assembly</h3>
+<p>For AMD, after <a href="https://github.com/triton-lang/triton/commit/1827757be3d352d05c324627bde02117b287f1b7">this patch</a>, the <code>*.amdgcn</code> file contains
+useful kernel resource usage information for performance debugging in broad
+strokes:</p>
+<pre><code>; Kernel info:
+; codeLenInByte = 7732
+; NumSgprs: 24
+; NumVgprs: 154
+; NumAgprs: 128
+; TotalNumVgprs: 284
+; ScratchSize: 0
+; MemoryBound: 1
+; FloatMode: 240
+; IeeeMode: 1
+; LDSByteSize: 0 bytes/workgroup (compile time only)
+; SGPRBlocks: 2
+; VGPRBlocks: 35
+; NumSGPRsForWavesPerEU: 24
+; NumVGPRsForWavesPerEU: 284
+; AccumOffset: 156
+; Occupancy: 1
+; WaveLimiterHint : 0
+</code></pre>
+<p>We can also find other useful metadata like <code>.sgpr_spill_count</code> and
+<code>.vgpr_spill_count</code> from the <code>*.amdgcn</code> file.
+Such information can help to identify performance issues due to register
+pressure/spill quickly without resorting to profilers.</p>
+<h3 id="cross-compilation">Cross compilation</h3>
+<p>Triton normally assumes JIT compilation&ndash;it would read the current active
+GPU&rsquo;s architecture information and JIT compile at runtime.
+Sometimes we may want to compile towards different GPU architectures; trying
+to find a machine containing the corresponding GPU may be difficult.</p>
+<p>We can actually AOT compile a specific kernel if we only want to inspect
+the compilation flow or artifact.</p>
+<pre><code class="language-python">import torch
+import triton
+import triton.language as tl
+from triton.backends.compiler import GPUTarget
+
+@triton.jit
+def kernel(x_ptr, y_ptr, output_ptr, n_elements, BLOCK_SIZE: tl.constexpr):
+  # A kernel to compile
+  ...
+
+src = triton.compiler.ASTSource(
+  fn=kernel,
+  signature={0: &quot;*fp32&quot;, 1: &quot;*fp32&quot;, 2: &quot;*fp32&quot;, 3: &quot;i32&quot;},
+  constants={&quot;BLOCK_SIZE&quot;: 64}
+)
+
+target = GPUTarget(&quot;cuda&quot;, 80, 32)        # For NVIDIA CUDA SM_80 (e.g., A100 GPU)
+# target = GPUTarget(&quot;hip&quot;, 'gfx942', 64) # For AMD HIP gfx942 (e.g., MI300X GPU)
+# Or other targets..
+output = triton.compile(src, target=target)
+</code></pre>
+<p>Then <code>output.asm</code> is a directory containing various IRs, i.e., ttir, ttgir,
+llir, etc., which we can print out with <code>print(output.asm['ttgir'])</code>.</p>
+<h2 id="debugging">Debugging</h2>
+<p>The difficulties associated with debugging typically arise from isolating the
+problematic component and pinpointing the culprit.
+Once done, the solution typically derives naturally.</p>
+<p>Once we have a more isolated case, the general methodology to pinpoint the exact
+culprit is to</p>
+<ol>
+<li>collect and inspect the symptoms,</li>
+<li>form hypothesis and run experiments to prove/refute the hypothesis, and</li>
+<li>iterate.</li>
+</ol>
+<h3 id="sanitizing-development-environment">Sanitizing development environment</h3>
+<p>One important step before engaging in full blown debugging is to sanitize
+the development environment.
+It can be quite frustrating to learn that the &ldquo;bug&rdquo; is actually due to
+environmental issues after several hours of effort!</p>
+<ul>
+<li>Purge all existing Triton installations and reinstall from scratch.</li>
+<li>Purge <code>$HOME/.triton/cache</code> and recompile the kernel.</li>
+<li>Double check <code>TRITON_*</code> environment variable set.</li>
+<li>Are others able to reproduce the same issue?</li>
+<li>What versions are the driver and other components in the stack at?</li>
+<li>Did the driver stack get updated recently?</li>
+<li>Does the issue persist after resetting the GPU / rebooting the machine?</li>
+<li>&hellip;</li>
+</ul>
+<h3 id="functionality-issues">Functionality issues</h3>
+<p>If you hit functionality issues in the Triton compiler codebase itself like
+segfault, it&rsquo;s typically easier to pinpoint the exact place and figure out.
+Various general software and <a href="https://mlir.llvm.org/getting_started/Debugging/">MLIR</a> debugging tips apply here:</p>
+<ul>
+<li>Turn on debugging build to get asserts and other additional checks.
+If compiling from Python with <code>pip</code> we can
+<a href="https://github.com/triton-lang/triton/blob/f27f6a7/python/setup.py#L112">export <code>DEBUG=1</code></a>.</li>
+<li>Use Clang sanitizers to help catch memory or threading issues.</li>
+<li>Use a general debugger to step through the codebase.</li>
+<li>&hellip;</li>
+</ul>
+<h3 id="correctness-issues">Correctness issues</h3>
+<p>If the compiled kernel has correctness issues, there are a few tips to collect
+symptoms and form hypothesis:</p>
+<ul>
+<li>Mutate the kernel source code to get a sense of which parts are likely
+causing issues.</li>
+<li>Disable features in the compiler to use a simple compilation flow.
+For example, set <code>num_stages=1</code> to disable software pipelining to see if
+it&rsquo;s causing the problem. Comment out non essential passes in <code>compiler.py</code>.</li>
+<li>Use strict math like disabling flushing to zeros with
+<code>allow_flush_denorm=False</code>.</li>
+<li>&hellip;</li>
+</ul>
+<h3 id="performance-issues">Performance issues</h3>
+<p>Performance issues typically would need using a profiler to see instruction
+timings and identify the bottlenecks. But by <a href="#amd-gcn-assembly">reading the
+assembly</a> we can sometimes immediately identify obvious
+issues.</p>
+        </div>
+        
+        <div class="my-4">
+    
+    <a href="https://www.lei.chat/tags/triton/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>triton</a>
+    
+    <a href="https://www.lei.chat/tags/compiler/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>compiler</a>
+    
+    <a href="https://www.lei.chat/tags/development/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>development</a>
+    
+    <a href="https://www.lei.chat/tags/tips/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>tips</a>
+    
+    <a href="https://www.lei.chat/tags/debugging/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>debugging</a>
+    
+    <a href="https://www.lei.chat/tags/pytorch/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>pytorch</a>
+    
+    <a href="https://www.lei.chat/tags/wheel/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>wheel</a>
+    
+    <a href="https://www.lei.chat/tags/code/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>code</a>
+    
+    <a href="https://www.lei.chat/tags/gpu/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>gpu</a>
+    
+    <a href="https://www.lei.chat/tags/jit/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>jit</a>
+    
+    <a href="https://www.lei.chat/tags/nvidia/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>nvidia</a>
+    
+    <a href="https://www.lei.chat/tags/amd/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>amd</a>
+    
+    <a href="https://www.lei.chat/tags/amdgcn/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>amdgcn</a>
+    
+</div>
+
+        
+        
+        
+
+
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">Next</span>
+        <a href="https://www.lei.chat/posts/leaving-google/" class="block">Leaving Google</a>
+        
+    </div>
+</div>
+
+        
+
+
+
+  <script id="utterances" src="https://utteranc.es/client.js"
+            issue-term=title
+            repo=antiagainst/antiagainst.github.io
+              theme=preferred-color-scheme
+        crossorigin="anonymous"
+        async>
+</script>
+<script>
+    if (storageColorScheme == "Light") {
+      document.getElementById('utterances').setAttribute('theme', 'github-light')
+    } else if (storageColorScheme == "Dark") {
+      document.getElementById('utterances').setAttribute('theme', 'github-dark')
+    }
+</script>
+
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+<div class="bg-secondary-bg rounded p-6">
+    <h3 class="text-lg font-semibold mb-4">Series of Posts</h3>
+    <div class="content">
+        
+          
+          <span class="font-semibold">
+            <i class="fas fa-th-list mr-1"></i>triton »
+          </span>
+          <br />
+          
+            <span>1.</span>
+            <a href="https://www.lei.chat/posts/triton-compiler-development-tips/">Triton Compiler Development Tips</a>
+            <br />
+          
+        
+    </div>
+</div>
+
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">On This Page</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#building-and-installation">Building and Installation</a>
+      <ul>
+        <li><a href="#using-wheels-from-pytorch">Using wheels from PyTorch</a></li>
+        <li><a href="#building-from-source-via-python">Building from source via Python</a></li>
+        <li><a href="#building-from-source-via-cmake">Building from source via CMake</a></li>
+      </ul>
+    </li>
+    <li><a href="#developing">Developing</a>
+      <ul>
+        <li><a href="#source-code-structure">Source code structure</a></li>
+        <li><a href="#ir-printing">IR printing</a></li>
+        <li><a href="#jit-compilation-artifacts">JIT compilation artifacts</a></li>
+        <li><a href="#amd-gcn-assembly">AMD GCN assembly</a></li>
+        <li><a href="#cross-compilation">Cross compilation</a></li>
+      </ul>
+    </li>
+    <li><a href="#debugging">Debugging</a>
+      <ul>
+        <li><a href="#sanitizing-development-environment">Sanitizing development environment</a></li>
+        <li><a href="#functionality-issues">Functionality issues</a></li>
+        <li><a href="#correctness-issues">Correctness issues</a></li>
+        <li><a href="#performance-issues">Performance issues</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded p-6">
+        <h2 class="text-lg font-semibold mb-4">See Also</h2>
+        <div class="content">
+            
+            <a href="https://www.lei.chat/posts/codegen-performant-convolution-kernels-for-mobile-gpus/">CodeGen Performant Convolution Kernels for Mobile GPUs</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/sampling-performance-counters-from-gpu-drivers/">Sampling Performance Counters from Mobile GPU Drivers</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/shader-toolchain-hlsl-in-vulkan/">Shader Toolchain: HLSL in Vulkan</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/hlsl-for-vulkan-semantic-strings-and-location-numbers/">HLSL for Vulkan: Semantic Strings and Location Numbers</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/hlsl-for-vulkan-resources/">HLSL for Vulkan: Resources</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/hlsl-for-vulkan-matrices/">HLSL for Vulkan: Matrices</a>
+            <br />
+            
+        </div>
+    </div>
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2018 - 2025 <a href="https://www.lei.chat/">Lei Zhang</a>
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

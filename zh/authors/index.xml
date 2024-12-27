@@ -6,7 +6,7 @@
     <description>Recent content in Authors on Lei.Chat()</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <copyright>&amp;copy; 2018 - 2023 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
+    <copyright>&amp;copy; 2018 - 2025 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright><atom:link href="https://www.lei.chat/zh/authors/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Lei Zhang</title>
@@ -14,8 +14,8 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://www.lei.chat/zh/authors/me/</guid>
-      <description>About This Website Hello, thanks for your interest in my website. 😊 I try to log down my learnings and thoughts about compilers (MLIR, SPIR-V, LLVM, etc.), GPU (Vulkan, Metal, etc.), toolchain (ML frameworks, etc.), and others sporadically.
-About Me I&amp;rsquo;m Lei Zhang. I work on ML compilers and runtime within nod.ai. Together with many other talented colleagues and open source contributors, we are building IREE to be an awesome ML compiler and runtime solution to provide a smooth deployment story to meet the needs of from datacenter to edge.</description>
+      <description>About This Website Hello, thanks for your interest in my website. 😊 I try to log down my learnings and thoughts about compilers (MLIR, SPIR-V, LLVM, Triton, IREE, etc.), GPU (CUDA, ROCm, Vulkan, Metal, etc.), toolchain (ML frameworks, etc.), and others sporadically.
+About Me I&amp;rsquo;m Lei, leading both Triton teams and SHARK GPU teams to work on open-source ML compiler and runtime solutions within the AMD AI Group. Together with many other talented colleagues and community contributors, we are building Triton to be an awesome language and compiler to program AMD GPUs and IREE to be an awesome ML compiler and runtime solution to provide a smooth deployment story to meet the needs of from datacenter to edge.</description>
     </item>
     
   </channel>
