@@ -118,10 +118,15 @@
     "itemListElement":[{
             "@type":"ListItem",
             "position":  1 ,
-            "name": "机器学习编译器代码生成相关 MLIR Dialect",
-            "description": "\u003cp\u003e在\u003ca href=\"../compilers-and-irs-llvm-ir-spirv-and-mlir/\"\u003e这个系列的首篇文章\u003c/a\u003e中我分享了对编译器和中间表示 (IR) 演进趋势的整体理解，\n也讨论了 \u003ca href=\"../compilers-and-irs-llvm-ir-spirv-and-mlir/#llvm-ir\"\u003eLLVM IR\u003c/a\u003e, \u003ca href=\"../compilers-and-irs-llvm-ir-spirv-and-mlir/#spir-v\"\u003eSPIR-V\u003c/a\u003e, 和 \u003ca href=\"../compilers-and-irs-llvm-ir-spirv-and-mlir/#mlir\"\u003eMLIR\u003c/a\u003e 所要解决的问题以及相应的设计着眼点。\n今天对 MLIR 做进一步展开，分析一下机器学习相关的 dialect 体系。\u003c/p\u003e",
-            "image": "https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/codegen-dialect-hierarchy.svg",
-            "url": "https://www.lei.chat/zh/posts/mlir-codegen-dialects-for-machine-learning-compilers/"
+            "name": "MLIR Linalg Dialect 以及 Patterns",
+            "description": "\u003cp\u003e\u003ca href=\"../mlir-vector-dialect-and-patterns/\"\u003e之前的文章\u003c/a\u003e介绍了 Vector dialect 及其相关 pattern。\n今天我们来看一下上层的 Linalg dialect 以及相关的变换。\u003c/p\u003e",
+            "url": "https://www.lei.chat/zh/posts/mlir-linalg-dialect-and-patterns/"
+        },{
+            "@type":"ListItem",
+            "position":  2 ,
+            "name": "MLIR Vector Dialect 以及 Patterns",
+            "description": "\u003cp\u003eVector dialect 及其相关变换 (transformation) 是机器学习代码生成流程中的重要一环。\n今天我们来仔细分析一下其定位、设计、特性，并介绍其中的重要操作 (operation) 和变换，\n最后用实例来说明如何恰当使用 vector dialect 相关功能。\u003c/p\u003e",
+            "url": "https://www.lei.chat/zh/posts/mlir-vector-dialect-and-patterns/"
         }
     ]
 }
@@ -160,7 +165,7 @@
 
 
 
-<meta property="og:updated_time" content="2022-02-20T15:21:03-05:00" />
+<meta property="og:updated_time" content="2022-09-01T14:59:09-07:00" />
 
 
 
@@ -263,6 +268,11 @@
 </article>
 <div class="bg-secondary-bg rounded px-6">
     
+    
+      
+        
+        
+      
     
       
         

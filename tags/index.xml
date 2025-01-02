@@ -8,13 +8,121 @@
     <language>en</language>
     <copyright>&amp;copy; 2018 - 2025 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Wed, 25 Dec 2024 15:13:01 -0800</lastBuildDate><atom:link href="https://www.lei.chat/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 31 Dec 2024 14:21:28 -0800</lastBuildDate><atom:link href="https://www.lei.chat/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>amd</title>
       <link>https://www.lei.chat/tags/amd/</link>
-      <pubDate>Wed, 25 Dec 2024 15:13:01 -0800</pubDate>
+      <pubDate>Tue, 31 Dec 2024 14:21:28 -0800</pubDate>
       
       <guid>https://www.lei.chat/tags/amd/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>compute</title>
+      <link>https://www.lei.chat/tags/compute/</link>
+      <pubDate>Tue, 31 Dec 2024 14:21:28 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/compute/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>concept</title>
+      <link>https://www.lei.chat/tags/concept/</link>
+      <pubDate>Tue, 31 Dec 2024 14:21:28 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/concept/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>gpu</title>
+      <link>https://www.lei.chat/tags/gpu/</link>
+      <pubDate>Tue, 31 Dec 2024 14:21:28 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/gpu/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>hierarchy</title>
+      <link>https://www.lei.chat/tags/hierarchy/</link>
+      <pubDate>Tue, 31 Dec 2024 14:21:28 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/hierarchy/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>layout</title>
+      <link>https://www.lei.chat/tags/layout/</link>
+      <pubDate>Tue, 31 Dec 2024 14:21:28 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/layout/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>linear-layout</title>
+      <link>https://www.lei.chat/tags/linear-layout/</link>
+      <pubDate>Tue, 31 Dec 2024 14:21:28 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/linear-layout/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>matrix</title>
+      <link>https://www.lei.chat/tags/matrix/</link>
+      <pubDate>Tue, 31 Dec 2024 14:21:28 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/matrix/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>memory</title>
+      <link>https://www.lei.chat/tags/memory/</link>
+      <pubDate>Tue, 31 Dec 2024 14:21:28 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/memory/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>nvidia</title>
+      <link>https://www.lei.chat/tags/nvidia/</link>
+      <pubDate>Tue, 31 Dec 2024 14:21:28 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/nvidia/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>performance</title>
+      <link>https://www.lei.chat/tags/performance/</link>
+      <pubDate>Tue, 31 Dec 2024 14:21:28 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/performance/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>swizzle</title>
+      <link>https://www.lei.chat/tags/swizzle/</link>
+      <pubDate>Tue, 31 Dec 2024 14:21:28 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/swizzle/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>triton</title>
+      <link>https://www.lei.chat/tags/triton/</link>
+      <pubDate>Tue, 31 Dec 2024 14:21:28 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/triton/</guid>
       <description></description>
     </item>
     
@@ -64,29 +172,11 @@
     </item>
     
     <item>
-      <title>gpu</title>
-      <link>https://www.lei.chat/tags/gpu/</link>
-      <pubDate>Wed, 25 Dec 2024 15:13:01 -0800</pubDate>
-      
-      <guid>https://www.lei.chat/tags/gpu/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>jit</title>
       <link>https://www.lei.chat/tags/jit/</link>
       <pubDate>Wed, 25 Dec 2024 15:13:01 -0800</pubDate>
       
       <guid>https://www.lei.chat/tags/jit/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>nvidia</title>
-      <link>https://www.lei.chat/tags/nvidia/</link>
-      <pubDate>Wed, 25 Dec 2024 15:13:01 -0800</pubDate>
-      
-      <guid>https://www.lei.chat/tags/nvidia/</guid>
       <description></description>
     </item>
     
@@ -109,15 +199,6 @@
     </item>
     
     <item>
-      <title>triton</title>
-      <link>https://www.lei.chat/tags/triton/</link>
-      <pubDate>Wed, 25 Dec 2024 15:13:01 -0800</pubDate>
-      
-      <guid>https://www.lei.chat/tags/triton/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>wheel</title>
       <link>https://www.lei.chat/tags/wheel/</link>
       <pubDate>Wed, 25 Dec 2024 15:13:01 -0800</pubDate>
@@ -132,15 +213,6 @@
       <pubDate>Tue, 26 Sep 2023 14:50:03 -0700</pubDate>
       
       <guid>https://www.lei.chat/tags/career/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>compute</title>
-      <link>https://www.lei.chat/tags/compute/</link>
-      <pubDate>Tue, 26 Sep 2023 14:50:03 -0700</pubDate>
-      
-      <guid>https://www.lei.chat/tags/compute/</guid>
       <description></description>
     </item>
     
@@ -372,7 +444,7 @@
     <item>
       <title>dialect</title>
       <link>https://www.lei.chat/tags/dialect/</link>
-      <pubDate>Wed, 31 Aug 2022 14:59:09 -0700</pubDate>
+      <pubDate>Thu, 01 Sep 2022 14:59:09 -0700</pubDate>
       
       <guid>https://www.lei.chat/tags/dialect/</guid>
       <description></description>
@@ -381,7 +453,7 @@
     <item>
       <title>distribution</title>
       <link>https://www.lei.chat/tags/distribution/</link>
-      <pubDate>Wed, 31 Aug 2022 14:59:09 -0700</pubDate>
+      <pubDate>Thu, 01 Sep 2022 14:59:09 -0700</pubDate>
       
       <guid>https://www.lei.chat/tags/distribution/</guid>
       <description></description>
@@ -390,7 +462,7 @@
     <item>
       <title>fusion</title>
       <link>https://www.lei.chat/tags/fusion/</link>
-      <pubDate>Wed, 31 Aug 2022 14:59:09 -0700</pubDate>
+      <pubDate>Thu, 01 Sep 2022 14:59:09 -0700</pubDate>
       
       <guid>https://www.lei.chat/tags/fusion/</guid>
       <description></description>
@@ -399,7 +471,7 @@
     <item>
       <title>ir</title>
       <link>https://www.lei.chat/tags/ir/</link>
-      <pubDate>Wed, 31 Aug 2022 14:59:09 -0700</pubDate>
+      <pubDate>Thu, 01 Sep 2022 14:59:09 -0700</pubDate>
       
       <guid>https://www.lei.chat/tags/ir/</guid>
       <description></description>
@@ -408,7 +480,7 @@
     <item>
       <title>linalg</title>
       <link>https://www.lei.chat/tags/linalg/</link>
-      <pubDate>Wed, 31 Aug 2022 14:59:09 -0700</pubDate>
+      <pubDate>Thu, 01 Sep 2022 14:59:09 -0700</pubDate>
       
       <guid>https://www.lei.chat/tags/linalg/</guid>
       <description></description>
@@ -417,7 +489,7 @@
     <item>
       <title>loop</title>
       <link>https://www.lei.chat/tags/loop/</link>
-      <pubDate>Wed, 31 Aug 2022 14:59:09 -0700</pubDate>
+      <pubDate>Thu, 01 Sep 2022 14:59:09 -0700</pubDate>
       
       <guid>https://www.lei.chat/tags/loop/</guid>
       <description></description>
@@ -426,7 +498,7 @@
     <item>
       <title>pattern</title>
       <link>https://www.lei.chat/tags/pattern/</link>
-      <pubDate>Wed, 31 Aug 2022 14:59:09 -0700</pubDate>
+      <pubDate>Thu, 01 Sep 2022 14:59:09 -0700</pubDate>
       
       <guid>https://www.lei.chat/tags/pattern/</guid>
       <description></description>
@@ -435,7 +507,7 @@
     <item>
       <title>structure</title>
       <link>https://www.lei.chat/tags/structure/</link>
-      <pubDate>Wed, 31 Aug 2022 14:59:09 -0700</pubDate>
+      <pubDate>Thu, 01 Sep 2022 14:59:09 -0700</pubDate>
       
       <guid>https://www.lei.chat/tags/structure/</guid>
       <description></description>
@@ -444,7 +516,7 @@
     <item>
       <title>tiling</title>
       <link>https://www.lei.chat/tags/tiling/</link>
-      <pubDate>Wed, 31 Aug 2022 14:59:09 -0700</pubDate>
+      <pubDate>Thu, 01 Sep 2022 14:59:09 -0700</pubDate>
       
       <guid>https://www.lei.chat/tags/tiling/</guid>
       <description></description>
@@ -453,7 +525,7 @@
     <item>
       <title>transformation</title>
       <link>https://www.lei.chat/tags/transformation/</link>
-      <pubDate>Wed, 31 Aug 2022 14:59:09 -0700</pubDate>
+      <pubDate>Thu, 01 Sep 2022 14:59:09 -0700</pubDate>
       
       <guid>https://www.lei.chat/tags/transformation/</guid>
       <description></description>
@@ -462,7 +534,7 @@
     <item>
       <title>vectorization</title>
       <link>https://www.lei.chat/tags/vectorization/</link>
-      <pubDate>Wed, 31 Aug 2022 14:59:09 -0700</pubDate>
+      <pubDate>Thu, 01 Sep 2022 14:59:09 -0700</pubDate>
       
       <guid>https://www.lei.chat/tags/vectorization/</guid>
       <description></description>
@@ -555,15 +627,6 @@
       <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
       
       <guid>https://www.lei.chat/tags/codegen/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>hierarchy</title>
-      <link>https://www.lei.chat/tags/hierarchy/</link>
-      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
-      
-      <guid>https://www.lei.chat/tags/hierarchy/</guid>
       <description></description>
     </item>
     
@@ -982,15 +1045,6 @@
     </item>
     
     <item>
-      <title>performance</title>
-      <link>https://www.lei.chat/tags/performance/</link>
-      <pubDate>Sat, 21 Aug 2021 22:47:43 -0400</pubDate>
-      
-      <guid>https://www.lei.chat/tags/performance/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>pipeline</title>
       <link>https://www.lei.chat/tags/pipeline/</link>
       <pubDate>Sat, 21 Aug 2021 22:47:43 -0400</pubDate>
@@ -1293,24 +1347,6 @@
       <pubDate>Tue, 24 Apr 2018 16:39:21 -0400</pubDate>
       
       <guid>https://www.lei.chat/tags/glsl/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>layout</title>
-      <link>https://www.lei.chat/tags/layout/</link>
-      <pubDate>Tue, 24 Apr 2018 16:39:21 -0400</pubDate>
-      
-      <guid>https://www.lei.chat/tags/layout/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>matrix</title>
-      <link>https://www.lei.chat/tags/matrix/</link>
-      <pubDate>Wed, 18 Apr 2018 20:13:20 -0400</pubDate>
-      
-      <guid>https://www.lei.chat/tags/matrix/</guid>
       <description></description>
     </item>
     

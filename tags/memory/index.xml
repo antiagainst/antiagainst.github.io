@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>memory on Lei.Chat()</title>
+    <link>https://www.lei.chat/tags/memory/</link>
+    <description>Recent content in memory on Lei.Chat()</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>&amp;copy; 2018 - 2025 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
+</copyright>
+    <lastBuildDate>Tue, 31 Dec 2024 14:21:28 -0800</lastBuildDate><atom:link href="https://www.lei.chat/tags/memory/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Triton Linear Layout: Concept</title>
+      <link>https://www.lei.chat/posts/triton-linear-layout-concept/</link>
+      <pubDate>Tue, 31 Dec 2024 14:21:28 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/posts/triton-linear-layout-concept/</guid>
+      <description>&lt;p&gt;Layout is a core concept in Triton for representing and optimizing distribution
+mappings from source problems to the target hardware compute and memory
+hierarchy.
+In this blog post I will talk about linear layout in Triton, the new unifying
+mechanism over existing bespoke layouts for different purposes.
+The aim is to provide motivation and an intuitive understanding of linear
+layout;
+I will rely on examples and illustrations instead of theories and proofs.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang='en' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Triton Linear Layout: Concept | Lei.Chat()</title>
+
+<meta name="generator" content="Hugo Eureka 0.8.4" />
+<link rel="stylesheet" href="https://www.lei.chat/css/eureka.min.css">
+<script defer src="https://www.lei.chat/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/bash.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/c.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cmake.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cpp.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/glsl.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/javascript.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/llvm.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/python.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/shell.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-109525036-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-109525036-1');
+</script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="Layout is a core concept in Triton for representing and optimizing distribution
+mappings from source problems to the target hardware compute and memory
+hierarchy.
+In this blog post I will talk about linear layout in Triton, the new unifying
+mechanism over existing bespoke layouts for different purposes.
+The aim is to provide motivation and an intuitive understanding of linear
+layout;
+I will rely on examples and illustrations instead of theories and proofs.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Posts",
+      "item":"https://www.lei.chat/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Triton Linear Layout: Concept",
+      "item":"https://www.lei.chat/posts/triton-linear-layout-concept/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.lei.chat/posts/triton-linear-layout-concept/"
+    },
+    "headline": "Triton Linear Layout: Concept | Lei.Chat()","datePublished": "2024-12-31T14:21:28-08:00",
+    "dateModified": "2024-12-31T14:21:28-08:00",
+    "wordCount":  3322 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "Lei Zhang",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.lei.chat/images/avatar.png"
+        }
+        },
+    "description": "\u003cp\u003eLayout is a core concept in Triton for representing and optimizing distribution\nmappings from source problems to the target hardware compute and memory\nhierarchy.\nIn this blog post I will talk about linear layout in Triton, the new unifying\nmechanism over existing bespoke layouts for different purposes.\nThe aim is to provide motivation and an intuitive understanding of linear\nlayout;\nI will rely on examples and illustrations instead of theories and proofs.\u003c\/p\u003e"
+}
+</script><meta property="og:title" content="Triton Linear Layout: Concept | Lei.Chat()" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="https://www.lei.chat/images/avatar.png">
+
+
+<meta property="og:url" content="https://www.lei.chat/posts/triton-linear-layout-concept/" />
+
+
+
+
+<meta property="og:description" content="Layout is a core concept in Triton for representing and optimizing distribution
+mappings from source problems to the target hardware compute and memory
+hierarchy.
+In this blog post I will talk about linear layout in Triton, the new unifying
+mechanism over existing bespoke layouts for different purposes.
+The aim is to provide motivation and an intuitive understanding of linear
+layout;
+I will rely on examples and illustrations instead of theories and proofs." />
+
+
+
+
+<meta property="og:locale" content="en" />
+
+
+
+
+<meta property="og:site_name" content="Lei.Chat()" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2024-12-31T14:21:28-08:00" />
+
+
+<meta property="article:modified_time" content="2024-12-31T14:21:28-08:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="triton" />
+
+<meta property="article:tag" content="layout" />
+
+<meta property="article:tag" content="linear-layout" />
+
+<meta property="article:tag" content="concept" />
+
+<meta property="article:tag" content="gpu" />
+
+<meta property="article:tag" content="hierarchy" />
+
+
+
+
+
+
+
+
+
+
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/triton-compiler-development-tips/" />
+
+
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Lei.Chat()</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">Posts</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Tags</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Categories</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Series</a>
+            <a href="/authors/me" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">About</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">Light</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">Dark</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">Auto</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">Triton Linear Layout: Concept</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2024-12-31</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>16 min read</span>
+    </div>
+    
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="https://www.lei.chat/categories/compiler/" class="hover:text-eureka">compiler</a><span>, </span>
+        
+        
+        <a href="https://www.lei.chat/categories/triton/" class="hover:text-eureka">triton</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="https://www.lei.chat/series/triton/" class="hover:text-eureka">triton</a>
+        
+    </div>
+    
+</div>
+
+        
+        <div class="content">
+            <p>Layout is a core concept in Triton for representing and optimizing distribution
+mappings from source problems to the target hardware compute and memory
+hierarchy.
+In this blog post I will talk about linear layout in Triton, the new unifying
+mechanism over existing bespoke layouts for different purposes.
+The aim is to provide motivation and an intuitive understanding of linear
+layout;
+I will rely on examples and illustrations instead of theories and proofs.</p>
+<h2 id="gpu-characteristics-and-preferences">GPU characteristics and preferences</h2>
+<p>GPUs are massive parallel machines composed of nested tiles of hardware
+functionality blocks.
+We program GPUs by mapping the input problem to the corresponding software
+abstraction for compute and memory hierarchy.
+Under the persistent desire for better performance, such mapping is growingly
+challenging with increasingly complex GPU architecture&mdash;we need to balance
+different mapping needs between memory and compute hardware units, amid more
+special functionality blocks like tensor cores and tensor memory accelerators.</p>
+<h3 id="gpu-compute-and-memory-hierarchy">GPU compute and memory hierarchy</h3>
+<p>I will not overelaborate GPU architecture, which we can find abundant resources
+elsewhere; just recap the important components to align on the terminology and
+as background for further discussions.</p>
+<p>A GPU consists of repeated tiles of hardware blocks<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>, i.e.,
+streaming multiprocessors (SMs) or cooperative thread array (CTAs) in NVIDIA
+terms, and compute units (CUs) in AMD terms.
+Blocks are identical units; each block is a standalone unit for GPU resource
+allocation and execution scheduling.
+They are the foundation to achieve GPU&rsquo;s scalability&mdash;different-sized problems
+can be decomposed and scheduled as the hardware scheduler sees fit.</p>
+<p>Within a hardware block, we have multiple identical vector (NVIDIA CUDA core,
+AMD shader core) and matrix (NVIDIA tensor core, AMD matrix core) compute units,
+and on-chip memory (NVIDIA shared memory, AMD local data share (LDS)) for data
+exchange within the block.</p>
+<p>In the canonical SIMT model, we program the vector compute units solely from the
+perspective of a single (NVIDIA) thread / (AMD) workitem, although the hardware
+executes a collection of them in lockstep, called a (NVIDIA) warp / (AMD)
+wavefront with a shared program counter<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup> to save chip die area.</p>
+<p>On the other side, matrix compute units are collectively executed by the whole
+warp, which sorts of &ldquo;breaks&rdquo; the SIMT single thread perspective&mdash;input matrix
+fragments are kept in the registers of the whole warp in a specific manner
+and we cannot conceptually treat threads entirely disjointly.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Level</th>
+<th style="text-align:center">NVIDIA Term</th>
+<th style="text-align:center">AMD Term</th>
+<th style="text-align:center">Operations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">block</td>
+<td style="text-align:center">Streaming Multiprocessor (SM) / Cooperative Thread Array (CTA)</td>
+<td style="text-align:center">Compute Unit (CU)</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:center">vector unit</td>
+<td style="text-align:center">warp</td>
+<td style="text-align:center">wavefront</td>
+<td style="text-align:center">subgroup reduction, matrix multiply–accumulate</td>
+</tr>
+<tr>
+<td style="text-align:center">vector lane</td>
+<td style="text-align:center">thread</td>
+<td style="text-align:center">workitem</td>
+<td style="text-align:center">elementwise operation</td>
+</tr>
+</tbody>
+</table>
+<p>For global memory access, consecutive threads reading consecutive elements to
+promote coalescing is essential for performance.
+It is still a descendant from the graphics era where computing for pixels on the
+screen fits nicely with such arrangement.
+Though now we are starting to see more special units on the memory side too like
+<a href="https://developer.nvidia.com/blog/nvidia-hopper-architecture-in-depth/#distributed_shared_memory">tensor memory accelerators</a>.
+For shared memory, avoiding bank conflicts are critical to get better
+performance; typically we pad the allocation or do swizzling to access.</p>
+<p>Triton programs GPUs at the block level.
+Overall it&rsquo;s quite straightforward for developers&mdash;it&rsquo;s just tiling the whole
+input problem once to map to blocks.
+We need to choose a proper block tile size, which typically can be simplified
+with just-in-time (JIT) compilation and autotuning.
+All the details in a block are not exposed to the developer.
+Within the block, as just discussed, we face a more demanding task that is
+suitable for a compiler.</p>
+<h3 id="prefered-memory-access-patterns">Prefered memory access patterns</h3>
+<p>For global memory, we want to arrange consecutive threads to access consecutive
+elements to promote coalescing and better utilize cache systems.
+Also to issue less instructions, we prefer the widest 128-bit load/store
+instructions on NVIDIA and AMD GPUs.
+For example, for 32-bit elements and warps with 32 threads, a nice elements'
+thread ownership pattern are shown as the following, where <code>Tt</code> means thread
+#<code>t</code> and <code>Rr</code> means register #<code>r</code>:</p>
+<p><img src="global-memory-access-pattern.svg" alt="Global Memory Access Pattern" title="Global Memory Access Pattern"></p>
+<p>#1) <em>If we look at the above ownership pattern, from outermost to innermost,
+it&rsquo;s nesting levels of warps to threads to registers.
+Such nesting can naturally be represented with a 3-D indexing of <code>(w, t, r)</code>.
+ID numbers at a particular level are under static upper limits, i.e., 4 for the
+register level, 32 for thread level.
+Given a particular <code>(w, t, r)</code>, the owned element in global memory is simply
+at index <code>w * 32 * 4 + t * 4 + r</code>&mdash;to put it another way, <code>w</code>, <code>t</code>, <code>r</code> has
+a base stride value of <code>32 * 4</code>, <code>4</code>, <code>1</code> respectively when composing the
+indexing.</em></p>
+<!--
+As we move from left to right for the 1-D data range, at a particular level,
+we have linearly increasing id numbers under a static upper limit, i.e., 4
+for the element level, 32 for thread level.
+Once we reach the upper limit, we wrap around and increase the higher level
+id number by one._
+-->
+<p>Shared memory is organized into banks.
+For both NVIDIA and AMD gfx9 architectures, we have 32 4-byte-sized banks,
+which memory addresses are assigned to with the formula of
+<code>bank = (address / 4) % 32</code>.
+From it, successive 32-bit elements are assigned to successive banks.
+If multiple threads in the same warp own elements belonging to the same bank,
+access will be serialized by splitting into as many separate conflict-free
+requests as necessary.</p>
+<p>For example if we have a 16x32 32-bit element tensor that we are transposing
+on NVIDIA GPUs.
+If we read from global memory and then store to shared memory in the following
+thread ownership manner, each warp will utilize the full shared memory bandwidth
+when storing.
+However, if we try to use one warp to read the first two columns so that we can
+write to global memory with coalescing, we will see high bank conflict given
+they hit only two banks.</p>
+<p><img src="shared-memory-linear.svg" alt="Shared Memory Linear Access Pattern" title="Shared Memory Linear Access Pattern"></p>
+<p>A common technique to avoid bank conflict is swizzling the element access
+indices.
+Based on <code>bank = (address / 4) % 32</code> and look at the second row, what we can do
+is to swap addresses of every pair of elements so that we swap their designated
+banks.
+Then for every column, the first two elements belong to different banks.
+Such address swapping can be achieved by an <code>xor</code> operation, which flips bits.
+So for the second row we  <code>xor 0b1</code>.
+Following this line of thought, for the third and fourth row we can swap with
+a larger stride, involving every tuple of four elements.
+First we can <code>xor 0b10</code> to swap across pairs, and then we can <code>xor 0b11</code> to
+swap both across pairs and within pairs.
+So on and so forth for other rows.
+Then we still remain bank conflict free when storing into shared memory by rows,
+now reading from shared memory by columns also has much less bank conflicts.</p>
+<p><img src="shared-memory-swizzle.svg" alt="Shared Memory Swizzle Access Pattern" title="Shared Memory Swizzle Access Pattern"></p>
+<p>#2) <em>Looking at the above swizzling pattern, for offset <code>o</code> within a 1-D shared
+memory allocation, the mapped to element in 2-D shared memory tensor <code>(x, y)</code>
+is <code>(o / 32, o % 32)</code> without swizzling.
+With swizzling, it&rsquo;s <code>(o / 32, (o % 32) xor (o / 32))</code>.
+That is, when we increase <code>o</code>, for every <code>32</code>, we contribute a base stride of
+<code>(1, 0)</code> to <code>(x, y)</code>.
+We contribute a base stride of <code>(0, 1)</code> to <code>(x, y)</code> for every <code>o % 32</code>.
+We achieve swizzling by contributing a <code>xor x</code> along <code>y</code>.</em></p>
+<h3 id="required-compute-access-patterns">Required compute access patterns</h3>
+<p>Global and shared memory access patterns in the above are needed for better
+performance.
+On the compute side, we need to arrange matrix fragment elements in registers
+following certain hardware requirements to compute correctly.
+For NVIDIA matrix instructions, we can find detailed description about register
+arrangement in the <a href="https://docs.nvidia.com/cuda/parallel-thread-execution/#warp-level-matrix-multiply-accumulate-instructions">PTX ISA documentation</a>.
+For AMD CDNA/RDNA matrix instructions, we can use <a href="https://github.com/ROCm/amd_matrix_instruction_calculator">this tool</a>
+to print the element ownership;
+For example, for AMD <code>V_MFMA_F32_16X16X16_F16</code> instruction C tensor,
+see the following table, where <code>vr{t}</code> means register #<code>r</code> for thread #<code>t</code>.</p>
+<!--
+![AMD MFMA C Matrix](amd-mfma16-c.svg "AMD MFMA C Matrix")
+-->
+<pre><code class="language-text">+-----------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+
+|   C[M][N] | 0      | 1      | 2      | 3      | 4      | 5      | 6      | 7      | 8      | 9      | 10     | 11     | 12     | 13     | 14     | 15     |
++===========+========+========+========+========+========+========+========+========+========+========+========+========+========+========+========+========+
+|         0 | v0{0}  | v0{1}  | v0{2}  | v0{3}  | v0{4}  | v0{5}  | v0{6}  | v0{7}  | v0{8}  | v0{9}  | v0{10} | v0{11} | v0{12} | v0{13} | v0{14} | v0{15} |
++-----------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+
+|         1 | v1{0}  | v1{1}  | v1{2}  | v1{3}  | v1{4}  | v1{5}  | v1{6}  | v1{7}  | v1{8}  | v1{9}  | v1{10} | v1{11} | v1{12} | v1{13} | v1{14} | v1{15} |
++-----------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+
+|         2 | v2{0}  | v2{1}  | v2{2}  | v2{3}  | v2{4}  | v2{5}  | v2{6}  | v2{7}  | v2{8}  | v2{9}  | v2{10} | v2{11} | v2{12} | v2{13} | v2{14} | v2{15} |
++-----------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+
+|         3 | v3{0}  | v3{1}  | v3{2}  | v3{3}  | v3{4}  | v3{5}  | v3{6}  | v3{7}  | v3{8}  | v3{9}  | v3{10} | v3{11} | v3{12} | v3{13} | v3{14} | v3{15} |
++-----------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+
+|         4 | v0{16} | v0{17} | v0{18} | v0{19} | v0{20} | v0{21} | v0{22} | v0{23} | v0{24} | v0{25} | v0{26} | v0{27} | v0{28} | v0{29} | v0{30} | v0{31} |
++-----------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+
+|         5 | v1{16} | v1{17} | v1{18} | v1{19} | v1{20} | v1{21} | v1{22} | v1{23} | v1{24} | v1{25} | v1{26} | v1{27} | v1{28} | v1{29} | v1{30} | v1{31} |
++-----------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+
+|         6 | v2{16} | v2{17} | v2{18} | v2{19} | v2{20} | v2{21} | v2{22} | v2{23} | v2{24} | v2{25} | v2{26} | v2{27} | v2{28} | v2{29} | v2{30} | v2{31} |
++-----------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+
+|         7 | v3{16} | v3{17} | v3{18} | v3{19} | v3{20} | v3{21} | v3{22} | v3{23} | v3{24} | v3{25} | v3{26} | v3{27} | v3{28} | v3{29} | v3{30} | v3{31} |
++-----------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+
+|         8 | v0{32} | v0{33} | v0{34} | v0{35} | v0{36} | v0{37} | v0{38} | v0{39} | v0{40} | v0{41} | v0{42} | v0{43} | v0{44} | v0{45} | v0{46} | v0{47} |
++-----------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+
+|         9 | v1{32} | v1{33} | v1{34} | v1{35} | v1{36} | v1{37} | v1{38} | v1{39} | v1{40} | v1{41} | v1{42} | v1{43} | v1{44} | v1{45} | v1{46} | v1{47} |
++-----------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+
+|        10 | v2{32} | v2{33} | v2{34} | v2{35} | v2{36} | v2{37} | v2{38} | v2{39} | v2{40} | v2{41} | v2{42} | v2{43} | v2{44} | v2{45} | v2{46} | v2{47} |
++-----------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+
+|        11 | v3{32} | v3{33} | v3{34} | v3{35} | v3{36} | v3{37} | v3{38} | v3{39} | v3{40} | v3{41} | v3{42} | v3{43} | v3{44} | v3{45} | v3{46} | v3{47} |
++-----------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+
+|        12 | v0{48} | v0{49} | v0{50} | v0{51} | v0{52} | v0{53} | v0{54} | v0{55} | v0{56} | v0{57} | v0{58} | v0{59} | v0{60} | v0{61} | v0{62} | v0{63} |
++-----------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+
+|        13 | v1{48} | v1{49} | v1{50} | v1{51} | v1{52} | v1{53} | v1{54} | v1{55} | v1{56} | v1{57} | v1{58} | v1{59} | v1{60} | v1{61} | v1{62} | v1{63} |
++-----------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+
+|        14 | v2{48} | v2{49} | v2{50} | v2{51} | v2{52} | v2{53} | v2{54} | v2{55} | v2{56} | v2{57} | v2{58} | v2{59} | v2{60} | v2{61} | v2{62} | v2{63} |
++-----------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+
+|        15 | v3{48} | v3{49} | v3{50} | v3{51} | v3{52} | v3{53} | v3{54} | v3{55} | v3{56} | v3{57} | v3{58} | v3{59} | v3{60} | v3{61} | v3{62} | v3{63} |
++-----------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+
+</code></pre>
+<p>#3) <em>The above ownership pattern follows a zigzag style.
+Successive registers belonging to the same thread #<code>t</code> has increasing index
+along the M dimension, while successive threads belonging to the same warp
+#<code>w</code> first have increasing index along the N dimension, and then wrap around
+to have increasing index along the M dimension.
+A hardware location <code>(w, t, r)</code> owns a logical tensor element at index
+<code>(m = r + t / 16, n = t % 16)</code>.</em></p>
+<h2 id="triton-linear-layout">Triton linear layout</h2>
+<p>The previous section was to motivate the concept of layout&mdash;for GPU
+computation, we need to distribute and map tensor elements to the compute
+and memory hierarchy, so we need a mechanism to present and optimize such
+distribution and mapping schemes.</p>
+<p>The mapping is not random so we don&rsquo;t have an unbound problem here.
+The three cases in the previous section are major ones to cover; other
+cases are basically mutations to them.
+There are common patterns behind these cases&mdash;we have a correlation between
+an input index to an output index.
+When increasing the input index dimension value, <em>some</em> output index dimension
+value increases by <em>some</em> stride accordingly, One input index dimension can
+map to multiple output index dimensions, and vice versa.
+The end result is that we have repeating nested/swizzled indexing patterns.</p>
+<p>Currently Triton defines separate layout mechanisms for previously mentioned
+cases and uses MLIR attributes to expose to the compiler, meaning
+<a href="https://github.com/triton-lang/triton/blob/d9facf3/include/triton/Dialect/TritonGPU/IR/TritonGPUAttrDefs.td#L598-L682"><code>BlockedEncodingAttr</code></a> for global memory access,
+<a href="https://github.com/triton-lang/triton/blob/d9facf3/include/triton/Dialect/TritonGPU/IR/TritonGPUAttrDefs.td#L153-L236"><code>SharedEncodingAttr</code></a> for shared memory access,
+and various vendor-specific attributes implementing
+<a href="https://github.com/triton-lang/triton/blob/d9facf3/include/triton/Dialect/TritonGPU/IR/TritonGPUAttrDefs.td#L778-L802"><code>MmaEncodingTrait</code></a> for matrix unit layouts,
+for example, <a href="https://github.com/triton-lang/triton/blob/d9facf3/include/triton/Dialect/TritonGPU/IR/TritonGPUAttrDefs.td#L804-L901"><code>AMDMfmaEncodingAttr</code></a>.
+The question comes as what the system would be if we want to represent all
+of them in a unified manner.</p>
+<h3 id="what-we-need">What we need</h3>
+<p>When we describe the mapping, we choose hardware location as the input
+dimensions and logical tensor index as the output dimensions, because there
+are cases where a tensor element, for example, when broadcasted, can be held by
+multiple hardware locations.
+So the reverse would mean we won&rsquo;t have a proper mapping function.
+For exact input and output dimensionity,</p>
+<!--
+the three examples are 3-D to 1-D, 1-D to 2-D, and 2-D to 2-D, respectively.
+-->
+<p>A) <em>In general, the layout system needs to be able to map from m-D to n-D to
+support all cases, where the input m-D is a hardware location <code>(warp-id, thread-id, register-id)</code> or allocation <code>(offset)</code>, and the output n-D is a
+tensor logical index, which typically is 2-D for matrix, 3-D for batched
+matrix, and even higher-D for convolution tensors.</em></p>
+<p>When we have multiple dimension mapping, we can reason about each input-output
+dimension pair separately and then compose them naturally, as the examples in
+the previous section show.
+It&rsquo;s a characteristic of n-D space in math; but as said in the beginning, this
+blog post is meant to provide intuitive explanations to avoid abstract theories.</p>
+<p>One way to think about it is to fold/merge the innermost consecutive level into
+one element, and then the next level becomes consecutive, so on and so forth.
+For example #3, where we have a zigzag pattern, folding all elements along the
+register-M dimension, we have consecutive elements along the thread-M dimension.
+Such &ldquo;subspace folding&rdquo; demonstrates dimension pair separation.</p>
+<p>Another way to interpret is that, when we normally map<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup> the n-D
+logical tensor index <code>(i, j, k, ..)</code> to 1-D storage space,
+dimensions to the left have a larger indexing base stride, and the total
+indexing range represented with possible <code>(k, ..)</code> is within the base stride
+size for <code>j</code>.
+So <code>j</code> and <code>k</code> can be treated disjointly and then compose together.
+Actually this line of thoughts applies to the same dimension&mdash;technically
+two-dimensional indexing <code>(i, j)</code> has no strong difference than one-dimensional
+<code>(i * stride_i + j)</code> indexing; it&rsquo;s just that the first factors out and
+implies an <em>implicit</em> stride for the <code>i</code> dimension, just like example #1.</p>
+<!--
+Actually following this line of thoughts, even for the same dimension, if we
+can separate different _explicit_ base "stride" values (e.g., between the lower
+8 and upper 8 within a total of 16), we can achieve disjointness between
+these stride ranges too.
+-->
+<p>B) <em>Basically, we can describe the mapping separately for each input-output
+dimension pair, where the output index linearly increases by some strides
+when the input index linearly increases.</em></p>
+<!--
+The mapping by associating their base stride values
+associate their base stride values along
+each output dimension to achieve composibility._
+-->
+<p>Now let&rsquo;s take a closer look at those base stride values.
+Theoretically they can be arbitrary numbers; but in reality we commonly see
+power-of-two choices in AI use cases.
+It&rsquo;s a reflection of the GPU hardware, on which those AI models are developed.
+GPUs typically<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup> choose power-of-two unit counts;
+so AI models use tensors with power-of-two dimension values
+to achieve better performance.
+One interesting fact is that if we have power-of-two values, they are naturally
+great to represent with the base-2 value system!</p>
+<p>As chatted before, the output index linearly increases by some stride when
+the input index linearly increases.
+If we think about it in the base-2 value system, the <em>position</em> of each bit
+actually represents some power-of-two stride.</p>
+<p>How do we add/compose them? That&rsquo;s the <code>xor</code> operation we have already seen and
+used in the example #2 from the previous section.
+The <code>xor</code> operation has a truth table of <code>0 xor 0 = 0</code>, <code>0 xor 1 = 1</code>,
+<code>1 xor 0 = 1</code>, and <code>1 xor 1 = 0</code>&mdash;it&rsquo;s &ldquo;addition without carry-over&rdquo;.
+That is exactly what we want&mdash;linear addition only at the current
+&ldquo;stride range&rdquo;, not affecting beyond the current &ldquo;nesting level&rdquo;.</p>
+<p>C) <em>So we can use the bits in a base-2 value system to capture the stride
+values and use the <code>xor</code> operation to add/compose them.</em></p>
+<h3 id="how-to-represent">How to represent</h3>
+<p>With A), B), and C) in the above, we basically derived the core concepts for
+linear layout, which I personally summarize as
+<em>a m-D to n-D index mapping system that uses base-2 value bit positions to
+imply strides and xor operation to compose them</em>.
+This summary tries to capture the essence so please don’t treat it as a precise
+definition or so, given again, this blog post is meant to provide intuitive
+understanding.</p>
+<p>The formal linear layout documentation is captured as <a href="https://github.com/triton-lang/triton/blob/d9facf3/include/triton/Tools/LinearLayout.h#L19-L313">code comments</a>,
+which provides a formal definition, its properties, some examples, and the
+math background.
+Please still spend time reading it carefully.
+With this blog post, hopefully now it becomes simpler.</p>
+<p>The <code>LinearLayout</code> C++ class implementation represents the index mapping
+system mostly like what we discussed before&mdash;each input dimension has
+its own map entry containing a readable name and a vector of output
+dimension strides.
+See the following quoted code:</p>
+<pre><code class="language-c++">// bases[inDim][i] = L(0, ..., inDim=2^i, ..., 0).  All other values of L are
+// computed by xor'ing bases together, using the linearity rule.  In addition:
+//
+// - Each inDim has the same set of outDims, in the same order.
+// - The order of dims is minor-to-major, although this only affects reshape.
+llvm::MapVector&lt;
+    StringAttr /*inDim*/,
+    std::vector&lt;std::vector&lt;int32_t&gt; /*size=getNumOutDims()*/&gt;
+                /*size=getInDimSizeLog2(inDim)*/&gt;
+  bases;
+</code></pre>
+<p>For <code>bases[input-dim-name]</code>, the mapped vector, called &ldquo;basis vectors&rdquo;, records
+how each <code>input-dim-name</code> bit, from least to most significant, contributes the
+strides along <em>all</em> output dimensions.</p>
+<p>Let&rsquo;s look at the MFMA pattern in example #3.
+The output is a 2-D 16x16 matrix; from minor to major, we encode it as <code>(n, m)</code>.</p>
+<ul>
+<li>For the <code>&quot;register&quot;</code> input dimension, we have a static upper limit of 4,
+which has 2 bits.
+Input bit <code>0b01</code>/<code>0b10</code> contributes a stride of <code>0b1</code>/<code>0b10</code> on <code>m</code>,
+nothing on <code>n</code>.
+so the 2 basis vectors are <code>{{0, 0b1}, {0, 0b10}}</code>.</li>
+<li>For the <code>&quot;lane&quot;</code> input dimension, we have a static upper limit of 64,
+so 6 bits.
+The 4 less significant bits only contribute to strides along <code>n</code> following
+an identity mapping,
+while the 2 more significant bits only contribute to strides along <code>m</code>,
+nesting the strides contributed by the <code>&quot;register&quot;</code> input dimension.
+So we have <code>{{0b1, 0}, {0b10, 0}, {0b100, 0}, {0b1000, 0}, {0, 0b100}, {0, 0b1000}}}</code>.</li>
+</ul>
+<p>We can find the above in the MFMA to linear layout <a href="https://github.com/triton-lang/triton/blob/d9facf3/lib/Dialect/TritonGPU/IR/LinearLayoutConversions.cpp#L283">implementation</a>.
+The same <code>LinearLayoutConversions.cpp</code> file also contains other layouts to
+linear layout conversions so it’s quite worth a read.</p>
+<h2 id="summary">Summary</h2>
+<p>Compared to bespoke layouts, linear layout unifies representations so it helps
+to simplify codebase and improve CodeGen performance given that we can better
+check whether layouts are the same and propagate accordingly.
+Though linear layout is an opaque and complicated mechanism in Triton.
+This blog post means to provide some intuitive understanding to help around.
+It only touches the conceptual bits and leaves how it&rsquo;s used to some future
+posts.</p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p>There are higher level hierarchies to be exact.
+For example, in <a href="https://developer.nvidia.com/blog/nvidia-hopper-architecture-in-depth/#nvidia_h100_gpu_architecture_in-depth">NVIDIA Hopper architecture</a>, the top level
+unit is GPU processing clusters (GPCs), each containing multiple identical
+texture processing clusters (TPCs) inside. Streaming multiprocessors (SMs) are
+the unit nested inside a TPC.
+For <a href="https://www.amd.com/content/dam/amd/en/documents/instinct-tech-docs/white-papers/amd-cdna-3-white-paper.pdf">AMD CNDA3 architecture</a>, we have accelerator complex
+dies (XCDs) as the top level unit beyond compute units (CUs).
+We ignore these extra hierarchy layers for now.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p>For NVIDIA, starting Volta, each thread has its own program counter to
+support <a href="https://docs.nvidia.com/cuda/volta-tuning-guide/index.html#independent-thread-scheduling">independent thread scheduling</a>.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p>Normally we tightly map all elements. For corner cases like
+broadcasting, the stride value is zero.&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p>There are exceptions, for example, in each MI300 XCD
+chiplet, we have 40 CUs.&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+        </div>
+        
+        <div class="my-4">
+    
+    <a href="https://www.lei.chat/tags/triton/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>triton</a>
+    
+    <a href="https://www.lei.chat/tags/layout/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>layout</a>
+    
+    <a href="https://www.lei.chat/tags/linear-layout/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>linear-layout</a>
+    
+    <a href="https://www.lei.chat/tags/concept/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>concept</a>
+    
+    <a href="https://www.lei.chat/tags/gpu/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>gpu</a>
+    
+    <a href="https://www.lei.chat/tags/hierarchy/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>hierarchy</a>
+    
+    <a href="https://www.lei.chat/tags/nvidia/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>nvidia</a>
+    
+    <a href="https://www.lei.chat/tags/amd/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>amd</a>
+    
+    <a href="https://www.lei.chat/tags/compute/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>compute</a>
+    
+    <a href="https://www.lei.chat/tags/memory/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>memory</a>
+    
+    <a href="https://www.lei.chat/tags/performance/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>performance</a>
+    
+    <a href="https://www.lei.chat/tags/swizzle/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>swizzle</a>
+    
+    <a href="https://www.lei.chat/tags/matrix/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>matrix</a>
+    
+</div>
+
+        
+        
+        
+
+
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">Next</span>
+        <a href="https://www.lei.chat/posts/triton-compiler-development-tips/" class="block">Triton Compiler Development Tips</a>
+        
+    </div>
+</div>
+
+        
+
+
+
+  <script id="utterances" src="https://utteranc.es/client.js"
+            issue-term=title
+            repo=antiagainst/antiagainst.github.io
+              theme=preferred-color-scheme
+        crossorigin="anonymous"
+        async>
+</script>
+<script>
+    if (storageColorScheme == "Light") {
+      document.getElementById('utterances').setAttribute('theme', 'github-light')
+    } else if (storageColorScheme == "Dark") {
+      document.getElementById('utterances').setAttribute('theme', 'github-dark')
+    }
+</script>
+
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+<div class="bg-secondary-bg rounded p-6">
+    <h3 class="text-lg font-semibold mb-4">Series of Posts</h3>
+    <div class="content">
+        
+          
+          <span class="font-semibold">
+            <i class="fas fa-th-list mr-1"></i>triton »
+          </span>
+          <br />
+          
+            <span>1.</span>
+            <a href="https://www.lei.chat/posts/triton-compiler-development-tips/">Triton Compiler Development Tips</a>
+            <br />
+          
+            <span>2.</span>
+            <a href="https://www.lei.chat/posts/triton-linear-layout-concept/">Triton Linear Layout: Concept</a>
+            <br />
+          
+        
+    </div>
+</div>
+
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">On This Page</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#gpu-characteristics-and-preferences">GPU characteristics and preferences</a>
+      <ul>
+        <li><a href="#gpu-compute-and-memory-hierarchy">GPU compute and memory hierarchy</a></li>
+        <li><a href="#prefered-memory-access-patterns">Prefered memory access patterns</a></li>
+        <li><a href="#required-compute-access-patterns">Required compute access patterns</a></li>
+      </ul>
+    </li>
+    <li><a href="#triton-linear-layout">Triton linear layout</a>
+      <ul>
+        <li><a href="#what-we-need">What we need</a></li>
+        <li><a href="#how-to-represent">How to represent</a></li>
+      </ul>
+    </li>
+    <li><a href="#summary">Summary</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded p-6">
+        <h2 class="text-lg font-semibold mb-4">See Also</h2>
+        <div class="content">
+            
+            <a href="https://www.lei.chat/posts/triton-compiler-development-tips/">Triton Compiler Development Tips</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/sampling-performance-counters-from-gpu-drivers/">Sampling Performance Counters from Mobile GPU Drivers</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/what-is-vulkan-compute/">What is Vulkan Compute?</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/hlsl-for-vulkan-resources/">HLSL for Vulkan: Resources</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/hlsl-for-vulkan-matrices/">HLSL for Vulkan: Matrices</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/leaving-google/">Leaving Google</a>
+            <br />
+            
+        </div>
+    </div>
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2018 - 2025 <a href="https://www.lei.chat/">Lei Zhang</a>
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>
