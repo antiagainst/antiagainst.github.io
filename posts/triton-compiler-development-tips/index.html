@@ -648,7 +648,7 @@ target = GPUTarget(&quot;cuda&quot;, 80, 32)        # For NVIDIA CUDA SM_80 (e.g
 # Or other targets..
 output = triton.compile(src, target=target)
 </code></pre>
-<p>Then <code>output.asm</code> is a directory containing various IRs, i.e., ttir, ttgir,
+<p>Then <code>output.asm</code> is a dictionary containing various IRs, i.e., ttir, ttgir,
 llir, etc., which we can print out with <code>print(output.asm['ttgir'])</code>.</p>
 <h2 id="debugging">Debugging</h2>
 <p>The difficulties associated with debugging typically arise from isolating the
