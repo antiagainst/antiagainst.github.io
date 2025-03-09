@@ -127,7 +127,7 @@ I will rely on examples and illustrations instead of theories and proofs.">
     },
     "headline": "Triton Linear Layout: Concept | Lei.Chat()","datePublished": "2024-12-31T14:21:28-08:00",
     "dateModified": "2024-12-31T14:21:28-08:00",
-    "wordCount":  3322 ,
+    "wordCount":  3324 ,
     "publisher": {
         "@type": "Person",
         "name": "Lei Zhang",
@@ -534,7 +534,7 @@ along the M dimension, while successive threads belonging to the same warp
 #<code>w</code> first have increasing index along the N dimension, and then wrap around
 to have increasing index along the M dimension.
 A hardware location <code>(w, t, r)</code> owns a logical tensor element at index
-<code>(m = r + t / 16, n = t % 16)</code>.</em></p>
+<code>(m = r + (t / 16) * 4, n = t % 16)</code>.</em></p>
 <h2 id="triton-linear-layout">Triton linear layout</h2>
 <p>The previous section was to motivate the concept of layout&mdash;for GPU
 computation, we need to distribute and map tensor elements to the compute
