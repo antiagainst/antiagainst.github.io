@@ -126,7 +126,7 @@ I&rsquo;ll try to keep this blog post updated periodically.">
     },
     "headline": "Triton Compiler Development Tips | Lei.Chat()","datePublished": "2024-12-25T15:13:01-08:00",
     "dateModified": "2024-12-25T15:13:01-08:00",
-    "wordCount":  1988 ,
+    "wordCount":  2041 ,
     "publisher": {
         "@type": "Person",
         "name": "Lei Zhang",
@@ -331,6 +331,7 @@ of which determines the potential.
 Hacking the compiler internals is not a simple task.
 Here are some tips hopefully useful to folks.
 I&rsquo;ll try to keep this blog post updated periodically.</p>
+<p><em>[2025/08/05: Updated script commands to match current codebase.]</em></p>
 <h2 id="building-and-installation">Building and Installation</h2>
 <p>Triton itself focuses on the GPU kernel; Runtime bits like tensor allocation
 and resource management are handled by PyTorch.
@@ -352,14 +353,14 @@ The canonical pypi wheel <code>triton</code> is only used for stable PyTorch rel
 targeting NVIDIA CUDA.
 We can find other combinations <a href="https://github.com/pytorch/pytorch/blob/main/RELEASE.md#triton-dependency-for-the-release">on this page</a>.</p>
 <p>To find which triton commit a specific PyTorch version is depending on, for
-example, v2.5.1, see <a href="https://github.com/pytorch/pytorch/blob/v2.5.1/.ci/docker/ci_commit_pins/triton.txt">PyTorch&rsquo;s source code
+example, v2.7.0, see <a href="https://github.com/pytorch/pytorch/blob/v2.7.0/.ci/docker/ci_commit_pins/triton.txt">PyTorch&rsquo;s source code
 <code>.ci/docker/ci_commit_pins/triton.txt</code></a>.</p>
 <h3 id="building-from-source-via-python">Building from source via Python</h3>
 <p>Though if interested in working on the Triton compiler itself, we need to
 install from the source.
 Triton&rsquo;s <code>README.md</code> has <a href="https://github.com/triton-lang/triton/blob/main/README.md#install-from-source">clear steps to follow</a>.
 I&rsquo;d typically use a Python virtualenv there for better environment isolation.</p>
-<p><code>pip install</code> builds the whole Triton project from <a href="https://github.com/triton-lang/triton/blob/main/python/setup.py">Triton&rsquo;s
+<p><code>pip install</code> builds the whole Triton project from <a href="https://github.com/triton-lang/triton/blob/main/setup.py">Triton&rsquo;s
 <code>setup.py</code></a>. The script first downloads build dependencies like
 LLVM, NVIDIA toolchain, and pybind11 under <code>$HOME/.triton</code>.
 We can use the <code>TRITON_HOME</code> environment variable to redirect it though.
@@ -381,7 +382,7 @@ A shell function to bake them in would come quite convenient:</p>
 <pre><code class="language-bash">triton-pip-install () {
   REPO_BASE_DIR=$(git rev-parse --show-toplevel)
   TRITON_BUILD_WITH_CCACHE=true TRITON_BUILD_WITH_CLANG_LLD=true \
-    pip install --no-build-isolation ${REPO_BASE_DIR}/python
+    pip install --no-build-isolation ${REPO_BASE_DIR}
 }
 </code></pre>
 <h3 id="building-from-source-via-cmake">Building from source via CMake</h3>
@@ -410,7 +411,7 @@ triton-configure-mlir() {
     -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
     -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
     -DCMAKE_C_COMPILER=$(which clang) -DCMAKE_CXX_COMPILER=$(which clang++) \
-    -DLLVM_ENABLE_PROJECTS=&quot;llvm;mlir&quot; \
+    -DLLVM_ENABLE_PROJECTS=&quot;llvm;mlir;lld&quot; \
     -DLLVM_TARGETS_TO_BUILD=&quot;AMDGPU;NVPTX;X86;AArch64&quot;
 }
 </code></pre>
@@ -427,10 +428,10 @@ triton-cmake() {
     return 1
   fi
 
-  SOURCE_DIR=$1; shift
-  TARGET_DIR=$1; shift
+  SOURCE_DIR=$(realpath $1); shift
+  TARGET_DIR=$(realpath $1); shift
   BUILD_TYPE=$1; shift
-  MLIR_DIR=$1;   shift
+  MLIR_DIR=$(realpath $1); shift
 
   if [[ &quot;$(uname)&quot; == &quot;Darwin&quot; ]]; then
     LINKER_FLAGS=()
@@ -446,11 +447,13 @@ triton-cmake() {
 
   cmake -GNinja \
     -S ${SOURCE_DIR} -B ${TARGET_DIR} \
+    -DTRITON_WHEEL_DIR=${TARGET_DIR}/wheel \
     -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
     -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
     -DTRITON_CODEGEN_BACKENDS=&quot;amd;nvidia&quot; \
     -DLLVM_INCLUDE_DIRS=${MLIR_DIR}/include \
     -DLLVM_LIBRARY_DIR=${MLIR_DIR}/lib \
+    -DLLVM_SYSPATH=${MLIR_DIR} \
     -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ \
     -DCMAKE_LINKER=lld ${LINKER_FLAGS[@]} \
     -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
@@ -462,15 +465,27 @@ triton-cmake() {
 }
 </code></pre>
 <p>With the above two scripts, setting up a new environment is:</p>
-<pre><code class="language-bash">git clone git@github.com:llvm/llvm-project.git
+<pre><code class="language-bash"># .
+# ├── triton
+# ├── llvm-project
+# └── build
+#     ├── triton-debug
+#     └── mlir-debug
+
+git clone git@github.com:triton-lang/triton.git
+git clone git@github.com:llvm/llvm-project.git
+
+# Build LLVM/MLIR at the specific commit needed by Triton
+cd llvm-project &amp;&amp; git checkout $(cat ../triton/cmake/llvm-hash.txt) &amp;&amp; cd ..
 triton-configure-mlir llvm-project/llvm build/mlir-debug Debug
 cmake --build build/mlir-debug
 
-git clone git@github.com:triton-lang/triton.git
 # Use triton-pip-install to download dependencies like NIVIDA toolchain
-cd triton &amp;&amp; triton-pip-install &amp;&amp; cd ..
-triton-cmake triton build/triton-debug Debug build/mlir-debug
-cmake --build build/triton-debug
+cd triton &amp;&amp; triton-pip-install
+
+# Build Triton itself
+triton-cmake . ../build/triton-debug Debug ../build/mlir-debug
+cmake --build ../build/triton-debug
 </code></pre>
 <p>We can also symlink the <code>compile_commands.json</code> file under <code>build/mlir-debug</code>
 to the Triton repo root directory to enable better code completion, if using
