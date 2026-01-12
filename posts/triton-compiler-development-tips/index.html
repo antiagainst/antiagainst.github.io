@@ -125,8 +125,8 @@ I&rsquo;ll try to keep this blog post updated periodically.">
         "@id": "https://www.lei.chat/posts/triton-compiler-development-tips/"
     },
     "headline": "Triton Compiler Development Tips | Lei.Chat()","datePublished": "2024-12-25T15:13:01-08:00",
-    "dateModified": "2024-12-25T15:13:01-08:00",
-    "wordCount":  2041 ,
+    "dateModified": "2025-08-05T15:13:01-08:00",
+    "wordCount":  2064 ,
     "publisher": {
         "@type": "Person",
         "name": "Lei Zhang",
@@ -175,7 +175,7 @@ I&rsquo;ll try to keep this blog post updated periodically." />
 <meta property="article:published_time" content="2024-12-25T15:13:01-08:00" />
 
 
-<meta property="article:modified_time" content="2024-12-25T15:13:01-08:00" />
+<meta property="article:modified_time" content="2025-08-05T15:13:01-08:00" />
 
 
 
@@ -199,6 +199,10 @@ I&rsquo;ll try to keep this blog post updated periodically." />
 
 
 
+
+
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/triton-linear-layout-examples/" />
 
 
 
@@ -331,7 +335,7 @@ of which determines the potential.
 Hacking the compiler internals is not a simple task.
 Here are some tips hopefully useful to folks.
 I&rsquo;ll try to keep this blog post updated periodically.</p>
-<p><em>[2025/08/05: Updated script commands to match current codebase.]</em></p>
+<p><em>[Update 2025/08/05: Updated script commands to match current codebase.]</em></p>
 <h2 id="building-and-installation">Building and Installation</h2>
 <p>Triton itself focuses on the GPU kernel; Runtime bits like tensor allocation
 and resource management are handled by PyTorch.
@@ -388,7 +392,8 @@ A shell function to bake them in would come quite convenient:</p>
 <h3 id="building-from-source-via-cmake">Building from source via CMake</h3>
 <p>Developing the Triton compiler mostly involves touching the C++ codebase for
 various MLIR passes and patterns.
-So I also directly build a <code>Debug</code> version from the <a href="https://github.com/triton-lang/triton/blob/main/CMakeLists.txt">top level
+This can be done using <code>ninja</code> in the <code>build/cmake.*/</code> directory after <code>pip install</code> the project at least once.
+Alternatively, you can also completely build from the <a href="https://github.com/triton-lang/triton/blob/main/CMakeLists.txt">top level
 <code>CMakeLists.txt</code></a>.</p>
 <p>It involves building the LLVM/MLIR in <code>Debug</code> too; there are steps in <a href="https://github.com/triton-lang/triton/blob/main/README.md#building-with-a-custom-llvm">the
 <code>README.md</code></a>, which I also put in a shell function:</p>
@@ -408,11 +413,12 @@ triton-configure-mlir() {
 
   cmake -GNinja \
     -S ${SOURCE_DIR} -B ${TARGET_DIR} \
+    -DCMAKE_INSTALL_PREFIX=${TARGET_DIR}/install \
     -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
     -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
     -DCMAKE_C_COMPILER=$(which clang) -DCMAKE_CXX_COMPILER=$(which clang++) \
     -DLLVM_ENABLE_PROJECTS=&quot;llvm;mlir;lld&quot; \
-    -DLLVM_TARGETS_TO_BUILD=&quot;AMDGPU;NVPTX;X86;AArch64&quot;
+    -DLLVM_TARGETS_TO_BUILD=&quot;AMDGPU;NVPTX;X86;AArch64&quot; &quot;$@&quot;
 }
 </code></pre>
 <p>Then the CMake configuration step for Triton can be captured with a shell
@@ -448,6 +454,7 @@ triton-cmake() {
   cmake -GNinja \
     -S ${SOURCE_DIR} -B ${TARGET_DIR} \
     -DTRITON_WHEEL_DIR=${TARGET_DIR}/wheel \
+    -DCMAKE_INSTALL_PREFIX=${TARGET_DIR}/install \
     -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
     -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
     -DTRITON_CODEGEN_BACKENDS=&quot;amd;nvidia&quot; \
@@ -461,7 +468,7 @@ triton-cmake() {
     -DTRITON_BUILD_PROTON=ON \
     -DCUPTI_INCLUDE_DIR=${REPO_BASE_DIR}/third_party/nvidia/backend/include \
     -DROCTRACER_INCLUDE_DIR=${REPO_BASE_DIR}/third_party/amd/backend/include \
-    -DJSON_INCLUDE_DIR=$HOME/.triton/json/include
+    -DJSON_INCLUDE_DIR=$HOME/.triton/json/include &quot;$@&quot;
 }
 </code></pre>
 <p>With the above two scripts, setting up a new environment is:</p>
@@ -819,6 +826,10 @@ issues.</p>
             <a href="https://www.lei.chat/posts/triton-linear-layout-concept/">Triton Linear Layout: Concept</a>
             <br />
           
+            <span>3.</span>
+            <a href="https://www.lei.chat/posts/triton-linear-layout-examples/">Triton Linear Layout: Examples</a>
+            <br />
+          
         
     </div>
 </div>
@@ -908,7 +919,7 @@ issues.</p>
   </main>
   <footer class="pl-scrollbar">
     <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
-    <p class="text-sm text-tertiary-text">&copy; 2018 - 2025 <a href="https://www.lei.chat/">Lei Zhang</a>
+    <p class="text-sm text-tertiary-text">&copy; 2018 - 2026 <a href="https://www.lei.chat/">Lei Zhang</a>
  &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
 </div></div>
   </footer>

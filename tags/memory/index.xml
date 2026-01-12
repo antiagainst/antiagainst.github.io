@@ -6,9 +6,23 @@
     <description>Recent content in memory on Lei.Chat()</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <copyright>&amp;copy; 2018 - 2025 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
+    <copyright>&amp;copy; 2018 - 2026 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Tue, 31 Dec 2024 14:21:28 -0800</lastBuildDate><atom:link href="https://www.lei.chat/tags/memory/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 10 Jan 2026 14:09:38 -0800</lastBuildDate><atom:link href="https://www.lei.chat/tags/memory/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Triton Linear Layout: Examples</title>
+      <link>https://www.lei.chat/posts/triton-linear-layout-examples/</link>
+      <pubDate>Sat, 10 Jan 2026 14:09:38 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/posts/triton-linear-layout-examples/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;../triton-linear-layout-concept/&#34;&gt;The previous blog post&lt;/a&gt; talked about Triton linear layout concepts, aiming to provide
+some underlying motivations and an intuitive understanding.
+As a companion, in this one I&amp;rsquo;d like to touch on linear layout internals and follow up with some
+concrete examples to show its usage in action and make it even more comprehensible.
+Following the same vein, common languages and explanations are preferred instead of mathematical
+terms and interpretations.&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Triton Linear Layout: Concept</title>
       <link>https://www.lei.chat/posts/triton-linear-layout-concept/</link>

@@ -6,7 +6,7 @@
     <description>Recent content in vector on Lei.Chat()</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <copyright>&amp;copy; 2018 - 2025 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
+    <copyright>&amp;copy; 2018 - 2026 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
     <lastBuildDate>Sun, 31 Jul 2022 15:07:00 -0700</lastBuildDate><atom:link href="https://www.lei.chat/tags/vector/index.xml" rel="self" type="application/rss+xml" />
     <item>
@@ -23,17 +23,6 @@ and best practices of using it based on my experiences.&lt;/p&gt;</description>
     </item>
     
     <item>
-      <title>MLIR Vector Dialect 以及 Patterns</title>
-      <link>https://www.lei.chat/zh/posts/mlir-vector-dialect-and-patterns/</link>
-      <pubDate>Sun, 31 Jul 2022 15:07:00 -0700</pubDate>
-      
-      <guid>https://www.lei.chat/zh/posts/mlir-vector-dialect-and-patterns/</guid>
-      <description>&lt;p&gt;Vector dialect 及其相关变换 (transformation) 是机器学习代码生成流程中的重要一环。
-今天我们来仔细分析一下其定位、设计、特性，并介绍其中的重要操作 (operation) 和变换，
-最后用实例来说明如何恰当使用 vector dialect 相关功能。&lt;/p&gt;</description>
-    </item>
-    
-    <item>
       <title>MLIR CodeGen Dialects for Machine Learning Compilers</title>
       <link>https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/</link>
       <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
@@ -46,17 +35,6 @@ It also touched on &lt;a href=&#34;../compilers-and-irs-llvm-ir-spirv-and-mlir/#
 focuses thereof.
 Today I will expand on MLIR and talk about its dialect hierarchy for machine
 learning (ML) compilers systematically.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>机器学习编译器代码生成相关 MLIR Dialect</title>
-      <link>https://www.lei.chat/zh/posts/mlir-codegen-dialects-for-machine-learning-compilers/</link>
-      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
-      
-      <guid>https://www.lei.chat/zh/posts/mlir-codegen-dialects-for-machine-learning-compilers/</guid>
-      <description>&lt;p&gt;在&lt;a href=&#34;../compilers-and-irs-llvm-ir-spirv-and-mlir/&#34;&gt;这个系列的首篇文章&lt;/a&gt;中我分享了对编译器和中间表示 (IR) 演进趋势的整体理解，
-也讨论了 &lt;a href=&#34;../compilers-and-irs-llvm-ir-spirv-and-mlir/#llvm-ir&#34;&gt;LLVM IR&lt;/a&gt;, &lt;a href=&#34;../compilers-and-irs-llvm-ir-spirv-and-mlir/#spir-v&#34;&gt;SPIR-V&lt;/a&gt;, 和 &lt;a href=&#34;../compilers-and-irs-llvm-ir-spirv-and-mlir/#mlir&#34;&gt;MLIR&lt;/a&gt; 所要解决的问题以及相应的设计着眼点。
-今天对 MLIR 做进一步展开，分析一下机器学习相关的 dialect 体系。&lt;/p&gt;</description>
     </item>
     
     <item>

@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang='en' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Triton Linear Layout: Examples | Lei.Chat()</title>
+
+<meta name="generator" content="Hugo Eureka 0.8.4" />
+<link rel="stylesheet" href="https://www.lei.chat/css/eureka.min.css">
+<script defer src="https://www.lei.chat/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/bash.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/c.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cmake.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cpp.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/glsl.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/javascript.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/llvm.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/python.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/shell.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-109525036-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-109525036-1');
+</script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="The previous blog post talked about Triton linear layout concepts, aiming to provide
+some underlying motivations and an intuitive understanding.
+As a companion, in this one I&rsquo;d like to touch on linear layout internals and follow up with some
+concrete examples to show its usage in action and make it even more comprehensible.
+Following the same vein, common languages and explanations are preferred instead of mathematical
+terms and interpretations.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Posts",
+      "item":"https://www.lei.chat/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Triton Linear Layout: Examples",
+      "item":"https://www.lei.chat/posts/triton-linear-layout-examples/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.lei.chat/posts/triton-linear-layout-examples/"
+    },
+    "headline": "Triton Linear Layout: Examples | Lei.Chat()","datePublished": "2026-01-10T14:09:38-08:00",
+    "dateModified": "2026-01-11T18:06:50-08:00",
+    "wordCount":  2586 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "Lei Zhang",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.lei.chat/images/avatar.png"
+        }
+        },
+    "description": "\u003cp\u003e\u003ca href=\u0022..\/triton-linear-layout-concept\/\u0022\u003eThe previous blog post\u003c\/a\u003e talked about Triton linear layout concepts, aiming to provide\nsome underlying motivations and an intuitive understanding.\nAs a companion, in this one I\u0026rsquo;d like to touch on linear layout internals and follow up with some\nconcrete examples to show its usage in action and make it even more comprehensible.\nFollowing the same vein, common languages and explanations are preferred instead of mathematical\nterms and interpretations.\u003c\/p\u003e"
+}
+</script><meta property="og:title" content="Triton Linear Layout: Examples | Lei.Chat()" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="https://www.lei.chat/images/avatar.png">
+
+
+<meta property="og:url" content="https://www.lei.chat/posts/triton-linear-layout-examples/" />
+
+
+
+
+<meta property="og:description" content="The previous blog post talked about Triton linear layout concepts, aiming to provide
+some underlying motivations and an intuitive understanding.
+As a companion, in this one I&rsquo;d like to touch on linear layout internals and follow up with some
+concrete examples to show its usage in action and make it even more comprehensible.
+Following the same vein, common languages and explanations are preferred instead of mathematical
+terms and interpretations." />
+
+
+
+
+<meta property="og:locale" content="en" />
+
+
+
+
+<meta property="og:site_name" content="Lei.Chat()" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2026-01-10T14:09:38-08:00" />
+
+
+<meta property="article:modified_time" content="2026-01-11T18:06:50-08:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="triton" />
+
+<meta property="article:tag" content="layout" />
+
+<meta property="article:tag" content="linear-layout" />
+
+<meta property="article:tag" content="examples" />
+
+<meta property="article:tag" content="gpu" />
+
+<meta property="article:tag" content="hierarchy" />
+
+
+
+
+
+
+
+
+
+
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/triton-linear-layout-concept/" />
+
+
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/triton-compiler-development-tips/" />
+
+
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Lei.Chat()</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">Posts</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Tags</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Categories</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Series</a>
+            <a href="/authors/me" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">About</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">Light</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">Dark</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">Auto</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">Triton Linear Layout: Examples</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2026-01-10</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>13 min read</span>
+    </div>
+    
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="https://www.lei.chat/categories/compiler/" class="hover:text-eureka">compiler</a><span>, </span>
+        
+        
+        <a href="https://www.lei.chat/categories/triton/" class="hover:text-eureka">triton</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="https://www.lei.chat/series/triton/" class="hover:text-eureka">triton</a>
+        
+    </div>
+    
+</div>
+
+        
+        <div class="content">
+            <p><a href="../triton-linear-layout-concept/">The previous blog post</a> talked about Triton linear layout concepts, aiming to provide
+some underlying motivations and an intuitive understanding.
+As a companion, in this one I&rsquo;d like to touch on linear layout internals and follow up with some
+concrete examples to show its usage in action and make it even more comprehensible.
+Following the same vein, common languages and explanations are preferred instead of mathematical
+terms and interpretations.</p>
+<h2 id="basics">Basics</h2>
+<p>Let&rsquo;s start with a recap of some representation fundamentals and then introduce some key operations
+which we will need to utilize later.</p>
+<h3 id="data-structures">Data structures</h3>
+<p>As mentioned in the <a href="../triton-linear-layout-concept/#how-to-represent">&ldquo;How to represent&rdquo; section</a> of the previous blog post, the
+<code>LinearLayout</code> C++ class uses the following <a href="https://github.com/triton-lang/triton/blob/00d2e9f7037dc3bba6f18b37f49c9aebaaa1c657/include/triton/Tools/LinearLayout.h#L317-L328">data structures</a> to record the index
+mapping system:</p>
+<pre><code class="language-c++">// bases[inDim][i] = L(0, ..., inDim=2^i, ..., 0).  All other values of L are
+// computed by xor'ing bases together, using the linearity rule.  In addition:
+//
+// - Each inDim has the same set of outDims, in the same order.
+// - The order of dims is minor-to-major, although this only affects reshape.
+llvm::MapVector&lt;StringAttr /*inDim*/,
+              std::vector&lt;std::vector&lt;int32_t&gt; /*size=getNumOutDims()*/&gt;
+              /*size=getInDimSizeLog2(inDim)*/&gt;
+  bases;
+llvm::MapVector&lt;StringAttr, int32_t /*size*/&gt; outDims;
+int32_t rank = 0;
+</code></pre>
+<h3 id="input-and-output-dimensions">Input and output dimensions</h3>
+<p>Inside <code>bases</code>, each input dimension has its own map entry containing a readable name and a vector
+of output dimension strides.
+For <code>bases[inDim]</code>, the mapped vector, called “basis vectors”, records how each
+<code>inDim</code> bit, from least to most significant, contributes the strides along all output
+dimensions.</p>
+<p>Although the input dimension&rsquo;s name is an unconstrained general string instead of some enumerant
+symbol, conventionally we typically use <code>&quot;register&quot;</code>, <code>&quot;lane&quot;</code>, <code>&quot;warp&quot;</code>, <code>&quot;block&quot;</code> when describing
+hardware compute hierarchy location and <code>&quot;offset&quot;</code> when describing shared memory allocation.
+Triton codebase has <a href="https://github.com/triton-lang/triton/blob/00d2e9f7037dc3bba6f18b37f49c9aebaaa1c657/include/triton/Dialect/TritonGPU/IR/LinearLayoutConversions.h#L22-L41">some comments here</a> regarding it and implicitly relies on this
+naming convention in various places.</p>
+<p>Output dimension names are not recorded in the <code>bases</code> data structure; it&rsquo;s captured as a separate
+<code>outDims</code> <code>MapVector</code> as shown in the above.
+Recall that these dimensions are ordinarily for describing n-D logical tensor; conventionally it&rsquo;s
+just <code>&quot;dimN&quot;</code> like <code>&quot;dim0&quot;</code>, <code>&quot;dim1&quot;</code>, and so on, which is what the
+<a href="https://github.com/triton-lang/triton/blob/00d2e9f7037dc3bba6f18b37f49c9aebaaa1c657/include/triton/Tools/LayoutUtils.h#L91"><code>standardOutDimNames()</code> utility</a> returns.</p>
+<h3 id="primitive-index-mappings">Primitive index mappings</h3>
+<p><code>LinearLayout</code> class provides some <code>static</code> methods for creating basic index mappings:</p>
+<ul>
+<li><code>LinearLayout::empty()</code>: a 0-D layout that maps everything to 0. In a sense you can think of it
+as a single &ldquo;point&rdquo; in an indexing system. It is typically the initial point for building up
+more realistic layouts.</li>
+<li><code>LinearLayout::identity1D(size, inDim, outDim)</code>: a 1-D identity layout from mapping an index <code>i</code>
+in <code>inDim</code> to the same <code>i</code> in <code>outDim</code>.
+Using a similar analogy this is the linear &ldquo;line&rdquo; for an indexing system.
+We frequently use it as a basic unit when building layouts. For example, to describe that we
+want to map 4 consecutive elements along <code>&quot;dimN&quot;</code> in the logical tensor to 4 consecutive
+registers, it would be <code>identity1D(4, &quot;register&quot;, &quot;dimN&quot;)</code>.</li>
+<li><code>LinearLayout::zeros1D(size, inDim, outDim)</code>: a 1-D layout that maps every <code>inDim</code> index <code>i</code> to
+<code>outDim</code> index <code>0</code>. This can represent multiple hardware locations mapping to the same logical
+tensor element; or in the reverse way to say it, broadcasting the same logical tensor element to
+multiple hardware locations.</li>
+<li><code>LinearLayout::strided1D(size, stride, inDim, outDim)</code>: a 1-D layout that maps every <code>inDim</code>
+index <code>i</code> to <code>outDim</code> index <code>stride * i</code>.</li>
+</ul>
+<p>Note that the above primitive index mappings all require <code>size</code>.
+This is one of the fundamental requirements of linear layout&mdash;it&rsquo;s bound to a known static shape,
+comparing to traditional bespoke layouts like blocked/shared/mma layouts which do not encode
+tensor shapes in them.
+When converting those bespoke layouts into linear layout, we need to provide the tensor shape
+we want to bind to.</p>
+<h2 id="operations">Operations</h2>
+<p>With the above basics and 1-D primitives, we can now start building useful n-D layouts.
+This can be achieved with a few key linear layout operations that generalize and scale well
+and give great powers.</p>
+<h3 id="product">Product</h3>
+<p><a href="https://github.com/triton-lang/triton/blob/00d2e9f7037dc3bba6f18b37f49c9aebaaa1c657/include/triton/Tools/LinearLayout.h#L600-L653">The <code>LinearLayout::operator*()</code> method</a> implements products.
+This method is frequently used for building real-world layouts where we map whole hardware
+hierarchy to n-D logical tensor elements.
+The code documentation, which contains some examples, is well worth reading.</p>
+<p>An intuitive interpretation of product is that we are building larger &ldquo;space&rdquo; with smaller
+&ldquo;subspaces&rdquo; as &ldquo;primitives.&rdquo;
+For example, let&rsquo;s say we want to describe a mapping that, along <code>&quot;dimN&quot;</code> of the tensor, we have
+a consecutive 16 GPU threads and each thread owns 4 consecutive elements in its
+registers.
+We can define <code>laneLL = LinearLayout::identity1D(16, &quot;lane&quot;, &quot;dimN&quot;)</code> for the first part,
+and <code>registerLL = LinearLayout::identity1D(4, &quot;register&quot;, &quot;dimN&quot;)</code> for the second part and do
+<code>registerLL * laneLL</code> to describe the overall mapping.
+It treats every 4 register elements as a subspace in the larger space;
+if we &ldquo;collapse&rdquo; that subspace as a single point, it&rsquo;s clear that the <code>&quot;lane&quot;</code> to <code>&quot;dimN&quot;</code> index
+mapping is identity which reflects the <code>laneLL</code> construct.</p>
+<p>Note that the multiplication order matters! Using examples from the documentation,
+<code>identity1D(4, &quot;i&quot;, &quot;o&quot;) * zeros1D(2, &quot;i&quot;, &quot;o&quot;)</code> gives a layout of <code>L(x) = x % 4</code>.
+Similarly using the above interpretation, after collapsing a subspace of 4 consecutive elements,
+all indices map to 0; therefore it&rsquo;s <code>L(x) = x % 4</code>.
+If we do <code>zeros1D(2, &quot;i&quot;, &quot;o&quot;) * identity1D(4, &quot;i&quot;, &quot;o&quot;)</code>, then it has a primitive of 2
+consecutive input index mapping to 0 and then using that as a subspace to build a consecutive
+linear indexing; therefore it should be <code>L(x) = x / 2</code>.</p>
+<h3 id="composition">Composition</h3>
+<p><a href="https://github.com/triton-lang/triton/blob/00d2e9f7037dc3bba6f18b37f49c9aebaaa1c657/include/triton/Tools/LinearLayout.h#L715-L732">The <code>LinearLayout::compose()</code> method</a> implements composition.
+Composition is like nested function calls&mdash;it takes the inner linear layout&rsquo;s output dimensions and
+feeds as input dimensions to the outer linear layout.</p>
+<p>Composition is not particularly interesting on its own in reality, due to that we normally describe
+layouts from hardware location to logical tensor elements so we typically use logical tensor
+as the output dimensions.
+It&rsquo;s more interesting together with inversion.</p>
+<h3 id="inversion">Inversion</h3>
+<p><a href="https://github.com/triton-lang/triton/blob/00d2e9f7037dc3bba6f18b37f49c9aebaaa1c657/include/triton/Tools/LinearLayout.h#L768-L773">The <code>LinearLayout::(pseudo)invert()</code> method(s)</a> implements inversion.
+Intuitively as the name suggests, it&rsquo;s inverting the mapping to get from output to input dimensions.
+There are a set of restrictions as whether/how a layout can be inverted, like every index along
+the output dimension needs to have at least one input index mapping to it so that we cover the
+whole logical tensor.
+I&rsquo;ll omit the math details and you can read the official linear layout <a href="https://arxiv.org/abs/2505.23819">paper</a> if
+interested in that.</p>
+<p>With inversion, we can use logical tensor dimensions as the &ldquo;bridge&rdquo; to connect different
+hardware locations.
+Such mapping is very useful for us to understand and &ldquo;compute&rdquo; characteristics when data flow
+among different hardware locations.
+For that, we have a dedicated API, <a href="https://github.com/triton-lang/triton/blob/00d2e9f7037dc3bba6f18b37f49c9aebaaa1c657/include/triton/Tools/LinearLayout.h#L734-L766">the <code>LinearLayout::invertAndCompose()</code> method</a>,
+for it.</p>
+<p>One common such usage is figuring out the element offsets in the shared memory that each GPU
+register should read.
+We can simply use a <code>distributedLL</code>, which describes how compute hierarchy wants tensor elements,
+and a <code>sharedLL</code>, which describes how shared memory allocation holds tensor elements, and perform
+<code>distributedLL.invertAndCompose(sharedLL)</code>, which will give us the mapping from registers to shared
+memory allocation offsets.
+(Note that <code>A.invertAndCompose(B)</code> means <code>B^-1(A)</code>.)</p>
+<p>Broadly, for GPU performance, how we move data across the hardware hierarchy matters a lot.
+Questions like whether we are using wide instructions to read/write global memory in coalesced
+manner, whether we can exchange data by simply doing register exchange or thread exchange within
+the same warp or cross warps using shared memory, and so on, can all sort of be easily answered
+by deducing from <code>A.invertAndCompose(B)</code>.</p>
+<p>But before we go into that, I&rsquo;d like to explain another pretty useful operation.</p>
+<h3 id="left-division">Left division</h3>
+<p><a href="https://github.com/triton-lang/triton/blob/00d2e9f7037dc3bba6f18b37f49c9aebaaa1c657/include/triton/Tools/LinearLayout.h#L659-L673">The <code>LinearLayout::divideLeft()</code> method</a> implements it.
+Mathematically it&rsquo;s involved but intuitively you can interpret it as the reverse of product
+(reflected in the names as division vs. multiplication).</p>
+<p>If product is building up larger spaces with smaller subspaces, <code>divideLeft(A, B)</code> is essentially
+asking whether <code>B</code> is a subspace of <code>A</code> and therefore we can obtain a resultant layout by
+&ldquo;collapsing&rdquo; <code>B</code>.
+This operation can be pretty useful to check, for example, whether a data movement can be
+implemented using a particular fast hardware intrinsic, as we will see later in examples.</p>
+<h2 id="examples">Examples</h2>
+<p>Okay, we have introduced major building blocks now and we can dive into concrete examples to see
+linear layouts in action.</p>
+<h3 id="n-d-identity-layout">N-D identity layout</h3>
+<p><a href="https://github.com/triton-lang/triton/blob/00d2e9f7037dc3bba6f18b37f49c9aebaaa1c657/lib/Tools/LayoutUtils.cpp#L159-L178">The <code>identityStandardND()</code> utility</a> is a good starting point which combines some of
+the above discussed pieces in straightforward manner:</p>
+<pre><code class="language-c++">// Returns a 1D -&gt; ND layout into [dim0, dim1, ...] that's equivalent to
+// creating a 1D -&gt; 1D mapping of size product(shape) and then reshaping to
+// permute(shape, order).
+LinearLayout identityStandardND(StringAttr inDimName, ArrayRef&lt;unsigned&gt; shape,
+                                ArrayRef&lt;unsigned&gt; order) {
+  assert(shape.size() == order.size());
+  MLIRContext *ctx = inDimName.getContext();
+  auto rank = shape.size();
+
+  // The order in triton is written wrt. [dim0, dim1, ...].
+  SmallVector&lt;StringAttr&gt; outDimNames = standardOutDimNames(ctx, rank);
+
+  LinearLayout ret = LinearLayout::empty();
+  for (int i = 0; i &lt; shape.size(); i++) {
+    // Start with the most-minor dimension, which is order[0].
+    int dim = order[i];
+    ret *= LinearLayout::identity1D(shape[dim], inDimName, outDimNames[dim]);
+  }
+  return ret;
+}
+</code></pre>
+<p>From the definition we are building the final layout by iteratively applying multiplication of what
+we have right now with a 1-D mapping from input dimension to next output dimension.
+We can intuitively understand with the previous subspace way.
+Or, another way to think about it: we fold/merge previous innermost consecutive levels as one
+element so that the next level becomes consecutive and therefore we can multiply with next level&rsquo;s
+<code>identity1D</code>.</p>
+<p>Dumping an example with <code>llvm::outs() &lt;&lt; identityStandardND(&quot;register&quot;, {2, 4, 8}, {2, 1, 0})</code>:</p>
+<pre><code> - register=1 -&gt; (1, 0, 0)
+   register=2 -&gt; (2, 0, 0)
+   register=4 -&gt; (4, 0, 0)
+   register=8 -&gt; (0, 1, 0)
+   register=16 -&gt; (0, 2, 0)
+   register=32 -&gt; (0, 0, 1)
+where out dims are: [dim2 (size 8), dim1 (size 4), dim0 (size 2)]
+</code></pre>
+<p>Note that, as previously explained, <code>LinearLayout</code> internally records an index mapping value for
+each bit of the input dimension and the corresponding strides on all output dimensions.
+So printing in decimal format reveals as all values are some power of twos.</p>
+<p>With the above prints we can see that when we consecutively increase index along <code>&quot;register&quot;</code> input
+dimension, we first consecutively increase along <code>&quot;dim2&quot;</code>, and then <code>&quot;dim1&quot;</code>, and then <code>&quot;dim0&quot;</code>
+as we would expect for N-D identity mapping with the given innermost to outermost order.</p>
+<h3 id="mfma-layout">MFMA layout</h3>
+<p>For the MFMA layout mentioned in <a href="../triton-linear-layout-concept/#required-compute-access-patterns">the previous blog post</a>, we would like a 2-D layout,
+where we first map 4 consecutive elements along <code>M</code> (<code>&quot;dim0&quot;</code>) output dimension to consecutive
+registers, and then we map 16 consecutive elements along <code>N</code> (<code>&quot;dim1&quot;</code>) output dimension to
+consecutive lanes.
+Folding/merging the above into one &ldquo;element&rdquo;, we can see the next level we map 4 consecutive
+elements along <code>M</code> output dimension to (64 / 16) consecutive lanes.
+Therefore, what we need would be</p>
+<pre><code class="language-c++">LinearLayout::identity1D(4, &quot;register&quot;, dimM) *
+LinearLayout::identity1D(16, &quot;lane&quot;, dimN) *
+LinearLayout::identity1D(64 / 16, &quot;lane&quot;, dimM)
+</code></pre>
+<p>The above is a simplified version of what <a href="https://github.com/triton-lang/triton/blob/00d2e9f7037dc3bba6f18b37f49c9aebaaa1c657/lib/Dialect/TritonGPU/IR/LinearLayoutConversions.cpp#L314">the <code>AMDMfmaEncodingAttr::toLinearLayout()</code>
+method</a> effectively does.
+The full implementation is more complicated given it needs to support different MFMA intrinsics
+and handle multiple warp layouts, while the above only talks about a single warp tile.
+Multiple warps and even multiple blocks are simply nesting more levels on top of the above and won&rsquo;t
+disturb what&rsquo;s described above though; so hopefully it should be easy to understand.</p>
+<p>For <code>#ttg.amd_mfma&lt;{version = 3, warpsPerCTA = [2, 2], instrShape = [16, 16, 16], isTransposed = false}&gt;</code>,
+dumping its layout on a <code>tensor&lt;32x64xf32&gt;</code>:</p>
+<pre><code> - register=1 -&gt; (1, 0)
+   register=2 -&gt; (2, 0)
+   register=4 -&gt; (0, 32)
+ - lane=1 -&gt; (0, 1)
+   lane=2 -&gt; (0, 2)
+   lane=4 -&gt; (0, 4)
+   lane=8 -&gt; (0, 8)
+   lane=16 -&gt; (4, 0)
+   lane=32 -&gt; (8, 0)
+ - warp=1 -&gt; (0, 16)
+   warp=2 -&gt; (16, 0)
+ - block is a size 1 dimension
+where out dims are: [dim0 (size 32), dim1 (size 64)]
+</code></pre>
+<p>I won&rsquo;t repeat all the details in the above, just pointing out some key points:
+as expected, the first 16 threads hold consecutive elements along <code>N</code> (<code>&quot;dim1&quot;</code>), and the next
+16 threads start with index 4 along <code>M</code> (<code>&quot;dim0&quot;</code>).
+And if we fold/merge every 16x16 elements (which is what a warp tile is) into one, we can
+see warps are consecutively increasing along <code>N</code> and then <code>M</code>, which composes as the next level of
+nesting.
+There are 2 warps along each dimension, thus matching the <code>warpsPerCTA = [2, 2]</code>.</p>
+<h3 id="distributed-to-shared-layout">Distributed to shared layout</h3>
+<p>In the <a href="./#inversion">Inversion section</a> we briefly touched about using
+<code>cvt = distributedLL.invertAndCompose(sharedLL)</code> to get the mapping from registers to shared memory
+allocation offsets and leveraging its characteristics to optimize lowering.</p>
+<p>One cool example is figuring the largest vectorization we can perform when lowering shared memory
+load/store, which is implemented as <a href="https://github.com/triton-lang/triton/blob/00d2e9f7037dc3bba6f18b37f49c9aebaaa1c657/lib/Tools/LayoutUtils.cpp#L446-L478">the <code>largestVectorization()</code> utility</a>.
+The idea is that we start from the largest possible bitwidth allowed by hardware and test whether
+it&rsquo;s possible.
+If not, we halve the bitwidth and try again. We use a loop to continue until getting one possible.</p>
+<p>How do we perform the check? If we think one individual hardware instruction as the primitive,
+described as <code>tile = LinearLayout::identity1D(vectorSize, &quot;register&quot;, &quot;offset&quot;)</code>,
+then the check is about whether we can break the whole convert <code>cvt</code> into primitive <code>tile</code>; that is,
+whether we can perfectly &ldquo;divide&rdquo; <code>cvt</code> with <code>tile</code>.
+That comes to what we have explained earlier&mdash;<code>divideLeft</code> can perform such division computation!
+With <code>divideLeft(cvt, tile)</code>, we can implement <code>largestVectorization()</code> in a pretty clean and simple
+manner.</p>
+<h3 id="generic-layout-conversion">Generic layout conversion</h3>
+<p>Moving onto the next example.
+<code>ttg.convert_layout</code> is one of the key operations in the Triton GPU dialect; it bridges one layout
+to another during compiler conversion flows.</p>
+<p>Such layout conversions potentially require data movement across the hardware hierarchy so they can be
+expensive.
+In Triton we perform <a href="https://github.com/triton-lang/triton/blob/main/lib/Dialect/TritonGPU/Transforms/RemoveLayoutConversions.cpp">the <code>TritonGPURemoveLayoutConversionsPass</code></a> to optimize away them as much
+as possible (and linear layout helps to prove some layout conversions are trivial), though there
+are still cases where we cannot completely eliminate one and need to materialize a conversion.</p>
+<p>For such cases, we want to optimize the conversion&mdash;for example, if data exchange is among threads
+in the same warp then we can perform warp shuffling which would be much cheaper than going through shared
+memory. If data exchange is among different warps then we are forced to use shared memory.</p>
+<p>To check what path we need to go down when converting from <code>srcLayout</code> to <code>dstLayout</code>, what we need
+to do is just <code>cvt = dstLayout.invertAndCompose(srcLayout)</code> (so that we get a mapping from
+destination to source layout indices), and then check whether <code>cvt</code>&rsquo;s <code>&quot;warp&quot;</code> dimension is just an
+identity to itself and involves no other dimensions at all.
+If so then we have no cross-warp data exchange, otherwise we have.
+Similarly we can check other dimensions like <code>&quot;block&quot;</code> and <code>&quot;lane&quot;</code> to deduce whether data exchange
+is across or within for them too, which is quite elegant.</p>
+<p>This general approach is concretely implemented in the <code>ttg.convert_layout</code>&rsquo;s LLVM <a href="https://github.com/triton-lang/triton/blob/00d2e9f7037dc3bba6f18b37f49c9aebaaa1c657/lib/Conversion/TritonGPUToLLVM/ConvertLayoutOpToLLVM.cpp#L44-L84">conversion
+pattern</a>, where we first get <code>minimalCvtLayout(srcTy, dstTy)</code>, and then go down
+the list to check whether it involves <code>&quot;block&quot;</code>, <code>&quot;warp&quot;</code>, and <code>&quot;lane&quot;</code> level data exchange.
+<a href="https://github.com/triton-lang/triton/blob/00d2e9f7037dc3bba6f18b37f49c9aebaaa1c657/lib/Analysis/Utility.cpp#L984">The <code>minimalCvtLayout()</code> utility</a> is a pretty commonly used utility for deducing the
+&ldquo;smallest submap of <code>srcTy^{-1} * dstTy</code> that is not the identity under the common dimensions.&rdquo;
+Internally, it just calls <code>dstLayout.invertAndCompose(srcLayout)</code> and performs <a href="https://github.com/triton-lang/triton/blob/00d2e9f7037dc3bba6f18b37f49c9aebaaa1c657/include/triton/Tools/LinearLayout.h#L683-L691"><code>quotient()</code>
+operation</a> to drop identity dimensions from the slowest to fastest.</p>
+<h2 id="final-words">Final Words</h2>
+<p>This blog post supplements the previous one and the linear layout paper with discussions
+of linear layout representation internals and operations.
+We then go over some concrete examples to see how linear layouts are built up and utilized for
+optimizing code generation in action.
+Linear layout right now replaces various bespoke conversions we had in Triton; it provides great
+simplicity and generalization, once you fully grasp the ideas.
+Hopefully this blog post helps along that line.</p>
+        </div>
+        
+        <div class="my-4">
+    
+    <a href="https://www.lei.chat/tags/triton/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>triton</a>
+    
+    <a href="https://www.lei.chat/tags/layout/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>layout</a>
+    
+    <a href="https://www.lei.chat/tags/linear-layout/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>linear-layout</a>
+    
+    <a href="https://www.lei.chat/tags/examples/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>examples</a>
+    
+    <a href="https://www.lei.chat/tags/gpu/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>gpu</a>
+    
+    <a href="https://www.lei.chat/tags/hierarchy/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>hierarchy</a>
+    
+    <a href="https://www.lei.chat/tags/memory/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>memory</a>
+    
+    <a href="https://www.lei.chat/tags/mfma/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>mfma</a>
+    
+    <a href="https://www.lei.chat/tags/conversion/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>conversion</a>
+    
+    <a href="https://www.lei.chat/tags/product/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>product</a>
+    
+    <a href="https://www.lei.chat/tags/composition/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>composition</a>
+    
+    <a href="https://www.lei.chat/tags/inversion/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>inversion</a>
+    
+    <a href="https://www.lei.chat/tags/divide-left/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>divide-left</a>
+    
+</div>
+
+        
+        
+        
+
+
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">Next</span>
+        <a href="https://www.lei.chat/posts/triton-linear-layout-concept/" class="block">Triton Linear Layout: Concept</a>
+        
+    </div>
+</div>
+
+        
+
+
+
+  <script id="utterances" src="https://utteranc.es/client.js"
+            issue-term=title
+            repo=antiagainst/antiagainst.github.io
+              theme=preferred-color-scheme
+        crossorigin="anonymous"
+        async>
+</script>
+<script>
+    if (storageColorScheme == "Light") {
+      document.getElementById('utterances').setAttribute('theme', 'github-light')
+    } else if (storageColorScheme == "Dark") {
+      document.getElementById('utterances').setAttribute('theme', 'github-dark')
+    }
+</script>
+
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+<div class="bg-secondary-bg rounded p-6">
+    <h3 class="text-lg font-semibold mb-4">Series of Posts</h3>
+    <div class="content">
+        
+          
+          <span class="font-semibold">
+            <i class="fas fa-th-list mr-1"></i>triton »
+          </span>
+          <br />
+          
+            <span>1.</span>
+            <a href="https://www.lei.chat/posts/triton-compiler-development-tips/">Triton Compiler Development Tips</a>
+            <br />
+          
+            <span>2.</span>
+            <a href="https://www.lei.chat/posts/triton-linear-layout-concept/">Triton Linear Layout: Concept</a>
+            <br />
+          
+            <span>3.</span>
+            <a href="https://www.lei.chat/posts/triton-linear-layout-examples/">Triton Linear Layout: Examples</a>
+            <br />
+          
+        
+    </div>
+</div>
+
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">On This Page</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#basics">Basics</a>
+      <ul>
+        <li><a href="#data-structures">Data structures</a></li>
+        <li><a href="#input-and-output-dimensions">Input and output dimensions</a></li>
+        <li><a href="#primitive-index-mappings">Primitive index mappings</a></li>
+      </ul>
+    </li>
+    <li><a href="#operations">Operations</a>
+      <ul>
+        <li><a href="#product">Product</a></li>
+        <li><a href="#composition">Composition</a></li>
+        <li><a href="#inversion">Inversion</a></li>
+        <li><a href="#left-division">Left division</a></li>
+      </ul>
+    </li>
+    <li><a href="#examples">Examples</a>
+      <ul>
+        <li><a href="#n-d-identity-layout">N-D identity layout</a></li>
+        <li><a href="#mfma-layout">MFMA layout</a></li>
+        <li><a href="#distributed-to-shared-layout">Distributed to shared layout</a></li>
+        <li><a href="#generic-layout-conversion">Generic layout conversion</a></li>
+      </ul>
+    </li>
+    <li><a href="#final-words">Final Words</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded p-6">
+        <h2 class="text-lg font-semibold mb-4">See Also</h2>
+        <div class="content">
+            
+            <a href="https://www.lei.chat/posts/triton-linear-layout-concept/">Triton Linear Layout: Concept</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/triton-compiler-development-tips/">Triton Compiler Development Tips</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/hlsl-for-vulkan-resources/">HLSL for Vulkan: Resources</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/">MLIR CodeGen Dialects for Machine Learning Compilers</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/codegen-performant-convolution-kernels-for-mobile-gpus/">CodeGen Performant Convolution Kernels for Mobile GPUs</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/sampling-performance-counters-from-gpu-drivers/">Sampling Performance Counters from Mobile GPU Drivers</a>
+            <br />
+            
+        </div>
+    </div>
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2018 - 2026 <a href="https://www.lei.chat/">Lei Zhang</a>
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

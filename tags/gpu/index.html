@@ -118,65 +118,65 @@
     "itemListElement":[{
             "@type":"ListItem",
             "position":  1 ,
+            "name": "Triton Linear Layout: Examples",
+            "description": "\u003cp\u003e\u003ca href=\"../triton-linear-layout-concept/\"\u003eThe previous blog post\u003c/a\u003e talked about Triton linear layout concepts, aiming to provide\nsome underlying motivations and an intuitive understanding.\nAs a companion, in this one I\u0026rsquo;d like to touch on linear layout internals and follow up with some\nconcrete examples to show its usage in action and make it even more comprehensible.\nFollowing the same vein, common languages and explanations are preferred instead of mathematical\nterms and interpretations.\u003c/p\u003e",
+            "url": "https://www.lei.chat/posts/triton-linear-layout-examples/"
+        },{
+            "@type":"ListItem",
+            "position":  2 ,
             "name": "Triton Linear Layout: Concept",
             "description": "\u003cp\u003eLayout is a core concept in Triton for representing and optimizing distribution\nmappings from source problems to the target hardware compute and memory\nhierarchy.\nIn this blog post I will talk about linear layout in Triton, the new unifying\nmechanism over existing bespoke layouts for different purposes.\nThe aim is to provide motivation and an intuitive understanding of linear\nlayout;\nI will rely on examples and illustrations instead of theories and proofs.\u003c/p\u003e",
             "url": "https://www.lei.chat/posts/triton-linear-layout-concept/"
         },{
             "@type":"ListItem",
-            "position":  2 ,
+            "position":  3 ,
             "name": "Triton Compiler Development Tips",
             "description": "\u003cp\u003e\u003ca href=\"https://triton-lang.org/\"\u003eTriton\u003c/a\u003e provides an elegant solution to program GPU kernels in Python,\npositioning itself as a critical component in the modern AI software stack.\nTo deliver performance and portability, it leverages a compiler, the capability\nof which determines the potential.\nHacking the compiler internals is not a simple task.\nHere are some tips hopefully useful to folks.\nI\u0026rsquo;ll try to keep this blog post updated periodically.\u003c/p\u003e",
             "url": "https://www.lei.chat/posts/triton-compiler-development-tips/"
         },{
             "@type":"ListItem",
-            "position":  3 ,
+            "position":  4 ,
             "name": "Single-node ML Runtime Foundation",
             "description": "\u003cp\u003ePrevious blog posts overviewed the MLIR dialect hierarchy for \u003ca href=\"../mlir-codegen-dialects-for-machine-learning-compilers/\"\u003ekernel code\ngeneration\u003c/a\u003e (CodeGen) and zoomed in on the\n\u003ca href=\"../mlir-linalg-dialect-and-patterns/\"\u003eLinalg\u003c/a\u003e and \u003ca href=\"../mlir-vector-dialect-and-patterns/\"\u003eVector\u003c/a\u003e dialects among them.\nNow I will switch to discuss the runtime side a bit, in order to provide\na holistic view of MLIR-based machine learning (ML) compilers.\nThis one touches the foundation and basics, including the target landscape,\nruntime requirements and designs to meet thereof.\u003c/p\u003e",
             "url": "https://www.lei.chat/posts/single-node-ml-runtime-foundation/"
         },{
             "@type":"ListItem",
-            "position":  4 ,
+            "position":  5 ,
             "name": "CodeGen Performant Convolution Kernels for Mobile GPUs",
             "description": "\u003cp\u003eThis blog post talks about how to generate performant code for convolution ops\nusing MLIR’s multiple levels of abstractions and transformations.\nI initially created it for targeting ARM Mali GPUs in IREE. But given it is\njust direct tiling and vectorization, it should be widely applicable.\u003c/p\u003e\n\u003cp\u003eI will walk through the lowering steps, so if you are interested to know how to\norganize MLIR’s various dialects/patterns together to achieve similar tasks,\nthis blog post might also be useful.\u003c/p\u003e",
             "url": "https://www.lei.chat/posts/codegen-performant-convolution-kernels-for-mobile-gpus/"
         },{
             "@type":"ListItem",
-            "position":  5 ,
+            "position":  6 ,
             "name": "Sampling Performance Counters from Mobile GPU Drivers",
             "description": "Hardware performance counter details in Adreno/Mali kernel mode drivers and how to query them from user mode application",
             "url": "https://www.lei.chat/posts/sampling-performance-counters-from-gpu-drivers/"
         },{
             "@type":"ListItem",
-            "position":  6 ,
+            "position":  7 ,
             "name": "Android/Linux GPU Drivers: Internals and Resources",
             "description": "Internals and resources about GPU user mode and kernel mode drivers in Android/Linux",
             "image": "https://www.lei.chat/posts/android-linux-gpu-drivers-internals-and-resources/gpu-user-kernel-driver.svg",
             "url": "https://www.lei.chat/posts/android-linux-gpu-drivers-internals-and-resources/"
         },{
             "@type":"ListItem",
-            "position":  7 ,
+            "position":  8 ,
             "name": "What is Vulkan Compute?",
             "description": "The compute subset of the Vulkan API",
             "image": "https://www.lei.chat/posts/what-is-vulkan-compute/vulkan-compute-application.svg",
             "url": "https://www.lei.chat/posts/what-is-vulkan-compute/"
         },{
             "@type":"ListItem",
-            "position":  8 ,
+            "position":  9 ,
             "name": "Shader Toolchain: HLSL in Vulkan",
             "description": "Shader Toolchain (HLSL in Vulkan): talk, slides, downloads, and documentation",
             "url": "https://www.lei.chat/posts/shader-toolchain-hlsl-in-vulkan/"
         },{
             "@type":"ListItem",
-            "position":  9 ,
+            "position":  10 ,
             "name": "HLSL for Vulkan: Semantic Strings and Location Numbers",
             "description": "HLSL for Vulkan: translating HLSL semantic strings into SPIR-V location numbers",
             "url": "https://www.lei.chat/posts/hlsl-for-vulkan-semantic-strings-and-location-numbers/"
-        },{
-            "@type":"ListItem",
-            "position":  10 ,
-            "name": "HLSL for Vulkan: Resources",
-            "description": "HLSL for Vulkan: translating HLSL resources into SPIR-V",
-            "url": "https://www.lei.chat/posts/hlsl-for-vulkan-resources/"
         }
     ]
 }
@@ -211,7 +211,7 @@
 
 
 
-<meta property="og:updated_time" content="2024-12-31T14:21:28-08:00" />
+<meta property="og:updated_time" content="2026-01-10T14:09:38-08:00" />
 
 
 
@@ -372,6 +372,58 @@
       
     
     <div class="overflow-hidden divide-y">
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="https://www.lei.chat/posts/triton-linear-layout-examples/" class="font-bold text-xl hover:text-eureka">Triton Linear Layout: Examples</a>
+</div>
+<div class="content">
+  The previous blog post talked about Triton linear layout concepts, aiming to provide some underlying motivations and an intuitive understanding. As a companion, in this one I’d like to touch on linear layout internals and follow up with some concrete examples to show its usage in action and make it even more comprehensible. Following the same vein, common languages and explanations are preferred instead of mathematical terms and interpretations.
+
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2026-01-10</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>13 min read</span>
+    </div>
+    
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="https://www.lei.chat/categories/compiler/" class="hover:text-eureka">compiler</a><span>, </span>
+        
+        
+        <a href="https://www.lei.chat/categories/triton/" class="hover:text-eureka">triton</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="https://www.lei.chat/series/triton/" class="hover:text-eureka">triton</a>
+        
+    </div>
+    
+</div>
+
+
+  </div>
+
+  
+</div>
+  </div>
   
   <div class="py-6">
     <div class="flex flex-col-reverse lg:flex-row justify-between">
@@ -862,58 +914,6 @@ I will walk through the lowering steps, so if you are interested to know how to 
 </div>
   </div>
   
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="mb-4">
-  <a href="https://www.lei.chat/posts/hlsl-for-vulkan-resources/" class="font-bold text-xl hover:text-eureka">HLSL for Vulkan: Resources</a>
-</div>
-<div class="content">
-  This blog post discusses how to manage resources in HLSL for Vulkan, using the SPIR-V CodeGen of DirectXShaderCompiler (DXC). It is one of the “HLSL for Vulkan” series.
-
-</div>
-
-<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
-    <div class="mr-6 my-2">
-        <i class="fas fa-calendar mr-1"></i>
-        <span>2018-04-24</span>
-    </div>
-    <div class="mr-6 my-2">
-        <i class="fas fa-clock mr-1"></i>
-        <span>7 min read</span>
-    </div>
-    
-    
-    
-    <div class="mr-6 my-2">
-        <i class="fas fa-folder mr-1"></i>
-        
-        <a href="https://www.lei.chat/categories/vulkan-graphics/" class="hover:text-eureka">vulkan-graphics</a><span>, </span>
-        
-        
-        <a href="https://www.lei.chat/categories/dxc/" class="hover:text-eureka">dxc</a>
-        
-    </div>
-    
-
-    
-    <div class="mr-6 my-2">
-        <i class="fas fa-th-list mr-1"></i>
-        
-        <a href="https://www.lei.chat/series/hlsl-for-vulkan/" class="hover:text-eureka">hlsl-for-vulkan</a>
-        
-    </div>
-    
-</div>
-
-
-  </div>
-
-  
-</div>
-  </div>
-  
 </div>
 
 
@@ -946,7 +946,7 @@ I will walk through the lowering steps, so if you are interested to know how to 
   </main>
   <footer class="pl-scrollbar">
     <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
-    <p class="text-sm text-tertiary-text">&copy; 2018 - 2025 <a href="https://www.lei.chat/">Lei Zhang</a>
+    <p class="text-sm text-tertiary-text">&copy; 2018 - 2026 <a href="https://www.lei.chat/">Lei Zhang</a>
  &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
 </div></div>
   </footer>
