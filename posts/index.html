@@ -103,64 +103,64 @@
     "itemListElement":[{
             "@type":"ListItem",
             "position":  1 ,
+            "name": "Triton Bespoke Layouts",
+            "description": "\u003cp\u003eHopefully the previous articles covering linear layout \u003ca href=\"../triton-linear-layout-concept/\"\u003econcepts\u003c/a\u003e and\n\u003ca href=\"../triton-linear-layout-examples/\"\u003eexamples\u003c/a\u003e facilitate building a solid understanding of the core generic layer powering\nvarious Triton code generation lowering and optimizations.\nNow let\u0026rsquo;s turn our focus to those bespoke layouts, which we still consistently interact with\nwhen working on Triton compiler internals.\nAdditionally, developers can directly program layouts with Gluon now; writing those bespoke layouts\nis generally more intuitive than linear layouts.\u003c/p\u003e",
+            "url": "https://www.lei.chat/posts/triton-bespoke-layouts/"
+        },{
+            "@type":"ListItem",
+            "position":  2 ,
             "name": "Triton Linear Layout: Examples",
             "description": "\u003cp\u003e\u003ca href=\"../triton-linear-layout-concept/\"\u003eThe previous blog post\u003c/a\u003e talked about Triton linear layout concepts, aiming to provide\nsome underlying motivations and an intuitive understanding.\nAs a companion, in this one I\u0026rsquo;d like to touch on linear layout internals and follow up with some\nconcrete examples to show its usage in action and make it even more comprehensible.\nFollowing the same vein, common languages and explanations are preferred instead of mathematical\nterms and interpretations.\u003c/p\u003e",
             "url": "https://www.lei.chat/posts/triton-linear-layout-examples/"
         },{
             "@type":"ListItem",
-            "position":  2 ,
+            "position":  3 ,
             "name": "Triton Linear Layout: Concept",
             "description": "\u003cp\u003eLayout is a core concept in Triton for representing and optimizing distribution\nmappings from source problems to the target hardware compute and memory\nhierarchy.\nIn this blog post I will talk about linear layout in Triton, the new unifying\nmechanism over existing bespoke layouts for different purposes.\nThe aim is to provide motivation and an intuitive understanding of linear\nlayout;\nI will rely on examples and illustrations instead of theories and proofs.\u003c/p\u003e",
             "url": "https://www.lei.chat/posts/triton-linear-layout-concept/"
         },{
             "@type":"ListItem",
-            "position":  3 ,
+            "position":  4 ,
             "name": "Triton Compiler Development Tips",
             "description": "\u003cp\u003e\u003ca href=\"https://triton-lang.org/\"\u003eTriton\u003c/a\u003e provides an elegant solution to program GPU kernels in Python,\npositioning itself as a critical component in the modern AI software stack.\nTo deliver performance and portability, it leverages a compiler, the capability\nof which determines the potential.\nHacking the compiler internals is not a simple task.\nHere are some tips hopefully useful to folks.\nI\u0026rsquo;ll try to keep this blog post updated periodically.\u003c/p\u003e",
             "url": "https://www.lei.chat/posts/triton-compiler-development-tips/"
         },{
             "@type":"ListItem",
-            "position":  4 ,
+            "position":  5 ,
             "name": "Leaving Google",
             "description": "\u003cp\u003eTime flies\u0026mdash;almost 9 years have passed since I joined Google.\nNow the time has come for me to leave and move on.\nWhile here, I\u0026rsquo;m super lucky to mostly work on open source projects that I can\npublicly talk about.\nSo at the end of my tenure with Google, I\u0026rsquo;d like to reflect and summarize the\nincredible journey, which I am super grateful for and thoroughly enjoyed,\nbefore I forget some details.\u003c/p\u003e",
             "url": "https://www.lei.chat/posts/leaving-google/"
         },{
             "@type":"ListItem",
-            "position":  5 ,
+            "position":  6 ,
             "name": "Single-node ML Runtime Foundation",
             "description": "\u003cp\u003ePrevious blog posts overviewed the MLIR dialect hierarchy for \u003ca href=\"../mlir-codegen-dialects-for-machine-learning-compilers/\"\u003ekernel code\ngeneration\u003c/a\u003e (CodeGen) and zoomed in on the\n\u003ca href=\"../mlir-linalg-dialect-and-patterns/\"\u003eLinalg\u003c/a\u003e and \u003ca href=\"../mlir-vector-dialect-and-patterns/\"\u003eVector\u003c/a\u003e dialects among them.\nNow I will switch to discuss the runtime side a bit, in order to provide\na holistic view of MLIR-based machine learning (ML) compilers.\nThis one touches the foundation and basics, including the target landscape,\nruntime requirements and designs to meet thereof.\u003c/p\u003e",
             "url": "https://www.lei.chat/posts/single-node-ml-runtime-foundation/"
         },{
             "@type":"ListItem",
-            "position":  6 ,
+            "position":  7 ,
             "name": "MLIR Linalg Dialect and Patterns",
             "description": "\u003cp\u003eI explained the Vector dialect and related patterns in the \u003ca href=\"../mlir-vector-dialect-and-patterns/\"\u003eprevious blog\npost\u003c/a\u003e. In this one let us look at a layer higher and\ntalk about the Linalg dialect and transformations around it.\u003c/p\u003e",
             "url": "https://www.lei.chat/posts/mlir-linalg-dialect-and-patterns/"
         },{
             "@type":"ListItem",
-            "position":  7 ,
+            "position":  8 ,
             "name": "MLIR Vector Dialect and Patterns",
             "description": "\u003cp\u003eThe \u003ccode\u003evector\u003c/code\u003e dialect and related transformations are crucial components in the\nMLIR CodeGen flow for machine learning (ML).\nToday I will zoom in on it to explain its positioning in the overall\npicture, characteristics, important operations and transformations,\nand best practices of using it based on my experiences.\u003c/p\u003e",
             "url": "https://www.lei.chat/posts/mlir-vector-dialect-and-patterns/"
         },{
             "@type":"ListItem",
-            "position":  8 ,
+            "position":  9 ,
             "name": "MLIR CodeGen Dialects for Machine Learning Compilers",
             "description": "\u003cp\u003eThe \u003ca href=\"../compilers-and-irs-llvm-ir-spirv-and-mlir/\"\u003einitial blog post\u003c/a\u003e in this series captured my overall take\non the evolution trends of compilers and IRs.\nIt also touched on \u003ca href=\"../compilers-and-irs-llvm-ir-spirv-and-mlir/#llvm-ir\"\u003eLLVM IR\u003c/a\u003e, \u003ca href=\"../compilers-and-irs-llvm-ir-spirv-and-mlir/#spir-v\"\u003eSPIR-V\u003c/a\u003e, and\n\u003ca href=\"../compilers-and-irs-llvm-ir-spirv-and-mlir/#mlir\"\u003eMLIR\u003c/a\u003e, explaining the problems they are addressing and design\nfocuses thereof.\nToday I will expand on MLIR and talk about its dialect hierarchy for machine\nlearning (ML) compilers systematically.\u003c/p\u003e",
             "image": "https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/codegen-dialect-hierarchy.svg",
             "url": "https://www.lei.chat/posts/mlir-codegen-dialects-for-machine-learning-compilers/"
         },{
             "@type":"ListItem",
-            "position":  9 ,
+            "position":  10 ,
             "name": "Compilers and IRs: LLVM IR, SPIR-V, and MLIR",
             "description": "Overall discussion on compilers and IRs (LLVM IR, SPIR-V, and MLIR): why they are in their current manner and how they would evolve",
             "url": "https://www.lei.chat/posts/compilers-and-irs-llvm-ir-spirv-and-mlir/"
-        },{
-            "@type":"ListItem",
-            "position":  10 ,
-            "name": "CodeGen Performant Convolution Kernels for Mobile GPUs",
-            "description": "\u003cp\u003eThis blog post talks about how to generate performant code for convolution ops\nusing MLIR’s multiple levels of abstractions and transformations.\nI initially created it for targeting ARM Mali GPUs in IREE. But given it is\njust direct tiling and vectorization, it should be widely applicable.\u003c/p\u003e\n\u003cp\u003eI will walk through the lowering steps, so if you are interested to know how to\norganize MLIR’s various dialects/patterns together to achieve similar tasks,\nthis blog post might also be useful.\u003c/p\u003e",
-            "url": "https://www.lei.chat/posts/codegen-performant-convolution-kernels-for-mobile-gpus/"
         }
     ]
 }
@@ -199,7 +199,7 @@
 
 
 
-<meta property="og:updated_time" content="2026-01-10T14:09:38-08:00" />
+<meta property="og:updated_time" content="2026-01-25T10:12:19-08:00" />
 
 
 
@@ -301,6 +301,58 @@
 </article>
 <div class="bg-secondary-bg rounded px-6">
     <div class="overflow-hidden divide-y">
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="https://www.lei.chat/posts/triton-bespoke-layouts/" class="font-bold text-xl hover:text-eureka">Triton Bespoke Layouts</a>
+</div>
+<div class="content">
+  Hopefully the previous articles covering linear layout concepts and examples facilitate building a solid understanding of the core generic layer powering various Triton code generation lowering and optimizations. Now let’s turn our focus to those bespoke layouts, which we still consistently interact with when working on Triton compiler internals. Additionally, developers can directly program layouts with Gluon now; writing those bespoke layouts is generally more intuitive than linear layouts.
+
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2026-01-25</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>16 min read</span>
+    </div>
+    
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="https://www.lei.chat/categories/compiler/" class="hover:text-eureka">compiler</a><span>, </span>
+        
+        
+        <a href="https://www.lei.chat/categories/triton/" class="hover:text-eureka">triton</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="https://www.lei.chat/series/triton/" class="hover:text-eureka">triton</a>
+        
+    </div>
+    
+</div>
+
+
+  </div>
+
+  
+</div>
+  </div>
   
   <div class="py-6">
     <div class="flex flex-col-reverse lg:flex-row justify-between">
@@ -791,68 +843,6 @@ IRs are critical to compilers. Like there are many compilers, there are also man
 </div>
   </div>
   
-  <div class="py-6">
-    <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="mb-4">
-  <a href="https://www.lei.chat/posts/codegen-performant-convolution-kernels-for-mobile-gpus/" class="font-bold text-xl hover:text-eureka">CodeGen Performant Convolution Kernels for Mobile GPUs</a>
-</div>
-<div class="content">
-  This blog post talks about how to generate performant code for convolution ops using MLIR’s multiple levels of abstractions and transformations. I initially created it for targeting ARM Mali GPUs in IREE. But given it is just direct tiling and vectorization, it should be widely applicable.
-I will walk through the lowering steps, so if you are interested to know how to organize MLIR’s various dialects/patterns together to achieve similar tasks, this blog post might also be useful.
-
-</div>
-
-<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
-    <div class="mr-6 my-2">
-        <i class="fas fa-calendar mr-1"></i>
-        <span>2021-09-19</span>
-    </div>
-    <div class="mr-6 my-2">
-        <i class="fas fa-clock mr-1"></i>
-        <span>36 min read</span>
-    </div>
-    
-    
-    
-    <div class="mr-6 my-2">
-        <i class="fas fa-folder mr-1"></i>
-        
-        <a href="https://www.lei.chat/categories/android/" class="hover:text-eureka">android</a><span>, </span>
-        
-        
-        <a href="https://www.lei.chat/categories/ml-inference/" class="hover:text-eureka">ml-inference</a><span>, </span>
-        
-        
-        <a href="https://www.lei.chat/categories/gpu-performance/" class="hover:text-eureka">gpu-performance</a><span>, </span>
-        
-        
-        <a href="https://www.lei.chat/categories/compiler/" class="hover:text-eureka">compiler</a><span>, </span>
-        
-        
-        <a href="https://www.lei.chat/categories/mlir/" class="hover:text-eureka">mlir</a>
-        
-    </div>
-    
-
-    
-    <div class="mr-6 my-2">
-        <i class="fas fa-th-list mr-1"></i>
-        
-        <a href="https://www.lei.chat/series/gpu-codegen/" class="hover:text-eureka">gpu-codegen</a>
-        
-    </div>
-    
-</div>
-
-
-  </div>
-
-  
-</div>
-  </div>
-  
 </div>
 
 
@@ -872,10 +862,13 @@ I will walk through the lowering steps, so if you are interested to know how to 
         <a href="/posts/page/2/" aria-label="Page 2" class="page-link" role="button">2</a>
       </li>
       <li class="page-item">
+        <a href="/posts/page/3/" aria-label="Page 3" class="page-link" role="button">3</a>
+      </li>
+      <li class="page-item">
         <a href="/posts/page/2/" aria-label="Next" class="page-link" role="button"><span aria-hidden="true">&raquo;</span></a>
       </li>
       <li class="page-item">
-        <a href="/posts/page/2/" aria-label="Last" class="page-link" role="button"><span aria-hidden="true">&raquo;&raquo;</span></a>
+        <a href="/posts/page/3/" aria-label="Last" class="page-link" role="button"><span aria-hidden="true">&raquo;&raquo;</span></a>
       </li>
     </ul>
 

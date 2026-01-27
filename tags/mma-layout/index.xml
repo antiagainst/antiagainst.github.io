@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>mma-layout on Lei.Chat()</title>
+    <link>https://www.lei.chat/tags/mma-layout/</link>
+    <description>Recent content in mma-layout on Lei.Chat()</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>&amp;copy; 2018 - 2026 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
+</copyright>
+    <lastBuildDate>Sun, 25 Jan 2026 10:12:19 -0800</lastBuildDate><atom:link href="https://www.lei.chat/tags/mma-layout/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Triton Bespoke Layouts</title>
+      <link>https://www.lei.chat/posts/triton-bespoke-layouts/</link>
+      <pubDate>Sun, 25 Jan 2026 10:12:19 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/posts/triton-bespoke-layouts/</guid>
+      <description>&lt;p&gt;Hopefully the previous articles covering linear layout &lt;a href=&#34;../triton-linear-layout-concept/&#34;&gt;concepts&lt;/a&gt; and
+&lt;a href=&#34;../triton-linear-layout-examples/&#34;&gt;examples&lt;/a&gt; facilitate building a solid understanding of the core generic layer powering
+various Triton code generation lowering and optimizations.
+Now let&amp;rsquo;s turn our focus to those bespoke layouts, which we still consistently interact with
+when working on Triton compiler internals.
+Additionally, developers can directly program layouts with Gluon now; writing those bespoke layouts
+is generally more intuitive than linear layouts.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

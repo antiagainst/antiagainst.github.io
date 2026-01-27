@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang='en' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>Triton Bespoke Layouts | Lei.Chat()</title>
+
+<meta name="generator" content="Hugo Eureka 0.8.4" />
+<link rel="stylesheet" href="https://www.lei.chat/css/eureka.min.css">
+<script defer src="https://www.lei.chat/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/bash.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/c.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cmake.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cpp.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/glsl.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/javascript.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/llvm.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/python.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/shell.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-109525036-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-109525036-1');
+</script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="Hopefully the previous articles covering linear layout concepts and
+examples facilitate building a solid understanding of the core generic layer powering
+various Triton code generation lowering and optimizations.
+Now let&rsquo;s turn our focus to those bespoke layouts, which we still consistently interact with
+when working on Triton compiler internals.
+Additionally, developers can directly program layouts with Gluon now; writing those bespoke layouts
+is generally more intuitive than linear layouts.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Posts",
+      "item":"https://www.lei.chat/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"Triton Bespoke Layouts",
+      "item":"https://www.lei.chat/posts/triton-bespoke-layouts/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://www.lei.chat/posts/triton-bespoke-layouts/"
+    },
+    "headline": "Triton Bespoke Layouts | Lei.Chat()","datePublished": "2026-01-25T10:12:19-08:00",
+    "dateModified": "2026-01-25T10:12:19-08:00",
+    "wordCount":  3318 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "Lei Zhang",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.lei.chat/images/avatar.png"
+        }
+        },
+    "description": "\u003cp\u003eHopefully the previous articles covering linear layout \u003ca href=\u0022..\/triton-linear-layout-concept\/\u0022\u003econcepts\u003c\/a\u003e and\n\u003ca href=\u0022..\/triton-linear-layout-examples\/\u0022\u003eexamples\u003c\/a\u003e facilitate building a solid understanding of the core generic layer powering\nvarious Triton code generation lowering and optimizations.\nNow let\u0026rsquo;s turn our focus to those bespoke layouts, which we still consistently interact with\nwhen working on Triton compiler internals.\nAdditionally, developers can directly program layouts with Gluon now; writing those bespoke layouts\nis generally more intuitive than linear layouts.\u003c\/p\u003e"
+}
+</script><meta property="og:title" content="Triton Bespoke Layouts | Lei.Chat()" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="https://www.lei.chat/images/avatar.png">
+
+
+<meta property="og:url" content="https://www.lei.chat/posts/triton-bespoke-layouts/" />
+
+
+
+
+<meta property="og:description" content="Hopefully the previous articles covering linear layout concepts and
+examples facilitate building a solid understanding of the core generic layer powering
+various Triton code generation lowering and optimizations.
+Now let&rsquo;s turn our focus to those bespoke layouts, which we still consistently interact with
+when working on Triton compiler internals.
+Additionally, developers can directly program layouts with Gluon now; writing those bespoke layouts
+is generally more intuitive than linear layouts." />
+
+
+
+
+<meta property="og:locale" content="en" />
+
+
+
+
+<meta property="og:site_name" content="Lei.Chat()" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2026-01-25T10:12:19-08:00" />
+
+
+<meta property="article:modified_time" content="2026-01-25T10:12:19-08:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="triton" />
+
+<meta property="article:tag" content="gluon" />
+
+<meta property="article:tag" content="layout" />
+
+<meta property="article:tag" content="linear-layout" />
+
+<meta property="article:tag" content="distributed-layout" />
+
+<meta property="article:tag" content="shared-layout" />
+
+
+
+
+
+
+
+
+
+
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/triton-linear-layout-examples/" />
+
+
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/triton-linear-layout-concept/" />
+
+
+
+<meta property="og:see_also" content="https://www.lei.chat/posts/triton-compiler-development-tips/" />
+
+
+
+
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">Lei.Chat()</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">Posts</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Tags</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Categories</a>
+            <a href="/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">Series</a>
+            <a href="/authors/me" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">About</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">Light</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">Dark</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">Auto</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+
+
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+        <h1 class="font-bold text-3xl text-primary-text">Triton Bespoke Layouts</h1>
+        <div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2026-01-25</span>
+    </div>
+    <div class="mr-6 my-2">
+        <i class="fas fa-clock mr-1"></i>
+        <span>16 min read</span>
+    </div>
+    
+    
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-folder mr-1"></i>
+        
+        <a href="https://www.lei.chat/categories/compiler/" class="hover:text-eureka">compiler</a><span>, </span>
+        
+        
+        <a href="https://www.lei.chat/categories/triton/" class="hover:text-eureka">triton</a>
+        
+    </div>
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="https://www.lei.chat/series/triton/" class="hover:text-eureka">triton</a>
+        
+    </div>
+    
+</div>
+
+        
+        <div class="content">
+            <p>Hopefully the previous articles covering linear layout <a href="../triton-linear-layout-concept/">concepts</a> and
+<a href="../triton-linear-layout-examples/">examples</a> facilitate building a solid understanding of the core generic layer powering
+various Triton code generation lowering and optimizations.
+Now let&rsquo;s turn our focus to those bespoke layouts, which we still consistently interact with
+when working on Triton compiler internals.
+Additionally, developers can directly program layouts with Gluon now; writing those bespoke layouts
+is generally more intuitive than linear layouts.</p>
+<p>By bespoke layouts, I mean traditional layouts like blocked/shared/MMA layouts.
+In certain places they are also called legacy layouts.
+Given we still actively use them and there are no plans to deprecate them, I personally prefer
+calling them bespoke layouts, to emphasize the fact that each one of them is tailored towards a
+specific need.</p>
+<h2 id="bespoke-vs-linear-layouts">Bespoke vs Linear Layouts</h2>
+<p>One would ask why we need two sets of layouts and what different purposes they serve, if any.</p>
+<p>Chronologically, we only have those bespoke layouts at the beginning.
+They model key hardware tensor ownership patterns in a straightforward manner.
+They are easy to understand and get the job done for common cases.
+However, as the kernel becomes more and more complicated which invites more and more optimizations,
+their shortcomings start to become obvious&mdash;<em>given each bespoke layout uses its own IR definition
+and underlying mechanism, we need more and more point to point conversion cases</em>.</p>
+<p>Starting with the general <code>ttg.convert_layout</code> operation <a href="../triton-linear-layout-examples/#generic-layout-conversion">we mentioned earlier</a> as an
+example, it can have different source and destination layouts.
+Without a generic mechanism, we need to consider them separately and use different code paths,
+which means solving a combinational problem in the space of
+source layout (blocked, shared, MMA, etc.) * destination layout (blocked, shared, MMA, etc.) *
+data exchange (intra-thread, intra-warp, inter-warp, etc.).</p>
+<p><code>ttg.convert_layout</code> serves as internal bridge inside the compiler for potential data ownership
+exchanges&mdash;we <a href="https://github.com/search?q=repo%3Atriton-lang%2Ftriton%20ConvertLayoutOp%3A%3Acreate&amp;type=code">insert it</a> as long as we have a mismatch in the type system due to
+layouts.
+Such approach gives us localized compiler transformations so easier to manage.
+On the flip side, it does mean that there can exist lots of redundant conversions; we would want
+to optimize them away if possible.</p>
+<p>Further, from the kernel&rsquo;s perspective, we write at the block level and process n-D tensors.
+It&rsquo;s quite common to perform <code>.permute()</code>, <code>.reshape()</code>, and other <a href="https://triton-lang.org/main/python-api/triton.language.html#shape-manipulation-ops">shape manipulation
+operations</a>.
+These operations conceptually bring no cost given they are just creating derivative &ldquo;views&rdquo;
+of the original tensor without needing to really shuffle data in the hardware.
+So we would like to optimize through them if possible when optimizing layout conversions.</p>
+<p>For the compiler to realize the above, it needs to reason and compute how element ownership
+transfers throughout the kernel code, which would be hard if we don&rsquo;t have a unified mechanism.
+Therefore linear layout was introduced as a generic underlying mechanism.</p>
+<p>Genericity comes with a cost of higher cognitive burden though, as human minds are typically
+fond of vivid illustrations rather than terse theories.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>
+Especially now with Gluon, developers can directly program layouts to get precise control to
+overrule inefficiencies of compiler heuristics.
+So even as all the Triton compiler internals are transitioning to heavily rely on linear layouts
+for generic optimizations, bespoke layouts are still great complementary mechanisms.
+It&rsquo;s like that we know all high-level programming languages are translated into assembly
+eventually, but we still prefer programming the former.</p>
+<p>I think I digressed a bit already, but the above are good backgrounds.
+Without further ado, let&rsquo;s discuss bespoke layouts.</p>
+<h2 id="layout-traits-and-attributes">Layout Traits and Attributes</h2>
+<p>The documentation for these layouts is embedded as descriptions in <a href="https://github.com/triton-lang/triton/blob/main/include/triton/Dialect/TritonGPU/IR/TritonGPUAttrDefs.td">the <code>TritonGPUAttrDefs.td</code>
+file</a>.
+The wording there is a bit formal but good to read through.</p>
+<p>In general, there are two categories&mdash;distributed and shared layouts.
+They are defined as TableGen attribute interfaces with a <code>EncodingTrait</code> suffix in their names.
+Attribute interface is a mechanism for different attributes to support the same API interface,
+like mixins in programming languages.</p>
+<p>Among distributed layouts, those for representing tensor/matrix core unit layouts are special
+enough to merit their own separate interface, named <code>MmaEncodingTrait</code>, for defining common methods
+and processing collectively.</p>
+<p>Various concrete layouts are defined as MLIR attributes, with an <code>EncodingAttr</code> suffix.
+See the hierarchy in the following illustration:</p>
+<p><img src="triton-layout-hierarchy.svg" alt="Triton Layout Hierarchy" title="Triton Layout Hierarchy"></p>
+<p>One may wonder why defining layouts in such manner.
+Triton uses MLIR&rsquo;s <a href="https://mlir.llvm.org/docs/Dialects/Builtin/#rankedtensortype"><code>tensor</code> data type</a>.
+Using MLIR attributes to define layouts allows us to attach them to <code>tensor</code> as the <code>encoding</code>
+attribute.
+With this, we basically bolt the layouts on the MLIR type system and carry them in each operation
+so we can reason and propagate them in relatively localized manner for optimizations as said in
+the previous section.</p>
+<h2 id="distributed-layouts">Distributed Layouts</h2>
+<p><a href="https://github.com/triton-lang/triton/blob/88c622b38388f49b49444af361bd0ae507f8496a/include/triton/Dialect/TritonGPU/IR/TritonGPUAttrDefs.td#L568">Distributed layout</a>, as the name indicates, are meant for ownership patterns where
+different hardware units own different tensor elements.
+This is the case when we use registers to hold the data; it matches and reflects the fundamental
+hardware characteristics that registers are per-SIMD resources and only visible to their owning
+threads and warps.</p>
+<p>A simplified flow of matmul is that we read data from global memory into registers and write to
+shared memory, and then read from shared memory to registers, and finally perform tensor/matrix
+core operation and write to global memory.<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<p>If we&rsquo;d like to design bespoke layouts to support this flow, we would need something to represent
+how to read/write from/to global memory, and how to manage shared memory, and how to arrange data
+in the manner as expected by tensor/matrix core units.
+The first is effectively blocked layout, and the third is various vendor-specific MMA layouts.
+The second we will come to in the <a href="#shared-layouts">Shared Layouts</a> section.</p>
+<h3 id="blocked-layout">Blocked layout</h3>
+<p>For global memory access, GPUs have stuck to the SIMT model longer than computation.
+While MMA was introduced since Volta in NVIDIA GPUs, it&rsquo;s only since Hopper that we see Tensor
+Memory Accelerator (TMA).</p>
+<h4 id="hardware-needs">Hardware needs</h4>
+<p>In the traditional SIMT model, each thread only read a few elements; we arrange threads into warps
+and then into CTAs<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup> to collectively progress the whole problem size.
+Although each thread uses its own global pointer so we can perform arbitrary gather/scatter style
+access, the hardware is really designed to be most efficient if all threads in the same warp
+collectively access consecutively with coalescing.</p>
+<p>To describe the above ownership pattern, we would need to specify how many elements each thread is
+responsible for, how many threads per warp we have, how many warps per CTA, and so on.
+Additionally to achieve best performance, we need to arrange threads/warps in nested tiles
+to be consecutive.
+These are all semantics we want to directly bake into the definition of blocked layout, which
+reflects <a href="https://github.com/triton-lang/triton/blob/88c622b38388f49b49444af361bd0ae507f8496a/include/triton/Dialect/TritonGPU/IR/TritonGPUAttrDefs.td#L806-L808">the current attribute definition</a>.</p>
+<h4 id="tensor-situations">Tensor situations</h4>
+<p>The above only specifies an element owning pattern of one &ldquo;unit&rdquo; though.
+When mapping to a concrete tensor, we would need to address some additional issues.</p>
+<p>First is how to scale to the exact shape of the tensor.
+This is straightforward considering the need of consecutive arrangement for performance&mdash;we just
+continuously tile in a wrap-around manner until we cover the whole tensor<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup>,
+with each tile called a repetition.
+This is actually the <a href="https://github.com/triton-lang/triton/blob/c0491b2d0289de66e64189e61a3de40dd99c1e0e/include/triton/Dialect/TritonGPU/IR/TritonGPUAttrDefs.td#L632-L635">behavior for all</a> distributed layouts.</p>
+<p>For example, applying a blocked layout of <code>ttgl.BlockedLayout(size_per_thread = [1, 8], threads_per_warp = [16, 4], warps_per_cta = [2, 2], order = [1, 0])</code> onto a (<code>MxK</code> =) <code>64x128xf16</code>
+tensor, we can use an <a href="https://github.com/ROCm/triton/tree/main_perf/python/perf-kernels/tools/plot-layout">awesome tool</a> created by <a href="https://github.com/zhanglx13">Lixun</a> to visualize (including
+all following illustrations):</p>
+<p><img src="block-64x128-1x8-16x4-2x2-order10.png" alt="Block layout; order10" title="Block layout; order10"></p>
+<p>There is a curious <code>order</code> bit in the above.
+That&rsquo;s the second issue we need to handle&mdash;given a <code>2x2</code> warps per CTA for example, there are
+multiple ways we can arrange the warps.
+So the definition we had thus far is not enough to pin down the exact distribution pattern.
+Similarly for the thread arrangements in a warp.
+To address this, we introduce the order to list dimension indices from fastest to slowest
+varying.<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></p>
+<p>Applying <code>ttgl.BlockedLayout(size_per_thread = [8, 1], threads_per_warp = [4, 16], warps_per_cta = [2, 2], order = [0, 1])</code> onto a (<code>KxN</code> =) <code>64x128xf16</code> tensor, we can see the different arrangements
+for warps.
+Although it&rsquo;s not obvious from the plot, thread arrangements follow similar order pattern like warps
+and they differ from the previous one too.</p>
+<p><img src="block-64x128-8x1-4x16-2x2-order01.png" alt="Block layout; order01" title="Block layout; order01"></p>
+<h4 id="pass-conversions">Pass conversions</h4>
+<p>Okay now we have a good mechanism to describe how we distribute a tensor in threads/warps/CTAs.
+We can then use it to optimize global memory access.
+This is performed in multiple steps.
+We know that Triton IR itself doesn&rsquo;t concern layouts.
+When we convert to Triton GPU IR, we <a href="https://github.com/triton-lang/triton/blob/c0491b2d0289de66e64189e61a3de40dd99c1e0e/lib/Conversion/TritonToTritonGPU/TritonGPUConversion.cpp#L28-L38">apply</a> a default blocked layout with
+a default order (the innermost dimension is the fastest varying) consistent with MLIR in general.
+Then later we use <a href="https://github.com/triton-lang/triton/blob/main/lib/Dialect/TritonGPU/Transforms/Coalesce.cpp">the Coalesce pass</a> to refine.
+Just pointing out the overall flow here to give more context on blocked layout.
+Details involved are another big topic I won&rsquo;t dive into for now given the focus is on layouts.</p>
+<p>As a side note, the fact that these bespoke layouts do not encode the tensor shape but auto &ldquo;scale&rdquo;
+at shape application time can cause subtle problems.
+Also, order only gives restricted representation power and it couples thread and warp arrangement.
+The former is a limitation of bespoke layout in general, while the latter is specific to blocked
+layout.
+Linear layout makes it better for both issues as it&rsquo;s explicit about shapes by construction and
+flexible about different arrangements.</p>
+<h3 id="mma-layouts">MMA layouts</h3>
+<p>Blocked layouts describe tensor element distribution patterns promoting efficient global memory
+access following the SIMT model.
+Before we are able to feed the data into tensor/matrix core units for computation, we need to
+rearrange to meet hardware layout requirements, given that they are not SIMT anymore and
+threads in a warp collectively own a tensor fragment.
+We touched on this part in <a href="../triton-linear-layout-concept/#gpu-compute-and-memory-hierarchy">the linear layout blog post</a>.</p>
+<p>All the three matrices involved in matmul have predefined element ownership patterns.
+Let&rsquo;s start with the C matrix, which is captured as the MMA layouts, and then move on to A/B
+in the next section, which is captured as dot operand layout.</p>
+<p>Due to the ad-hoc nature of tensor/matrix core units, the element ownership follows a
+vendor-specific exotic manner.
+Using <a href="https://github.com/triton-lang/triton/blob/main/include/triton/Dialect/TritonGPU/IR/TritonGPUAttrDefs.td#L1028-L1034">AMD MFMA layout</a> as an example, we have a version given the instructions
+may not be portable across generations.
+We have an instruction shape specifying the exact hardware intrinsic variant.
+These two fields pretty much determine what a warp unit tile (that is, a single MFMA intrinsic)
+looks like.</p>
+<p>There is a transpose bit on the layout definition worth explaining.
+It&rsquo;s an optimization for cases like chained <code>tl.dot</code> ops and direct global writes.
+Unlike NVIDIA MMA layouts, AMD MFMA layout for C matrix natively requires threads to own consecutive
+elements along the M dimension, which is inconvenient if we want to feed one <code>tl.dot</code>&rsquo;s result as A
+matrix to following <code>tl.dot</code>, or directly write out to global memory.
+The trick is to rely on $C^T = B^T A^T$ to compute the transpose.
+Showing the <code>V_MFMA_F32_16X16X16_F16</code> hardware intrinsic:</p>
+<p><img src="mfma-16x16x16-trans-cmp.jpg" alt="MFMA layout; transpose" title="MFMA layout; tranpose"></p>
+<p>There is nothing to customize within a warp unit tile.
+But we can specify how to nest further on top of it with tiles per warp and warp per CTA, like
+other distributed layouts.
+We can look at examples showing that together with dot operand layout, for the full picture of
+<code>tl.dot</code> computation.</p>
+<h3 id="dot-operand-layout">Dot operand layout</h3>
+<p>To describe the A/B matrix layout, we need to know which intrinsic we target.
+We can get such information by using the C matrix&rsquo;s MMA layout as the parent layout.
+Then use an index to indicate whether it&rsquo;s A or B matrix.
+That&rsquo;s the <a href="https://github.com/triton-lang/triton/blob/c0491b2d0289de66e64189e61a3de40dd99c1e0e/include/triton/Dialect/TritonGPU/IR/TritonGPUAttrDefs.td#L1460-L1462">main fields</a> in dot operand layouts.</p>
+<p>There is one additional <code>kWidth</code> bit that specifies the number of elements each thread loads
+consecutively from shared memory.
+Its existence gives us chances to optimize shared memory load with wider instruction.
+If we look at <code>V_MFMA_F32_16X16X16_F16</code>, each thread only owns (16 x 16 / 64 =) 4 (called
+as <code>kBase</code> <a href="https://github.com/triton-lang/triton/blob/c0491b2d0289de66e64189e61a3de40dd99c1e0e/third_party/amd/lib/TritonAMDGPUTransforms/AccelerateAMDMatmul.cpp#L688-L689">here</a>) <code>f16</code> elements,
+which is only 64 bits.
+The widest shared memory access instruction allows 128 bits.
+GPU hardware nowadays packs very powerful tensor/matrix core units, and the bottleneck is often
+feeding data to them via memory.
+So we want to optimize shared memory access via widest instruction.
+We can set kWidth as 8 to read in 2x (called as <code>kPack</code> <a href="https://github.com/triton-lang/triton/blob/c0491b2d0289de66e64189e61a3de40dd99c1e0e/third_party/amd/lib/TritonAMDGPUTransforms/AccelerateAMDMatmul.cpp#L694-L699">here</a>) elements and issue two MFMA
+instructions to consume them.</p>
+<p>Given the following layout</p>
+<pre><code class="language-python">c_layout = ttgl.amd.AMDMFMALayout(version = 3, instr_shape = [16, 16, 16],
+                                  transposed = False, warps_per_cta = [2, 4])
+a_layout = ttgl.DotOperandLayout(parent = c_layout, operand_index = 0, k_width = 8)
+b_layout = ttgl.DotOperandLayout(parent = c_layout, operand_index = 1, k_width = 8)
+</code></pre>
+<p>on a <code>64x64x64xf16</code> tensor:</p>
+<p><img src="dot-64x64x64-16x16x16f16-kw8-w2x4-transF.png" alt="Dot operand layout; transpose" title="Dot operand layout; tranpose"></p>
+<h4 id="pass-conversions-1">Pass conversions</h4>
+<p>The MMA layout for C and associated dot operand layout for A/B are decided in <a href="https://github.com/triton-lang/triton/blob/main/third_party/amd/lib/TritonAMDGPUTransforms/AccelerateAMDMatmul.cpp">the AccelerateMatmul
+pass</a>.
+We run patterns on <code>tl.dot</code> ops there and decide on a MFMA intrinsic variant to use based off
+precision and shape and other characteristics.
+MMA layout and dot operand layout are created out of it accordingly, with <code>ttg.convert_layout</code>
+bridging the type system.</p>
+<p>This decision becomes the layout <em>anchor</em> for compute side.
+Together with the Coalesce pass, which decides the <em>anchor</em> for memory access side, we establish
+&ldquo;boundaries&rdquo; for layout propagation and resolution.
+<a href="https://github.com/triton-lang/triton/blob/main/lib/Dialect/TritonGPU/Transforms/RemoveLayoutConversions.cpp">The RemoveLayoutConversions pass</a> would work inside this boundary to optimize.</p>
+<h2 id="shared-layouts">Shared Layouts</h2>
+<p>Thus far we have discussed the layouts needed for global memory access and tensor/matrix core
+computation.
+Another major component we need to utilize well for high performance is shared memory.</p>
+<p>Shared memory is visible to all threads in the CTA.
+We explicitly fetch data into shared memory when software pipelining with multiple buffers to hide
+memory latency.
+We can also implicitly use it to do layout conversions in Triton if the data exchange cannot be
+completed in an intra warp manner.</p>
+<p>We want corresponding layout mechanisms to represent shared memory usage.
+One critical aspect it needs to handle well is avoiding bank conflicts for performance.
+Generally there are two ways to handle bank conflict, via swizzling or padding.
+Therefore, we have two important shared layout variants.</p>
+<h3 id="swizzled-shared-layout">Swizzled shared layout</h3>
+<p><a href="../triton-linear-layout-concept/#prefered-memory-access-patterns">The previous article</a> already explained the intuition and algorithm
+of using swizzling to address bank conflict&mdash;for row #<code>i</code>, perform <code>xor i</code> when indexing.
+Here we can directly focus on the layout mechanism to realize that.</p>
+<p>In order to be flexible, the swizzling scheme is encoded with <a href="https://github.com/triton-lang/triton/blob/c0491b2d0289de66e64189e61a3de40dd99c1e0e/include/triton/Dialect/TritonGPU/IR/TritonGPUAttrDefs.td#L130-L132">a few knobs</a>:</p>
+<ul>
+<li><code>vec</code>: specifying how many elements are grouped together as a vector unit</li>
+<li><code>perPhase</code>: specifying how many rows are in the same phase</li>
+<li><code>maxPhase</code>: specifying the max number of phases we have</li>
+</ul>
+<p>There are a few examples in the description which are quite illustrative.
+Overall they define a scheme on two most fast varying dimensions&mdash;<code>order[0]</code> being column, and
+<code>order[1]</code> being row.
+Given an element at <code>(r, c)</code>, <code>phase</code> would be <code>(r / perPhase) % maxPhase</code>.
+The swizzled column is <code>((c / vec) ^ phase) * vec + (c % vec)</code>.</p>
+<p>For a <code>32x64xf16</code> tensor, we can achieve 32-bank conflict free with
+<code>ttgl.SwizzledSharedLayout(vec = 8, per_phase=1, max_phase=8, order=[1, 0])</code>:</p>
+<p><img src="lds-32x64-b32-f16-kw8-swizzle.png" alt="Swizzling; 32x64xf16, vec8" title="Swizzling; 32x64xf16, vec8"></p>
+<h3 id="padded-shared-layout">Padded shared layout</h3>
+<p>Initially swizzling is the only mechanism for shared layout bank conflict resolution.
+It operates on indices with the <code>xor</code> operation, which nicely matches linear layout fundamentals
+and it can cover all NVIDIA GPU needs.</p>
+<h4 id="rationale">Rationale</h4>
+<p>However, for AMD GPUs, certain hardware features makes it infeasible/inefficient to use swizzling
+for handling bank conflict.
+One such example is <code>GLOBAL_LOAD_LDS_*</code> intrinsics in AMD <a href="https://www.amd.com/content/dam/amd/en/documents/instinct-tech-docs/instruction-set-architectures/amd-instinct-cdna4-instruction-set-architecture.pdf">CDNA4 architecture</a>.
+It directly writes data from global memory to shared memory without going through
+registers, which is nice to reduce register pressure.<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup>
+However, these intrinsics use one single scalar register to specify the base shared memory
+location for the whole warp, mandating the full warp to perform consecutive writes.
+We cannot perform the scatter-style writes needed for swizzling.</p>
+<p>There are <a href="https://github.com/triton-lang/triton/blob/c0491b2d0289de66e64189e61a3de40dd99c1e0e/third_party/amd/lib/TritonAMDGPUTransforms/CoalesceAsyncCopy.cpp#L25-L28">tricks</a> to work around this by effectively &ldquo;reverse&rdquo; the
+swizzle scheme onto the global pointers, but that comes as overhead given we need to
+exchange global pointers among threads.
+It&rsquo;s more natural to use padding for avoiding bank conflict for such cases.
+Therefore we <a href="https://github.com/triton-lang/triton/pull/7212">introduced</a> it and for now it&rsquo;s only used for the AMD backend.</p>
+<h4 id="definition">Definition</h4>
+<p>The <a href="https://github.com/triton-lang/triton/blob/c0491b2d0289de66e64189e61a3de40dd99c1e0e/include/triton/Dialect/TritonGPU/IR/TritonGPUAttrDefs.td#L241">padded shared layout</a> is defined to take a list of interval-padding pairs;
+we insert the corresponding padding amount after every interval elements.
+Multi interval-padding pairs are supported for flexibility of multi-tiered padding schemes and
+they compose in an additive manner.</p>
+<p>If we have a shared memory allocation of <code>MxN</code> shape and each thread handles <code>v</code> consecutive
+elements, a general algorithm is to check how many consecutive banks <code>v</code> occupies and make sure
+we pad an amount of that many banks for every row of <code>N</code> elements.</p>
+<p>For example, using the same <code>32x64xf16</code> tensor and vector size of 8, we can pad (8 * 2 =) 16 bytes
+(which is 4 banks) after every (64 * 2 =) 128 bytes.
+Padded shared layout specifies interval-padding values as number of elements.
+So it would be
+<code>ttgl.PaddedSharedLayout.with_identity_for(padding_interval_pairs = [[64, 8]], shape = [32, 64], order = [1, 0])</code> to give us 32-bank conflict free:</p>
+<p><img src="lds-32x64-b32-f16-kw8-padding.png" alt="Padding; 32x64xf16, vec8" title="Padding; 32x64xf16, vec8"></p>
+<h4 id="linear-layout-interactions">Linear layout interactions</h4>
+<p>One big difference compared to swizzled shared layout, other than that we waste a bit of shared
+memory capacity due to padding, is that the key operation of padding is standard <code>+</code>, not <code>xor</code>.
+That breaks linear layout fundamentals, if you recall what we discussed earlier in <a href="https://www.lei.chat/posts/triton-linear-layout-concept/#what-we-need">the
+earlier blog post</a>.
+Therefore, padded shared layout cannot be directly converted to linear layout and enjoy the same
+level of genericity when doing optimizations.</p>
+<p>We might think it&rsquo;s a fine trade-off given that shared memory is a special unit which we typically
+only involve when reading and writing into it, unlike with registers we can perform various kinds
+of optimizations and would want to propagate layouts across.</p>
+<p>Though if thinking a bit deeper, we can see that padding only concerns the final physical shared
+memory allocation with 1-D offsets.
+We need to consider padding amounts when performing allocation, and adjust indexing to accommodate
+those &ldquo;holes&rdquo; when composing the final linearized offsets into the allocation.
+Such steps are isolated within converting to LLVM and the information needed are already encoded
+as the interval-padding pairs.</p>
+<p>Before that, when we work at the higher Triton GPU layer, we operate on logical shared memory
+&ldquo;views&rdquo; with n-D indexing.
+Here we can still leverage all the (linear) layout facilities to reason about transformations,
+like <a href="https://github.com/triton-lang/triton/blob/114c86ac6f3637ae628d6f9d5f99b1053793ba9a/lib/Dialect/TritonGPU/IR/Dialect.cpp#L2706-L2718">transpose</a> and <a href="https://github.com/triton-lang/triton/blob/114c86ac6f3637ae628d6f9d5f99b1053793ba9a/lib/Dialect/TritonGPU/IR/Ops.cpp#L606-L617">reshape</a>, given they only concern about the
+n-D logical view and element index remapping.</p>
+<p>Actually, even padded shared layout itself carries a <a href="https://github.com/triton-lang/triton/blob/114c86ac6f3637ae628d6f9d5f99b1053793ba9a/include/triton/Dialect/TritonGPU/IR/TritonGPUAttrDefs.td#L282-L316">linear component</a>
+that can remap from the 1-D shared memory offset to logical n-D tensor elements, to give more
+flexibility to achieve <a href="https://github.com/triton-lang/triton/pull/7929">certain optimization goals</a>.
+This linear remapping component is encoded in the linear layout mechanism and plays well there.</p>
+<p>Overall the n-D logical indexing vs 1-D physical offset padding is a nice conceptual boundary to
+reason about and leverage the high level transformations and isolate the &ldquo;breaking&rdquo; aspects of
+padded shared layout to only allocation and final indexing calculation when converting to LLVM.</p>
+<h2 id="final-words">Final words</h2>
+<p>Thanks for following through till the end!
+This blog post introduced the overall bespoke layout hierarchy, the pros and cons vs linear layout,
+and then explained some key variants.
+There are some layouts that I omitted, like slice layout for broadcast/reduction, linear encoding
+layouts for exposing linear layout directly into Triton GPU IR, and various vendor-specific layouts.
+Those are more targeted and specialized and we can pick up later.</p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p>Weirdly though, if you really deeply think linear layout through, you may argue
+that it&rsquo;s cognitively simpler than bespoke layouts!&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p>This might be anchoring on earlier GPU generations without fancy async features,
+but it helps us to build up the motivation and intuition of bespoke layouts.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p>CTA is an NVIDIA term. See <a href="../triton-linear-layout-concept/#gpu-compute-and-memory-hierarchy">this section</a> for translations.&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p>If the tensor&rsquo;s shape is smaller than the &ldquo;unit&rdquo;, it becomes tricker&mdash;we
+<a href="https://github.com/triton-lang/triton/blob/c0491b2d0289de66e64189e61a3de40dd99c1e0e/include/triton/Dialect/TritonGPU/IR/TritonGPUAttrDefs.td#L637-L640">&ldquo;broadcast&rdquo; there</a>.&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5" role="doc-endnote">
+<p>Note that the dimensions themselves are ordered from left to right in ascending manner.
+For example, for <code>b x m x n</code>, <code>b</code> is dim#0, and <code>m</code> is dim#1, and <code>n</code> is dim#2.&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6" role="doc-endnote">
+<p>AMD <a href="https://www.amd.com/content/dam/amd/en/documents/instinct-tech-docs/instruction-set-architectures/amd-instinct-mi300-cdna3-instruction-set-architecture.pdf">CDNA3 architecture</a> also has some <code>GLOBAL_LOAD_LDS_*</code> intrinsics,
+but it&rsquo;s missing wider variants like <code>*_DWORDx4</code> so less usable.&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+        </div>
+        
+        <div class="my-4">
+    
+    <a href="https://www.lei.chat/tags/triton/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>triton</a>
+    
+    <a href="https://www.lei.chat/tags/gluon/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>gluon</a>
+    
+    <a href="https://www.lei.chat/tags/layout/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>layout</a>
+    
+    <a href="https://www.lei.chat/tags/linear-layout/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>linear-layout</a>
+    
+    <a href="https://www.lei.chat/tags/distributed-layout/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>distributed-layout</a>
+    
+    <a href="https://www.lei.chat/tags/shared-layout/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>shared-layout</a>
+    
+    <a href="https://www.lei.chat/tags/blocked-layout/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>blocked-layout</a>
+    
+    <a href="https://www.lei.chat/tags/mma-layout/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>mma-layout</a>
+    
+    <a href="https://www.lei.chat/tags/mfma/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>mfma</a>
+    
+    <a href="https://www.lei.chat/tags/swizzling/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>swizzling</a>
+    
+    <a href="https://www.lei.chat/tags/padding/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka"><i class="fas fa-tags mr-1"></i>padding</a>
+    
+</div>
+
+        
+        
+        
+
+
+        
+        
+        
+        
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+    <div>
+        
+    </div>
+    <div class="md:text-right mt-4 md:mt-0">
+        
+        <span class="block font-bold">Next</span>
+        <a href="https://www.lei.chat/posts/triton-linear-layout-examples/" class="block">Triton Linear Layout: Examples</a>
+        
+    </div>
+</div>
+
+        
+
+
+
+  <script id="utterances" src="https://utteranc.es/client.js"
+            issue-term=title
+            repo=antiagainst/antiagainst.github.io
+              theme=preferred-color-scheme
+        crossorigin="anonymous"
+        async>
+</script>
+<script>
+    if (storageColorScheme == "Light") {
+      document.getElementById('utterances').setAttribute('theme', 'github-light')
+    } else if (storageColorScheme == "Dark") {
+      document.getElementById('utterances').setAttribute('theme', 'github-dark')
+    }
+</script>
+
+    </div>
+    
+    <div class="col-span-2">
+        
+        
+<div class="bg-secondary-bg rounded p-6">
+    <h3 class="text-lg font-semibold mb-4">Series of Posts</h3>
+    <div class="content">
+        
+          
+          <span class="font-semibold">
+            <i class="fas fa-th-list mr-1"></i>triton »
+          </span>
+          <br />
+          
+            <span>1.</span>
+            <a href="https://www.lei.chat/posts/triton-compiler-development-tips/">Triton Compiler Development Tips</a>
+            <br />
+          
+            <span>2.</span>
+            <a href="https://www.lei.chat/posts/triton-linear-layout-concept/">Triton Linear Layout: Concept</a>
+            <br />
+          
+            <span>3.</span>
+            <a href="https://www.lei.chat/posts/triton-linear-layout-examples/">Triton Linear Layout: Examples</a>
+            <br />
+          
+            <span>4.</span>
+            <a href="https://www.lei.chat/posts/triton-bespoke-layouts/">Triton Bespoke Layouts</a>
+            <br />
+          
+        
+    </div>
+</div>
+
+        
+        
+        <div class="sticky top-16 z-10 hidden lg:block px-6 py-4  bg-primary-bg ">
+    <span class="text-lg font-semibold">On This Page</span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6 ">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#bespoke-vs-linear-layouts">Bespoke vs Linear Layouts</a></li>
+    <li><a href="#layout-traits-and-attributes">Layout Traits and Attributes</a></li>
+    <li><a href="#distributed-layouts">Distributed Layouts</a>
+      <ul>
+        <li><a href="#blocked-layout">Blocked layout</a>
+          <ul>
+            <li><a href="#hardware-needs">Hardware needs</a></li>
+            <li><a href="#tensor-situations">Tensor situations</a></li>
+            <li><a href="#pass-conversions">Pass conversions</a></li>
+          </ul>
+        </li>
+        <li><a href="#mma-layouts">MMA layouts</a></li>
+        <li><a href="#dot-operand-layout">Dot operand layout</a>
+          <ul>
+            <li><a href="#pass-conversions-1">Pass conversions</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#shared-layouts">Shared Layouts</a>
+      <ul>
+        <li><a href="#swizzled-shared-layout">Swizzled shared layout</a></li>
+        <li><a href="#padded-shared-layout">Padded shared layout</a>
+          <ul>
+            <li><a href="#rationale">Rationale</a></li>
+            <li><a href="#definition">Definition</a></li>
+            <li><a href="#linear-layout-interactions">Linear layout interactions</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#final-words">Final words</a></li>
+  </ul>
+</nav>
+</div>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        enableStickyToc();
+    });
+</script>
+        
+    </div>
+    
+
+    
+    
+    <div
+        class="col-span-2  lg:col-span-6 bg-secondary-bg rounded p-6">
+        <h2 class="text-lg font-semibold mb-4">See Also</h2>
+        <div class="content">
+            
+            <a href="https://www.lei.chat/posts/triton-linear-layout-examples/">Triton Linear Layout: Examples</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/triton-linear-layout-concept/">Triton Linear Layout: Concept</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/triton-compiler-development-tips/">Triton Compiler Development Tips</a>
+            <br />
+            
+            <a href="https://www.lei.chat/posts/hlsl-for-vulkan-resources/">HLSL for Vulkan: Resources</a>
+            <br />
+            
+        </div>
+    </div>
+    
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+        hljs.initHighlightingOnLoad();
+    })
+</script>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2018 - 2026 <a href="https://www.lei.chat/">Lei Zhang</a>
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>

@@ -8,7 +8,22 @@
     <language>en</language>
     <copyright>&amp;copy; 2018 - 2026 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Sat, 10 Jan 2026 14:09:38 -0800</lastBuildDate><atom:link href="https://www.lei.chat/series/triton/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 25 Jan 2026 10:12:19 -0800</lastBuildDate><atom:link href="https://www.lei.chat/series/triton/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Triton Bespoke Layouts</title>
+      <link>https://www.lei.chat/posts/triton-bespoke-layouts/</link>
+      <pubDate>Sun, 25 Jan 2026 10:12:19 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/posts/triton-bespoke-layouts/</guid>
+      <description>&lt;p&gt;Hopefully the previous articles covering linear layout &lt;a href=&#34;../triton-linear-layout-concept/&#34;&gt;concepts&lt;/a&gt; and
+&lt;a href=&#34;../triton-linear-layout-examples/&#34;&gt;examples&lt;/a&gt; facilitate building a solid understanding of the core generic layer powering
+various Triton code generation lowering and optimizations.
+Now let&amp;rsquo;s turn our focus to those bespoke layouts, which we still consistently interact with
+when working on Triton compiler internals.
+Additionally, developers can directly program layouts with Gluon now; writing those bespoke layouts
+is generally more intuitive than linear layouts.&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Triton Linear Layout: Examples</title>
       <link>https://www.lei.chat/posts/triton-linear-layout-examples/</link>

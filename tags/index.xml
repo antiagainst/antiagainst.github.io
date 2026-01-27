@@ -8,7 +8,106 @@
     <language>en</language>
     <copyright>&amp;copy; 2018 - 2026 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Sat, 10 Jan 2026 14:09:38 -0800</lastBuildDate><atom:link href="https://www.lei.chat/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 25 Jan 2026 10:12:19 -0800</lastBuildDate><atom:link href="https://www.lei.chat/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>blocked-layout</title>
+      <link>https://www.lei.chat/tags/blocked-layout/</link>
+      <pubDate>Sun, 25 Jan 2026 10:12:19 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/blocked-layout/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>distributed-layout</title>
+      <link>https://www.lei.chat/tags/distributed-layout/</link>
+      <pubDate>Sun, 25 Jan 2026 10:12:19 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/distributed-layout/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>gluon</title>
+      <link>https://www.lei.chat/tags/gluon/</link>
+      <pubDate>Sun, 25 Jan 2026 10:12:19 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/gluon/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>layout</title>
+      <link>https://www.lei.chat/tags/layout/</link>
+      <pubDate>Sun, 25 Jan 2026 10:12:19 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/layout/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>linear-layout</title>
+      <link>https://www.lei.chat/tags/linear-layout/</link>
+      <pubDate>Sun, 25 Jan 2026 10:12:19 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/linear-layout/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>mfma</title>
+      <link>https://www.lei.chat/tags/mfma/</link>
+      <pubDate>Sun, 25 Jan 2026 10:12:19 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/mfma/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>mma-layout</title>
+      <link>https://www.lei.chat/tags/mma-layout/</link>
+      <pubDate>Sun, 25 Jan 2026 10:12:19 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/mma-layout/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>padding</title>
+      <link>https://www.lei.chat/tags/padding/</link>
+      <pubDate>Sun, 25 Jan 2026 10:12:19 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/padding/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>shared-layout</title>
+      <link>https://www.lei.chat/tags/shared-layout/</link>
+      <pubDate>Sun, 25 Jan 2026 10:12:19 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/shared-layout/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>swizzling</title>
+      <link>https://www.lei.chat/tags/swizzling/</link>
+      <pubDate>Sun, 25 Jan 2026 10:12:19 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/swizzling/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>triton</title>
+      <link>https://www.lei.chat/tags/triton/</link>
+      <pubDate>Sun, 25 Jan 2026 10:12:19 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/triton/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>composition</title>
       <link>https://www.lei.chat/tags/composition/</link>
@@ -73,24 +172,6 @@
     </item>
     
     <item>
-      <title>layout</title>
-      <link>https://www.lei.chat/tags/layout/</link>
-      <pubDate>Sat, 10 Jan 2026 14:09:38 -0800</pubDate>
-      
-      <guid>https://www.lei.chat/tags/layout/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>linear-layout</title>
-      <link>https://www.lei.chat/tags/linear-layout/</link>
-      <pubDate>Sat, 10 Jan 2026 14:09:38 -0800</pubDate>
-      
-      <guid>https://www.lei.chat/tags/linear-layout/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>memory</title>
       <link>https://www.lei.chat/tags/memory/</link>
       <pubDate>Sat, 10 Jan 2026 14:09:38 -0800</pubDate>
@@ -100,29 +181,11 @@
     </item>
     
     <item>
-      <title>mfma</title>
-      <link>https://www.lei.chat/tags/mfma/</link>
-      <pubDate>Sat, 10 Jan 2026 14:09:38 -0800</pubDate>
-      
-      <guid>https://www.lei.chat/tags/mfma/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>product</title>
       <link>https://www.lei.chat/tags/product/</link>
       <pubDate>Sat, 10 Jan 2026 14:09:38 -0800</pubDate>
       
       <guid>https://www.lei.chat/tags/product/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>triton</title>
-      <link>https://www.lei.chat/tags/triton/</link>
-      <pubDate>Sat, 10 Jan 2026 14:09:38 -0800</pubDate>
-      
-      <guid>https://www.lei.chat/tags/triton/</guid>
       <description></description>
     </item>
     
@@ -784,60 +847,6 @@
     </item>
     
     <item>
-      <title>代码生成</title>
-      <link>https://www.lei.chat/tags/%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90/</link>
-      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
-      
-      <guid>https://www.lei.chat/tags/%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>体系</title>
-      <link>https://www.lei.chat/tags/%E4%BD%93%E7%B3%BB/</link>
-      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
-      
-      <guid>https://www.lei.chat/tags/%E4%BD%93%E7%B3%BB/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>操作</title>
-      <link>https://www.lei.chat/tags/%E6%93%8D%E4%BD%9C/</link>
-      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
-      
-      <guid>https://www.lei.chat/tags/%E6%93%8D%E4%BD%9C/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>机器学习</title>
-      <link>https://www.lei.chat/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</link>
-      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
-      
-      <guid>https://www.lei.chat/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>类型</title>
-      <link>https://www.lei.chat/tags/%E7%B1%BB%E5%9E%8B/</link>
-      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
-      
-      <guid>https://www.lei.chat/tags/%E7%B1%BB%E5%9E%8B/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>编译器</title>
-      <link>https://www.lei.chat/tags/%E7%BC%96%E8%AF%91%E5%99%A8/</link>
-      <pubDate>Sun, 20 Feb 2022 15:21:03 -0500</pubDate>
-      
-      <guid>https://www.lei.chat/tags/%E7%BC%96%E8%AF%91%E5%99%A8/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>中间表示</title>
       <link>https://www.lei.chat/tags/%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA/</link>
       <pubDate>Sun, 23 Jan 2022 10:54:37 -0500</pubDate>
@@ -924,6 +933,15 @@
       <pubDate>Sun, 23 Jan 2022 10:54:37 -0500</pubDate>
       
       <guid>https://www.lei.chat/tags/%E6%A8%A1%E5%9D%97%E5%8C%96/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>编译器</title>
+      <link>https://www.lei.chat/tags/%E7%BC%96%E8%AF%91%E5%99%A8/</link>
+      <pubDate>Sun, 23 Jan 2022 10:54:37 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/tags/%E7%BC%96%E8%AF%91%E5%99%A8/</guid>
       <description></description>
     </item>
     
