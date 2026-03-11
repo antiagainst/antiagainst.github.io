@@ -8,11 +8,11 @@
     <language>en</language>
     <copyright>&amp;copy; 2018 - 2026 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Sun, 25 Jan 2026 10:12:19 -0800</lastBuildDate><atom:link href="https://www.lei.chat/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 28 Feb 2026 15:48:43 -0800</lastBuildDate><atom:link href="https://www.lei.chat/categories/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>compiler</title>
       <link>https://www.lei.chat/categories/compiler/</link>
-      <pubDate>Sun, 25 Jan 2026 10:12:19 -0800</pubDate>
+      <pubDate>Sat, 28 Feb 2026 15:48:43 -0800</pubDate>
       
       <guid>https://www.lei.chat/categories/compiler/</guid>
       <description></description>
@@ -21,7 +21,7 @@
     <item>
       <title>triton</title>
       <link>https://www.lei.chat/categories/triton/</link>
-      <pubDate>Sun, 25 Jan 2026 10:12:19 -0800</pubDate>
+      <pubDate>Sat, 28 Feb 2026 15:48:43 -0800</pubDate>
       
       <guid>https://www.lei.chat/categories/triton/</guid>
       <description></description>
@@ -64,24 +64,6 @@
     </item>
     
     <item>
-      <title>机器学习推理</title>
-      <link>https://www.lei.chat/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%8E%A8%E7%90%86/</link>
-      <pubDate>Sun, 31 Jul 2022 15:07:00 -0700</pubDate>
-      
-      <guid>https://www.lei.chat/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%8E%A8%E7%90%86/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>编译器</title>
-      <link>https://www.lei.chat/categories/%E7%BC%96%E8%AF%91%E5%99%A8/</link>
-      <pubDate>Sun, 31 Jul 2022 15:07:00 -0700</pubDate>
-      
-      <guid>https://www.lei.chat/categories/%E7%BC%96%E8%AF%91%E5%99%A8/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>llvm</title>
       <link>https://www.lei.chat/categories/llvm/</link>
       <pubDate>Sun, 23 Jan 2022 10:54:37 -0500</pubDate>
@@ -105,6 +87,15 @@
       <pubDate>Sun, 23 Jan 2022 10:54:37 -0500</pubDate>
       
       <guid>https://www.lei.chat/categories/%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>编译器</title>
+      <link>https://www.lei.chat/categories/%E7%BC%96%E8%AF%91%E5%99%A8/</link>
+      <pubDate>Sun, 23 Jan 2022 10:54:37 -0500</pubDate>
+      
+      <guid>https://www.lei.chat/categories/%E7%BC%96%E8%AF%91%E5%99%A8/</guid>
       <description></description>
     </item>
     

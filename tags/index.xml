@@ -8,7 +8,88 @@
     <language>en</language>
     <copyright>&amp;copy; 2018 - 2026 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Sun, 25 Jan 2026 10:12:19 -0800</lastBuildDate><atom:link href="https://www.lei.chat/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 28 Feb 2026 15:48:43 -0800</lastBuildDate><atom:link href="https://www.lei.chat/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>agent</title>
+      <link>https://www.lei.chat/tags/agent/</link>
+      <pubDate>Sat, 28 Feb 2026 15:48:43 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/agent/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>gluon</title>
+      <link>https://www.lei.chat/tags/gluon/</link>
+      <pubDate>Sat, 28 Feb 2026 15:48:43 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/gluon/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>gpu</title>
+      <link>https://www.lei.chat/tags/gpu/</link>
+      <pubDate>Sat, 28 Feb 2026 15:48:43 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/gpu/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ir</title>
+      <link>https://www.lei.chat/tags/ir/</link>
+      <pubDate>Sat, 28 Feb 2026 15:48:43 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/ir/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>layout</title>
+      <link>https://www.lei.chat/tags/layout/</link>
+      <pubDate>Sat, 28 Feb 2026 15:48:43 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/layout/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>performance</title>
+      <link>https://www.lei.chat/tags/performance/</link>
+      <pubDate>Sat, 28 Feb 2026 15:48:43 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/performance/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>portability</title>
+      <link>https://www.lei.chat/tags/portability/</link>
+      <pubDate>Sat, 28 Feb 2026 15:48:43 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/portability/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>software-pipelining</title>
+      <link>https://www.lei.chat/tags/software-pipelining/</link>
+      <pubDate>Sat, 28 Feb 2026 15:48:43 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/software-pipelining/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>triton</title>
+      <link>https://www.lei.chat/tags/triton/</link>
+      <pubDate>Sat, 28 Feb 2026 15:48:43 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/tags/triton/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>blocked-layout</title>
       <link>https://www.lei.chat/tags/blocked-layout/</link>
@@ -24,24 +105,6 @@
       <pubDate>Sun, 25 Jan 2026 10:12:19 -0800</pubDate>
       
       <guid>https://www.lei.chat/tags/distributed-layout/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>gluon</title>
-      <link>https://www.lei.chat/tags/gluon/</link>
-      <pubDate>Sun, 25 Jan 2026 10:12:19 -0800</pubDate>
-      
-      <guid>https://www.lei.chat/tags/gluon/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>layout</title>
-      <link>https://www.lei.chat/tags/layout/</link>
-      <pubDate>Sun, 25 Jan 2026 10:12:19 -0800</pubDate>
-      
-      <guid>https://www.lei.chat/tags/layout/</guid>
       <description></description>
     </item>
     
@@ -100,15 +163,6 @@
     </item>
     
     <item>
-      <title>triton</title>
-      <link>https://www.lei.chat/tags/triton/</link>
-      <pubDate>Sun, 25 Jan 2026 10:12:19 -0800</pubDate>
-      
-      <guid>https://www.lei.chat/tags/triton/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>composition</title>
       <link>https://www.lei.chat/tags/composition/</link>
       <pubDate>Sat, 10 Jan 2026 14:09:38 -0800</pubDate>
@@ -141,15 +195,6 @@
       <pubDate>Sat, 10 Jan 2026 14:09:38 -0800</pubDate>
       
       <guid>https://www.lei.chat/tags/examples/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>gpu</title>
-      <link>https://www.lei.chat/tags/gpu/</link>
-      <pubDate>Sat, 10 Jan 2026 14:09:38 -0800</pubDate>
-      
-      <guid>https://www.lei.chat/tags/gpu/</guid>
       <description></description>
     </item>
     
@@ -231,15 +276,6 @@
       <pubDate>Tue, 31 Dec 2024 14:21:28 -0800</pubDate>
       
       <guid>https://www.lei.chat/tags/nvidia/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>performance</title>
-      <link>https://www.lei.chat/tags/performance/</link>
-      <pubDate>Tue, 31 Dec 2024 14:21:28 -0800</pubDate>
-      
-      <guid>https://www.lei.chat/tags/performance/</guid>
       <description></description>
     </item>
     
@@ -591,15 +627,6 @@
       <pubDate>Wed, 31 Aug 2022 14:59:09 -0700</pubDate>
       
       <guid>https://www.lei.chat/tags/fusion/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>ir</title>
-      <link>https://www.lei.chat/tags/ir/</link>
-      <pubDate>Wed, 31 Aug 2022 14:59:09 -0700</pubDate>
-      
-      <guid>https://www.lei.chat/tags/ir/</guid>
       <description></description>
     </item>
     

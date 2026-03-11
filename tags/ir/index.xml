@@ -8,7 +8,22 @@
     <language>en</language>
     <copyright>&amp;copy; 2018 - 2026 &lt;a href=&#34;https://www.lei.chat/&#34;&gt;Lei Zhang&lt;/a&gt;
 </copyright>
-    <lastBuildDate>Wed, 31 Aug 2022 14:59:09 -0700</lastBuildDate><atom:link href="https://www.lei.chat/tags/ir/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 28 Feb 2026 15:48:43 -0800</lastBuildDate><atom:link href="https://www.lei.chat/tags/ir/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Gluon: Explicit Performance</title>
+      <link>https://www.lei.chat/posts/gluon-explicit-performance/</link>
+      <pubDate>Sat, 28 Feb 2026 15:48:43 -0800</pubDate>
+      
+      <guid>https://www.lei.chat/posts/gluon-explicit-performance/</guid>
+      <description>&lt;p&gt;Gluon enhances the Triton language and compiler solutions with an additional approach towards GPU
+kernel programming.
+It strikes a different balance in the portability and performance spectrum to expose more compiler
+internals; thus giving developers more explicit controls to reach higher performance ceiling.
+In this blog post I&amp;rsquo;ll explain Gluon per my understanding.
+I will also use this as an opportunity to talk about domain-specific languages, particularly
+in the context of dramatically evolving agentic software development.&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>MLIR Linalg Dialect and Patterns</title>
       <link>https://www.lei.chat/posts/mlir-linalg-dialect-and-patterns/</link>
