@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang='zh' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>模型架构 | Lei.Chat()</title>
+
+<meta name="generator" content="Hugo Eureka 0.8.4" />
+<link rel="stylesheet" href="https://www.lei.chat/css/eureka.min.css">
+<script defer src="https://www.lei.chat/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/bash.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/c.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cmake.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/cpp.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/glsl.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/javascript.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/llvm.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/python.min.js"
+     crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/shell.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+<link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-109525036-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'UA-109525036-1');
+</script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://www.lei.chat/images/avatar_hudaf23b5d8d39c4f2b01519ceec7d6b7b_105358_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="现代大模型架构的交互式、基于原始资料的可视化导览。">
+
+
+
+<meta property="og:title" content="模型架构 | Lei.Chat()" />
+<meta property="og:type" content="website" />
+
+
+<meta property="og:image" content="https://www.lei.chat/images/avatar.png">
+
+
+<meta property="og:url" content="https://www.lei.chat/zh/models/" />
+
+
+
+<meta property="og:description" content="现代大模型架构的交互式、基于原始资料的可视化导览。" />
+
+
+
+<meta property="og:locale" content="zh" />
+
+
+
+<meta property="og:locale:alternate" content="en" />
+
+
+
+
+<meta property="og:site_name" content="Lei.Chat()" />
+
+
+
+
+
+
+
+
+<meta property="article:section" content="models" />
+
+
+<link rel="alternate" type="application/rss+xml" href="https://www.lei.chat/zh/models/index.xml" title="Lei.Chat()" />
+
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/zh/" class="mr-6 text-primary-text text-xl font-bold">Lei.Chat()</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/zh/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">文章</a>
+            <a href="/zh/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">标签</a>
+            <a href="/zh/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">主题</a>
+            <a href="/zh/series/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">系列</a>
+            <a href="/zh/models/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  mr-4">模型</a>
+            <a href="/zh/authors/me" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  mr-4">关于</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">浅色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">深色</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">自动</span>
+                </div>
+            </div>
+            <div class="relative pt-4 pl-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="languageMode">
+                    <i class="fas fa-globe"></i>
+                    <span class="pl-1">简体中文</span>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open-lang">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='languageOptions'>
+                    <a class="px-4 py-1 hover:text-eureka" href="https://www.lei.chat/zh/models/">简体中文</a>
+                    <a class="px-4 py-1 hover:text-eureka" href="https://www.lei.chat/models/">English</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+        switchLanguage()
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+<style>
+  .models-page {
+    --models-border: rgba(127, 127, 127, 0.22);
+    --models-muted: var(--color-secondary-text);
+    margin: 3rem 1.5rem 4.5rem;
+  }
+
+  .models-hero {
+    max-width: 48rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .models-kicker {
+    margin: 0 0 0.75rem;
+    color: var(--color-eureka);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .models-title {
+    margin: 0;
+    color: var(--color-primary-text);
+    font-size: clamp(2.25rem, 6vw, 4.5rem);
+    font-weight: 750;
+    letter-spacing: -0.045em;
+    line-height: 0.98;
+  }
+
+  .models-intro {
+    max-width: 42rem;
+    margin: 1.25rem 0 0;
+    color: var(--models-muted);
+    font-size: 1.05rem;
+    line-height: 1.75;
+  }
+
+  .models-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  .model-card {
+    display: flex;
+    min-height: 25rem;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--models-border);
+    border-radius: 1rem;
+    background: var(--color-secondary-bg);
+    color: var(--color-primary-text);
+    box-shadow: 0 1.25rem 3.5rem rgba(0, 0, 0, 0.08);
+    text-decoration: none;
+    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+  }
+
+  .model-card:hover,
+  .model-card:focus-visible {
+    border-color: var(--color-eureka);
+    box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.13);
+    outline: none;
+    transform: translateY(-4px);
+  }
+
+  .model-visual {
+    position: relative;
+    min-height: 10.5rem;
+    overflow: hidden;
+    border-bottom: 1px solid var(--models-border);
+    background-color: var(--color-primary-bg);
+    background-image:
+      linear-gradient(var(--models-border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--models-border) 1px, transparent 1px);
+    background-size: 2rem 2rem;
+  }
+
+  .model-visual::before,
+  .model-visual::after {
+    position: absolute;
+    content: "";
+  }
+
+  .model-visual::before {
+    top: 50%;
+    left: 12%;
+    width: 76%;
+    height: 2px;
+    background: currentColor;
+    opacity: 0.4;
+  }
+
+  .model-visual::after {
+    inset: 18% 13%;
+    border: 1px dashed currentColor;
+    border-radius: 1.1rem;
+    opacity: 0.38;
+  }
+
+  .model-visual.cyan { color: #159eb5; }
+  .model-visual.blue { color: #477ee5; }
+
+  .model-node {
+    position: absolute;
+    z-index: 1;
+    width: 4.25rem;
+    height: 2.75rem;
+    border: 1px solid currentColor;
+    border-radius: 0.75rem;
+    background: var(--color-secondary-bg);
+    box-shadow: 0 0.5rem 1.25rem rgba(0, 0, 0, 0.09);
+  }
+
+  .model-node:nth-child(1) { top: 38%; left: 9%; }
+  .model-node:nth-child(2) { top: 22%; left: calc(50% - 2.125rem); }
+  .model-node:nth-child(3) { right: 9%; bottom: 20%; }
+
+  .model-card-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 1.5rem;
+  }
+
+  .model-eyebrow {
+    margin: 0 0 0.55rem;
+    color: var(--color-eureka);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+  }
+
+  .model-name {
+    margin: 0;
+    color: var(--color-primary-text);
+    font-size: 1.65rem;
+    font-weight: 720;
+    letter-spacing: -0.025em;
+  }
+
+  .model-description {
+    margin: 0.8rem 0 1.2rem;
+    color: var(--models-muted);
+    line-height: 1.65;
+  }
+
+  .model-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin: 0 0 1.4rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .model-tag {
+    border: 1px solid var(--models-border);
+    border-radius: 999px;
+    padding: 0.3rem 0.62rem;
+    color: var(--models-muted);
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+
+  .model-link {
+    margin-top: auto;
+    color: var(--color-eureka);
+    font-size: 0.88rem;
+    font-weight: 700;
+  }
+
+  @media (max-width: 760px) {
+    .models-page { margin: 2rem 1rem 3rem; }
+    .models-grid { grid-template-columns: 1fr; }
+    .model-card { min-height: 23rem; }
+  }
+</style>
+
+<section class="models-page">
+  <header class="models-hero">
+    <p class="models-kicker">Architecture atlas</p>
+    <h1 class="models-title">模型架构</h1>
+    <div class="models-intro"><p>通过可点击的组件和张量契约探索模型架构。</p>
+</div>
+  </header>
+
+  <div class="models-grid">
+    
+    <a class="model-card" href="/models/kimi-k3-architecture.html">
+      <div class="model-visual cyan" aria-hidden="true">
+        <span class="model-node"></span>
+        <span class="model-node"></span>
+        <span class="model-node"></span>
+      </div>
+      <div class="model-card-body">
+        <p class="model-eyebrow">混合循环架构</p>
+        <h2 class="model-name">Kimi K3</h2>
+        <p class="model-description">从整体 token 流深入 Kimi K3 的 MLA、短卷积、门控 Delta Rule 状态更新、MoE 路由和内核张量形状。</p>
+        <ul class="model-tags" aria-label="Architecture topics">
+          <li class="model-tag">MLA</li><li class="model-tag">Delta Rule</li><li class="model-tag">MoE</li><li class="model-tag">内核细节</li>
+        </ul>
+        <span class="model-link">Explore architecture →</span>
+      </div>
+    </a>
+    
+    <a class="model-card" href="/models/deepseek-v4-architecture.html">
+      <div class="model-visual blue" aria-hidden="true">
+        <span class="model-node"></span>
+        <span class="model-node"></span>
+        <span class="model-node"></span>
+      </div>
+      <div class="model-card-body">
+        <p class="model-eyebrow">百万 token 架构</p>
+        <h2 class="model-name">DeepSeek V4</h2>
+        <p class="model-description">逐层了解 DeepSeek V4 的 CSA、HCA、Lightning Indexer、流形约束残差、DeepSeekMoE 和多 token 预测。</p>
+        <ul class="model-tags" aria-label="Architecture topics">
+          <li class="model-tag">CSA / HCA</li><li class="model-tag">mHC</li><li class="model-tag">DeepSeekMoE</li><li class="model-tag">MTP</li>
+        </ul>
+        <span class="model-link">Explore architecture →</span>
+      </div>
+    </a>
+    
+  </div>
+</section>
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text">&copy; 2018 - 2026 <a href="https://www.lei.chat/">Lei Zhang</a>
+ &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+  </footer>
+</body>
+
+</html>
