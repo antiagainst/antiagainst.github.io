@@ -1,0 +1,2204 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Interactive architecture and kernel-flow explorer for DeepSeek V4 Pro and Flash."
+    />
+    <title>DeepSeek V4 — Interactive Architecture Map</title>
+    <script>
+      (() => {
+        let savedTheme = null;
+        try {
+          savedTheme = localStorage.getItem("tokenspeed-architecture-theme");
+        } catch {}
+        const prefersDark = !window.matchMedia || window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.dataset.theme = ["dark", "light"].includes(savedTheme)
+          ? savedTheme
+          : prefersDark ? "dark" : "light";
+      })();
+    </script>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #050a14;
+        --panel: #091222;
+        --panel-2: #0b172a;
+        --ink: #eef4ff;
+        --muted: #9baac2;
+        --faint: #64748e;
+        --line: rgba(187, 205, 236, 0.13);
+        --line-strong: rgba(187, 205, 236, 0.25);
+        --blue: #77a2ff;
+        --cyan: #55d5e8;
+        --violet: #ae8bff;
+        --green: #5cdaa7;
+        --orange: #ffb36b;
+        --pink: #f38fbb;
+        --yellow: #f3d36f;
+        --shadow: 0 28px 80px rgba(0, 0, 0, 0.4);
+        font-family:
+          Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        min-width: 320px;
+        margin: 0;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 16% 0%, rgba(85, 213, 232, 0.11), transparent 29rem),
+          radial-gradient(circle at 88% 6%, rgba(119, 162, 255, 0.13), transparent 31rem),
+          var(--bg);
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      button,
+      a,
+      [role="button"] {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      a {
+        color: var(--cyan);
+      }
+
+      .skip-link {
+        position: fixed;
+        z-index: 100;
+        top: 12px;
+        left: 12px;
+        padding: 10px 14px;
+        color: var(--bg);
+        background: var(--cyan);
+        border-radius: 9px;
+        transform: translateY(-160%);
+      }
+
+      .skip-link:focus {
+        transform: translateY(0);
+      }
+
+      .topbar {
+        position: sticky;
+        z-index: 30;
+        top: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 64px;
+        padding: 0 28px;
+        border-bottom: 1px solid var(--line);
+        background: rgba(5, 10, 20, 0.78);
+        backdrop-filter: blur(18px);
+      }
+
+      .brand {
+        display: inline-flex;
+        gap: 11px;
+        align-items: center;
+        color: var(--ink);
+        font-size: 12px;
+        font-weight: 750;
+        letter-spacing: 0.09em;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .brand-mark {
+        display: grid;
+        width: 29px;
+        height: 29px;
+        place-items: center;
+        color: var(--cyan);
+        border: 1px solid rgba(85, 213, 232, 0.48);
+        border-radius: 8px;
+        background: rgba(85, 213, 232, 0.07);
+        font-size: 14px;
+        font-weight: 820;
+      }
+
+      .top-actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .report-link,
+      .theme-button,
+      .tool-button,
+      .trace-button {
+        display: inline-flex;
+        gap: 7px;
+        align-items: center;
+        justify-content: center;
+        min-height: 37px;
+        padding: 0 12px;
+        color: var(--ink);
+        border: 1px solid var(--line-strong);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.025);
+        cursor: pointer;
+        text-decoration: none;
+        transition:
+          border-color 150ms ease,
+          background 150ms ease,
+          transform 150ms ease;
+      }
+
+      .report-link:hover,
+      .theme-button:hover,
+      .tool-button:hover,
+      .trace-button:hover {
+        border-color: rgba(85, 213, 232, 0.55);
+        background: rgba(85, 213, 232, 0.07);
+      }
+
+      .report-link:active,
+      .theme-button:active,
+      .tool-button:active,
+      .trace-button:active {
+        transform: translateY(1px);
+      }
+
+      .theme-button {
+        flex: 0 0 auto;
+        width: 37px;
+        min-height: 37px;
+        padding: 0;
+        font-size: 17px;
+        line-height: 1;
+      }
+
+      main {
+        width: min(1540px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(320px, 430px);
+        gap: 54px;
+        align-items: end;
+        padding: 76px 4px 38px;
+      }
+
+      .eyebrow {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin: 0 0 13px;
+        color: var(--cyan);
+        font-size: 12px;
+        font-weight: 760;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+      }
+
+      .eyebrow::before {
+        width: 25px;
+        height: 1px;
+        content: "";
+        background: currentColor;
+      }
+
+      h1 {
+        max-width: 940px;
+        margin: 0;
+        font-size: clamp(44px, 6vw, 92px);
+        font-weight: 670;
+        letter-spacing: -0.065em;
+        line-height: 0.94;
+      }
+
+      h1 span {
+        color: var(--blue);
+      }
+
+      .lede {
+        max-width: 870px;
+        margin: 24px 0 0;
+        color: #b8c5d9;
+        font-size: clamp(16px, 1.45vw, 20px);
+        line-height: 1.62;
+      }
+
+      .family-panel {
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.018);
+      }
+
+      .variant-switch {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5px;
+        padding: 4px;
+        border: 1px solid var(--line);
+        border-radius: 11px;
+        background: rgba(0, 0, 0, 0.18);
+      }
+
+      .variant-button {
+        min-height: 37px;
+        color: var(--muted);
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .variant-button[aria-pressed="true"] {
+        color: #07101f;
+        background: var(--blue);
+      }
+
+      .hero-metrics {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .metric {
+        min-height: 77px;
+        padding: 13px 14px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+      }
+
+      .metric strong {
+        display: block;
+        font-size: 21px;
+        font-weight: 680;
+        letter-spacing: -0.03em;
+      }
+
+      .metric span {
+        display: block;
+        margin-top: 5px;
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .explorer {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 370px;
+        overflow: hidden;
+        border: 1px solid var(--line-strong);
+        border-radius: 20px;
+        background: rgba(9, 18, 34, 0.9);
+        box-shadow: var(--shadow);
+      }
+
+      .graph-column {
+        min-width: 0;
+      }
+
+      .view-tabs {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+        min-height: 64px;
+        padding: 10px 15px;
+        overflow-x: auto;
+        border-bottom: 1px solid var(--line);
+        scrollbar-width: none;
+      }
+
+      .view-tabs::-webkit-scrollbar {
+        display: none;
+      }
+
+      .view-tab {
+        flex: 0 0 auto;
+        min-height: 37px;
+        padding: 0 13px;
+        color: var(--muted);
+        border: 1px solid transparent;
+        border-radius: 9px;
+        background: transparent;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 680;
+      }
+
+      .view-tab:hover {
+        color: var(--ink);
+        background: rgba(255, 255, 255, 0.035);
+      }
+
+      .view-tab[aria-selected="true"] {
+        color: #07101f;
+        border-color: var(--blue);
+        background: var(--blue);
+      }
+
+      .viewport-wrap {
+        position: relative;
+        min-height: 700px;
+        background:
+          linear-gradient(rgba(119, 162, 255, 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(119, 162, 255, 0.035) 1px, transparent 1px),
+          radial-gradient(circle at 49% 44%, rgba(85, 213, 232, 0.045), transparent 40%);
+        background-size: 36px 36px, 36px 36px, auto;
+      }
+
+      #architecture-map {
+        display: block;
+        width: 100%;
+        min-height: 700px;
+        cursor: grab;
+        touch-action: none;
+        user-select: none;
+      }
+
+      #architecture-map.dragging {
+        cursor: grabbing;
+      }
+
+      .canvas-tools {
+        position: absolute;
+        z-index: 8;
+        top: 13px;
+        right: 13px;
+        display: flex;
+        gap: 5px;
+        padding: 5px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: rgba(5, 10, 20, 0.86);
+        backdrop-filter: blur(12px);
+      }
+
+      .tool-button {
+        width: 33px;
+        min-height: 33px;
+        padding: 0;
+        border-radius: 8px;
+      }
+
+      .trace-button {
+        min-height: 33px;
+        padding: 0 10px;
+        color: var(--cyan);
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 730;
+      }
+
+      .trace-button.running {
+        color: var(--bg);
+        border-color: var(--cyan);
+        background: var(--cyan);
+      }
+
+      .map-hint {
+        position: absolute;
+        z-index: 7;
+        bottom: 13px;
+        left: 14px;
+        margin: 0;
+        padding: 7px 9px;
+        color: var(--faint);
+        border-radius: 8px;
+        background: rgba(5, 10, 20, 0.78);
+        font-size: 10px;
+        pointer-events: none;
+      }
+
+      .symbol-legend,
+      .color-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 18px;
+        align-items: center;
+        min-height: 55px;
+        padding: 10px 16px;
+        border-top: 1px solid var(--line);
+      }
+
+      .symbol-legend {
+        background: rgba(255, 255, 255, 0.012);
+      }
+
+      .legend-title {
+        color: var(--ink);
+        font-size: 10px;
+        font-weight: 760;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .legend-items {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px 17px;
+      }
+
+      .legend-item {
+        display: inline-flex;
+        gap: 7px;
+        align-items: center;
+        color: var(--muted);
+        font-size: 10px;
+      }
+
+      .symbol-icon,
+      .color-swatch {
+        position: relative;
+        flex: 0 0 auto;
+        width: 20px;
+        height: 12px;
+        color: #a4b3ca;
+        border: 1px solid currentColor;
+        border-radius: 4px;
+        background: rgba(164, 179, 202, 0.07);
+      }
+
+      .symbol-icon.projection {
+        clip-path: polygon(12% 0, 88% 0, 100% 50%, 88% 100%, 12% 100%, 0 50%);
+        border-radius: 0;
+      }
+
+      .symbol-icon.cache {
+        border-radius: 50% / 25%;
+      }
+
+      .symbol-icon.routing {
+        width: 13px;
+        height: 13px;
+        border-radius: 0;
+        transform: rotate(45deg) scale(0.72);
+      }
+
+      .symbol-icon.boundary {
+        border-style: dashed;
+      }
+
+      .symbol-icon.flow {
+        border: 0;
+        background: transparent;
+      }
+
+      .symbol-icon.flow::before {
+        position: absolute;
+        top: 6px;
+        right: 3px;
+        left: 0;
+        content: "";
+        border-top: 1.5px solid currentColor;
+      }
+
+      .symbol-icon.flow::after {
+        position: absolute;
+        top: 3px;
+        right: 0;
+        content: "";
+        border-top: 3.5px solid transparent;
+        border-bottom: 3.5px solid transparent;
+        border-left: 5px solid currentColor;
+      }
+
+      .color-swatch {
+        width: 13px;
+        height: 8px;
+      }
+
+      .detail-panel {
+        padding: 25px;
+        border-left: 1px solid var(--line);
+        background:
+          linear-gradient(180deg, rgba(119, 162, 255, 0.04), transparent 15rem),
+          rgba(5, 10, 20, 0.48);
+      }
+
+      .detail-kicker {
+        margin: 0 0 9px;
+        color: var(--cyan);
+        font-size: 10px;
+        font-weight: 780;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .detail-panel h2 {
+        margin: 0;
+        font-size: 27px;
+        font-weight: 660;
+        letter-spacing: -0.04em;
+        line-height: 1.08;
+      }
+
+      .detail-copy {
+        margin: 15px 0 0;
+        color: #b1bfd4;
+        font-size: 13px;
+        line-height: 1.65;
+      }
+
+      .detail-rule {
+        height: 1px;
+        margin: 21px 0;
+        border: 0;
+        background: var(--line);
+      }
+
+      .detail-facts {
+        display: grid;
+        gap: 0;
+        margin: 0;
+      }
+
+      .detail-fact {
+        display: grid;
+        grid-template-columns: minmax(78px, 0.8fr) 1.2fr;
+        gap: 10px;
+        align-items: baseline;
+        padding: 9px 0;
+        border-bottom: 1px solid rgba(187, 205, 236, 0.075);
+      }
+
+      .detail-fact dt {
+        color: var(--faint);
+        font-size: 9px;
+        letter-spacing: 0.055em;
+        text-transform: uppercase;
+      }
+
+      .detail-fact dd {
+        margin: 0;
+        font-size: 11px;
+        font-weight: 640;
+        line-height: 1.4;
+        text-align: right;
+      }
+
+      .kernel-contract {
+        margin-top: 22px;
+        padding-top: 19px;
+        border-top: 1px solid var(--line);
+      }
+
+      .kernel-contract[hidden] {
+        display: none;
+      }
+
+      .contract-heading {
+        display: flex;
+        gap: 10px;
+        align-items: start;
+        justify-content: space-between;
+      }
+
+      .contract-heading h3 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 660;
+      }
+
+      .contract-badge {
+        padding: 4px 6px;
+        color: var(--cyan);
+        border: 1px solid rgba(85, 213, 232, 0.24);
+        border-radius: 6px;
+        background: rgba(85, 213, 232, 0.05);
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 8px;
+      }
+
+      .notation {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-top: 10px;
+      }
+
+      .notation span {
+        padding: 3px 5px;
+        color: var(--muted);
+        border: 1px solid rgba(187, 205, 236, 0.09);
+        border-radius: 5px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 8px;
+      }
+
+      .shape-table {
+        width: 100%;
+        margin-top: 11px;
+        border-spacing: 0;
+        border-collapse: collapse;
+      }
+
+      .shape-table th,
+      .shape-table td {
+        padding: 7px 0;
+        vertical-align: top;
+        border-bottom: 1px solid rgba(187, 205, 236, 0.065);
+        font-size: 9px;
+        line-height: 1.35;
+        text-align: left;
+      }
+
+      .shape-table th {
+        width: 33%;
+        padding-right: 8px;
+        color: var(--faint);
+        font-weight: 560;
+      }
+
+      .shape-table code {
+        color: #dce7fa;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 8px;
+        overflow-wrap: anywhere;
+        white-space: normal;
+      }
+
+      .shape-note {
+        display: block;
+        margin-top: 2px;
+        color: var(--faint);
+        font-size: 8px;
+      }
+
+      .contract-note {
+        margin: 9px 0 0;
+        color: var(--faint);
+        font-size: 8px;
+        line-height: 1.45;
+      }
+
+      .detail-source {
+        display: inline-flex;
+        gap: 6px;
+        align-items: center;
+        margin-top: 21px;
+        color: var(--muted);
+        font-size: 10px;
+        text-decoration: none;
+      }
+
+      .detail-source:hover {
+        color: var(--cyan);
+      }
+
+      .facts-section {
+        padding: 72px 4px 34px;
+      }
+
+      .section-heading {
+        display: grid;
+        grid-template-columns: 1fr minmax(280px, 520px);
+        gap: 30px;
+        align-items: end;
+        margin-bottom: 24px;
+      }
+
+      .section-heading h2 {
+        margin: 0;
+        font-size: clamp(30px, 4vw, 54px);
+        font-weight: 650;
+        letter-spacing: -0.05em;
+      }
+
+      .section-heading p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .fact-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 9px;
+      }
+
+      .fact-card {
+        min-height: 148px;
+        padding: 20px;
+        border: 1px solid var(--line);
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.018);
+      }
+
+      .fact-card .number {
+        color: var(--blue);
+        font-size: 26px;
+        font-weight: 670;
+        letter-spacing: -0.04em;
+      }
+
+      .fact-card h3 {
+        margin: 12px 0 6px;
+        font-size: 13px;
+      }
+
+      .fact-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.55;
+      }
+
+      .sources {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) repeat(3, minmax(180px, 0.62fr));
+        gap: 9px;
+        padding: 36px 4px 88px;
+      }
+
+      .source-intro,
+      .source-card {
+        min-height: 130px;
+        padding: 19px;
+        border: 1px solid var(--line);
+        border-radius: 15px;
+      }
+
+      .source-intro h2 {
+        margin: 0 0 9px;
+        font-size: 20px;
+      }
+
+      .source-intro p,
+      .source-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.55;
+      }
+
+      .source-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        color: var(--ink);
+        text-decoration: none;
+        transition:
+          transform 150ms ease,
+          border-color 150ms ease;
+      }
+
+      .source-card:hover {
+        border-color: rgba(85, 213, 232, 0.5);
+        transform: translateY(-2px);
+      }
+
+      .source-card strong {
+        font-size: 12px;
+      }
+
+      .source-card span {
+        color: var(--cyan);
+        font-size: 10px;
+      }
+
+      footer {
+        display: flex;
+        justify-content: space-between;
+        margin: 0;
+        padding: 23px 28px;
+        color: var(--faint);
+        border-top: 1px solid var(--line);
+        font-size: 10px;
+      }
+
+      /* SVG language */
+      .zone {
+        fill: rgba(255, 255, 255, 0.012);
+        stroke: rgba(187, 205, 236, 0.14);
+        stroke-width: 1.3;
+        stroke-dasharray: 7 7;
+      }
+
+      .zone-label {
+        fill: #70809b;
+        font-size: 11px;
+        font-weight: 740;
+        letter-spacing: 0.13em;
+      }
+
+      .edge {
+        fill: none;
+        stroke: rgba(181, 200, 231, 0.43);
+        stroke-width: 2;
+        marker-end: url(#arrow);
+        transition:
+          opacity 140ms ease,
+          stroke 140ms ease;
+      }
+
+      .edge.c-csa {
+        stroke: rgba(85, 213, 232, 0.66);
+        marker-end: url(#arrow-csa);
+      }
+
+      .edge.c-hca {
+        stroke: rgba(174, 139, 255, 0.65);
+        marker-end: url(#arrow-hca);
+      }
+
+      .edge.c-moe {
+        stroke: rgba(255, 179, 107, 0.65);
+        marker-end: url(#arrow-moe);
+      }
+
+      .edge.c-mhc {
+        stroke: rgba(92, 218, 167, 0.65);
+        marker-end: url(#arrow-mhc);
+      }
+
+      .edge.c-mtp {
+        stroke: rgba(243, 143, 187, 0.65);
+        marker-end: url(#arrow-mtp);
+      }
+
+      .edge.dashed {
+        stroke-dasharray: 6 6;
+      }
+
+      .edge.highlighted {
+        opacity: 1;
+        stroke: var(--cyan);
+        stroke-width: 3.4;
+        marker-end: url(#arrow-csa);
+      }
+
+      .has-selection .edge:not(.highlighted) {
+        opacity: 0.17;
+      }
+
+      .trace-running .edge {
+        stroke-dasharray: 8 10;
+        animation: march 650ms linear infinite;
+      }
+
+      .edge-label {
+        fill: #7585a0;
+        font-size: 9px;
+        font-weight: 600;
+        text-anchor: middle;
+      }
+
+      .node {
+        cursor: pointer;
+        outline: none;
+      }
+
+      .node .shape {
+        fill: #0d1b30;
+        stroke: rgba(187, 205, 236, 0.32);
+        stroke-width: 1.5;
+        transition:
+          filter 140ms ease,
+          fill 140ms ease,
+          stroke 140ms ease;
+      }
+
+      .node.c-csa .shape {
+        fill: #0c2730;
+        stroke: rgba(85, 213, 232, 0.62);
+      }
+
+      .node.c-hca .shape {
+        fill: #211a36;
+        stroke: rgba(174, 139, 255, 0.62);
+      }
+
+      .node.c-moe .shape {
+        fill: #2b2117;
+        stroke: rgba(255, 179, 107, 0.62);
+      }
+
+      .node.c-mhc .shape {
+        fill: #102a24;
+        stroke: rgba(92, 218, 167, 0.62);
+      }
+
+      .node.c-mtp .shape {
+        fill: #2e1a2a;
+        stroke: rgba(243, 143, 187, 0.62);
+      }
+
+      .node.c-control .shape {
+        fill: #2b2816;
+        stroke: rgba(243, 211, 111, 0.62);
+      }
+
+      .node:hover .shape,
+      .node:focus .shape,
+      .node.selected .shape {
+        stroke: var(--cyan);
+        stroke-width: 2.5;
+        filter: url(#glow);
+      }
+
+      .node.selected .shape {
+        fill: #143047;
+      }
+
+      .node.processing .shape {
+        animation: pulse 750ms ease both;
+      }
+
+      .node-label {
+        fill: #e8effd;
+        font-size: 14px;
+        font-weight: 660;
+        text-anchor: middle;
+        pointer-events: none;
+      }
+
+      .node-sub {
+        fill: #8ea0bc;
+        font-size: 9.5px;
+        font-weight: 530;
+        text-anchor: middle;
+        pointer-events: none;
+      }
+
+      .annotation {
+        fill: #71819d;
+        font-size: 10px;
+      }
+
+      .annotation.strong {
+        fill: #c5d1e6;
+        font-size: 11px;
+        font-weight: 650;
+      }
+
+      .big-number {
+        fill: var(--blue);
+        font-size: 30px;
+        font-weight: 690;
+        letter-spacing: -0.04em;
+        text-anchor: middle;
+      }
+
+      html[data-theme="light"] {
+        color-scheme: light;
+        --bg: #f4f7fc;
+        --panel: #ffffff;
+        --panel-2: #f2f6fc;
+        --ink: #111d31;
+        --muted: #53627a;
+        --faint: #6b7890;
+        --line: rgba(39, 66, 108, 0.13);
+        --line-strong: rgba(39, 66, 108, 0.24);
+        --blue: #326dcc;
+        --cyan: #087d91;
+        --violet: #7049b8;
+        --green: #147a59;
+        --orange: #a95414;
+        --pink: #a83b72;
+        --yellow: #806400;
+        --shadow: 0 28px 80px rgba(45, 67, 104, 0.14);
+      }
+
+      html[data-theme="light"] body {
+        background:
+          radial-gradient(circle at 16% 0%, rgba(8, 125, 145, 0.08), transparent 29rem),
+          radial-gradient(circle at 88% 6%, rgba(50, 109, 204, 0.09), transparent 31rem),
+          var(--bg);
+      }
+
+      html[data-theme="light"] .topbar {
+        background: rgba(248, 250, 254, 0.84);
+      }
+
+      html[data-theme="light"] .report-link,
+      html[data-theme="light"] .theme-button,
+      html[data-theme="light"] .tool-button,
+      html[data-theme="light"] .trace-button,
+      html[data-theme="light"] .family-panel,
+      html[data-theme="light"] .metric,
+      html[data-theme="light"] .fact-card {
+        background: rgba(255, 255, 255, 0.72);
+      }
+
+      html[data-theme="light"] .report-link:hover,
+      html[data-theme="light"] .theme-button:hover,
+      html[data-theme="light"] .tool-button:hover,
+      html[data-theme="light"] .trace-button:hover,
+      html[data-theme="light"] .view-tab:hover {
+        background: rgba(8, 125, 145, 0.075);
+      }
+
+      html[data-theme="light"] .lede,
+      html[data-theme="light"] .detail-copy {
+        color: #45566f;
+      }
+
+      html[data-theme="light"] .variant-switch {
+        background: rgba(39, 66, 108, 0.055);
+      }
+
+      html[data-theme="light"] .variant-button[aria-pressed="true"],
+      html[data-theme="light"] .view-tab[aria-selected="true"],
+      html[data-theme="light"] .trace-button.running {
+        color: #ffffff;
+      }
+
+      html[data-theme="light"] .explorer {
+        background: rgba(255, 255, 255, 0.94);
+      }
+
+      html[data-theme="light"] .viewport-wrap {
+        background:
+          linear-gradient(rgba(50, 109, 204, 0.065) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(50, 109, 204, 0.065) 1px, transparent 1px),
+          radial-gradient(circle at 49% 44%, rgba(8, 125, 145, 0.05), transparent 40%);
+        background-size: 36px 36px, 36px 36px, auto;
+      }
+
+      html[data-theme="light"] .canvas-tools,
+      html[data-theme="light"] .map-hint {
+        background: rgba(255, 255, 255, 0.91);
+      }
+
+      html[data-theme="light"] .symbol-legend,
+      html[data-theme="light"] .notation span {
+        background: rgba(50, 109, 204, 0.035);
+      }
+
+      html[data-theme="light"] .symbol-icon,
+      html[data-theme="light"] .shape-table code {
+        color: #40536e;
+      }
+
+      html[data-theme="light"] .detail-panel {
+        background:
+          linear-gradient(180deg, rgba(50, 109, 204, 0.045), transparent 15rem),
+          rgba(247, 249, 253, 0.85);
+      }
+
+      html[data-theme="light"] .detail-fact,
+      html[data-theme="light"] .shape-table th,
+      html[data-theme="light"] .shape-table td {
+        border-bottom-color: rgba(39, 66, 108, 0.085);
+      }
+
+      html[data-theme="light"] .zone {
+        fill: rgba(50, 109, 204, 0.022);
+        stroke: rgba(39, 66, 108, 0.17);
+      }
+
+      html[data-theme="light"] .zone-label,
+      html[data-theme="light"] .annotation {
+        fill: #63728a;
+      }
+
+      html[data-theme="light"] .annotation.strong {
+        fill: #34445d;
+      }
+
+      html[data-theme="light"] .edge {
+        stroke: rgba(64, 83, 116, 0.58);
+      }
+
+      html[data-theme="light"] .edge.c-csa { stroke: rgba(8, 125, 145, 0.78); }
+      html[data-theme="light"] .edge.c-hca { stroke: rgba(112, 73, 184, 0.75); }
+      html[data-theme="light"] .edge.c-moe { stroke: rgba(169, 84, 20, 0.75); }
+      html[data-theme="light"] .edge.c-mhc { stroke: rgba(20, 122, 89, 0.75); }
+      html[data-theme="light"] .edge.c-mtp { stroke: rgba(168, 59, 114, 0.75); }
+
+      html[data-theme="light"] .edge-label {
+        fill: #66758d;
+      }
+
+      html[data-theme="light"] .node .shape {
+        fill: #f8fafd;
+        stroke: rgba(57, 79, 114, 0.42);
+      }
+
+      html[data-theme="light"] .node.c-csa .shape {
+        fill: #e6f3f5;
+        stroke: rgba(8, 125, 145, 0.68);
+      }
+
+      html[data-theme="light"] .node.c-hca .shape {
+        fill: #f0eafa;
+        stroke: rgba(112, 73, 184, 0.68);
+      }
+
+      html[data-theme="light"] .node.c-moe .shape {
+        fill: #faeee4;
+        stroke: rgba(169, 84, 20, 0.68);
+      }
+
+      html[data-theme="light"] .node.c-mhc .shape {
+        fill: #e5f2ed;
+        stroke: rgba(20, 122, 89, 0.68);
+      }
+
+      html[data-theme="light"] .node.c-mtp .shape {
+        fill: #f8e9f0;
+        stroke: rgba(168, 59, 114, 0.68);
+      }
+
+      html[data-theme="light"] .node.c-control .shape {
+        fill: #f5f0d8;
+        stroke: rgba(128, 100, 0, 0.68);
+      }
+
+      html[data-theme="light"] .node.selected .shape {
+        fill: #dcecf5;
+      }
+
+      html[data-theme="light"] .node-label {
+        fill: #17243a;
+      }
+
+      html[data-theme="light"] .node-sub {
+        fill: #607089;
+      }
+
+      html[data-theme="light"] #arrow path { fill: #53647e; }
+      html[data-theme="light"] #arrow-csa path { fill: var(--cyan); }
+      html[data-theme="light"] #arrow-hca path { fill: var(--violet); }
+      html[data-theme="light"] #arrow-moe path { fill: var(--orange); }
+      html[data-theme="light"] #arrow-mhc path { fill: var(--green); }
+      html[data-theme="light"] #arrow-mtp path { fill: var(--pink); }
+
+      @keyframes march {
+        to {
+          stroke-dashoffset: -18;
+        }
+      }
+
+      @keyframes pulse {
+        45% {
+          stroke: var(--cyan);
+          stroke-width: 3.5;
+          filter: url(#trace-glow);
+        }
+      }
+
+      @media (max-width: 1140px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
+
+        .family-panel {
+          max-width: 650px;
+        }
+
+        .explorer {
+          grid-template-columns: 1fr;
+        }
+
+        .detail-panel {
+          border-top: 1px solid var(--line);
+          border-left: 0;
+        }
+
+        .detail-facts {
+          grid-template-columns: repeat(2, 1fr);
+          column-gap: 25px;
+        }
+
+        .fact-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .sources {
+          grid-template-columns: repeat(3, 1fr);
+        }
+
+        .source-intro {
+          grid-column: 1 / -1;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .topbar {
+          padding: 0 14px;
+        }
+
+        .report-link span:first-child {
+          display: none;
+        }
+
+        main {
+          width: min(1540px, calc(100% - 20px));
+        }
+
+        .hero {
+          padding-top: 48px;
+        }
+
+        .viewport-wrap,
+        #architecture-map {
+          min-height: 560px;
+        }
+
+        .map-hint {
+          display: none;
+        }
+
+        .detail-facts,
+        .section-heading,
+        .fact-grid,
+        .sources {
+          grid-template-columns: 1fr;
+        }
+
+        .source-intro {
+          grid-column: auto;
+        }
+
+        footer {
+          gap: 9px;
+          flex-direction: column;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#explorer">Skip to architecture explorer</a>
+
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="DeepSeek V4 architecture map home">
+        <span class="brand-mark" aria-hidden="true">V4</span>
+        DeepSeek V4 / Architecture
+      </a>
+      <div class="top-actions">
+        <button
+          class="theme-button"
+          id="theme-toggle"
+          type="button"
+          aria-label="Switch to light theme"
+          title="Switch to light theme"
+        >
+          <span id="theme-icon" aria-hidden="true">☀</span>
+        </button>
+        <a
+          class="report-link"
+          href="https://arxiv.org/abs/2606.19348"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <span>Read technical report</span><span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">Million-token intelligence · visualized</p>
+          <h1 id="page-title">Inside <span>DeepSeek V4</span></h1>
+          <p class="lede">
+            A source-grounded map of the V4 family: hybrid compressed attention,
+            four-stream manifold-constrained residuals, fine-grained DeepSeekMoE,
+            and a shared-head multi-token prediction path.
+          </p>
+        </div>
+        <div class="family-panel" aria-label="DeepSeek V4 model variant">
+          <div class="variant-switch">
+            <button class="variant-button" type="button" data-variant="pro" aria-pressed="true">V4 Pro</button>
+            <button class="variant-button" type="button" data-variant="flash" aria-pressed="false">V4 Flash</button>
+          </div>
+          <div class="hero-metrics">
+            <div class="metric"><strong id="metric-total">1.6T</strong><span>total parameters</span></div>
+            <div class="metric"><strong id="metric-active">49B</strong><span>activated parameters</span></div>
+            <div class="metric"><strong id="metric-layers">61</strong><span>transformer layers</span></div>
+            <div class="metric"><strong>1M</strong><span>token context</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="explorer" id="explorer" aria-label="Interactive DeepSeek V4 architecture explorer">
+        <div class="graph-column">
+          <nav class="view-tabs" role="tablist" aria-label="Architecture views">
+            <button class="view-tab" role="tab" aria-selected="true" data-view="overall">System flow</button>
+            <button class="view-tab" role="tab" aria-selected="false" data-view="schedule">Layer schedule</button>
+            <button class="view-tab" role="tab" aria-selected="false" data-view="csa">CSA internals</button>
+            <button class="view-tab" role="tab" aria-selected="false" data-view="hca">HCA internals</button>
+            <button class="view-tab" role="tab" aria-selected="false" data-view="mhc">mHC residuals</button>
+            <button class="view-tab" role="tab" aria-selected="false" data-view="moe">DeepSeekMoE</button>
+            <button class="view-tab" role="tab" aria-selected="false" data-view="mtp">MTP path</button>
+          </nav>
+
+          <div class="viewport-wrap">
+            <div class="canvas-tools" aria-label="Diagram controls">
+              <button class="trace-button" id="trace-flow" type="button">▶ Trace flow</button>
+              <button class="tool-button" id="zoom-out" type="button" aria-label="Zoom out">−</button>
+              <button class="tool-button" id="zoom-in" type="button" aria-label="Zoom in">+</button>
+              <button class="tool-button" id="fit-view" type="button" aria-label="Fit diagram">⌖</button>
+            </div>
+            <p class="map-hint">Click a shape for details · drag to pan · wheel to zoom</p>
+            <svg
+              id="architecture-map"
+              viewBox="0 0 1400 820"
+              role="img"
+              aria-labelledby="map-title map-description"
+              tabindex="0"
+            >
+              <title id="map-title">Interactive DeepSeek V4 architecture flow graph</title>
+              <desc id="map-description">
+                Seven plates show the full DeepSeek V4 system, Pro and Flash layer schedules,
+                Compressed Sparse Attention, Heavily Compressed Attention, mHC residuals,
+                DeepSeekMoE, and Multi-Token Prediction.
+              </desc>
+              <defs>
+                <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+                  <feGaussianBlur stdDeviation="5" result="blur" />
+                  <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                </filter>
+                <filter id="trace-glow" x="-60%" y="-60%" width="220%" height="220%">
+                  <feGaussianBlur stdDeviation="9" result="blur" />
+                  <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                </filter>
+                <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#aebdd6" /></marker>
+                <marker id="arrow-csa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#55d5e8" /></marker>
+                <marker id="arrow-hca" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#ae8bff" /></marker>
+                <marker id="arrow-moe" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#ffb36b" /></marker>
+                <marker id="arrow-mhc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#5cdaa7" /></marker>
+                <marker id="arrow-mtp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f38fbb" /></marker>
+              </defs>
+              <g id="diagram-root"></g>
+            </svg>
+          </div>
+
+          <div class="symbol-legend" aria-live="polite">
+            <span class="legend-title" id="symbol-legend-title">System symbols</span>
+            <div class="legend-items" id="symbol-legend-items"></div>
+          </div>
+          <div class="color-legend" aria-label="Color key">
+            <span class="legend-item" style="color:var(--cyan)"><span class="color-swatch"></span>CSA</span>
+            <span class="legend-item" style="color:var(--violet)"><span class="color-swatch"></span>HCA</span>
+            <span class="legend-item" style="color:var(--green)"><span class="color-swatch"></span>mHC</span>
+            <span class="legend-item" style="color:var(--orange)"><span class="color-swatch"></span>DeepSeekMoE</span>
+            <span class="legend-item" style="color:var(--pink)"><span class="color-swatch"></span>MTP</span>
+          </div>
+        </div>
+
+        <aside class="detail-panel" aria-live="polite" aria-labelledby="detail-title">
+          <p class="detail-kicker" id="detail-kicker">Architecture overview</p>
+          <h2 id="detail-title">Three efficiency axes</h2>
+          <p class="detail-copy" id="detail-copy">
+            DeepSeek V4 compresses sequence memory with CSA/HCA, expands residual
+            capacity with stable four-stream mHC, and scales channel capacity through
+            sparse fine-grained experts. Select a shape to inspect it.
+          </p>
+          <hr class="detail-rule" />
+          <dl class="detail-facts" id="detail-facts">
+            <div class="detail-fact"><dt>Attention</dt><dd>CSA + HCA + SWA</dd></div>
+            <div class="detail-fact"><dt>Residual</dt><dd>4-stream mHC</dd></div>
+            <div class="detail-fact"><dt>MoE</dt><dd>6 routed + 1 shared</dd></div>
+            <div class="detail-fact"><dt>Context</dt><dd>1,048,576 tokens</dd></div>
+          </dl>
+          <section class="kernel-contract" id="kernel-contract" hidden aria-labelledby="contract-title">
+            <div class="contract-heading">
+              <h3 id="contract-title">Kernel tensor contract</h3>
+              <span class="contract-badge">logical shapes</span>
+            </div>
+            <div class="notation" id="contract-notation"></div>
+            <table class="shape-table"><tbody id="contract-rows"></tbody></table>
+            <p class="contract-note" id="contract-note"></p>
+          </section>
+          <a
+            class="detail-source"
+            id="detail-source"
+            href="https://arxiv.org/abs/2606.19348"
+            target="_blank"
+            rel="noreferrer"
+          ><span>Official technical report · §2</span><span aria-hidden="true">↗</span></a>
+        </aside>
+      </section>
+
+      <section class="facts-section" aria-labelledby="facts-heading">
+        <div class="section-heading">
+          <h2 id="facts-heading">The V4 family at a glance</h2>
+          <p>
+            Pro and Flash share the same architectural ideas but scale different axes.
+            The interactive switch updates every variant-sensitive count and tensor contract.
+          </p>
+        </div>
+        <div class="fact-grid">
+          <article class="fact-card"><div class="number">4× / 128×</div><h3>Two compression regimes</h3><p>CSA compresses overlapping blocks 4× and sparsely selects them; HCA compresses non-overlapping blocks 128× and attends densely.</p></article>
+          <article class="fact-card"><div class="number">128</div><h3>Local window</h3><p>Every CSA and HCA layer supplements compressed history with 128 recent uncompressed KV entries.</p></article>
+          <article class="fact-card"><div class="number">4 streams</div><h3>mHC residual width</h3><p>Dynamic input, output, and doubly-stochastic residual mappings surround both attention and MoE sublayers.</p></article>
+          <article class="fact-card"><div class="number">6 + 1</div><h3>Activated experts</h3><p>Six fine-grained routed experts run beside one always-on shared expert in every transformer block.</p></article>
+          <article class="fact-card"><div class="number">3</div><h3>Hash-routed layers</h3><p>The first three MoE layers use token-ID hash routing; later layers use learned Sqrt(Softplus) affinity scores.</p></article>
+          <article class="fact-card"><div class="number">1 MTP</div><h3>Next-token lookahead</h3><p>One shared-head MTP module learns the next future token and can drive speculative decoding.</p></article>
+          <article class="fact-card"><div class="number">2%</div><h3>KV cache vs GQA8</h3><p>The report estimates roughly 2% of a BF16 GQA8 cache at one-million-token context.</p></article>
+          <article class="fact-card"><div class="number">FP4 + FP8</div><h3>Mixed inference precision</h3><p>In instruct checkpoints, MoE expert parameters use FP4 while most remaining parameters use FP8.</p></article>
+        </div>
+      </section>
+
+      <section class="sources" aria-labelledby="sources-heading">
+        <div class="source-intro">
+          <h2 id="sources-heading">Primary sources</h2>
+          <p>Architecture claims are reconciled against DeepSeek’s technical report, released configs, and open reference inference implementation.</p>
+        </div>
+        <a class="source-card" href="https://arxiv.org/abs/2606.19348" target="_blank" rel="noreferrer"><strong>Technical report</strong><p>Architecture §2, model setups §4.2.1, and cache layout §3.5.</p><span>Open report ↗</span></a>
+        <a class="source-card" href="https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro/blob/main/config.json" target="_blank" rel="noreferrer"><strong>Pro / Flash configs</strong><p>Exact layer schedules, widths, heads, experts, mHC, and compression settings.</p><span>Open Pro config ↗</span></a>
+        <a class="source-card" href="https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro/blob/main/inference/model.py" target="_blank" rel="noreferrer"><strong>Reference implementation</strong><p>Executable tensor packing for compressors, indexer, grouped output, mHC, MoE, and MTP.</p><span>Open model.py ↗</span></a>
+      </section>
+    </main>
+
+    <footer>
+      <span>Auto-generated by gpt-5.6-sol.</span>
+      <span>DeepSeek V4 names and specifications belong to DeepSeek AI.</span>
+    </footer>
+
+    <script>
+      const SVG_NS = "http://www.w3.org/2000/svg";
+      const reportUrl = "https://arxiv.org/abs/2606.19348";
+      const proConfigUrl = "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro/blob/main/config.json";
+      const flashConfigUrl = "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash/blob/main/config.json";
+      const modelUrl = "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro/blob/main/inference/model.py";
+      const themeStorageKey = "tokenspeed-architecture-theme";
+      const themeToggle = document.getElementById("theme-toggle");
+      const themeIcon = document.getElementById("theme-icon");
+
+      function readStoredTheme() {
+        try {
+          const theme = localStorage.getItem(themeStorageKey);
+          return ["dark", "light"].includes(theme) ? theme : null;
+        } catch {
+          return null;
+        }
+      }
+
+      function updateThemeControl() {
+        const current = document.documentElement.dataset.theme;
+        const next = current === "dark" ? "light" : "dark";
+        themeIcon.textContent = current === "dark" ? "☀" : "☾";
+        themeToggle.setAttribute("aria-label", `Switch to ${next} theme`);
+        themeToggle.title = `Switch to ${next} theme`;
+        themeToggle.setAttribute("aria-pressed", String(current === "light"));
+      }
+
+      function setTheme(theme, persist = false) {
+        document.documentElement.dataset.theme = theme;
+        if (persist) {
+          try {
+            localStorage.setItem(themeStorageKey, theme);
+          } catch {}
+        }
+        updateThemeControl();
+      }
+
+      themeToggle.addEventListener("click", () => {
+        setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark", true);
+      });
+      window.matchMedia?.("(prefers-color-scheme: dark)")?.addEventListener("change", (event) => {
+        if (!readStoredTheme()) setTheme(event.matches ? "dark" : "light");
+      });
+      updateThemeControl();
+
+      const variants = {
+        pro: {
+          name: "DeepSeek V4 Pro", total: "1.6T", active: "49B", layers: 61,
+          d: 7168, heads: 128, qrank: 1536, groups: 16, groupOut: 16384,
+          csaTopk: 1024, experts: 384, expertFfn: 3072, routeScale: 2.5,
+          schedule: "2 HCA + 29 × (CSA → HCA) + final CSA",
+          counts: "30 CSA · 31 HCA", config: proConfigUrl
+        },
+        flash: {
+          name: "DeepSeek V4 Flash", total: "284B", active: "13B", layers: 43,
+          d: 4096, heads: 64, qrank: 1024, groups: 8, groupOut: 8192,
+          csaTopk: 512, experts: 256, expertFfn: 2048, routeScale: 1.5,
+          schedule: "2 pure SWA + 20 × (CSA → HCA) + final CSA",
+          counts: "21 CSA · 20 HCA · 2 SWA", config: flashConfigUrl
+        }
+      };
+
+      const details = {
+        tokens: ["Input", "Token IDs", "A 129,280-entry tokenizer feeds text, code, tool traces, and reasoning history into an untied embedding table.", [["Vocabulary", "129,280"], ["Context", "1,048,576"], ["Modality", "Text"]]],
+        embedding: ["Input representation", "Embedding", "Token IDs become d-wide hidden vectors, then the residual state is copied into four mHC streams before the first transformer block.", v => [["Width d", f(v.d)], ["mHC expansion", "4 copies"], ["Weight tying", "Disabled"]]],
+        expand: ["Residual initialization", "Four-stream residual", "mHC expands the residual state from one d-wide vector to four parallel streams. Inner attention and MoE layers still consume one d-wide mixture.", v => [["Logical shape", `[B,T,4,${v.d}]`], ["Actual layer input", `[B,T,${v.d}]`], ["Expansion", "4×"]]],
+        block: ["Transformer backbone", "Hybrid V4 block", "Every block applies mHC around an attention sublayer and again around a DeepSeekMoE sublayer. The attention type follows the variant’s compression schedule.", v => [["Layers", String(v.layers)], ["Attention", v.counts], ["FFN", "MoE in every block"], ["Residual", "mHC ×2 / block"]]],
+        attention: ["Sequence mixing", "Hybrid compressed attention", "V4 interleaves CSA and HCA. Both use 512-wide shared KV MQA, partial RoPE, an attention sink, and a 128-token local window.", v => [["Query heads", String(v.heads)], ["Head width", "512"], ["Local window", "128"], ["RoPE dims", "64"]]],
+        moe: ["Channel mixing", "DeepSeekMoE", "Each block activates six fine-grained routed experts plus one shared expert. The first three layers hash-route by token ID; later layers learn routing affinities.", v => [["Routed pool", String(v.experts)], ["Selected", "6"], ["Shared", "1"], ["Expert FFN", f(v.expertFfn)]]],
+        head: ["Model output", "mHC head + vocabulary projection", "A learned sigmoid mixture collapses the four residual streams, RMSNorm stabilizes the result, and the untied LM head produces next-token logits.", v => [["Input", `[B,T,4,${v.d}]`], ["Output", "129,280 logits"], ["Head", "Vocabulary-sharded"]]],
+        mtp: ["Lookahead", "One MTP module", "A shifted next-token embedding is fused with the main hidden state, processed by one extra V4 block, and scored with the shared prediction head.", v => [["Depth", "1"], ["Attention", "Pure SWA"], ["Embedding / head", "Shared"], ["Use", "Training + speculation"]]],
+        attentionInput: ["Attention input", "Hidden states H", "The d-wide hidden activations entering CSA or HCA supply the current queries, the source history to compress, and the recent 128-token local KV window.", v => [["Logical shape", `[B,T,${v.d}]`], ["Query role", "Current T positions"], ["History role", "Compression source"], ["Local branch", "Recent 128 tokens"]]],
+        attentionOut: ["Attention output", "Projected attention update ŷ", "Grouped low-rank output projections recombine all attention heads and return one d-wide update to the enclosing mHC residual connection.", v => [["Logical shape", `[B,T,${v.d}]`], ["Head groups", String(v.groups)], ["Rank / group", "1,024"], ["Consumer", "mHC post-map C"]]],
+        moeInput: ["MoE input", "Token state x", "The mHC input map produces a d-wide activation for every token. MoE kernels flatten batch and sequence into N tokens before routing and expert dispatch.", v => [["Logical shape", `[B,T,${v.d}]`], ["Kernel shape", `[N,${v.d}]`], ["N", "B × T tokens"], ["Consumers", "Router + shared expert"]]],
+        moeOutput: ["MoE output", "Aggregated expert update", "The weighted sum of six routed expert results is added to the always-on shared expert result, producing one d-wide update for the enclosing mHC post-map.", v => [["Kernel shape", `[N,${v.d}]`], ["Routed terms", "6"], ["Shared terms", "1"], ["Consumer", "mHC post-map C"]]],
+        swa: ["Local attention", "Pure sliding-window attention", "Flash begins with two pure local-attention layers. Pro instead begins with HCA, although every compressed layer also carries a 128-token SWA branch.", [["Window", "128"], ["Compressed history", "None"], ["Flash layers", "0–1"]]],
+        csa: ["Sparse long-context attention", "Compressed Sparse Attention", "CSA compresses every four source tokens into one KV entry, uses a learned lightning indexer to retain only the most relevant compressed entries, then concatenates the 128-token local window.", v => [["Compression", "4× overlapping"], ["Selected blocks", f(v.csaTopk)], ["Local KV", "128"], ["KV width", "512"]]],
+        hca: ["Dense compressed attention", "Heavily Compressed Attention", "HCA pools each non-overlapping 128-token block into one 512-wide KV entry and attends densely over the resulting short history plus the recent local window.", [["Compression", "128×"], ["Selection", "All compressed entries"], ["Local KV", "128"], ["KV width", "512"]]],
+        residualMix: ["Stable residual scaling", "mHC mixing", "Input A and output C are non-negative sigmoid mappings. Residual B is projected by 20 Sinkhorn-Knopp iterations onto the doubly-stochastic Birkhoff polytope.", v => [["Streams", "4"], ["B matrix", "4 × 4"], ["Iterations", "20"], ["Flattened input", `4d = ${f(4 * v.d)}`]]],
+        compressor: ["Sequence compression", "Token-level compressor", "Content vectors and channel-wise pooling logits are projected from every token. Learned positional biases and a row-wise softmax produce a weighted KV summary.", [["CSA block", "4 tokens, overlapping branches"], ["HCA block", "128 tokens, non-overlap"], ["Output width", "512"]]],
+        compressedKv: ["Compressed state", "Compressed KV entries", "Each 512-wide entry serves simultaneously as key and value for shared-KV multi-query attention. Complete blocks enter paged cache; incomplete tails remain in state cache.", [["Width", "512"], ["Key / value", "Shared entry"], ["Storage", "FP8 + BF16 RoPE"]]],
+        query: ["Attention queries", "Low-rank query path", "Queries are compressed to a latent rank, RMS-normalized, expanded into per-head 512-wide vectors, normalized per head, and partially rotated in the final 64 channels.", v => [["Input", f(v.d)], ["Latent rank", f(v.qrank)], ["Heads", String(v.heads)], ["Per head", "512"]]],
+        queryLatent: ["Shared query bottleneck", "Query latent qr", "Hidden states are projected to one RMS-normalized query latent. CSA then forks this same latent into two independent projections: the full attention queries and the smaller lightning-indexer queries.", v => [["Input", `[B,T,${v.d}]`], ["Logical shape", `[B,T,${v.qrank}]`], ["Full-Q consumer", `${v.heads} × 512`], ["Indexer consumer", "64 × 128"]]],
+        fullQuery: ["Core attention queries", "Full attention Q", "The shared query latent expands into the full per-head query tensor used by MQA. This branch does not feed the lightning indexer; both branches independently read qr.", v => [["Input qr", `[B,T,${v.qrank}]`], ["Logical shape", `[B,T,${v.heads},512]`], ["Heads", String(v.heads)], ["Per head", "512"]]],
+        indexer: ["Sparse-selection queries", "Lightning indexer Q", "CSA independently projects the shared query latent—not the full attention Q—into 64 indexer heads of width 128, scores compressed blocks in FP4, and selects the top-k entries.", v => [["Input qr", `[B,T,${v.qrank}]`], ["Logical shape", "[B,T,64,128]"], ["Score precision", "FP4"], ["Top-k", f(v.csaTopk)]]],
+        topk: ["Sparse selection", "Top-k compressed blocks", "Only the highest-scoring compressed positions continue to core attention. Invalid future blocks are masked before selection.", v => [["Indices / query", f(v.csaTopk)], ["Source length", "⌊T / 4⌋"], ["Causality", "Earlier complete blocks"]]],
+        concat: ["Attention memory", "Compressed + local KV", "Compressed long-range entries are concatenated with 128 recent uncompressed entries, restoring fine-grained local dependencies and access within the current compression block.", [["Local entries", "≤128"], ["Compressed width", "512"], ["KV heads", "1 shared"]]],
+        mqa: ["Core attention", "Shared-KV multi-query attention", "All query heads attend to the same 512-wide KV entries. Per-head RMSNorm and attention sinks stabilize and modulate the attention mass.", v => [["Query heads", String(v.heads)], ["KV heads", "1"], ["Head width", "512"], ["RoPE", "Last 64 dims"]]],
+        groupedOut: ["Attention output", "Grouped low-rank projection", "The very wide concatenated head output is split into groups. Each group contracts to rank 1,024 before the grouped results are concatenated and projected to d.", v => [["Groups", String(v.groups)], ["Heads / group", String(v.heads / v.groups)], ["Raw / group", "4,096"], ["Rank / group", "1,024"]]],
+        mhcInput: ["mHC state", "Expanded residual Xₗ", "The residual stream has four d-wide copies. It is flattened and normalized only to generate small dynamic mixing parameters; inner layers remain d-wide.", v => [["Shape", `[B,T,4,${v.d}]`], ["Flattened", `[B,T,${4 * v.d}]`], ["Expansion", "4×"]]],
+        generator: ["mHC parameterization", "Dynamic mixing generator", "One small projection produces 24 values per token: four input weights, four output weights, and sixteen residual-mixing entries. Static biases and learned scales are added.", v => [["Input width", f(4 * v.d)], ["Dynamic outputs", "24"], ["Separate sets", "Attention + MoE"]]],
+        amap: ["mHC pre-mix", "Bounded input map A", "A = sigmoid(Ã) gives four non-negative weights that mix the residual streams into the single d-wide input consumed by attention or MoE.", [["Shape", "[B,T,1,4]"], ["Constraint", "Sigmoid"], ["Output", "[B,T,d]"]]],
+        bmap: ["mHC residual map", "Doubly-stochastic B", "Twenty Sinkhorn-Knopp row/column normalization iterations map the raw 4×4 matrix onto the Birkhoff polytope, bounding its spectral norm by one.", [["Shape", "[B,T,4,4]"], ["Iterations", "20"], ["Rows / columns", "Sum to 1"]]],
+        cmap: ["mHC post-mix", "Bounded output map C", "C = 2·sigmoid(C̃) produces four bounded coefficients that broadcast the d-wide sublayer update back into the expanded residual state.", [["Shape", "[B,T,4,1]"], ["Constraint", "2 × Sigmoid"], ["Role", "Broadcast update"]]],
+        sublayer: ["Inner transform", "Attention or MoE Fₗ", "The actual sublayer still accepts and returns one d-wide vector. mHC scales residual capacity without multiplying the expensive inner computation by four.", v => [["Input / output", `[B,T,${v.d}]`], ["Surrounded by", "A, B, C maps"], ["Occurrences", "2 per block"]]],
+        mhcOutput: ["mHC update", "Next expanded residual", "The mapped old residual B·X and broadcast sublayer result C·F(A·X) are summed to form the next four-stream state.", v => [["Equation", "Xₗ₊₁ = BₗXₗ + CₗFₗ(AₗXₗ)"], ["Shape", `[B,T,4,${v.d}]`]]],
+        router: ["Expert routing", "Hash or learned top-6 router", "Layers 0–2 select experts from a fixed token-ID hash table. Later layers score every expert with Sqrt(Softplus), add auxiliary-loss-free correction bias, normalize top-6 weights, and scale them.", v => [["Hash layers", "3"], ["Learned pool", String(v.experts)], ["Top-k", "6"], ["Route scale", String(v.routeScale)]]],
+        experts: ["Sparse FFN bank", "Fine-grained routed experts", "Selected experts apply a clamped SwiGLU FFN. In released instruct checkpoints, routed expert weights use FP4 and are naturally packed by expert-parallel kernels.", v => [["Pool", String(v.experts)], ["Active", "6"], ["d → F → d", `${f(v.d)} → ${f(v.expertFfn)} → ${f(v.d)}`], ["Precision", "FP4 instruct"]]],
+        shared: ["Common FFN", "One shared expert", "An always-on expert processes every token in parallel with the routed experts and is added after their weighted reduction.", v => [["Count", "1"], ["Input / output", f(v.d)], ["FFN width", f(v.expertFfn)]]],
+        combine: ["Expert aggregation", "Weighted routed sum + shared", "The six routed outputs are weighted and reduced, then the shared-expert output is added to return one d-wide MoE update.", v => [["Routed terms", "6"], ["Shared terms", "1"], ["Output", `[N,${v.d}]`]]],
+        mainHidden: ["MTP input", "Main-model hidden state", "The completed four-stream hidden state from the main decoder is normalized and projected as one input to the MTP module.", v => [["Shape", `[B,T,4,${v.d}]`], ["Source", "Main decoder"]]],
+        nextEmbed: ["MTP input", "Shifted next-token embedding", "During training, the embedding of the next ground-truth token is normalized, projected, and broadcast across residual streams.", v => [["Embedding", `[B,T,${v.d}]`], ["Shift", "+1 token"], ["Table", "Shared"]]],
+        fuse: ["MTP fusion", "Projected input sum", "The projected future-token embedding and projected main hidden state are summed before the extra transformer block.", v => [["Output", `[B,T,4,${v.d}]`], ["Projections", "Two d × d"]]],
+        mtpBlock: ["MTP decoder", "One extra V4 block", "The MTP module reuses the same block design with mHC, pure sliding-window attention, and learned DeepSeekMoE routing.", v => [["Depth", "1"], ["Attention", "SWA 128"], ["MoE", `top-6 of ${v.experts}`], ["mHC", "4 streams"]]],
+        sharedHead: ["MTP output", "Shared prediction head", "The MTP state is collapsed through the same mHC-head logic and scored by the main vocabulary head, avoiding a separate output matrix.", [["Vocabulary", "129,280"], ["Head", "Shared with main model"], ["Target", "Next future token"]]]
+      };
+      details.initialHca = details.hca;
+      details.repeatedHca = details.hca;
+      details.initialSwa = details.swa;
+      details.finalCsa = details.csa;
+
+      function f(number) {
+        return Number(number).toLocaleString("en-US");
+      }
+
+      function variantValue(value, variant) {
+        return typeof value === "function" ? value(variant) : value;
+      }
+
+      function node(id, x, y, w, h, label, sub, color = "", shape = "process", step = 0) {
+        return { id, x, y, w, h, label, sub, color, shape, step };
+      }
+
+      function edge(from, to, color = "", label = "", dashed = false, d = "") {
+        return { from, to, color, label, dashed, d };
+      }
+
+      function overallPlate(v) {
+        return {
+          title: `${v.name} · end-to-end flow`,
+          zones: [[45, 95, 250, 635, "INPUT"], [330, 70, 760, 690, `${v.layers}-LAYER BACKBONE`], [1125, 95, 220, 635, "OUTPUT / LOOKAHEAD"]],
+          nodes: [
+            node("tokens", 85, 335, 160, 95, "Input tokens", "129,280 vocabulary", "", "process", 0),
+            node("embedding", 385, 165, 180, 86, "Embedding", `width ${f(v.d)}`, "", "projection", 1),
+            node("expand", 630, 153, 195, 110, "mHC expand ×4", `[B,T,4,${v.d}]`, "c-mhc", "process", 2),
+            { ...node("block", 405, 315, 610, 350, `Hybrid V4 block × ${v.layers}`, "mHC wraps attention and MoE", "", "boundary", 3), labelY: 32 },
+            node("attention", 455, 425, 220, 100, "CSA / HCA", v.counts, "c-csa", "process", 4),
+            node("moe", 745, 425, 220, 100, "DeepSeekMoE", `6 of ${v.experts} + shared`, "c-moe", "process", 5),
+            node("residualMix", 565, 560, 290, 75, "mHC residual mixing", "A pre · B residual · C post", "c-mhc", "process", 6),
+            node("head", 1140, 175, 170, 100, "Norm + LM head", "next-token logits", "", "projection", 7),
+            node("mtp", 1140, 500, 180, 116, "MTP module ×1", "shifted embedding + hidden", "c-mtp", "process", 8)
+          ],
+          edges: [
+            edge("tokens", "embedding", "", "lookup", false, "M245 382 C315 382 320 208 385 208"),
+            edge("embedding", "expand", "c-mhc"), edge("expand", "block", "c-mhc", "", false, "M728 263 V290 H710 V315"),
+            edge("attention", "moe"), edge("moe", "residualMix", "c-mhc", "", false, "M855 525 V545 H710 V560"),
+            edge("residualMix", "attention", "c-mhc", "next layer", true, "M565 598 H430 V475 H455"),
+            edge("block", "head", "", "main path", false, "M1015 385 C1085 385 1070 225 1140 225"),
+            edge("block", "mtp", "c-mtp", "hidden state", false, "M1015 550 H1140"),
+            edge("embedding", "mtp", "c-mtp", "shift +1", true, "M475 251 C475 690 1080 690 1140 600")
+          ],
+          notes: [[725, 694, v.schedule, true], [725, 718, "Every block uses MoE; layers 0–2 use hash routing.", false]]
+        };
+      }
+
+      function schedulePlate(v) {
+        const firstLabel = v === variants.pro ? "HCA ×2" : "Pure SWA ×2";
+        const firstColor = v === variants.pro ? "c-hca" : "";
+        return {
+          title: `${v.name} · attention and routing schedule`,
+          zones: [[50, 75, 1300, 660, "LAYERWISE SCHEDULE"]],
+          nodes: [
+            node("embedding", 90, 335, 135, 90, "Embedding", `d = ${f(v.d)}`, "", "process", 0),
+            node(v === variants.pro ? "initialHca" : "initialSwa", 285, 310, 180, 140, firstLabel, "layers 0–1", firstColor, "process", 1),
+            node("csa", 550, 310, 190, 140, "CSA", "compression 4 · sparse", "c-csa", "process", 2),
+            node("repeatedHca", 815, 310, 190, 140, "HCA", "compression 128 · dense", "c-hca", "process", 3),
+            node("finalCsa", 1080, 310, 190, 140, "Final CSA", `layer ${v.layers - 1}`, "c-csa", "process", 4),
+            node("moe", 515, 545, 285, 95, "MoE in every block", `first 3 hash · remaining learned top-6 / ${v.experts}`, "c-moe", "process", 5),
+            node("residualMix", 860, 545, 285, 95, "mHC around both sublayers", "4 residual streams · 20 Sinkhorn iterations", "c-mhc", "process", 6)
+          ],
+          edges: [
+            edge("embedding", v === variants.pro ? "initialHca" : "initialSwa"),
+            edge(v === variants.pro ? "initialHca" : "initialSwa", "csa"), edge("csa", "repeatedHca"),
+            edge("repeatedHca", "csa", "", "repeat", false, "M1005 345 C1050 275 1035 245 960 245 H640 C545 245 525 275 550 345"),
+            edge("repeatedHca", "finalCsa", "c-csa", "final", false, "M1005 380 H1080"),
+            edge("csa", "moe", "c-moe", "paired FFN", true, "M645 450 V545"),
+            edge("repeatedHca", "residualMix", "c-mhc", "paired mHC", true, "M910 450 V545")
+          ],
+          notes: [[700, 160, v.schedule, true], [700, 190, v.counts, false], [700, 685, "MTP adds one extra pure-SWA V4 block after the main decoder.", false]]
+        };
+      }
+
+      function csaPlate(v) {
+        return {
+          title: `${v.name} · Compressed Sparse Attention`,
+          zones: [[45, 60, 1310, 705, "CSA · COMPRESSION 4 · TOP-K SPARSE GLOBAL MEMORY + LOCAL WINDOW"]],
+          nodes: [
+            node("attentionInput", 80, 355, 130, 92, "Hidden states H", `[B,T,${v.d}]`, "", "process", 0),
+            node("compressor", 275, 165, 210, 115, "Dual compressor", "overlap · 2 branches · m=4", "c-csa", "projection", 1),
+            node("compressedKv", 550, 165, 190, 115, "Compressed KV", "[B,⌊T/4⌋,512]", "c-csa", "cache", 2),
+            node("queryLatent", 275, 525, 190, 110, "Query latent qr", `[B,T,${v.qrank}]`, "c-csa", "projection", 1),
+            node("fullQuery", 535, 420, 205, 110, "Full attention Q", `[B,T,${v.heads},512]`, "c-csa", "projection", 2),
+            node("indexer", 535, 585, 205, 120, "Lightning indexer Q", "[B,T,64,128] · FP4 scores", "c-control", "projection", 2),
+            node("topk", 820, 155, 180, 120, "Top-k selector", `${f(v.csaTopk)} compressed entries`, "c-control", "routing", 4),
+            node("concat", 820, 350, 180, 135, "Concatenate KV", `top-${f(v.csaTopk)} + local 128`, "c-csa", "process", 5),
+            node("mqa", 1060, 325, 190, 160, "Shared-KV MQA", `${v.heads} Q heads · 1 KV head`, "c-csa", "process", 6),
+            node("groupedOut", 1080, 555, 190, 120, "Grouped output", `${v.groups} groups · rank 1,024`, "c-csa", "projection", 7),
+            node("attentionOut", 1285, 365, 80, 80, "ŷ", `width ${f(v.d)}`, "", "process", 8)
+          ],
+          edges: [
+            edge("attentionInput", "compressor", "c-csa", "history", false, "M210 385 C245 385 235 222 275 222"),
+            edge("compressor", "compressedKv", "c-csa"), edge("attentionInput", "queryLatent", "c-csa", "project once", false, "M210 420 C245 420 235 580 275 580"),
+            edge("compressedKv", "topk", "c-control", "candidate KV", false, "M740 222 H820"),
+            edge("queryLatent", "fullQuery", "c-csa", "expand Q", false, "M465 565 C500 565 495 475 535 475"),
+            edge("queryLatent", "indexer", "c-control", "independent projection", false, "M465 595 C500 595 495 645 535 645"),
+            edge("compressedKv", "indexer", "c-control", "index keys", true, "M645 280 V330 H775 V645 H740"),
+            edge("indexer", "topk", "c-control", "scores", false, "M740 645 C805 645 785 215 820 215"),
+            edge("topk", "concat", "c-csa", "selected", false, "M910 275 V350"),
+            edge("attentionInput", "concat", "c-csa", "recent 128", true, "M210 420 H790 V418 H820"),
+            edge("concat", "mqa", "c-csa"), edge("fullQuery", "mqa", "c-csa", "Q", false, "M740 475 C900 475 945 430 1060 430"),
+            edge("mqa", "groupedOut", "c-csa", "heads", false, "M1155 485 V555"), edge("groupedOut", "attentionOut", "", "", false, "M1270 615 C1320 615 1320 445 1325 445")
+          ],
+          notes: [[650, 720, "qr forks independently into full Q and indexer Q · full Q does not feed the indexer", true], [650, 742, "Partial RoPE on final 64 full-Q channels · complete compressed blocks enter cache.", false]]
+        };
+      }
+
+      function hcaPlate(v) {
+        return {
+          title: `${v.name} · Heavily Compressed Attention`,
+          zones: [[50, 70, 1300, 680, "HCA · COMPRESSION 128 · DENSE OVER COMPRESSED HISTORY + LOCAL WINDOW"]],
+          nodes: [
+            node("attentionInput", 85, 350, 140, 95, "Hidden states H", `[B,T,${v.d}]`, "", "process", 0),
+            node("compressor", 315, 180, 220, 125, "Heavy compressor", "non-overlap · m′=128", "c-hca", "projection", 1),
+            node("compressedKv", 615, 180, 210, 125, "HCA KV cache", "[B,⌊T/128⌋,512]", "c-hca", "cache", 2),
+            node("query", 315, 525, 220, 125, "Low-rank queries", `${f(v.d)} → ${f(v.qrank)} → ${v.heads}×512`, "c-hca", "projection", 1),
+            node("concat", 885, 325, 200, 145, "Concatenate KV", "all compressed + local 128", "c-hca", "process", 3),
+            node("mqa", 1135, 310, 190, 175, "Dense shared-KV MQA", `${v.heads} Q heads · 1 KV head`, "c-hca", "process", 4),
+            node("groupedOut", 900, 555, 210, 120, "Grouped output", `${v.groups} groups · rank 1,024`, "c-hca", "projection", 5),
+            node("attentionOut", 1245, 580, 80, 80, "ŷ", `width ${f(v.d)}`, "", "process", 6)
+          ],
+          edges: [
+            edge("attentionInput", "compressor", "c-hca", "history", false, "M225 375 C275 375 265 242 315 242"),
+            edge("compressor", "compressedKv", "c-hca"), edge("attentionInput", "query", "c-hca", "query", false, "M225 420 C275 420 265 588 315 588"),
+            edge("compressedKv", "concat", "c-hca", "all complete blocks", false, "M825 242 C865 242 850 370 885 370"),
+            edge("attentionInput", "concat", "c-hca", "recent 128", true, "M225 400 H885"),
+            edge("concat", "mqa", "c-hca"), edge("query", "mqa", "c-hca", "Q", false, "M535 588 C1030 588 1045 430 1135 430"),
+            edge("mqa", "groupedOut", "c-hca", "heads", false, "M1230 485 V520 H1005 V555"), edge("groupedOut", "attentionOut")
+          ],
+          notes: [[700, 122, "At 1M tokens: ≈8,192 compressed entries instead of 1,048,576 raw entries", true], [700, 720, "No sparse indexer: HCA attends densely over its much shorter compressed history.", false]]
+        };
+      }
+
+      function mhcPlate(v) {
+        return {
+          title: `${v.name} · Manifold-Constrained Hyper-Connections`,
+          zones: [[48, 65, 1304, 690, "mHC · ONE ATTENTION OR MoE SUBLAYER"]],
+          nodes: [
+            node("mhcInput", 75, 350, 175, 110, "Residual Xₗ", `[B,T,4,${v.d}]`, "c-mhc", "process", 0),
+            node("generator", 330, 125, 230, 130, "Dynamic generator", `RMSNorm(vec X) · ${f(4 * v.d)}→24`, "c-mhc", "projection", 1),
+            node("amap", 650, 135, 170, 105, "A = σ(Ã)", "pre-mix [1×4]", "c-mhc", "process", 2),
+            node("bmap", 650, 335, 170, 125, "B ∈ Birkhoff", "Sinkhorn 20 · [4×4]", "c-mhc", "process", 2),
+            node("cmap", 650, 565, 170, 105, "C = 2σ(C̃)", "post-map [4×1]", "c-mhc", "process", 2),
+            node("sublayer", 925, 135, 190, 115, "Fₗ: attention / MoE", `[B,T,${v.d}]`, "", "process", 3),
+            node("mhcOutput", 1145, 340, 190, 120, "Residual Xₗ₊₁", `B·X + C·F(A·X)`, "c-mhc", "process", 4)
+          ],
+          edges: [
+            edge("mhcInput", "generator", "c-mhc", "flatten + norm", true, "M162 350 C162 205 280 190 330 190"),
+            edge("generator", "amap", "c-mhc"), edge("generator", "bmap", "c-mhc", "", false, "M445 255 V397 H650"), edge("generator", "cmap", "c-mhc", "", false, "M380 255 V617 H650"),
+            edge("mhcInput", "amap", "c-mhc", "mix streams", false, "M250 380 C450 380 430 188 650 188"),
+            edge("amap", "sublayer", "c-mhc"), edge("sublayer", "cmap", "c-mhc", "broadcast", false, "M1020 250 V617 H820"),
+            edge("mhcInput", "bmap", "c-mhc"), edge("bmap", "mhcOutput", "c-mhc", "mapped residual"),
+            edge("cmap", "mhcOutput", "c-mhc", "sublayer update", false, "M820 617 C1080 617 1070 425 1145 425")
+          ],
+          notes: [[700, 715, "A and C are non-negative and bounded; B is doubly stochastic and non-expansive.", true], [700, 738, "The expensive sublayer remains d-wide—the four-stream expansion applies only to residual state.", false]]
+        };
+      }
+
+      function moePlate(v) {
+        return {
+          title: `${v.name} · DeepSeekMoE`,
+          zones: [[48, 65, 1304, 690, "FINE-GRAINED SPARSE CHANNEL MIXING · EVERY TRANSFORMER BLOCK"]],
+          nodes: [
+            node("moeInput", 75, 355, 145, 100, "Token state x", `[N,${v.d}]`, "", "process", 0),
+            node("router", 305, 500, 205, 135, "Router", `hash first 3 · then top-6 / ${v.experts}`, "c-control", "routing", 1),
+            node("experts", 610, 470, 250, 195, `${v.experts} routed experts`, `activate 6 · ${f(v.d)}→${f(v.expertFfn)}→${f(v.d)}`, "c-moe", "boundary", 2),
+            node("shared", 345, 170, 210, 130, "Shared expert ×1", `always active · FFN ${f(v.expertFfn)}`, "c-moe", "process", 1),
+            node("combine", 970, 330, 175, 120, "Weighted sum", "6 routed + shared", "c-moe", "routing", 3),
+            node("moeOutput", 1220, 350, 115, 80, "MoE output", `[N,${v.d}]`, "", "process", 4)
+          ],
+          edges: [
+            edge("moeInput", "router", "c-moe", "route", false, "M220 405 C270 405 250 567 305 567"),
+            edge("router", "experts", "c-moe", "dispatch top-6"), edge("experts", "combine", "c-moe", "weighted reduce", false, "M860 567 C930 567 900 405 970 405"),
+            edge("moeInput", "shared", "c-moe", "always-on", false, "M220 380 C280 380 275 235 345 235"),
+            edge("shared", "combine", "c-moe", "common path", false, "M555 235 C850 235 850 365 970 365"), edge("combine", "moeOutput", "")
+          ],
+          notes: [[700, 715, "Routing score = Sqrt(Softplus(xWᵀ)); top-6 weights are renormalized and scaled.", true], [700, 738, "Instruct checkpoints: routed experts FP4; most non-expert weights FP8.", false]]
+        };
+      }
+
+      function mtpPlate(v) {
+        return {
+          title: `${v.name} · Multi-Token Prediction`,
+          zones: [[48, 65, 1304, 690, "ONE SHARED-HEAD MTP MODULE"]],
+          nodes: [
+            node("mainHidden", 85, 180, 210, 120, "Main hidden state", `[B,T,4,${v.d}]`, "", "process", 0),
+            node("nextEmbed", 85, 520, 210, 120, "Next-token embedding", `shift +1 · [B,T,${v.d}]`, "c-mtp", "process", 0),
+            node("fuse", 405, 335, 210, 130, "Norm + project + add", "h-proj + e-proj", "c-mtp", "projection", 1),
+            node("mtpBlock", 735, 290, 260, 220, "MTP V4 block ×1", `mHC · SWA 128 · MoE top-6/${v.experts}`, "c-mtp", "process", 2),
+            node("sharedHead", 1095, 330, 205, 140, "Shared norm + head", "129,280 future-token logits", "c-mtp", "projection", 3)
+          ],
+          edges: [
+            edge("mainHidden", "fuse", "c-mtp", "normalize + h-proj", false, "M295 240 C365 240 335 380 405 380"),
+            edge("nextEmbed", "fuse", "c-mtp", "normalize + e-proj", false, "M295 580 C365 580 335 420 405 420"),
+            edge("fuse", "mtpBlock", "c-mtp"), edge("mtpBlock", "sharedHead", "c-mtp")
+          ],
+          notes: [[700, 160, "Training target: one additional future token; loss weight 0.3 for most pre-training.", true], [700, 650, "Inference: the same checkpoint’s NextN layer can provide speculative draft tokens.", false]]
+        };
+      }
+
+      const plateBuilders = { overall: overallPlate, schedule: schedulePlate, csa: csaPlate, hca: hcaPlate, mhc: mhcPlate, moe: moePlate, mtp: mtpPlate };
+
+      const plateLegends = {
+        overall: ["System symbols", [["process", "module / sublayer"], ["projection", "projection / encoding"], ["boundary", "repeated region"], ["flow", "data path"]]],
+        schedule: ["Schedule symbols", [["process", "layer group"], ["boundary", "repetition"], ["flow", "layer order"]]],
+        csa: ["CSA symbols", [["process", "attention operation"], ["projection", "learned projection"], ["cache", "cached state"], ["routing", "top-k selection"], ["flow", "tensor flow"]]],
+        hca: ["HCA symbols", [["process", "attention operation"], ["projection", "learned projection"], ["cache", "cached state"], ["flow", "tensor flow"]]],
+        mhc: ["mHC symbols", [["process", "mapping / state"], ["projection", "dynamic generator"], ["flow", "residual flow"]]],
+        moe: ["MoE symbols", [["process", "expert / operation"], ["routing", "route / reduce"], ["boundary", "expert bank"], ["flow", "active token path"]]],
+        mtp: ["MTP symbols", [["process", "state / block"], ["projection", "fusion / head"], ["flow", "prediction path"]]]
+      };
+
+      function contractsFor(v) {
+        const hPerGroup = v.heads / v.groups;
+        const qOut = v.heads * 512;
+        return {
+          csa: {
+            title: "CSA tensor contract",
+            notation: ["B batch", "T query tokens", "H history", `Nh ${v.heads}`, "C 512", "m 4", `K ${v.csaTopk}`],
+            rows: [
+              ["Input", `X [B,T,${v.d}]`, "query tokens and KV history"],
+              ["Dual compressor", `Wa/Wb KV,Z [${v.d},512]`, "two overlapping 4-token branches"],
+              ["Compressed KV", "Ccomp [B,⌊H/4⌋,512]", "one shared key/value head"],
+              ["Query latent", `Wqa [${v.d},${v.qrank}]`, `qr [B,T,${v.qrank}]`],
+              ["Full attention Q", `Wq [${v.qrank},${qOut}]`, `Q [B,T,${v.heads},512]`],
+              ["Lightning indexer Q", `Windex [${v.qrank},8192]`, "Qindex [B,T,64,128] plus 64 scalar head weights"],
+              ["Index scores", "I [B,T,⌊H/4⌋]", `top-k indices [B,T,${v.csaTopk}]`],
+              ["Core MQA", `scores [B,${v.heads},T,K+128]`, "shared K=V entries, partial RoPE"],
+              ["Grouped output", `${v.groups} × [${hPerGroup * 512},1024]`, `concat ${v.groupOut} → ${v.d}`]
+            ],
+            note: "Weight matrices use math orientation [in,out]. Full attention Q and lightning indexer Q are independent projections of the same qr latent. The physical cache also keeps an uncompressed 128-token SWA segment and incomplete compression tails."
+          },
+          hca: {
+            title: "HCA tensor contract",
+            notation: ["B batch", "T query tokens", "H history", `Nh ${v.heads}`, "C 512", "m′ 128"],
+            rows: [
+              ["Input", `X [B,T,${v.d}]`, "query tokens and KV history"],
+              ["Compressor", `WKV,WZ [${v.d},512]`, "positional bias [128,512]"],
+              ["Compressed KV", "Ccomp [B,⌊H/128⌋,512]", "dense compressed history"],
+              ["Query low rank", `[${v.d},${v.qrank}] · [${v.qrank},${qOut}]`, `Q [B,T,${v.heads},512]`],
+              ["Core MQA", `scores [B,${v.heads},T,⌊H/128⌋+128]`, "all compressed + local entries"],
+              ["Grouped output", `${v.groups} × [${hPerGroup * 512},1024]`, `concat ${v.groupOut} → ${v.d}`]
+            ],
+            note: "At 1M context HCA stores about 8,192 compressed entries per layer, plus local and incomplete-block state."
+          },
+          mhc: {
+            title: "mHC tensor contract",
+            notation: ["B batch", "T tokens", "R 4 streams", `D ${v.d}`, "M 24 mixing values"],
+            rows: [
+              ["Residual", `X [B,T,4,${v.d}]`, `flatten → [B,T,${4 * v.d}]`],
+              ["Generator", `Wmix [${4 * v.d},24]`, "separate matrices for attention and MoE"],
+              ["Input map A", "[B,T,1,4]", "sigmoid-bounded pre-mix"],
+              ["Residual map B", "[B,T,4,4]", "20-step Sinkhorn projection"],
+              ["Output map C", "[B,T,4,1]", "2·sigmoid bounded post-map"],
+              ["Inner layer", `F: [B,T,${v.d}] → [B,T,${v.d}]`, "attention or MoE remains unexpanded"],
+              ["Update", `X′ [B,T,4,${v.d}]`, "B·X + C·F(A·X)"]
+            ],
+            note: "The reference stores the dynamic generator as [24,4D] in PyTorch Linear orientation. Fused kernels generate A/B/C and apply the Sinkhorn map."
+          },
+          moe: {
+            title: "DeepSeekMoE tensor contract",
+            notation: ["N B·T tokens", `D ${v.d}`, `E ${v.experts}`, "K 6", `F ${v.expertFfn}`],
+            rows: [
+              ["Learned router", `X [N,D] · Wrᵀ [D,${v.experts}]`, `scores [N,${v.experts}] → ids/weights [N,6]`],
+              ["Hash router", "tid2eid [129280,6]", "used in transformer layers 0–2"],
+              ["Logical dispatch", `[N,6,${v.d}]`, `physically packed [tokens_e,${v.d}]`],
+              ["Expert gate/up", `W1,W3 [${v.d},${v.expertFfn}]`, "clamped SwiGLU"],
+              ["Expert down", `W2 [${v.expertFfn},${v.d}]`, `one triplet for each of ${v.experts} experts`],
+              ["Routed reduce", `[N,6,${v.d}] → [N,${v.d}]`, "weighted sum"],
+              ["Shared expert", `${v.d} → ${v.expertFfn} → ${v.d}`, "always active; added after routed reduce"]
+            ],
+            note: "The logical dispatch is dense in notation; expert-parallel MegaMoE kernels sort and pack a ragged number of tokens per expert. Instruct routed weights are FP4."
+          },
+          mtp: {
+            title: "MTP tensor contract",
+            notation: ["B batch", "T training positions", "R 4", `D ${v.d}`, "V 129280"],
+            rows: [
+              ["Main state", `H [B,T,4,${v.d}]`, "completed main decoder state"],
+              ["Shifted embedding", `E+1 [B,T,${v.d}]`, "shared embedding table"],
+              ["Fusion", `Wh,Wе [${v.d},${v.d}]`, `broadcast sum [B,T,4,${v.d}]`],
+              ["MTP block", `4D residual · SWA 128 · MoE top-6/${v.experts}`, "one extra V4 transformer block"],
+              ["Head", `collapse [B,T,4,D] → [B,T,D]`, "shared LM head [D,129280]"]
+            ],
+            note: "During autoregressive speculative decoding T is typically one. The released compress-ratio schedule assigns the MTP block pure sliding-window attention."
+          }
+        };
+      }
+
+      const svg = document.getElementById("architecture-map");
+      const diagramRoot = document.getElementById("diagram-root");
+      const detailKicker = document.getElementById("detail-kicker");
+      const detailTitle = document.getElementById("detail-title");
+      const detailCopy = document.getElementById("detail-copy");
+      const detailFacts = document.getElementById("detail-facts");
+      const detailSource = document.getElementById("detail-source");
+      const contract = document.getElementById("kernel-contract");
+      const contractTitle = document.getElementById("contract-title");
+      const contractNotation = document.getElementById("contract-notation");
+      const contractRows = document.getElementById("contract-rows");
+      const contractNote = document.getElementById("contract-note");
+      const traceButton = document.getElementById("trace-flow");
+      const legendTitle = document.getElementById("symbol-legend-title");
+      const legendItems = document.getElementById("symbol-legend-items");
+      let activeVariant = "pro";
+      let activeView = "overall";
+      let activePlate = null;
+      let viewBox = [0, 0, 1400, 820];
+      let dragging = false;
+      let dragStart = null;
+      let traceTimers = [];
+
+      function el(name, attrs = {}) {
+        const element = document.createElementNS(SVG_NS, name);
+        Object.entries(attrs).forEach(([key, value]) => element.setAttribute(key, value));
+        return element;
+      }
+
+      function renderShape(group, item) {
+        let shape;
+        if (item.shape === "projection") {
+          shape = el("path", { d: `M0 0H${item.w - 22}L${item.w} ${item.h / 2}L${item.w - 22} ${item.h}H0L22 ${item.h / 2}Z`, class: "shape" });
+        } else if (item.shape === "routing") {
+          shape = el("path", { d: `M${item.w / 2} 0L${item.w} ${item.h / 2}L${item.w / 2} ${item.h}L0 ${item.h / 2}Z`, class: "shape" });
+        } else {
+          shape = el("rect", { width: item.w, height: item.h, rx: item.shape === "cache" ? item.h / 4 : 17, class: "shape" });
+        }
+        group.append(shape);
+        if (item.shape === "cache") {
+          group.append(el("path", { d: `M0 ${item.h / 4}C0 0 ${item.w} 0 ${item.w} ${item.h / 4}`, fill: "none", stroke: "currentColor", opacity: ".45" }));
+        }
+      }
+
+      function renderText(group, item) {
+        const lines = item.label.split("|");
+        const centeredStart = item.h / 2 - (lines.length - 1) * 9 - (item.sub ? 8 : 0);
+        const start = item.labelY ?? centeredStart;
+        lines.forEach((line, index) => {
+          const text = el("text", { x: item.w / 2, y: start + index * 19, class: "node-label" });
+          text.textContent = line;
+          group.append(text);
+        });
+        if (item.sub) {
+          const sub = el("text", { x: item.w / 2, y: start + lines.length * 19 + 3, class: "node-sub" });
+          sub.textContent = item.sub;
+          group.append(sub);
+        }
+      }
+
+      function defaultPath(from, to) {
+        const x1 = from.x + from.w;
+        const y1 = from.y + from.h / 2;
+        const x2 = to.x;
+        const y2 = to.y + to.h / 2;
+        const mid = (x1 + x2) / 2;
+        return `M${x1} ${y1}C${mid} ${y1} ${mid} ${y2} ${x2} ${y2}`;
+      }
+
+      function renderPlate() {
+        stopTrace();
+        clearSelection();
+        const v = variants[activeVariant];
+        activePlate = plateBuilders[activeView](v);
+        diagramRoot.replaceChildren();
+
+        activePlate.zones.forEach(([x, y, w, h, label]) => {
+          diagramRoot.append(el("rect", { x, y, width: w, height: h, rx: 22, class: "zone" }));
+          const text = el("text", { x: x + 24, y: y + 32, class: "zone-label" });
+          text.textContent = label;
+          diagramRoot.append(text);
+        });
+
+        const byId = Object.fromEntries(activePlate.nodes.map(item => [item.id, item]));
+        activePlate.edges.forEach((item, index) => {
+          const path = el("path", {
+            d: item.d || defaultPath(byId[item.from], byId[item.to]),
+            class: `edge ${item.color} ${item.dashed ? "dashed" : ""}`,
+            "data-from": item.from,
+            "data-to": item.to,
+            "data-edge": index
+          });
+          diagramRoot.append(path);
+          if (item.label) {
+            const from = byId[item.from];
+            const to = byId[item.to];
+            const text = el("text", { x: (from.x + from.w + to.x) / 2, y: (from.y + from.h / 2 + to.y + to.h / 2) / 2 - 7, class: "edge-label" });
+            text.textContent = item.label;
+            diagramRoot.append(text);
+          }
+        });
+
+        activePlate.nodes.forEach((item) => {
+          const group = el("g", {
+            class: `node ${item.color}`,
+            transform: `translate(${item.x} ${item.y})`,
+            "data-node": item.id,
+            "data-step": item.step,
+            role: "button",
+            tabindex: "0"
+          });
+          renderShape(group, item);
+          renderText(group, item);
+          group.addEventListener("click", event => { event.stopPropagation(); selectNode(group); });
+          group.addEventListener("keydown", event => {
+            if (event.key === "Enter" || event.key === " ") { event.preventDefault(); selectNode(group); }
+          });
+          diagramRoot.append(group);
+        });
+
+        activePlate.notes.forEach(([x, y, content, strong]) => {
+          const text = el("text", { x, y, class: `annotation ${strong ? "strong" : ""}`, "text-anchor": "middle" });
+          text.textContent = content;
+          diagramRoot.append(text);
+        });
+
+        renderLegend();
+        renderContract();
+        const first = diagramRoot.querySelector(".node");
+        if (first) selectNode(first);
+      }
+
+      function renderLegend() {
+        const [title, items] = plateLegends[activeView];
+        legendTitle.textContent = title;
+        legendItems.replaceChildren();
+        items.forEach(([kind, label]) => {
+          const wrapper = document.createElement("span");
+          wrapper.className = "legend-item";
+          const icon = document.createElement("span");
+          icon.className = `symbol-icon ${kind}`;
+          icon.setAttribute("aria-hidden", "true");
+          const text = document.createElement("span");
+          text.textContent = label;
+          wrapper.append(icon, text);
+          legendItems.append(wrapper);
+        });
+      }
+
+      function renderContract() {
+        const spec = contractsFor(variants[activeVariant])[activeView];
+        contract.hidden = !spec;
+        if (!spec) return;
+        contractTitle.textContent = spec.title;
+        contractNotation.replaceChildren();
+        spec.notation.forEach(item => {
+          const chip = document.createElement("span");
+          chip.textContent = item;
+          contractNotation.append(chip);
+        });
+        contractRows.replaceChildren();
+        spec.rows.forEach(([label, shape, note]) => {
+          const row = document.createElement("tr");
+          const heading = document.createElement("th");
+          heading.scope = "row";
+          heading.textContent = label;
+          const cell = document.createElement("td");
+          const code = document.createElement("code");
+          code.textContent = shape;
+          const explanation = document.createElement("span");
+          explanation.className = "shape-note";
+          explanation.textContent = note;
+          cell.append(code, explanation);
+          row.append(heading, cell);
+          contractRows.append(row);
+        });
+        contractNote.textContent = spec.note;
+      }
+
+      function selectNode(group) {
+        const key = group.dataset.node;
+        const raw = details[key];
+        if (!raw) return;
+        clearSelection();
+        group.classList.add("selected");
+        svg.classList.add("has-selection");
+        diagramRoot.querySelectorAll(".edge").forEach(item => {
+          if (item.dataset.from === key || item.dataset.to === key) item.classList.add("highlighted");
+        });
+        const v = variants[activeVariant];
+        const [kicker, title, copy, facts] = raw;
+        detailKicker.textContent = kicker;
+        detailTitle.textContent = title;
+        detailCopy.textContent = copy;
+        detailFacts.replaceChildren();
+        variantValue(facts, v).forEach(([label, value]) => {
+          const wrapper = document.createElement("div");
+          wrapper.className = "detail-fact";
+          const term = document.createElement("dt");
+          term.textContent = label;
+          const definition = document.createElement("dd");
+          definition.textContent = value;
+          wrapper.append(term, definition);
+          detailFacts.append(wrapper);
+        });
+        detailSource.href = ["query", "indexer", "compressor", "groupedOut", "generator", "router", "experts", "mtpBlock"].includes(key) ? modelUrl : reportUrl;
+        detailSource.firstElementChild.textContent = detailSource.href === modelUrl ? "Official reference implementation" : "Official technical report · §2";
+      }
+
+      function clearSelection() {
+        svg.classList.remove("has-selection");
+        diagramRoot.querySelectorAll(".selected").forEach(item => item.classList.remove("selected"));
+        diagramRoot.querySelectorAll(".highlighted").forEach(item => item.classList.remove("highlighted"));
+      }
+
+      function setView(name) {
+        activeView = name;
+        document.querySelectorAll(".view-tab").forEach(tab => {
+          const active = tab.dataset.view === name;
+          tab.setAttribute("aria-selected", String(active));
+          if (active) tab.scrollIntoView({ block: "nearest", inline: "nearest" });
+        });
+        resetView();
+        renderPlate();
+      }
+
+      function setVariant(name) {
+        activeVariant = name;
+        const v = variants[name];
+        document.querySelectorAll(".variant-button").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.variant === name)));
+        document.getElementById("metric-total").textContent = v.total;
+        document.getElementById("metric-active").textContent = v.active;
+        document.getElementById("metric-layers").textContent = v.layers;
+        renderPlate();
+      }
+
+      function setViewBox(next) {
+        viewBox = next;
+        svg.setAttribute("viewBox", next.join(" "));
+      }
+
+      function resetView() {
+        setViewBox([0, 0, 1400, 820]);
+      }
+
+      function zoom(factor, x = viewBox[0] + viewBox[2] / 2, y = viewBox[1] + viewBox[3] / 2) {
+        const width = Math.min(2200, Math.max(520, viewBox[2] * factor));
+        const actual = width / viewBox[2];
+        const height = viewBox[3] * actual;
+        const rx = (x - viewBox[0]) / viewBox[2];
+        const ry = (y - viewBox[1]) / viewBox[3];
+        setViewBox([x - rx * width, y - ry * height, width, height]);
+      }
+
+      function clientPoint(clientX, clientY) {
+        const rect = svg.getBoundingClientRect();
+        return { x: viewBox[0] + (clientX - rect.left) / rect.width * viewBox[2], y: viewBox[1] + (clientY - rect.top) / rect.height * viewBox[3] };
+      }
+
+      function stopTrace() {
+        traceTimers.forEach(window.clearTimeout);
+        traceTimers = [];
+        svg.classList.remove("trace-running");
+        traceButton.classList.remove("running");
+        traceButton.textContent = "▶ Trace flow";
+        diagramRoot.querySelectorAll(".processing").forEach(item => item.classList.remove("processing"));
+      }
+
+      function runTrace() {
+        if (svg.classList.contains("trace-running")) { stopTrace(); return; }
+        clearSelection();
+        svg.classList.add("trace-running");
+        traceButton.classList.add("running");
+        traceButton.textContent = "■ Stop";
+        const nodes = [...diagramRoot.querySelectorAll(".node")].sort((a, b) => Number(a.dataset.step) - Number(b.dataset.step));
+        nodes.forEach((item, index) => {
+          traceTimers.push(window.setTimeout(() => {
+            diagramRoot.querySelectorAll(".processing").forEach(node => node.classList.remove("processing"));
+            item.classList.add("processing");
+            selectNode(item);
+          }, index * 680));
+        });
+        traceTimers.push(window.setTimeout(stopTrace, nodes.length * 680 + 800));
+      }
+
+      document.querySelectorAll(".view-tab").forEach(tab => {
+        tab.addEventListener("click", () => setView(tab.dataset.view));
+        tab.addEventListener("keydown", event => {
+          if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+          event.preventDefault();
+          const tabs = [...document.querySelectorAll(".view-tab")];
+          const offset = event.key === "ArrowRight" ? 1 : -1;
+          const next = tabs[(tabs.indexOf(tab) + offset + tabs.length) % tabs.length];
+          next.focus();
+          setView(next.dataset.view);
+        });
+      });
+      document.querySelectorAll(".variant-button").forEach(button => button.addEventListener("click", () => setVariant(button.dataset.variant)));
+      document.getElementById("zoom-in").addEventListener("click", () => zoom(0.82));
+      document.getElementById("zoom-out").addEventListener("click", () => zoom(1.22));
+      document.getElementById("fit-view").addEventListener("click", resetView);
+      traceButton.addEventListener("click", runTrace);
+      svg.addEventListener("click", event => { if (event.target === svg || event.target.classList.contains("zone")) clearSelection(); });
+      svg.addEventListener("wheel", event => { event.preventDefault(); const p = clientPoint(event.clientX, event.clientY); zoom(event.deltaY > 0 ? 1.12 : 0.89, p.x, p.y); }, { passive: false });
+      svg.addEventListener("pointerdown", event => {
+        if (event.target.closest(".node")) return;
+        dragging = true;
+        svg.classList.add("dragging");
+        svg.setPointerCapture(event.pointerId);
+        dragStart = { x: event.clientX, y: event.clientY, box: [...viewBox] };
+      });
+      svg.addEventListener("pointermove", event => {
+        if (!dragging) return;
+        const rect = svg.getBoundingClientRect();
+        setViewBox([dragStart.box[0] - (event.clientX - dragStart.x) / rect.width * dragStart.box[2], dragStart.box[1] - (event.clientY - dragStart.y) / rect.height * dragStart.box[3], dragStart.box[2], dragStart.box[3]]);
+      });
+      function endDrag() { dragging = false; svg.classList.remove("dragging"); }
+      svg.addEventListener("pointerup", endDrag);
+      svg.addEventListener("pointercancel", endDrag);
+      window.addEventListener("keydown", event => { if (event.key === "Escape") { stopTrace(); clearSelection(); } });
+
+      const params = new URLSearchParams(window.location.search);
+      if (Object.hasOwn(variants, params.get("model"))) activeVariant = params.get("model");
+      if (Object.hasOwn(plateBuilders, params.get("view"))) activeView = params.get("view");
+      setVariant(activeVariant);
+      setView(activeView);
+    </script>
+  </body>
+</html>
