@@ -1,0 +1,2403 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Interactive architecture and kernel-flow explorer for GLM 5.3 Base and Flash."
+    />
+    <title>GLM 5.3 — Interactive Architecture Map</title>
+    <script>
+      (() => {
+        let savedTheme = null;
+        try {
+          savedTheme = localStorage.getItem("tokenspeed-architecture-theme");
+        } catch {}
+        const prefersDark = !window.matchMedia || window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.dataset.theme = ["dark", "light"].includes(savedTheme)
+          ? savedTheme
+          : prefersDark ? "dark" : "light";
+      })();
+    </script>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #050a14;
+        --panel: #091222;
+        --panel-2: #0b172a;
+        --ink: #eef4ff;
+        --muted: #9baac2;
+        --faint: #64748e;
+        --line: rgba(187, 205, 236, 0.13);
+        --line-strong: rgba(187, 205, 236, 0.25);
+        --blue: #77a2ff;
+        --cyan: #55d5e8;
+        --violet: #ae8bff;
+        --green: #5cdaa7;
+        --orange: #ffb36b;
+        --pink: #f38fbb;
+        --yellow: #f3d36f;
+        --shadow: 0 28px 80px rgba(0, 0, 0, 0.4);
+        font-family:
+          Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        min-width: 320px;
+        margin: 0;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 16% 0%, rgba(85, 213, 232, 0.11), transparent 29rem),
+          radial-gradient(circle at 88% 6%, rgba(119, 162, 255, 0.13), transparent 31rem),
+          var(--bg);
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      button,
+      a,
+      [role="button"] {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      a {
+        color: var(--cyan);
+      }
+
+      .skip-link {
+        position: fixed;
+        z-index: 100;
+        top: 12px;
+        left: 12px;
+        padding: 10px 14px;
+        color: var(--bg);
+        background: var(--cyan);
+        border-radius: 9px;
+        transform: translateY(-160%);
+      }
+
+      .skip-link:focus {
+        transform: translateY(0);
+      }
+
+      .topbar {
+        position: sticky;
+        z-index: 30;
+        top: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 64px;
+        padding: 0 28px;
+        border-bottom: 1px solid var(--line);
+        background: rgba(5, 10, 20, 0.78);
+        backdrop-filter: blur(18px);
+      }
+
+      .brand {
+        display: inline-flex;
+        gap: 11px;
+        align-items: center;
+        color: var(--ink);
+        font-size: 12px;
+        font-weight: 750;
+        letter-spacing: 0.09em;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .brand-mark {
+        display: grid;
+        width: 29px;
+        height: 29px;
+        place-items: center;
+        color: var(--cyan);
+        border: 1px solid rgba(85, 213, 232, 0.48);
+        border-radius: 8px;
+        background: rgba(85, 213, 232, 0.07);
+        font-size: 14px;
+        font-weight: 820;
+      }
+
+      .top-actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .report-link,
+      .theme-button,
+      .tool-button,
+      .trace-button {
+        display: inline-flex;
+        gap: 7px;
+        align-items: center;
+        justify-content: center;
+        min-height: 37px;
+        padding: 0 12px;
+        color: var(--ink);
+        border: 1px solid var(--line-strong);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.025);
+        cursor: pointer;
+        text-decoration: none;
+        transition:
+          border-color 150ms ease,
+          background 150ms ease,
+          transform 150ms ease;
+      }
+
+      .report-link:hover,
+      .theme-button:hover,
+      .tool-button:hover,
+      .trace-button:hover {
+        border-color: rgba(85, 213, 232, 0.55);
+        background: rgba(85, 213, 232, 0.07);
+      }
+
+      .report-link:active,
+      .theme-button:active,
+      .tool-button:active,
+      .trace-button:active {
+        transform: translateY(1px);
+      }
+
+      .theme-button {
+        flex: 0 0 auto;
+        width: 37px;
+        min-height: 37px;
+        padding: 0;
+        font-size: 17px;
+        line-height: 1;
+      }
+
+      main {
+        width: min(1540px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(320px, 430px);
+        gap: 54px;
+        align-items: end;
+        padding: 76px 4px 38px;
+      }
+
+      .eyebrow {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin: 0 0 13px;
+        color: var(--cyan);
+        font-size: 12px;
+        font-weight: 760;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+      }
+
+      .eyebrow::before {
+        width: 25px;
+        height: 1px;
+        content: "";
+        background: currentColor;
+      }
+
+      h1 {
+        max-width: 940px;
+        margin: 0;
+        font-size: clamp(44px, 6vw, 92px);
+        font-weight: 670;
+        letter-spacing: -0.065em;
+        line-height: 0.94;
+      }
+
+      h1 span {
+        color: var(--blue);
+      }
+
+      .lede {
+        max-width: 870px;
+        margin: 24px 0 0;
+        color: #b8c5d9;
+        font-size: clamp(16px, 1.45vw, 20px);
+        line-height: 1.62;
+      }
+
+      .family-panel {
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.018);
+      }
+
+      .variant-switch {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5px;
+        padding: 4px;
+        border: 1px solid var(--line);
+        border-radius: 11px;
+        background: rgba(0, 0, 0, 0.18);
+      }
+
+      .variant-button {
+        min-height: 37px;
+        color: var(--muted);
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .variant-button[aria-pressed="true"] {
+        color: #07101f;
+        background: var(--blue);
+      }
+
+      .hero-metrics {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .metric {
+        min-height: 77px;
+        padding: 13px 14px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+      }
+
+      .metric strong {
+        display: block;
+        font-size: 21px;
+        font-weight: 680;
+        letter-spacing: -0.03em;
+      }
+
+      .metric span {
+        display: block;
+        margin-top: 5px;
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .explorer {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 370px;
+        overflow: hidden;
+        border: 1px solid var(--line-strong);
+        border-radius: 20px;
+        background: rgba(9, 18, 34, 0.9);
+        box-shadow: var(--shadow);
+      }
+
+      .graph-column {
+        min-width: 0;
+      }
+
+      .view-tabs {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+        min-height: 64px;
+        padding: 10px 15px;
+        overflow-x: auto;
+        border-bottom: 1px solid var(--line);
+        scrollbar-width: none;
+      }
+
+      .view-tabs::-webkit-scrollbar {
+        display: none;
+      }
+
+      .view-tab {
+        flex: 0 0 auto;
+        min-height: 37px;
+        padding: 0 13px;
+        color: var(--muted);
+        border: 1px solid transparent;
+        border-radius: 9px;
+        background: transparent;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 680;
+      }
+
+      .view-tab:hover {
+        color: var(--ink);
+        background: rgba(255, 255, 255, 0.035);
+      }
+
+      .view-tab[aria-selected="true"] {
+        color: #07101f;
+        border-color: var(--blue);
+        background: var(--blue);
+      }
+
+      .viewport-wrap {
+        position: relative;
+        min-height: 700px;
+        background:
+          linear-gradient(rgba(119, 162, 255, 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(119, 162, 255, 0.035) 1px, transparent 1px),
+          radial-gradient(circle at 49% 44%, rgba(85, 213, 232, 0.045), transparent 40%);
+        background-size: 36px 36px, 36px 36px, auto;
+      }
+
+      #architecture-map {
+        display: block;
+        width: 100%;
+        min-height: 700px;
+        cursor: grab;
+        touch-action: none;
+        user-select: none;
+      }
+
+      #architecture-map.dragging {
+        cursor: grabbing;
+      }
+
+      .canvas-tools {
+        position: absolute;
+        z-index: 8;
+        top: 13px;
+        right: 13px;
+        display: flex;
+        gap: 5px;
+        padding: 5px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: rgba(5, 10, 20, 0.86);
+        backdrop-filter: blur(12px);
+      }
+
+      .tool-button {
+        width: 33px;
+        min-height: 33px;
+        padding: 0;
+        border-radius: 8px;
+      }
+
+      .trace-button {
+        min-height: 33px;
+        padding: 0 10px;
+        color: var(--cyan);
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 730;
+      }
+
+      .trace-button.running {
+        color: var(--bg);
+        border-color: var(--cyan);
+        background: var(--cyan);
+      }
+
+      .map-hint {
+        position: absolute;
+        z-index: 7;
+        bottom: 13px;
+        left: 14px;
+        margin: 0;
+        padding: 7px 9px;
+        color: var(--faint);
+        border-radius: 8px;
+        background: rgba(5, 10, 20, 0.78);
+        font-size: 10px;
+        pointer-events: none;
+      }
+
+      .symbol-legend,
+      .color-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 18px;
+        align-items: center;
+        min-height: 55px;
+        padding: 10px 16px;
+        border-top: 1px solid var(--line);
+      }
+
+      .symbol-legend {
+        background: rgba(255, 255, 255, 0.012);
+      }
+
+      .legend-title {
+        color: var(--ink);
+        font-size: 10px;
+        font-weight: 760;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .legend-items {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px 17px;
+      }
+
+      .legend-item {
+        display: inline-flex;
+        gap: 7px;
+        align-items: center;
+        color: var(--muted);
+        font-size: 10px;
+      }
+
+      .symbol-icon,
+      .color-swatch {
+        position: relative;
+        flex: 0 0 auto;
+        width: 20px;
+        height: 12px;
+        color: #a4b3ca;
+        border: 1px solid currentColor;
+        border-radius: 4px;
+        background: rgba(164, 179, 202, 0.07);
+      }
+
+      .symbol-icon.projection {
+        clip-path: polygon(12% 0, 88% 0, 100% 50%, 88% 100%, 12% 100%, 0 50%);
+        border-radius: 0;
+      }
+
+      .symbol-icon.cache {
+        border-radius: 50% / 25%;
+      }
+
+      .symbol-icon.routing {
+        width: 13px;
+        height: 13px;
+        border-radius: 0;
+        transform: rotate(45deg) scale(0.72);
+      }
+
+      .symbol-icon.boundary {
+        border-style: dashed;
+      }
+
+      .symbol-icon.flow {
+        border: 0;
+        background: transparent;
+      }
+
+      .symbol-icon.flow::before {
+        position: absolute;
+        top: 6px;
+        right: 3px;
+        left: 0;
+        content: "";
+        border-top: 1.5px solid currentColor;
+      }
+
+      .symbol-icon.flow::after {
+        position: absolute;
+        top: 3px;
+        right: 0;
+        content: "";
+        border-top: 3.5px solid transparent;
+        border-bottom: 3.5px solid transparent;
+        border-left: 5px solid currentColor;
+      }
+
+      .color-swatch {
+        width: 13px;
+        height: 8px;
+      }
+
+      .detail-panel {
+        padding: 25px;
+        border-left: 1px solid var(--line);
+        background:
+          linear-gradient(180deg, rgba(119, 162, 255, 0.04), transparent 15rem),
+          rgba(5, 10, 20, 0.48);
+      }
+
+      .detail-kicker {
+        margin: 0 0 9px;
+        color: var(--cyan);
+        font-size: 10px;
+        font-weight: 780;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .detail-panel h2 {
+        margin: 0;
+        font-size: 27px;
+        font-weight: 660;
+        letter-spacing: -0.04em;
+        line-height: 1.08;
+      }
+
+      .detail-copy {
+        margin: 15px 0 0;
+        color: #b1bfd4;
+        font-size: 13px;
+        line-height: 1.65;
+      }
+
+      .detail-rule {
+        height: 1px;
+        margin: 21px 0;
+        border: 0;
+        background: var(--line);
+      }
+
+      .detail-facts {
+        display: grid;
+        gap: 0;
+        margin: 0;
+      }
+
+      .detail-fact {
+        display: grid;
+        grid-template-columns: minmax(78px, 0.8fr) 1.2fr;
+        gap: 10px;
+        align-items: baseline;
+        padding: 9px 0;
+        border-bottom: 1px solid rgba(187, 205, 236, 0.075);
+      }
+
+      .detail-fact dt {
+        color: var(--faint);
+        font-size: 9px;
+        letter-spacing: 0.055em;
+        text-transform: uppercase;
+      }
+
+      .detail-fact dd {
+        margin: 0;
+        font-size: 11px;
+        font-weight: 640;
+        line-height: 1.4;
+        text-align: right;
+      }
+
+      .kernel-contract {
+        margin-top: 22px;
+        padding-top: 19px;
+        border-top: 1px solid var(--line);
+      }
+
+      .kernel-contract[hidden] {
+        display: none;
+      }
+
+      .contract-heading {
+        display: flex;
+        gap: 10px;
+        align-items: start;
+        justify-content: space-between;
+      }
+
+      .contract-heading h3 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 660;
+      }
+
+      .contract-badge {
+        padding: 4px 6px;
+        color: var(--cyan);
+        border: 1px solid rgba(85, 213, 232, 0.24);
+        border-radius: 6px;
+        background: rgba(85, 213, 232, 0.05);
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 8px;
+      }
+
+      .notation {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-top: 10px;
+      }
+
+      .notation span {
+        padding: 3px 5px;
+        color: var(--muted);
+        border: 1px solid rgba(187, 205, 236, 0.09);
+        border-radius: 5px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 8px;
+      }
+
+      .shape-table {
+        width: 100%;
+        margin-top: 11px;
+        border-spacing: 0;
+        border-collapse: collapse;
+      }
+
+      .shape-table th,
+      .shape-table td {
+        padding: 7px 0;
+        vertical-align: top;
+        border-bottom: 1px solid rgba(187, 205, 236, 0.065);
+        font-size: 9px;
+        line-height: 1.35;
+        text-align: left;
+      }
+
+      .shape-table th {
+        width: 33%;
+        padding-right: 8px;
+        color: var(--faint);
+        font-weight: 560;
+      }
+
+      .shape-table code {
+        color: #dce7fa;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 8px;
+        overflow-wrap: anywhere;
+        white-space: normal;
+      }
+
+      .shape-note {
+        display: block;
+        margin-top: 2px;
+        color: var(--faint);
+        font-size: 8px;
+      }
+
+      .contract-note {
+        margin: 9px 0 0;
+        color: var(--faint);
+        font-size: 8px;
+        line-height: 1.45;
+      }
+
+      .detail-source {
+        display: inline-flex;
+        gap: 6px;
+        align-items: center;
+        margin-top: 21px;
+        color: var(--muted);
+        font-size: 10px;
+        text-decoration: none;
+      }
+
+      .detail-source:hover {
+        color: var(--cyan);
+      }
+
+      .facts-section {
+        padding: 72px 4px 34px;
+      }
+
+      .section-heading {
+        display: grid;
+        grid-template-columns: 1fr minmax(280px, 520px);
+        gap: 30px;
+        align-items: end;
+        margin-bottom: 24px;
+      }
+
+      .section-heading h2 {
+        margin: 0;
+        font-size: clamp(30px, 4vw, 54px);
+        font-weight: 650;
+        letter-spacing: -0.05em;
+      }
+
+      .section-heading p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .fact-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 9px;
+      }
+
+      .fact-card {
+        min-height: 148px;
+        padding: 20px;
+        border: 1px solid var(--line);
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.018);
+      }
+
+      .fact-card .number {
+        color: var(--blue);
+        font-size: 26px;
+        font-weight: 670;
+        letter-spacing: -0.04em;
+      }
+
+      .fact-card h3 {
+        margin: 12px 0 6px;
+        font-size: 13px;
+      }
+
+      .fact-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.55;
+      }
+
+      .sources {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) repeat(3, minmax(180px, 0.62fr));
+        gap: 9px;
+        padding: 36px 4px 88px;
+      }
+
+      .source-intro,
+      .source-card {
+        min-height: 130px;
+        padding: 19px;
+        border: 1px solid var(--line);
+        border-radius: 15px;
+      }
+
+      .source-intro h2 {
+        margin: 0 0 9px;
+        font-size: 20px;
+      }
+
+      .source-intro p,
+      .source-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.55;
+      }
+
+      .source-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        color: var(--ink);
+        text-decoration: none;
+        transition:
+          transform 150ms ease,
+          border-color 150ms ease;
+      }
+
+      .source-card:hover {
+        border-color: rgba(85, 213, 232, 0.5);
+        transform: translateY(-2px);
+      }
+
+      .source-card strong {
+        font-size: 12px;
+      }
+
+      .source-card span {
+        color: var(--cyan);
+        font-size: 10px;
+      }
+
+      footer {
+        display: flex;
+        justify-content: space-between;
+        margin: 0;
+        padding: 23px 28px;
+        color: var(--faint);
+        border-top: 1px solid var(--line);
+        font-size: 10px;
+      }
+
+      /* SVG language */
+      .zone {
+        fill: rgba(255, 255, 255, 0.012);
+        stroke: rgba(187, 205, 236, 0.14);
+        stroke-width: 1.3;
+        stroke-dasharray: 7 7;
+      }
+
+      .zone-label {
+        fill: #70809b;
+        font-size: 11px;
+        font-weight: 740;
+        letter-spacing: 0.13em;
+      }
+
+      .edge {
+        fill: none;
+        stroke: rgba(181, 200, 231, 0.43);
+        stroke-width: 2;
+        marker-end: url(#arrow);
+        transition:
+          opacity 140ms ease,
+          stroke 140ms ease;
+      }
+
+      .edge.c-csa {
+        stroke: rgba(85, 213, 232, 0.66);
+        marker-end: url(#arrow-csa);
+      }
+
+      .edge.c-hca {
+        stroke: rgba(174, 139, 255, 0.65);
+        marker-end: url(#arrow-hca);
+      }
+
+      .edge.c-moe {
+        stroke: rgba(255, 179, 107, 0.65);
+        marker-end: url(#arrow-moe);
+      }
+
+      .edge.c-mhc {
+        stroke: rgba(92, 218, 167, 0.65);
+        marker-end: url(#arrow-mhc);
+      }
+
+      .edge.c-mtp {
+        stroke: rgba(243, 143, 187, 0.65);
+        marker-end: url(#arrow-mtp);
+      }
+
+      .edge.dashed {
+        stroke-dasharray: 6 6;
+      }
+
+      .edge.highlighted {
+        opacity: 1;
+        stroke: var(--cyan);
+        stroke-width: 3.4;
+        marker-end: url(#arrow-csa);
+      }
+
+      .has-selection .edge:not(.highlighted) {
+        opacity: 0.17;
+      }
+
+      .trace-running .edge {
+        stroke-dasharray: 8 10;
+        animation: march 650ms linear infinite;
+      }
+
+      .edge-label {
+        fill: #7585a0;
+        font-size: 9px;
+        font-weight: 600;
+        text-anchor: middle;
+      }
+
+      .node {
+        cursor: pointer;
+        outline: none;
+      }
+
+      .node .shape {
+        fill: #0d1b30;
+        stroke: rgba(187, 205, 236, 0.32);
+        stroke-width: 1.5;
+        transition:
+          filter 140ms ease,
+          fill 140ms ease,
+          stroke 140ms ease;
+      }
+
+      .node.c-csa .shape {
+        fill: #0c2730;
+        stroke: rgba(85, 213, 232, 0.62);
+      }
+
+      .node.c-hca .shape {
+        fill: #211a36;
+        stroke: rgba(174, 139, 255, 0.62);
+      }
+
+      .node.c-moe .shape {
+        fill: #2b2117;
+        stroke: rgba(255, 179, 107, 0.62);
+      }
+
+      .node.c-mhc .shape {
+        fill: #102a24;
+        stroke: rgba(92, 218, 167, 0.62);
+      }
+
+      .node.c-mtp .shape {
+        fill: #2e1a2a;
+        stroke: rgba(243, 143, 187, 0.62);
+      }
+
+      .node.c-control .shape {
+        fill: #2b2816;
+        stroke: rgba(243, 211, 111, 0.62);
+      }
+
+      .node:hover .shape,
+      .node:focus .shape,
+      .node.selected .shape {
+        stroke: var(--cyan);
+        stroke-width: 2.5;
+        filter: url(#glow);
+      }
+
+      .node.selected .shape {
+        fill: #143047;
+      }
+
+      .node.processing .shape {
+        animation: pulse 750ms ease both;
+      }
+
+      .node-label {
+        fill: #e8effd;
+        font-size: 14px;
+        font-weight: 660;
+        text-anchor: middle;
+        pointer-events: none;
+      }
+
+      .node-sub {
+        fill: #8ea0bc;
+        font-size: 9.5px;
+        font-weight: 530;
+        text-anchor: middle;
+        pointer-events: none;
+      }
+
+      .annotation {
+        fill: #71819d;
+        font-size: 10px;
+      }
+
+      .annotation.strong {
+        fill: #c5d1e6;
+        font-size: 11px;
+        font-weight: 650;
+      }
+
+      .big-number {
+        fill: var(--blue);
+        font-size: 30px;
+        font-weight: 690;
+        letter-spacing: -0.04em;
+        text-anchor: middle;
+      }
+
+      html[data-theme="light"] {
+        color-scheme: light;
+        --bg: #f4f7fc;
+        --panel: #ffffff;
+        --panel-2: #f2f6fc;
+        --ink: #111d31;
+        --muted: #53627a;
+        --faint: #6b7890;
+        --line: rgba(39, 66, 108, 0.13);
+        --line-strong: rgba(39, 66, 108, 0.24);
+        --blue: #326dcc;
+        --cyan: #087d91;
+        --violet: #7049b8;
+        --green: #147a59;
+        --orange: #a95414;
+        --pink: #a83b72;
+        --yellow: #806400;
+        --shadow: 0 28px 80px rgba(45, 67, 104, 0.14);
+      }
+
+      html[data-theme="light"] body {
+        background:
+          radial-gradient(circle at 16% 0%, rgba(8, 125, 145, 0.08), transparent 29rem),
+          radial-gradient(circle at 88% 6%, rgba(50, 109, 204, 0.09), transparent 31rem),
+          var(--bg);
+      }
+
+      html[data-theme="light"] .topbar {
+        background: rgba(248, 250, 254, 0.84);
+      }
+
+      html[data-theme="light"] .report-link,
+      html[data-theme="light"] .theme-button,
+      html[data-theme="light"] .tool-button,
+      html[data-theme="light"] .trace-button,
+      html[data-theme="light"] .family-panel,
+      html[data-theme="light"] .metric,
+      html[data-theme="light"] .fact-card {
+        background: rgba(255, 255, 255, 0.72);
+      }
+
+      html[data-theme="light"] .report-link:hover,
+      html[data-theme="light"] .theme-button:hover,
+      html[data-theme="light"] .tool-button:hover,
+      html[data-theme="light"] .trace-button:hover,
+      html[data-theme="light"] .view-tab:hover {
+        background: rgba(8, 125, 145, 0.075);
+      }
+
+      html[data-theme="light"] .lede,
+      html[data-theme="light"] .detail-copy {
+        color: #45566f;
+      }
+
+      html[data-theme="light"] .variant-switch {
+        background: rgba(39, 66, 108, 0.055);
+      }
+
+      html[data-theme="light"] .variant-button[aria-pressed="true"],
+      html[data-theme="light"] .view-tab[aria-selected="true"],
+      html[data-theme="light"] .trace-button.running {
+        color: #ffffff;
+      }
+
+      html[data-theme="light"] .explorer {
+        background: rgba(255, 255, 255, 0.94);
+      }
+
+      html[data-theme="light"] .viewport-wrap {
+        background:
+          linear-gradient(rgba(50, 109, 204, 0.065) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(50, 109, 204, 0.065) 1px, transparent 1px),
+          radial-gradient(circle at 49% 44%, rgba(8, 125, 145, 0.05), transparent 40%);
+        background-size: 36px 36px, 36px 36px, auto;
+      }
+
+      html[data-theme="light"] .canvas-tools,
+      html[data-theme="light"] .map-hint {
+        background: rgba(255, 255, 255, 0.91);
+      }
+
+      html[data-theme="light"] .symbol-legend,
+      html[data-theme="light"] .notation span {
+        background: rgba(50, 109, 204, 0.035);
+      }
+
+      html[data-theme="light"] .symbol-icon,
+      html[data-theme="light"] .shape-table code {
+        color: #40536e;
+      }
+
+      html[data-theme="light"] .detail-panel {
+        background:
+          linear-gradient(180deg, rgba(50, 109, 204, 0.045), transparent 15rem),
+          rgba(247, 249, 253, 0.85);
+      }
+
+      html[data-theme="light"] .detail-fact,
+      html[data-theme="light"] .shape-table th,
+      html[data-theme="light"] .shape-table td {
+        border-bottom-color: rgba(39, 66, 108, 0.085);
+      }
+
+      html[data-theme="light"] .zone {
+        fill: rgba(50, 109, 204, 0.022);
+        stroke: rgba(39, 66, 108, 0.17);
+      }
+
+      html[data-theme="light"] .zone-label,
+      html[data-theme="light"] .annotation {
+        fill: #63728a;
+      }
+
+      html[data-theme="light"] .annotation.strong {
+        fill: #34445d;
+      }
+
+      html[data-theme="light"] .edge {
+        stroke: rgba(64, 83, 116, 0.58);
+      }
+
+      html[data-theme="light"] .edge.c-csa { stroke: rgba(8, 125, 145, 0.78); }
+      html[data-theme="light"] .edge.c-hca { stroke: rgba(112, 73, 184, 0.75); }
+      html[data-theme="light"] .edge.c-moe { stroke: rgba(169, 84, 20, 0.75); }
+      html[data-theme="light"] .edge.c-mhc { stroke: rgba(20, 122, 89, 0.75); }
+      html[data-theme="light"] .edge.c-mtp { stroke: rgba(168, 59, 114, 0.75); }
+
+      html[data-theme="light"] .edge-label {
+        fill: #66758d;
+      }
+
+      html[data-theme="light"] .node .shape {
+        fill: #f8fafd;
+        stroke: rgba(57, 79, 114, 0.42);
+      }
+
+      html[data-theme="light"] .node.c-csa .shape {
+        fill: #e6f3f5;
+        stroke: rgba(8, 125, 145, 0.68);
+      }
+
+      html[data-theme="light"] .node.c-hca .shape {
+        fill: #f0eafa;
+        stroke: rgba(112, 73, 184, 0.68);
+      }
+
+      html[data-theme="light"] .node.c-moe .shape {
+        fill: #faeee4;
+        stroke: rgba(169, 84, 20, 0.68);
+      }
+
+      html[data-theme="light"] .node.c-mhc .shape {
+        fill: #e5f2ed;
+        stroke: rgba(20, 122, 89, 0.68);
+      }
+
+      html[data-theme="light"] .node.c-mtp .shape {
+        fill: #f8e9f0;
+        stroke: rgba(168, 59, 114, 0.68);
+      }
+
+      html[data-theme="light"] .node.c-control .shape {
+        fill: #f5f0d8;
+        stroke: rgba(128, 100, 0, 0.68);
+      }
+
+      html[data-theme="light"] .node.selected .shape {
+        fill: #dcecf5;
+      }
+
+      html[data-theme="light"] .node-label {
+        fill: #17243a;
+      }
+
+      html[data-theme="light"] .node-sub {
+        fill: #607089;
+      }
+
+      html[data-theme="light"] #arrow path { fill: #53647e; }
+      html[data-theme="light"] #arrow-csa path { fill: var(--cyan); }
+      html[data-theme="light"] #arrow-hca path { fill: var(--violet); }
+      html[data-theme="light"] #arrow-moe path { fill: var(--orange); }
+      html[data-theme="light"] #arrow-mhc path { fill: var(--green); }
+      html[data-theme="light"] #arrow-mtp path { fill: var(--pink); }
+
+      @keyframes march {
+        to {
+          stroke-dashoffset: -18;
+        }
+      }
+
+      @keyframes pulse {
+        45% {
+          stroke: var(--cyan);
+          stroke-width: 3.5;
+          filter: url(#trace-glow);
+        }
+      }
+
+      @media (max-width: 1140px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
+
+        .family-panel {
+          max-width: 650px;
+        }
+
+        .explorer {
+          grid-template-columns: 1fr;
+        }
+
+        .detail-panel {
+          border-top: 1px solid var(--line);
+          border-left: 0;
+        }
+
+        .detail-facts {
+          grid-template-columns: repeat(2, 1fr);
+          column-gap: 25px;
+        }
+
+        .fact-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .sources {
+          grid-template-columns: repeat(3, 1fr);
+        }
+
+        .source-intro {
+          grid-column: 1 / -1;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .topbar {
+          padding: 0 14px;
+        }
+
+        .report-link span:first-child {
+          display: none;
+        }
+
+        main {
+          width: min(1540px, calc(100% - 20px));
+        }
+
+        .hero {
+          padding-top: 48px;
+        }
+
+        .viewport-wrap,
+        #architecture-map {
+          min-height: 560px;
+        }
+
+        .map-hint {
+          display: none;
+        }
+
+        .detail-facts,
+        .section-heading,
+        .fact-grid,
+        .sources {
+          grid-template-columns: 1fr;
+        }
+
+        .source-intro {
+          grid-column: auto;
+        }
+
+        footer {
+          gap: 9px;
+          flex-direction: column;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#explorer">Skip to architecture explorer</a>
+
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="GLM 5.3 architecture map home">
+        <span class="brand-mark" aria-hidden="true">G5</span>
+        GLM 5.3 / Architecture
+      </a>
+      <div class="top-actions">
+        <button
+          class="theme-button"
+          id="theme-toggle"
+          type="button"
+          aria-label="Switch to light theme"
+          title="Switch to light theme"
+        >
+          <span id="theme-icon" aria-hidden="true">☀</span>
+        </button>
+        <a
+          class="report-link"
+          href="https://arxiv.org/abs/2602.15763"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <span>Read technical report</span><span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">Sparse + linear attention · visualized</p>
+          <h1 id="page-title">Inside <span>GLM 5.3</span></h1>
+          <p class="lede">
+            A source-grounded map of two very different checkpoints: the 744B
+            all-DSA Base model and the 320B multimodal Flash model that interleaves
+            KDA, sparse attention, four-stream mHC, KPool, and sparse experts.
+          </p>
+        </div>
+        <div class="family-panel" aria-label="GLM 5.3 model variant">
+          <div class="variant-switch">
+            <button class="variant-button" type="button" data-variant="base" aria-pressed="true">GLM 5.3 Base</button>
+            <button class="variant-button" type="button" data-variant="flash" aria-pressed="false">GLM 5.3 Flash</button>
+          </div>
+          <div class="hero-metrics">
+            <div class="metric"><strong id="metric-total">744B</strong><span>total parameters</span></div>
+            <div class="metric"><strong id="metric-active">40B</strong><span>activated parameters</span></div>
+            <div class="metric"><strong id="metric-layers">78</strong><span>decoder layers</span></div>
+            <div class="metric"><strong>1M</strong><span>token context</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="explorer" id="explorer" aria-label="Interactive GLM 5.3 architecture explorer">
+        <div class="graph-column">
+          <nav class="view-tabs" role="tablist" aria-label="Architecture views">
+            <button class="view-tab" role="tab" aria-selected="true" data-view="overall">System flow</button>
+            <button class="view-tab" role="tab" aria-selected="false" data-view="schedule">Layer schedule</button>
+            <button class="view-tab" role="tab" aria-selected="false" data-view="dsa">DSA internals</button>
+            <button class="view-tab" role="tab" aria-selected="false" data-view="kpool">KPool internals</button>
+            <button class="view-tab" role="tab" aria-selected="false" data-view="kda">KDA internals</button>
+            <button class="view-tab" role="tab" aria-selected="false" data-view="mhc">mHC residuals</button>
+            <button class="view-tab" role="tab" aria-selected="false" data-view="moe">GLM MoE</button>
+            <button class="view-tab" role="tab" aria-selected="false" data-view="mtp">MTP path</button>
+            <button class="view-tab" role="tab" aria-selected="false" data-view="vision">Vision tower</button>
+          </nav>
+
+          <div class="viewport-wrap">
+            <div class="canvas-tools" aria-label="Diagram controls">
+              <button class="trace-button" id="trace-flow" type="button">▶ Trace flow</button>
+              <button class="tool-button" id="zoom-out" type="button" aria-label="Zoom out">−</button>
+              <button class="tool-button" id="zoom-in" type="button" aria-label="Zoom in">+</button>
+              <button class="tool-button" id="fit-view" type="button" aria-label="Fit diagram">⌖</button>
+            </div>
+            <p class="map-hint">Click a shape for details · drag to pan · wheel to zoom</p>
+            <svg
+              id="architecture-map"
+              viewBox="0 0 1400 820"
+              role="img"
+              aria-labelledby="map-title map-description"
+              tabindex="0"
+            >
+              <title id="map-title">Interactive GLM 5.3 architecture flow graph</title>
+              <desc id="map-description">
+                Nine plates show the GLM 5.3 Base and Flash system flows, layer schedules,
+                DeepSeek Sparse Attention, KPool, Kimi Delta Attention, mHC residuals,
+                sparse mixture of experts, Multi-Token Prediction, and the Flash vision tower.
+              </desc>
+              <defs>
+                <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+                  <feGaussianBlur stdDeviation="5" result="blur" />
+                  <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                </filter>
+                <filter id="trace-glow" x="-60%" y="-60%" width="220%" height="220%">
+                  <feGaussianBlur stdDeviation="9" result="blur" />
+                  <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                </filter>
+                <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#aebdd6" /></marker>
+                <marker id="arrow-csa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#55d5e8" /></marker>
+                <marker id="arrow-hca" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#ae8bff" /></marker>
+                <marker id="arrow-moe" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#ffb36b" /></marker>
+                <marker id="arrow-mhc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#5cdaa7" /></marker>
+                <marker id="arrow-mtp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#f38fbb" /></marker>
+              </defs>
+              <g id="diagram-root"></g>
+            </svg>
+          </div>
+
+          <div class="symbol-legend" aria-live="polite">
+            <span class="legend-title" id="symbol-legend-title">System symbols</span>
+            <div class="legend-items" id="symbol-legend-items"></div>
+          </div>
+          <div class="color-legend" aria-label="Color key">
+            <span class="legend-item" style="color:var(--cyan)"><span class="color-swatch"></span>DSA</span>
+            <span class="legend-item" style="color:var(--violet)"><span class="color-swatch"></span>KDA</span>
+            <span class="legend-item" style="color:var(--yellow)"><span class="color-swatch"></span>KPool / routing</span>
+            <span class="legend-item" style="color:var(--green)"><span class="color-swatch"></span>mHC</span>
+            <span class="legend-item" style="color:var(--orange)"><span class="color-swatch"></span>GLM MoE</span>
+            <span class="legend-item" style="color:var(--pink)"><span class="color-swatch"></span>MTP</span>
+          </div>
+        </div>
+
+        <aside class="detail-panel" aria-live="polite" aria-labelledby="detail-title">
+          <p class="detail-kicker" id="detail-kicker">Architecture overview</p>
+          <h2 id="detail-title">Two checkpoints, two execution profiles</h2>
+          <p class="detail-copy" id="detail-copy">
+            Base spends every layer on precise top-2048 sparse attention. Flash replaces
+            three of every four attention layers with recurrent KDA and adds four-stream
+            mHC plus native vision. Select a shape to inspect it.
+          </p>
+          <hr class="detail-rule" />
+          <dl class="detail-facts" id="detail-facts">
+            <div class="detail-fact"><dt>Base</dt><dd>78 DSA layers</dd></div>
+            <div class="detail-fact"><dt>Flash</dt><dd>34 KDA + 11 DSA</dd></div>
+            <div class="detail-fact"><dt>MoE</dt><dd>8 routed + 1 shared</dd></div>
+            <div class="detail-fact"><dt>Context</dt><dd>1048576 tokens</dd></div>
+          </dl>
+          <section class="kernel-contract" id="kernel-contract" hidden aria-labelledby="contract-title">
+            <div class="contract-heading">
+              <h3 id="contract-title">Kernel tensor contract</h3>
+              <span class="contract-badge">logical shapes</span>
+            </div>
+            <div class="notation" id="contract-notation"></div>
+            <table class="shape-table"><tbody id="contract-rows"></tbody></table>
+            <p class="contract-note" id="contract-note"></p>
+          </section>
+          <a
+            class="detail-source"
+            id="detail-source"
+            href="https://arxiv.org/abs/2602.15763"
+            target="_blank"
+            rel="noreferrer"
+          ><span>Official technical report · §2</span><span aria-hidden="true">↗</span></a>
+        </aside>
+      </section>
+
+      <section class="facts-section" aria-labelledby="facts-heading">
+        <div class="section-heading">
+          <h2 id="facts-heading">The GLM 5.3 family at a glance</h2>
+          <p>
+            Base and Flash share DSA, latent KV attention, sparse experts, and NextN,
+            but Flash introduces a separate hybrid multimodal architecture.
+          </p>
+        </div>
+        <div class="fact-grid">
+          <article class="fact-card"><div class="number">744B / 40B</div><h3>Base scale</h3><p>The released Base checkpoint has 744B total and 40B activated parameters across 78 decoder layers.</p></article>
+          <article class="fact-card"><div class="number">320B / 18B</div><h3>Flash scale</h3><p>Flash reduces active compute while adding native image and video inputs.</p></article>
+          <article class="fact-card"><div class="number">2048</div><h3>Sparse memory budget</h3><p>Every DSA query selects 2048 historical tokens through a 32-head lightning indexer.</p></article>
+          <article class="fact-card"><div class="number">3 : 1</div><h3>Flash hybrid schedule</h3><p>Three recurrent KDA layers alternate with one full DSA layer, ending on KDA.</p></article>
+          <article class="fact-card"><div class="number">4 tokens</div><h3>KPool groups</h3><p>Flash DSA pools four index keys to shortlist groups before expanding selected groups to token indices.</p></article>
+          <article class="fact-card"><div class="number">8 + 1</div><h3>Activated experts</h3><p>Eight routed experts run beside one always-on shared expert after the first three dense FFNs.</p></article>
+          <article class="fact-card"><div class="number">4 streams</div><h3>Flash mHC width</h3><p>Dynamic A, B, and C maps wrap both attention and FFN sublayers; Base uses a standard residual path.</p></article>
+          <article class="fact-card"><div class="number">FP8 E4M3</div><h3>Released precision</h3><p>Both published configs use 128 × 128 block-quantized FP8 weights.</p></article>
+        </div>
+      </section>
+
+      <section class="sources" aria-labelledby="sources-heading">
+        <div class="source-intro">
+          <h2 id="sources-heading">Primary sources</h2>
+          <p>Architecture claims are reconciled against Z.ai’s technical report, released configs, model cards, and TokenSpeed implementations.</p>
+        </div>
+        <a class="source-card" href="https://arxiv.org/abs/2602.15763" target="_blank" rel="noreferrer"><strong>GLM-5 report</strong><p>DSA, model scale, MoE, MTP, and long-context system design.</p><span>Open report ↗</span></a>
+        <a class="source-card" href="https://huggingface.co/zai-org/GLM-5.3/blob/main/config.json" target="_blank" rel="noreferrer"><strong>Base config</strong><p>Exact widths, DSA index schedule, expert counts, and released precision.</p><span>Open Base config ↗</span></a>
+        <a class="source-card" href="https://huggingface.co/zai-org/GLM-5.3-Flash/blob/main/config.json" target="_blank" rel="noreferrer"><strong>Flash config</strong><p>KDA/DSA schedule, KPool, mHC, vision tower, and expert topology.</p><span>Open Flash config ↗</span></a>
+      </section>
+    </main>
+
+    <footer>
+      <span>Auto-generated by gpt-5.6-sol.</span>
+      <span>GLM names and specifications belong to Z.ai.</span>
+    </footer>
+
+    <script>
+      const SVG_NS = "http://www.w3.org/2000/svg";
+      const reportUrl = "https://arxiv.org/abs/2602.15763";
+      const baseConfigUrl = "https://huggingface.co/zai-org/GLM-5.3/blob/main/config.json";
+      const flashConfigUrl = "https://huggingface.co/zai-org/GLM-5.3-Flash/blob/main/config.json";
+      const baseModelUrl = "https://github.com/lightseekorg/tokenspeed/blob/main/python/tokenspeed/runtime/models/glm5.py";
+      const flashModelUrl = "https://github.com/lightseekorg/tokenspeed/blob/main/python/tokenspeed/runtime/models/glm53_flash.py";
+      const themeStorageKey = "tokenspeed-architecture-theme";
+      const themeToggle = document.getElementById("theme-toggle");
+      const themeIcon = document.getElementById("theme-icon");
+
+      function readStoredTheme() {
+        try {
+          const theme = localStorage.getItem(themeStorageKey);
+          return ["dark", "light"].includes(theme) ? theme : null;
+        } catch {
+          return null;
+        }
+      }
+
+      function updateThemeControl() {
+        const current = document.documentElement.dataset.theme;
+        const next = current === "dark" ? "light" : "dark";
+        themeIcon.textContent = current === "dark" ? "☀" : "☾";
+        themeToggle.setAttribute("aria-label", `Switch to ${next} theme`);
+        themeToggle.title = `Switch to ${next} theme`;
+        themeToggle.setAttribute("aria-pressed", String(current === "light"));
+      }
+
+      function setTheme(theme, persist = false) {
+        document.documentElement.dataset.theme = theme;
+        if (persist) {
+          try {
+            localStorage.setItem(themeStorageKey, theme);
+          } catch {}
+        }
+        updateThemeControl();
+      }
+
+      themeToggle.addEventListener("click", () => {
+        setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark", true);
+      });
+      window.matchMedia?.("(prefers-color-scheme: dark)")?.addEventListener("change", (event) => {
+        if (!readStoredTheme()) setTheme(event.matches ? "dark" : "light");
+      });
+      updateThemeControl();
+
+      const variants = {
+        base: {
+          key: "base", name: "GLM 5.3 Base", total: "744B", active: "40B", layers: 78,
+          d: 6144, heads: 64, qrank: 2048, kvRank: 512, rope: 64,
+          indexHeads: 32, indexDim: 128, indexTopk: 2048,
+          fullIndexers: 21, reusedIndexers: 57, experts: 256, expertFfn: 2048,
+          denseLayers: 3, moeLayers: 75, residual: "standard", modality: "text",
+          schedule: "DSA ×78 · full index every fourth layer after the first three",
+          counts: "78 DSA", config: baseConfigUrl
+        },
+        flash: {
+          key: "flash", name: "GLM 5.3 Flash", total: "320B", active: "18B", layers: 45,
+          d: 4096, heads: 64, qrank: 1536, kvRank: 512, rope: 0,
+          indexHeads: 32, indexDim: 128, indexTopk: 2048,
+          kpool: 4, kdaHeads: 64, kdaDim: 128, conv: 4,
+          dsaLayers: 11, kdaLayers: 34, experts: 288, expertFfn: 2048,
+          denseLayers: 3, moeLayers: 42, residual: "4-stream mHC", modality: "text + vision",
+          schedule: "11 × (KDA ×3 → DSA) + final KDA",
+          counts: "34 KDA · 11 DSA", config: flashConfigUrl
+        }
+      };
+
+      const details = {};
+
+      Object.assign(details, {
+        tokens: ["Input", "Token IDs", "Text tokens enter the shared language embedding. GLM 5.3 Flash can also replace designated media placeholders with vision features before decoding.", [["Vocabulary", "154880"], ["Context", "1048576"], ["Base modality", "Text"], ["Flash modality", "Text + vision"]]],
+        media: ["Multimodal input", "Images / video", "Flash alone includes the native vision path. Frames are patchified by a 3-D convolution before visual tokens are contextualized and merged into the language width.", [["Variant", "Flash only"], ["Image size", "448 × 448"], ["Patch", "2 × 14 × 14"]]],
+        visionTower: ["Visual encoder", "24-block vision tower", "A 1024-wide transformer with 16 attention heads processes spatiotemporal patch tokens. A 2 × 2 merger then maps groups of four patches into 4096-wide language features.", [["Depth", "24"], ["Width", "1024"], ["Heads", "16"], ["Output", "4096"]]],
+        embedding: ["Input representation", "Language embedding", "The embedding table maps token IDs to the active checkpoint's hidden width. Flash inserts projected visual tokens at media positions in this same sequence.", v => [["Logical input", "ids [B,T]"], ["Logical output", `[B,T,${v.d}]`], ["Weight", `[154880,${v.d}]`]]],
+        expand: ["Flash residual initialization", "Four-stream mHC state", "Flash expands each 4096-wide token into four residual streams. Base does not use mHC and keeps a conventional single residual stream.", v => [["Variant", v.key === "flash" ? "Flash" : "Not used by Base"], ["Flash shape", "[B,T,4,4096]"], ["Inner sublayer", "[B,T,4096]"]]],
+        block: ["Decoder backbone", "GLM 5.3 decoder stack", "Base uses DSA in all 78 layers with standard residuals. Flash uses 34 recurrent KDA and 11 DSA layers inside four-stream mHC blocks.", v => [["Layers", String(v.layers)], ["Attention", v.counts], ["Residual", v.residual], ["FFN schedule", `${v.denseLayers} dense + ${v.moeLayers} MoE`]]],
+        attention: ["Sequence mixing", "DSA / KDA", "DSA performs content-selected sparse attention over a latent KV cache. Flash substitutes recurrent KDA in three out of every four layers to reduce long-context traffic.", v => [["Schedule", v.counts], ["DSA top-k", "2048"], ["Flash KDA state", "64 × 128 × 128"]]],
+        ffn: ["Channel mixing", "Dense FFN → sparse MoE", "The first three decoder layers use a dense 12288-wide SwiGLU FFN. Every later layer activates eight routed experts plus one shared expert.", v => [["Dense layers", "0–2"], ["MoE layers", String(v.moeLayers)], ["Routed pool", String(v.experts)], ["Active", "8 + 1 shared"]]],
+        residualMix: ["Residual path", "Residual mixing", "Base uses a conventional residual add. Flash generates dynamic A, B, and C maps around both attention and FFN sublayers and carries four residual streams.", v => [["Variant", v.key === "flash" ? "4-stream mHC" : "standard residual"], ["Flash Sinkhorn", "20 iterations"]]],
+        head: ["Model output", "Norm + vocabulary head", "The final decoder state is normalized and projected to logits over the 154880-token vocabulary.", v => [["Input", `[B,T,${v.d}]`], ["Output", "[B,T,154880]"]]],
+        mtp: ["Lookahead", "One NextN / MTP layer", "Both released checkpoints include one additional prediction layer that fuses a shifted token embedding with the main hidden state and reuses the language-model head.", [["Depth", "1"], ["Attention", "DSA"], ["FFN", "MoE"], ["Output head", "Shared"]]],
+        baseDsa: ["Base schedule", "DSA in every decoder layer", "All 78 Base layers use sparse latent attention. Layers 0, 1, 2, 6, 10, …, 74 compute a fresh lightning index; the remaining layers reuse shared top-2048 indices.", [["DSA layers", "78"], ["Full indexers", "21"], ["Shared-index layers", "57"]]],
+        flashKda: ["Flash schedule", "KDA groups", "Flash repeats three recurrent KDA layers before each DSA layer, then ends with layer 44 as KDA.", [["KDA layers", "34"], ["Pattern", "0–2, 4–6, …, 44"]]],
+        flashDsa: ["Flash schedule", "DSA checkpoints", "Layers 3, 7, 11, …, 43 provide full sparse-attention refreshes between groups of three KDA layers.", [["DSA layers", "11"], ["Pattern", "3 + 4n"], ["Indexer", "Fresh on every DSA layer"]]],
+        denseFfn: ["FFN schedule", "Dense SwiGLU", "Layers 0–2 use a dense SwiGLU feed-forward network before sparse experts begin.", v => [["Layers", "0–2"], ["Input", String(v.d)], ["Intermediate", "12288"]]],
+        moeFfn: ["FFN schedule", "Sparse GLM MoE", "Every layer after layer 2 uses sigmoid top-8 routing plus one always-on shared expert.", v => [["Layers", `3–${v.layers - 1}`], ["Pool", String(v.experts)], ["Active", "8 + shared"]]],
+        dsaInput: ["DSA input", "Hidden states H", "The hidden state independently supplies the query latent, latent KV cache entry, index key, and per-head index weights.", v => [["Logical shape", `[B,T,${v.d}]`], ["Consumers", "query · KV · indexer"]]],
+        queryLatent: ["Shared query bottleneck", "Query latent qᵣ", "Hidden states are projected once to an RMS-normalized latent. Two independent projections then produce full attention Q and lightning-indexer Q; neither branch consumes the other.", v => [["Input", `[B,T,${v.d}]`], ["Logical shape", `[B,T,${v.qrank}]`], ["Full-Q branch", "64 × 256"], ["Indexer branch", "32 × 128"]]],
+        fullQuery: ["Core attention queries", "Full DSA query Q", "The qᵣ latent expands into 64 attention heads of width 256 for sparse MLA. Base divides each head into 192 NoPE + 64 RoPE channels; Flash uses 256 NoPE channels.", v => [["Input", `[B,T,${v.qrank}]`], ["Logical shape", "[B,T,64,256]"], ["NoPE / RoPE", `${256 - v.rope} / ${v.rope}`]]],
+        kvLatent: ["Latent history", "Compressed KV cache", "A 512-wide latent stores the content needed to reconstruct attention keys and values. Base appends 64 decoupled RoPE channels; Flash has no RoPE cache channels.", v => [["Content", "[B,H,512]"], ["RoPE", v.rope ? "[B,H,64]" : "none"], ["Cached width", String(v.kvRank + v.rope)]]],
+        indexQuery: ["Sparse-selection queries", "Lightning indexer Q", "An independent projection of qᵣ produces 32 query heads of width 128. Learned signed per-head weights combine ReLU-clipped similarities into one score per history token.", v => [["Input", `[B,T,${v.qrank}]`], ["Logical shape", "[B,T,32,128]"], ["Head weights", "[B,T,32]"]]],
+        indexKey: ["Sparse-selection keys", "Lightning index key Kᵢ", "The index key is projected directly from H and normalized. Base applies 64 rotary channels; Flash uses a Hadamard transform and sends the key through KPool.", v => [["Input", `[B,H,${v.d}]`], ["Logical shape", "[B,H,128]"], ["Flash pool", v.key === "flash" ? "groups of 4" : "none"]]],
+        topk: ["Sparse selection", "Top-2048 token indices", "The indexer selects 2048 causal history positions per query. Base can reuse a prior layer's selection; every Flash DSA layer computes its own KPool-backed selection.", [["Indices", "[B,T,2048]"], ["Causality", "past positions only"]]],
+        sparseMla: ["Sparse attention", "Latent attention over selected tokens", "Only selected latent cache rows are read. Sixty-four 256-wide query heads attend to the sparse history and the output projection returns the model width.", v => [["Q", "[B,T,64,256]"], ["Selected KV", "[B,T,2048,512]"], ["Output", `[B,T,${v.d}]`]]],
+        dsaOutput: ["DSA output", "Projected sparse-attention update", "The sparse attention result is projected back to the checkpoint hidden width and returned to its residual wrapper.", v => [["Logical shape", `[B,T,${v.d}]`], ["Consumer", v.key === "flash" ? "mHC post-map C" : "residual add"]]],
+        rawIndex: ["KPool input", "Raw token index features", "Flash DSA produces one normalized 128-wide index key and one 128-wide learned gate vector per history token.", [["Keys", "Kraw [B,H,128]"], ["Gates", "G [B,H,128]"]]],
+        groupFour: ["KPool grouping", "Groups of four tokens", "Consecutive token index features are reshaped into four-token pools. Incomplete tail tokens remain visible and are carried into the eventual FlatKV selection.", [["Input", "[B,H,128]"], ["Grouped", "[B,⌊H/4⌋,4,128]"]]],
+        poolMix: ["KPool compression", "Gate + positional mixing", "A learned gate and a four-position embedding combine the four raw token keys into one 128-wide pooled key, then a Hadamard transform prepares it for scoring.", [["APE", "[4,128]"], ["Pooled key", "[B,⌊H/4⌋,128]"], ["Cache dtype", "FP8"]]],
+        pooledCache: ["KPool cache", "Pooled index-key history", "One compact key represents each complete four-token group, reducing the first-stage candidate count by roughly four.", [["Logical shape", "[B,⌊H/4⌋,128]"], ["Pool size", "4"]]],
+        poolTopk: ["KPool shortlist", "Select top-512 groups", "The 32-head lightning query scores pooled keys. The 512 highest-scoring complete groups become candidates for token-level expansion.", [["Query", "[B,T,32,128]"], ["Scores", "[B,T,⌊H/4⌋]"], ["Selected", "[B,T,512]"]]],
+        expandTokens: ["KPool expansion", "Expand groups to FlatKV tokens", "Selected pool rows expand back to their original token positions. The visible incomplete tail is appended, so the implementation reserves up to 2051 output slots for a top-2048 request.", [["Requested top-k", "2048"], ["Maximum slots", "2051"], ["Output", "flat token indices"]]],
+        kdaInput: ["KDA input", "Hidden states H", "Flash KDA projects each 4096-wide token into Q, K, V, a per-head update strength β, and low-rank features that generate decay α and output gate g.", [["Logical shape", "[B,T,4096]"], ["Variant", "Flash only"]]],
+        kdaProject: ["KDA projections", "Fused QKVβfg projection", "The fused projection emits three 8192-wide streams for Q/K/V, 64 β values, and two 128-wide latents expanded into per-channel α and output gates.", [["Q/K/V", "3 × [B,T,8192]"], ["β", "[B,T,64]"], ["fₐ / gₐ", "2 × [B,T,128]"]]],
+        shortConv: ["Local mixing", "Depthwise causal Conv1D", "Separate four-tap depthwise kernels mix each Q, K, and V channel with its current value and three preceding values. Sequence length and channel count are preserved.", [["Input", "Q/K/V [B,T,8192]"], ["Weights", "Wq,Wk,Wv [8192,1,4]"], ["Output", "Q′/K′/V′ [B,T,8192]"]]],
+        alphaBeta: ["KDA gates", "Decay α and update β", "The learned decay controls retention per state row while β controls how strongly the current normalized key/value pair corrects the recurrent matrix.", [["α", "[B,T,64,128]"], ["β", "[B,T,64]"], ["Lower bound", "−5"]]],
+        deltaState: ["Recurrent memory", "Delta-rule state Sₜ", "Each head carries a 128 × 128 matrix. The update decays prior memory, removes the component addressed by the current key, then writes the current key/value association.", [["State", "S [B,64,128,128]"], ["Update", "S ← Diag(α) (I − βkkᵀ) S + βkvᵀ"]]],
+        kdaRead: ["KDA read", "Query-state product", "The convolved query reads the updated recurrent matrix. This produces one 128-wide result per head without scanning the full token history.", [["Query", "q [B,T,64,128]"], ["State", "S [B,64,128,128]"], ["Result", "O [B,T,64,128]"]]],
+        outputGate: ["KDA output", "Gate + norm + projection", "A learned channel gate modulates the 8192-wide recurrent output, per-head RMSNorm stabilizes it, and the output projection returns to width 4096.", [["Gate", "g [B,T,64,128]"], ["Flattened", "[B,T,8192]"], ["Output", "[B,T,4096]"]]],
+        mhcInput: ["mHC state", "Four residual streams Xₗ", "Flash carries four 4096-wide streams. A normalized flattened view generates 24 small mixing values; Base has no mHC state.", [["Logical shape", "[B,T,4,4096]"], ["Flattened", "[B,T,16384]"]]],
+        generator: ["mHC parameterization", "Dynamic A / B / C generator", "One projection produces 24 values per token: four pre-mix weights, sixteen residual-map entries, and four post-mix weights. Attention and FFN use separate generators.", [["Input", "[B,T,16384]"], ["Weight", "Wmix [16384,24]"], ["Output", "[B,T,24]"]]],
+        amap: ["mHC pre-map", "A = sigmoid(Ã)", "Four non-negative weights mix the residual streams into the single 4096-wide input consumed by the inner attention or FFN.", [["A", "[B,T,1,4]"], ["A·X", "[B,T,4096]"]]],
+        bmap: ["mHC residual map", "Doubly-stochastic B", "Twenty Sinkhorn row/column normalization iterations turn the dynamic 4 × 4 matrix into a bounded cross-stream residual map.", [["B", "[B,T,4,4]"], ["Iterations", "20"]]],
+        cmap: ["mHC post-map", "C = 2·sigmoid(C̃)", "Four bounded coefficients broadcast the one-stream sublayer output back into the expanded residual state.", [["C", "[B,T,4,1]"], ["C·F", "[B,T,4,4096]"]]],
+        sublayer: ["Inner transform", "Attention or FFN Fₗ", "The expensive inner operation remains one stream wide even though the residual state has four streams.", [["Input / output", "[B,T,4096]"], ["Occurrences", "2 per Flash block"]]],
+        mhcOutput: ["mHC update", "Next four-stream residual", "The mapped prior state and broadcast sublayer update are added to form Xₗ₊₁ = BₗXₗ + CₗFₗ(AₗXₗ).", [["Output", "[B,T,4,4096]"]]],
+        moeInput: ["MoE input", "Token states x", "Batch and sequence axes are flattened to N tokens for routing and expert execution.", v => [["Logical", `[B,T,${v.d}]`], ["Kernel", `[N,${v.d}]`], ["N", "B × T"]]],
+        router: ["Expert routing", "Sigmoid top-8 router", "A learned router scores every routed expert, applies auxiliary-loss-free correction bias, selects eight experts, renormalizes their probabilities, and scales them by 2.5.", v => [["Scores", `[N,${v.experts}]`], ["Selected", "ids/weights [N,8]"], ["Scale", "2.5"]]],
+        experts: ["Sparse FFN bank", "Routed expert pool", "Each selected expert applies a 2048-wide SwiGLU transformation and returns a d-wide contribution.", v => [["Experts", String(v.experts)], ["Active / token", "8"], ["Weights", `W1/W3 [${v.d},2048] · W2 [2048,${v.d}]`]]],
+        shared: ["Common FFN", "Shared expert ×1", "One always-on 2048-wide SwiGLU expert processes every token in parallel with the routed experts.", v => [["Input / output", String(v.d)], ["Intermediate", "2048"]]],
+        combine: ["Expert aggregation", "Weighted routed sum + shared", "Eight weighted routed outputs are reduced and added to the shared-expert result.", v => [["Routed", `[N,8,${v.d}] → [N,${v.d}]`], ["Output", `[N,${v.d}]`]]],
+        moeOutput: ["MoE output", "Aggregated channel update", "The combined sparse and shared expert result returns to the layer residual wrapper.", v => [["Logical shape", `[B,T,${v.d}]`], ["Residual", v.residual]]],
+        mainHidden: ["MTP input", "Main hidden state", "The completed main-decoder state is normalized and projected as one side of the NextN fusion.", v => [["Shape", `[B,T,${v.d}]`], ["Source", "main decoder"]]],
+        nextEmbed: ["MTP input", "Shifted token embedding", "The next ground-truth token embedding is shifted into alignment during training and projected as the second fusion input.", v => [["Shape", `[B,T,${v.d}]`], ["Shift", "+1 token"]]],
+        fuse: ["MTP fusion", "Concatenate + linear projection", "Normalized main hidden states and shifted embeddings are concatenated and mapped back to the model width before the extra prediction block.", v => [["Concat", `[B,T,${2 * v.d}]`], ["Output", `[B,T,${v.d}]`]]],
+        mtpBlock: ["MTP decoder", "One extra DSA + MoE layer", "The released checkpoint contains one NextN layer. It uses DSA and a sparse MoE; Flash disables mHC and KDA for this extra layer.", v => [["Depth", "1"], ["Attention", "DSA top-2048"], ["MoE", `top-8 of ${v.experts}`], ["mHC", "disabled"]]],
+        sharedHead: ["MTP output", "Shared vocabulary head", "The extra layer is normalized and scored with the main vocabulary projection.", [["Logits", "[B,T,154880]"], ["Head", "shared"]]],
+        pixels: ["Vision input", "Image / video pixels", "Flash accepts images or video clips. The patch embed consumes RGB blocks spanning two frames and 14 × 14 spatial pixels.", [["Patch volume", "3 × 2 × 14 × 14"], ["Image", "448 × 448"]]],
+        patchEmbed: ["Vision stem", "Conv3D patch embedding", "A non-overlapping Conv3D maps each spatiotemporal patch to a 1024-wide visual token.", [["Kernel / stride", "2 × 14 × 14"], ["Output", "[Nv,1024]"]]],
+        visionBlocks: ["Vision encoder", "24 transformer blocks", "Full visual self-attention and a gated MLP contextualize patch tokens at width 1024.", [["Tokens", "[Nv,1024]"], ["Heads", "16 × 64"], ["MLP", "1024 → 4096 → 1024"]]],
+        patchMerge: ["Vision merger", "2 × 2 spatial merge", "Each group of four neighboring patch tokens is concatenated into 4096 channels, normalized, expanded to 10240, and projected to the text width.", [["Input group", "[Nv/4,4096]"], ["Projection", "4096 → 10240 → 4096"], ["Output", "[Nv/4,4096]"]]],
+        visualTokens: ["Language interface", "Visual token embeddings", "Merged 4096-wide vision features replace media placeholder embeddings before the Flash text decoder.", [["Logical shape", "[B,Tv,4096]"], ["Consumer", "Flash decoder"]]],
+        unavailable: ["Variant scope", "Not used by this checkpoint", "This plate describes a mechanism present only in the other GLM 5.3 checkpoint. Switch variants to inspect its active tensor flow.", v => [["Current variant", v.name]]]
+      });
+      details.baseDsaFirst = details.baseDsa;
+      details.baseDsaShared = details.baseDsa;
+      details.baseDsaGroups = details.baseDsa;
+      details.flashKdaFirst = details.flashKda;
+      details.flashRepeat = details.flashKda;
+      details.flashKdaFinal = details.flashKda;
+
+      function variantValue(value, variant) {
+        return typeof value === "function" ? value(variant) : value;
+      }
+
+      function node(id, x, y, w, h, label, sub, color = "", shape = "process", step = 0) {
+        return { id, x, y, w, h, label, sub, color, shape, step };
+      }
+
+      function edge(from, to, color = "", label = "", dashed = false, d = "") {
+        return { from, to, color, label, dashed, d };
+      }
+
+      function glmOverallPlate(v) {
+        const flash = v.key === "flash";
+        const nodes = [
+          node("tokens", 70, 350, 150, 92, "Text tokens", "vocab 154880", "", "process", 0),
+          node("embedding", 330, 205, 180, 92, "Embedding", `width ${v.d}`, "", "projection", 1),
+          { ...node("block", 590, 190, 520, 430, `GLM decoder block × ${v.layers}`, flash ? "mHC wraps attention + FFN" : "standard residual path", "", "boundary", 3), labelY: 34 },
+          node("attention", 645, 325, 190, 105, flash ? "KDA / DSA" : "DSA", v.counts, flash ? "c-hca" : "c-csa", "process", 4),
+          node("ffn", 865, 325, 190, 105, "Dense / GLM MoE", `first 3 dense · then 8/${v.experts}`, "c-moe", "process", 5),
+          node("residualMix", 725, 490, 260, 85, flash ? "mHC residual mixing" : "Residual add", flash ? "4 streams · A / B / C" : "single hidden stream", flash ? "c-mhc" : "", "process", 6),
+          node("head", 1175, 190, 165, 100, "Norm + LM head", "next-token logits", "", "projection", 7),
+          node("mtp", 1175, 500, 165, 112, "NextN ×1", "DSA + MoE", "c-mtp", "process", 8)
+        ];
+        const edges = [
+          edge("tokens", "embedding", "", "lookup", false, "M220 396 C270 396 275 251 330 251"),
+          edge("embedding", "block"), edge("attention", "ffn"),
+          edge("ffn", "residualMix", flash ? "c-mhc" : "", "", false, "M960 430 V470 H855 V490"),
+          edge("residualMix", "attention", flash ? "c-mhc" : "", "next layer", true, "M725 532 H615 V378 H645"),
+          edge("block", "head", "", "main path", false, "M1110 290 H1175"),
+          edge("block", "mtp", "c-mtp", "hidden", false, "M1110 555 H1175"),
+          edge("embedding", "mtp", "c-mtp", "shift +1", true, "M420 297 C420 700 1110 700 1175 575")
+        ];
+        if (flash) {
+          nodes.push(node("media", 65, 585, 155, 92, "Images / video", "native multimodal", "c-control", "process", 0));
+          nodes.push(node("visionTower", 315, 500, 205, 120, "Vision tower", "24 blocks · 1024 → 4096", "c-control", "process", 1));
+          nodes.push(node("expand", 535, 95, 185, 86, "mHC expand ×4", "[B,T,4,4096]", "c-mhc", "process", 2));
+          edges.push(edge("media", "visionTower", "c-control"));
+          edges.push(edge("visionTower", "block", "c-control", "visual tokens", false, "M520 560 C560 560 545 420 590 420"));
+          edges.push(edge("embedding", "expand", "c-mhc", "", false, "M420 205 V138 H535"));
+          edges.push(edge("expand", "block", "c-mhc", "", false, "M720 138 H850 V190"));
+        }
+        return {
+          title: `${v.name} · end-to-end flow`,
+          zones: [[40, 75, 250, 655, "INPUT"], [565, 70, 575, 665, `${v.layers}-LAYER BACKBONE`], [1155, 75, 210, 655, "OUTPUT / LOOKAHEAD"]],
+          nodes, edges,
+          notes: [[850, 675, v.schedule, true], [850, 700, `${v.denseLayers} dense FFNs · ${v.moeLayers} sparse MoE layers · one NextN layer`, false]]
+        };
+      }
+
+      function glmSchedulePlate(v) {
+        if (v.key === "base") {
+          return {
+            title: `${v.name} · layer schedule`,
+            zones: [[45, 70, 1310, 675, "BASE · ALL 78 LAYERS USE DSA"]],
+            nodes: [
+              node("embedding", 70, 335, 135, 90, "Embedding", "d = 6144", "", "process", 0),
+              node("baseDsaFirst", 270, 275, 205, 205, "DSA layers 0–2", "fresh index in each · dense FFN", "c-csa", "process", 1),
+              node("baseDsaShared", 550, 300, 185, 155, "DSA layers 3–5", "reuse layer 2 top-k", "c-csa", "process", 2),
+              node("baseDsaGroups", 810, 250, 240, 255, "18 × four-layer group", "fresh index → reuse ×3|layers 6–77", "c-csa", "boundary", 3),
+              node("head", 1135, 335, 185, 90, "Norm + LM head", "after layer 77", "", "projection", 4),
+              node("denseFfn", 285, 565, 180, 95, "Dense FFN ×3", "layers 0–2 · width 12288", "c-moe", "process", 2),
+              node("moeFfn", 690, 565, 265, 95, "Sparse MoE ×75", "layers 3–77 · top-8 / 256", "c-moe", "process", 3)
+            ],
+            edges: [
+              edge("embedding", "baseDsaFirst"), edge("baseDsaFirst", "baseDsaShared"), edge("baseDsaShared", "baseDsaGroups"),
+              edge("baseDsaGroups", "head", "", "", false, "M1050 378 H1135"),
+              edge("baseDsaFirst", "denseFfn", "c-moe", "FFN", true, "M370 480 V565"),
+              edge("baseDsaShared", "moeFfn", "c-moe", "FFN", true, "M645 455 V530 H820 V565")
+            ],
+            notes: [[700, 135, "Fresh-index layers: 0, 1, 2, 6, 10, …, 74 · 21 total", true], [700, 705, "Every attention layer still reads top-2048 token positions; 57 layers reuse a preceding selection.", false]]
+          };
+        }
+        return {
+          title: `${v.name} · layer schedule`,
+          zones: [[45, 70, 1310, 675, "FLASH · REPEATING KDA ×3 → DSA"]],
+          nodes: [
+            node("embedding", 65, 335, 135, 90, "Embedding", "d = 4096", "", "process", 0),
+            node("flashKdaFirst", 270, 285, 205, 190, "KDA ×3", "layers 0–2", "c-hca", "process", 1),
+            node("flashDsa", 550, 300, 190, 160, "DSA", "layer 3 · KPool top-2048", "c-csa", "process", 2),
+            node("flashRepeat", 815, 245, 235, 265, "Repeat ×11", "KDA ×3 → DSA|through DSA layer 43", "c-hca", "boundary", 3),
+            node("flashKdaFinal", 1125, 300, 180, 160, "Final KDA", "layer 44", "c-hca", "process", 4),
+            node("denseFfn", 275, 570, 190, 90, "Dense FFN ×3", "layers 0–2", "c-moe", "process", 2),
+            node("moeFfn", 690, 570, 270, 90, "Sparse MoE ×42", "layers 3–44 · top-8 / 288", "c-moe", "process", 4),
+            node("residualMix", 1030, 570, 245, 90, "mHC in every block", "4 streams · 20 Sinkhorn", "c-mhc", "process", 5)
+          ],
+          edges: [
+            edge("embedding", "flashKdaFirst", "c-hca"), edge("flashKdaFirst", "flashDsa", "c-csa"),
+            edge("flashDsa", "flashRepeat", "c-hca"), edge("flashRepeat", "flashKdaFinal", "c-hca", "final", false, "M1050 378 H1125"),
+            edge("flashKdaFirst", "denseFfn", "c-moe", "FFN", true, "M370 475 V570"),
+            edge("flashDsa", "moeFfn", "c-moe", "FFN", true, "M645 460 V530 H825 V570"),
+            edge("moeFfn", "residualMix", "c-mhc")
+          ],
+          notes: [[700, 135, "34 KDA layers: 0–2, 4–6, …, 40–42, 44 · 11 DSA layers: 3, 7, …, 43", true], [700, 705, "Every Flash DSA layer computes a fresh KPool-backed index.", false]]
+        };
+      }
+
+      function glmDsaPlate(v) {
+        return {
+          title: `${v.name} · DeepSeek Sparse Attention`,
+          zones: [[35, 55, 1330, 710, "DSA · QUERY LATENT FORKS INTO FULL ATTENTION AND LIGHTNING INDEXER"]],
+          nodes: [
+            node("dsaInput", 55, 355, 135, 92, "Hidden states H", `[B,T,${v.d}]`, "", "process", 0),
+            node("queryLatent", 250, 340, 175, 120, "Query latent qᵣ", `[B,T,${v.qrank}]`, "c-csa", "projection", 1),
+            node("fullQuery", 500, 190, 190, 115, "Full attention Q", "[B,T,64,256]", "c-csa", "projection", 2),
+            node("indexQuery", 500, 535, 190, 120, "Lightning Q", "[B,T,32,128]", "c-control", "projection", 2),
+            node("kvLatent", 760, 350, 205, 125, "Latent KV cache", v.rope ? "[B,H,576]" : "[B,H,512]", "c-csa", "cache", 2),
+            node("indexKey", 760, 535, 190, 120, "Index key Kᵢ", v.key === "flash" ? "[B,H,128] → KPool" : "[B,H,128]", "c-control", "projection", 2),
+            node("topk", 810, 180, 185, 120, "Top-k selector", "[B,T,2048]", "c-control", "routing", 3),
+            node("sparseMla", 1055, 300, 205, 180, "Sparse latent attention", "64 heads · selected history", "c-csa", "process", 4),
+            node("dsaOutput", 1290, 350, 75, 80, "ŷ", `d=${v.d}`, "", "process", 5)
+          ],
+          edges: [
+            edge("dsaInput", "queryLatent", "c-csa"),
+            edge("queryLatent", "fullQuery", "c-csa", "full Q", false, "M425 370 C460 370 455 247 500 247"),
+            edge("queryLatent", "indexQuery", "c-control", "index Q", false, "M425 430 C460 430 455 595 500 595"),
+            edge("dsaInput", "kvLatent", "c-csa", "", false, "M122 355 V125 H862 V350"),
+            edge("dsaInput", "indexKey", "c-control", "", true, "M122 447 V680 H855 V655"),
+            edge("indexQuery", "topk", "c-control", "scores", false, "M690 595 C775 595 755 240 810 240"),
+            edge("indexKey", "topk", "c-control", "", false, "M855 535 V300"),
+            edge("topk", "sparseMla", "c-csa", "indices", false, "M995 240 C1030 240 1020 365 1055 365"),
+            edge("kvLatent", "sparseMla", "c-csa", "selected KV"),
+            edge("fullQuery", "sparseMla", "c-csa", "Q", false, "M690 247 H1170 V300"),
+            edge("sparseMla", "dsaOutput")
+          ],
+          notes: [[700, 720, "H → qᵣ, then qᵣ independently forks to 64 × 256 full Q and 32 × 128 indexer Q", true], [700, 744, v.key === "base" ? "Base: 512 latent + 64 RoPE cache channels · full index computed in 21 layers" : "Flash: 512 latent channels · no RoPE · every DSA layer uses KPool", false]]
+        };
+      }
+
+      function glmKpoolPlate(v) {
+        if (v.key !== "flash") {
+          return {
+            title: `${v.name} · KPool scope`,
+            zones: [[120, 115, 1160, 580, "KPOOL IS FLASH-ONLY"]],
+            nodes: [
+              node("indexKey", 180, 325, 220, 130, "Base index keys", "[B,H,128] per token", "c-control", "projection", 0),
+              node("unavailable", 555, 285, 290, 210, "No pooled index cache", "Base scores token keys directly", "", "boundary", 1),
+              node("topk", 1000, 325, 220, 130, "Direct top-2048", "[B,T,2048]", "c-control", "routing", 2)
+            ],
+            edges: [edge("indexKey", "unavailable", "c-control"), edge("unavailable", "topk", "c-control")],
+            notes: [[700, 600, "Switch to GLM 5.3 Flash to inspect four-token KPool compression and expansion.", true]]
+          };
+        }
+        return {
+          title: `${v.name} · KPool index compression`,
+          zones: [[40, 60, 1320, 700, "KPOOL · FOUR TOKEN INDEX KEYS → ONE POOLED CANDIDATE"]],
+          nodes: [
+            node("rawIndex", 60, 335, 180, 120, "Raw index features", "Kraw + gate · [B,H,128]", "c-control", "process", 0),
+            node("groupFour", 315, 320, 190, 150, "Group four tokens", "[B,⌊H/4⌋,4,128]", "c-control", "boundary", 1),
+            node("poolMix", 580, 290, 210, 205, "Gate + position mix", "APE [4,128] · Hadamard", "c-control", "process", 2),
+            node("pooledCache", 865, 175, 200, 135, "Pooled key cache", "[B,⌊H/4⌋,128] · FP8", "c-control", "cache", 3),
+            node("indexQuery", 865, 540, 200, 120, "Lightning Q", "[B,T,32,128]", "c-csa", "projection", 3),
+            node("poolTopk", 1130, 270, 185, 130, "Top-512 groups", "score pooled history", "c-control", "routing", 4),
+            node("expandTokens", 1110, 500, 225, 145, "Expand to FlatKV", "top-2048 · up to 2051 slots", "c-control", "routing", 5)
+          ],
+          edges: [
+            edge("rawIndex", "groupFour", "c-control"), edge("groupFour", "poolMix", "c-control"), edge("poolMix", "pooledCache", "c-control", "write complete groups", false, "M790 350 C830 350 825 242 865 242"),
+            edge("pooledCache", "poolTopk", "c-control"), edge("indexQuery", "poolTopk", "c-control", "32-head scores", false, "M1065 600 C1110 600 1090 335 1130 335"),
+            edge("poolTopk", "expandTokens", "c-control"), edge("rawIndex", "expandTokens", "c-control", "visible tail", true, "M150 455 V700 H1220 V645")
+          ],
+          notes: [[700, 715, "Pooling cuts first-stage index history about 4×; selected groups expand back to exact token positions.", true], [700, 739, "The tail can add at most 3 visible tokens, so top-2048 selection reserves 2051 output slots.", false]]
+        };
+      }
+
+      function glmKdaPlate(v) {
+        if (v.key !== "flash") {
+          return {
+            title: `${v.name} · KDA scope`,
+            zones: [[120, 115, 1160, 580, "KDA IS FLASH-ONLY"]],
+            nodes: [
+              node("baseDsa", 220, 330, 235, 140, "Base sequence mixer", "DSA in all 78 layers", "c-csa", "process", 0),
+              node("unavailable", 580, 285, 260, 220, "No recurrent KDA", "no short-conv or matrix state", "", "boundary", 1),
+              node("dsaOutput", 995, 330, 210, 140, "DSA update", "width 6144", "c-csa", "process", 2)
+            ],
+            edges: [edge("baseDsa", "unavailable", "c-csa"), edge("unavailable", "dsaOutput", "c-csa")],
+            notes: [[700, 600, "Switch to GLM 5.3 Flash to inspect the 64-head delta-rule recurrence.", true]]
+          };
+        }
+        return {
+          title: `${v.name} · Kimi Delta Attention`,
+          zones: [[35, 55, 1330, 710, "KDA · DEPTHWISE SHORT CONV + RECURRENT DELTA-RULE STATE"]],
+          nodes: [
+            node("kdaInput", 50, 350, 135, 92, "Hidden states H", "[B,T,4096]", "", "process", 0),
+            node("kdaProject", 245, 315, 205, 165, "Fused QKVβfg", "Q/K/V 8192 · β64 · f/g128", "c-hca", "projection", 1),
+            node("shortConv", 525, 165, 205, 150, "Causal DW Conv1D", "kernel 4 on Q / K / V", "c-hca", "process", 2),
+            node("alphaBeta", 525, 505, 205, 135, "Decay α + update β", "α [B,T,64,128]", "c-control", "process", 2),
+            node("deltaState", 820, 285, 230, 220, "Delta-rule state Sₜ", "64 heads · 128 × 128", "c-hca", "cache", 3),
+            node("kdaRead", 1110, 180, 210, 145, "Read qᵀS", "[B,T,64,128]", "c-hca", "process", 4),
+            node("outputGate", 1100, 510, 225, 145, "Gate + norm + O-proj", "8192 → 4096", "c-hca", "projection", 5)
+          ],
+          edges: [
+            edge("kdaInput", "kdaProject", "c-hca"), edge("kdaProject", "shortConv", "c-hca", "Q / K / V", false, "M450 350 C480 350 480 240 525 240"),
+            edge("kdaProject", "alphaBeta", "c-control", "β / f", false, "M450 445 C480 445 480 572 525 572"),
+            edge("shortConv", "deltaState", "c-hca", "k / v", false, "M730 240 C780 240 770 350 820 350"),
+            edge("alphaBeta", "deltaState", "c-control", "α / β"),
+            edge("deltaState", "deltaState", "c-hca", "Sₜ₋₁ → Sₜ", true, "M935 505 V590 H790 V420 H820"),
+            edge("shortConv", "kdaRead", "c-hca", "q", false, "M730 215 H1110"), edge("deltaState", "kdaRead", "c-hca"),
+            edge("kdaRead", "outputGate", "c-hca", "flatten", false, "M1215 325 V510"), edge("kdaProject", "outputGate", "c-control", "g", true, "M347 480 V700 H1212 V655")
+          ],
+          notes: [[700, 700, "S ← Diag(α) (I − β k kᵀ) S + β k vᵀ", true], [700, 730, "The 4-tap operation is a 1-D depthwise causal convolution: [B,T,8192] → [B,T,8192].", false]]
+        };
+      }
+
+      function glmMhcPlate(v) {
+        if (v.key !== "flash") {
+          return {
+            title: `${v.name} · residual path`,
+            zones: [[120, 115, 1160, 580, "BASE USES A STANDARD RESIDUAL STREAM"]],
+            nodes: [
+              node("dsaInput", 190, 335, 210, 130, "Residual xₗ", "[B,T,6144]", "", "process", 0),
+              node("unavailable", 565, 285, 270, 220, "No mHC expansion", "xₗ₊₁ = xₗ + F(Norm(xₗ))", "", "boundary", 1),
+              node("dsaOutput", 1000, 335, 210, 130, "Residual xₗ₊₁", "[B,T,6144]", "", "process", 2)
+            ],
+            edges: [edge("dsaInput", "unavailable"), edge("unavailable", "dsaOutput")],
+            notes: [[700, 600, "Switch to GLM 5.3 Flash to inspect A / B / C dynamic residual mixing.", true]]
+          };
+        }
+        return {
+          title: `${v.name} · Manifold-Constrained Hyper-Connections`,
+          zones: [[40, 55, 1320, 710, "mHC · ONE FLASH ATTENTION OR FFN SUBLAYER"]],
+          nodes: [
+            node("mhcInput", 55, 350, 175, 110, "Residual Xₗ", "[B,T,4,4096]", "c-mhc", "process", 0),
+            node("generator", 305, 115, 235, 135, "Dynamic generator", "RMSNorm(vec X) · 16384→24", "c-mhc", "projection", 1),
+            node("amap", 625, 130, 175, 105, "A = σ(Ã)", "pre-map [1×4]", "c-mhc", "process", 2),
+            node("bmap", 625, 340, 175, 125, "B ∈ Birkhoff", "Sinkhorn 20 · [4×4]", "c-mhc", "process", 2),
+            node("cmap", 625, 570, 175, 105, "C = 2σ(C̃)", "post-map [4×1]", "c-mhc", "process", 2),
+            node("sublayer", 900, 130, 195, 115, "Fₗ: attention / FFN", "[B,T,4096]", "", "process", 3),
+            node("mhcOutput", 1140, 345, 195, 120, "Residual Xₗ₊₁", "B·X + C·F(A·X)", "c-mhc", "process", 4)
+          ],
+          edges: [
+            edge("mhcInput", "generator", "c-mhc", "flatten + norm", true, "M142 350 C142 200 260 182 305 182"),
+            edge("generator", "amap", "c-mhc"), edge("generator", "bmap", "c-mhc", "", false, "M422 250 V402 H625"), edge("generator", "cmap", "c-mhc", "", false, "M360 250 V622 H625"),
+            edge("mhcInput", "amap", "c-mhc", "mix streams", false, "M230 380 C430 380 410 182 625 182"),
+            edge("amap", "sublayer", "c-mhc"), edge("sublayer", "cmap", "c-mhc", "broadcast", false, "M998 245 V622 H800"),
+            edge("mhcInput", "bmap", "c-mhc"), edge("bmap", "mhcOutput", "c-mhc", "mapped residual"),
+            edge("cmap", "mhcOutput", "c-mhc", "sublayer update", false, "M800 622 C1070 622 1060 430 1140 430")
+          ],
+          notes: [[700, 715, "Xₗ₊₁ = BₗXₗ + CₗFₗ(AₗXₗ)", true], [700, 740, "The inner KDA, DSA, or FFN remains 4096-wide; only the residual state has four streams.", false]]
+        };
+      }
+
+      function glmMoePlate(v) {
+        return {
+          title: `${v.name} · sparse mixture of experts`,
+          zones: [[40, 55, 1320, 710, "GLM MoE · LAYERS 3 AND ABOVE"]],
+          nodes: [
+            node("moeInput", 55, 355, 145, 100, "Token states x", `[N,${v.d}]`, "", "process", 0),
+            node("router", 280, 500, 210, 140, "Sigmoid router", `top-8 / ${v.experts}`, "c-control", "routing", 1),
+            node("experts", 590, 455, 270, 205, `${v.experts} routed experts`, `activate 8 · ${v.d}→2048→${v.d}`, "c-moe", "boundary", 2),
+            node("shared", 320, 165, 220, 135, "Shared expert ×1", "always active · width 2048", "c-moe", "process", 1),
+            node("combine", 970, 325, 180, 125, "Weighted sum", "8 routed + shared", "c-moe", "routing", 3),
+            node("moeOutput", 1230, 350, 110, 80, "MoE output", `[N,${v.d}]`, "", "process", 4)
+          ],
+          edges: [
+            edge("moeInput", "router", "c-moe", "score", false, "M200 405 C250 405 230 570 280 570"),
+            edge("router", "experts", "c-moe", "dispatch top-8"), edge("experts", "combine", "c-moe", "weighted reduce", false, "M860 558 C930 558 900 400 970 400"),
+            edge("moeInput", "shared", "c-moe", "always-on", false, "M200 380 C260 380 250 232 320 232"),
+            edge("shared", "combine", "c-moe", "common path", false, "M540 232 C850 232 850 365 970 365"), edge("combine", "moeOutput")
+          ],
+          notes: [[700, 705, `Layers 0–2 use dense 12288-wide SwiGLU; layers 3–${v.layers - 1} use this sparse path.`, true], [700, 732, "Top-8 probabilities are renormalized, scaled by 2.5, and augmented by one shared expert.", false]]
+        };
+      }
+
+      function glmMtpPlate(v) {
+        return {
+          title: `${v.name} · NextN / Multi-Token Prediction`,
+          zones: [[40, 55, 1320, 710, "ONE EXTRA NEXTN PREDICTION LAYER"]],
+          nodes: [
+            node("mainHidden", 70, 180, 220, 120, "Main hidden state", `[B,T,${v.d}]`, "", "process", 0),
+            node("nextEmbed", 70, 520, 220, 120, "Shifted embedding", `[B,T,${v.d}] · +1`, "c-mtp", "process", 0),
+            node("fuse", 405, 330, 220, 140, "Norm + concat + project", `${2 * v.d} → ${v.d}`, "c-mtp", "projection", 1),
+            node("mtpBlock", 740, 285, 270, 225, "NextN decoder layer ×1", `DSA top-2048 · MoE top-8/${v.experts}`, "c-mtp", "process", 2),
+            node("sharedHead", 1110, 330, 215, 140, "Shared norm + LM head", "154880 future-token logits", "c-mtp", "projection", 3)
+          ],
+          edges: [
+            edge("mainHidden", "fuse", "c-mtp", "normalize", false, "M290 240 C365 240 335 380 405 380"),
+            edge("nextEmbed", "fuse", "c-mtp", "shift + normalize", false, "M290 580 C365 580 335 420 405 420"),
+            edge("fuse", "mtpBlock", "c-mtp"), edge("mtpBlock", "sharedHead", "c-mtp")
+          ],
+          notes: [[700, 160, "The released checkpoints expose num_nextn_predict_layers = 1.", true], [700, 650, v.key === "flash" ? "Flash NextN uses DSA + MoE with mHC disabled; it is not another KDA layer." : "Base NextN uses the same DSA + MoE family and shares the vocabulary head.", false]]
+        };
+      }
+
+      function glmVisionPlate(v) {
+        if (v.key !== "flash") {
+          return {
+            title: `${v.name} · modality scope`,
+            zones: [[120, 115, 1160, 580, "BASE IS TEXT-ONLY"]],
+            nodes: [
+              node("tokens", 220, 335, 215, 130, "Text tokens only", "vocab 154880", "", "process", 0),
+              node("unavailable", 565, 285, 270, 220, "No vision tower", "Base checkpoint is text-only", "", "boundary", 1),
+              node("embedding", 1000, 335, 210, 130, "Text embedding", "[B,T,6144]", "", "projection", 2)
+            ],
+            edges: [edge("tokens", "unavailable"), edge("unavailable", "embedding")],
+            notes: [[700, 600, "Switch to GLM 5.3 Flash to inspect its native image/video encoder.", true]]
+          };
+        }
+        return {
+          title: `${v.name} · native vision tower`,
+          zones: [[40, 55, 1320, 710, "FLASH VISION · SPATIOTEMPORAL PATCHES TO LANGUAGE-WIDTH TOKENS"]],
+          nodes: [
+            node("pixels", 55, 350, 155, 100, "RGB media", "images / video", "c-control", "process", 0),
+            node("patchEmbed", 285, 320, 205, 160, "Conv3D patch embed", "kernel=stride 2×14×14", "c-control", "projection", 1),
+            node("visionBlocks", 580, 285, 240, 230, "Vision transformer ×24", "width 1024 · 16 heads", "c-control", "boundary", 2),
+            node("patchMerge", 910, 310, 220, 180, "2×2 patch merger", "4096→10240→4096", "c-control", "projection", 3),
+            node("visualTokens", 1210, 345, 140, 110, "Visual tokens", "[B,Tv,4096]", "c-control", "process", 4)
+          ],
+          edges: [edge("pixels", "patchEmbed", "c-control"), edge("patchEmbed", "visionBlocks", "c-control"), edge("visionBlocks", "patchMerge", "c-control"), edge("patchMerge", "visualTokens", "c-control")],
+          notes: [[700, 650, "Conv3D maps each 3 × 2 × 14 × 14 patch to 1024 channels; the 2 × 2 merger reduces visual token count 4×.", true], [700, 680, "Merged 4096-wide features replace media placeholders in the Flash language sequence.", false]]
+        };
+      }
+
+      const plateBuilders = {
+        overall: glmOverallPlate,
+        schedule: glmSchedulePlate,
+        dsa: glmDsaPlate,
+        kpool: glmKpoolPlate,
+        kda: glmKdaPlate,
+        mhc: glmMhcPlate,
+        moe: glmMoePlate,
+        mtp: glmMtpPlate,
+        vision: glmVisionPlate
+      };
+
+      const plateLegends = {
+        overall: ["System symbols", [["process", "module / sublayer"], ["projection", "projection / encoding"], ["boundary", "repeated region"], ["flow", "data path"]]],
+        schedule: ["Schedule symbols", [["process", "layer group"], ["boundary", "repetition"], ["flow", "layer order"]]],
+        dsa: ["DSA symbols", [["process", "attention operation"], ["projection", "learned projection"], ["cache", "latent history"], ["routing", "top-k selection"], ["flow", "tensor flow"]]],
+        kpool: ["KPool symbols", [["process", "pool operation"], ["boundary", "four-token group"], ["cache", "pooled index state"], ["routing", "select / expand"], ["flow", "index path"]]],
+        kda: ["KDA symbols", [["process", "linear-attention operation"], ["projection", "learned projection"], ["cache", "recurrent state"], ["flow", "recurrent data path"]]],
+        mhc: ["mHC symbols", [["process", "mapping / state"], ["projection", "dynamic generator"], ["flow", "residual flow"]]],
+        moe: ["MoE symbols", [["process", "expert / operation"], ["routing", "route / reduce"], ["boundary", "expert bank"], ["flow", "active token path"]]],
+        mtp: ["MTP symbols", [["process", "state / block"], ["projection", "fusion / head"], ["flow", "prediction path"]]],
+        vision: ["Vision symbols", [["process", "tokens / block"], ["projection", "patch or feature projection"], ["boundary", "repeated transformer"], ["flow", "visual token path"]]]
+      };
+
+      function contractsFor(v) {
+        return {
+          dsa: {
+            title: "DSA tensor contract",
+            notation: ["B batch", "T query tokens", "H history tokens", "Nh 64", "K 2048"],
+            rows: [
+              ["Input", `H [B,T,${v.d}]`, "shared source for attention and indexer paths"],
+              ["Query latent", `Wqa [${v.d},${v.qrank}]`, `qᵣ [B,T,${v.qrank}] after RMSNorm`],
+              ["Full attention Q", `Wqb [${v.qrank},16384]`, "Q [B,T,64,256]"],
+              ["Indexer Q", `Wiq [${v.qrank},4096]`, "Qi [B,T,32,128]"],
+              ["Indexer key", `Wik [${v.d},128]`, "Ki [B,H,128]"],
+              ["Head weights", `Wiw [${v.d},32]`, "wi [B,T,32]"],
+              ["Latent KV", `Wkva [${v.d},${v.kvRank + v.rope}]`, v.rope ? "C [B,H,512] + Krope [B,H,64]" : "C [B,H,512]"],
+              ["Sparse indices", "I [B,T,2048]", v.key === "flash" ? "selected through KPool" : "direct token-level top-k"],
+              ["Gathered history", "Csel [B,T,2048,512]", "latent rows consumed by sparse MLA"],
+              ["Output", `Y [B,T,${v.d}]`, "projected attention update"]
+            ],
+            note: "Weight matrices use math orientation [in,out]. Full attention Q and lightning-indexer Q are independent projections of qᵣ; the indexer never consumes the 64-head full Q tensor."
+          },
+          kpool: v.key === "flash" ? {
+            title: "KPool tensor contract",
+            notation: ["B batch", "T query tokens", "H history tokens", "P 4 tokens / pool", "K 2048"],
+            rows: [
+              ["Raw index key", "Kraw [B,H,128]", "normalized per-token key"],
+              ["Gate", "G [B,H,128]", "learned from hidden states"],
+              ["Pool view", "[B,⌊H/4⌋,4,128]", "four consecutive tokens per complete group"],
+              ["Position embedding", "APE [4,128]", "learned position inside each pool"],
+              ["Pooled cache", "Kpool [B,⌊H/4⌋,128]", "Hadamard-transformed FP8 keys"],
+              ["Query", "Qi [B,T,32,128]", "lightning-indexer queries"],
+              ["Candidate groups", "Gids [B,T,512]", "top-scoring pooled rows"],
+              ["Expanded slots", "I [B,T,≤2051]", "flat token positions including visible tail"]
+            ],
+            note: "KPool reduces the first-stage index history by about 4×, then expands shortlisted groups back to exact token positions. A top-2048 request reserves 2048 + 4 − 1 = 2051 slots for the incomplete tail."
+          } : null,
+          kda: v.key === "flash" ? {
+            title: "KDA tensor contract",
+            notation: ["B batch", "T tokens", "Nh 64 heads", "D 128 head width", "C 4 conv taps"],
+            rows: [
+              ["Input", "H [B,T,4096]", "Flash hidden states"],
+              ["Fused projection", "Wqkvβfg [4096,24896]", "3×8192 QKV + 64 β + 128 fₐ + 128 gₐ"],
+              ["Q / K / V", "[B,T,64,128] each", "8192 channels per stream"],
+              ["Depthwise Conv1D", "Wq,Wk,Wv [8192,1,4]", "causal, channel-wise, preserves [B,T,8192]"],
+              ["Decay", "α [B,T,64,128]", "fₐ [B,T,128] projected to 8192 channels"],
+              ["Update strength", "β [B,T,64]", "one value per head and token"],
+              ["Recurrent state", "S [B,64,128,128]", "one key-by-value matrix per head"],
+              ["State update", "S ← Diag(α) (I − βkkᵀ) S + βkvᵀ", "delta-rule erase + write"],
+              ["State read", "qᵀS → O [B,T,64,128]", "linear-time sequence mixing"],
+              ["Output gate", "g [B,T,64,128]", "RMSNorm + gate + [8192,4096] projection"]
+            ],
+            note: "The short kernel is a 1-D depthwise causal convolution over sequence positions. Separate four-tap kernels operate on every Q, K, and V channel."
+          } : null,
+          mhc: v.key === "flash" ? {
+            title: "mHC tensor contract",
+            notation: ["B batch", "T tokens", "R 4 residual streams", "D 4096", "M 24 mixing values"],
+            rows: [
+              ["Residual", "X [B,T,4,4096]", "flatten → [B,T,16384]"],
+              ["Generator", "Wmix [16384,24]", "separate parameters for attention and FFN"],
+              ["Input map A", "[B,T,1,4]", "sigmoid-bounded pre-mix"],
+              ["Residual map B", "[B,T,4,4]", "20-step Sinkhorn projection"],
+              ["Output map C", "[B,T,4,1]", "2·sigmoid bounded post-map"],
+              ["Inner layer", "F: [B,T,4096] → [B,T,4096]", "KDA, DSA, or FFN remains unexpanded"],
+              ["Update", "X′ [B,T,4,4096]", "B·X + C·F(A·X)"]
+            ],
+            note: "mHC is Flash-only. Base keeps a single [B,T,6144] residual stream and a conventional residual add."
+          } : null,
+          moe: {
+            title: "GLM MoE tensor contract",
+            notation: ["N B·T tokens", `D ${v.d}`, `E ${v.experts} routed experts`, "K 8 active", "F 2048"],
+            rows: [
+              ["Input", `X [N,${v.d}]`, "flattened decoder tokens"],
+              ["Router", `Wr [${v.d},${v.experts}]`, `sigmoid scores [N,${v.experts}]`],
+              ["Selection", "ids/weights [N,8]", "renormalized top-8, scaled by 2.5"],
+              ["Logical dispatch", `[N,8,${v.d}]`, "eight expert assignments per token"],
+              ["Expert gate/up", `W1,W3 [${v.d},2048]`, `one pair per each of ${v.experts} experts`],
+              ["Expert down", `W2 [2048,${v.d}]`, "returns one d-wide contribution"],
+              ["Routed reduce", `[N,8,${v.d}] → [N,${v.d}]`, "weighted sum"],
+              ["Shared expert", `${v.d} → 2048 → ${v.d}`, "always active and added to routed result"]
+            ],
+            note: `Layers 0–2 use dense ${v.d} → 12288 → ${v.d} SwiGLU instead. The sparse MoE appears in the remaining ${v.moeLayers} decoder layers.`
+          },
+          mtp: {
+            title: "MTP tensor contract",
+            notation: ["B batch", "T training positions", `D ${v.d}`, "V 154880"],
+            rows: [
+              ["Main state", `H [B,T,${v.d}]`, "completed main-decoder hidden state"],
+              ["Shifted embedding", `E+1 [B,T,${v.d}]`, "shared embedding table"],
+              ["Concatenation", `C [B,T,${2 * v.d}]`, "normalized H and E+1"],
+              ["Fusion projection", `Wf [${2 * v.d},${v.d}]`, `Z [B,T,${v.d}]`],
+              ["NextN layer", `DSA top-2048 · MoE top-8/${v.experts}`, "one extra decoder layer; no Flash mHC"],
+              ["Head", `[B,T,${v.d}] · Wlm [${v.d},154880]`, "shared vocabulary projection"]
+            ],
+            note: "The released Base and Flash configs each expose one NextN prediction layer. It can provide draft tokens for speculative decoding without a separate draft checkpoint."
+          },
+          vision: v.key === "flash" ? {
+            title: "Vision tensor contract",
+            notation: ["Nv visual patch tokens", "Tv merged visual tokens", "C RGB channels"],
+            rows: [
+              ["Patch volume", "pixels [Nv,3,2,14,14]", "RGB × time × height × width"],
+              ["Patch embedding", "Conv3D [1024,3,2,14,14]", "stride equals kernel; output [Nv,1024]"],
+              ["Vision QKV", "Wqkv [1024,3072]", "Q/K/V [Nv,16,64] in each of 24 blocks"],
+              ["Vision MLP", "1024 → 4096 → 1024", "gated feed-forward path"],
+              ["Spatial merge", "4 × 1024 → 4096", "2 × 2 neighboring patches"],
+              ["Merger MLP", "4096 → 10240 → 4096", "maps Tv = Nv/4 tokens to text width"],
+              ["Decoder input", "V [B,Tv,4096]", "replaces media placeholder embeddings"]
+            ],
+            note: "The vision tower is native to GLM 5.3 Flash. Base is text-only and has no vision parameters."
+          } : null
+        };
+      }
+
+      function activeContract(v, view) {
+        return contractsFor(v)[view] || null;
+      }
+
+      const svg = document.getElementById("architecture-map");
+      const diagramRoot = document.getElementById("diagram-root");
+      const detailKicker = document.getElementById("detail-kicker");
+      const detailTitle = document.getElementById("detail-title");
+      const detailCopy = document.getElementById("detail-copy");
+      const detailFacts = document.getElementById("detail-facts");
+      const detailSource = document.getElementById("detail-source");
+      const contract = document.getElementById("kernel-contract");
+      const contractTitle = document.getElementById("contract-title");
+      const contractNotation = document.getElementById("contract-notation");
+      const contractRows = document.getElementById("contract-rows");
+      const contractNote = document.getElementById("contract-note");
+      const traceButton = document.getElementById("trace-flow");
+      const legendTitle = document.getElementById("symbol-legend-title");
+      const legendItems = document.getElementById("symbol-legend-items");
+      let activeVariant = "base";
+      let activeView = "overall";
+      let activePlate = null;
+      let viewBox = [0, 0, 1400, 820];
+      let dragging = false;
+      let dragStart = null;
+      let traceTimers = [];
+
+      function el(name, attrs = {}) {
+        const element = document.createElementNS(SVG_NS, name);
+        Object.entries(attrs).forEach(([key, value]) => element.setAttribute(key, value));
+        return element;
+      }
+
+      function renderShape(group, item) {
+        let shape;
+        if (item.shape === "projection") {
+          shape = el("path", { d: `M0 0H${item.w - 22}L${item.w} ${item.h / 2}L${item.w - 22} ${item.h}H0L22 ${item.h / 2}Z`, class: "shape" });
+        } else if (item.shape === "routing") {
+          shape = el("path", { d: `M${item.w / 2} 0L${item.w} ${item.h / 2}L${item.w / 2} ${item.h}L0 ${item.h / 2}Z`, class: "shape" });
+        } else {
+          shape = el("rect", { width: item.w, height: item.h, rx: item.shape === "cache" ? item.h / 4 : 17, class: "shape" });
+        }
+        group.append(shape);
+        if (item.shape === "cache") {
+          group.append(el("path", { d: `M0 ${item.h / 4}C0 0 ${item.w} 0 ${item.w} ${item.h / 4}`, fill: "none", stroke: "currentColor", opacity: ".45" }));
+        }
+      }
+
+      function renderText(group, item) {
+        const lines = item.label.split("|");
+        const centeredStart = item.h / 2 - (lines.length - 1) * 9 - (item.sub ? 8 : 0);
+        const start = item.labelY ?? centeredStart;
+        lines.forEach((line, index) => {
+          const text = el("text", { x: item.w / 2, y: start + index * 19, class: "node-label" });
+          text.textContent = line;
+          group.append(text);
+        });
+        if (item.sub) {
+          const sub = el("text", { x: item.w / 2, y: start + lines.length * 19 + 3, class: "node-sub" });
+          sub.textContent = item.sub;
+          group.append(sub);
+        }
+      }
+
+      function defaultPath(from, to) {
+        const x1 = from.x + from.w;
+        const y1 = from.y + from.h / 2;
+        const x2 = to.x;
+        const y2 = to.y + to.h / 2;
+        const mid = (x1 + x2) / 2;
+        return `M${x1} ${y1}C${mid} ${y1} ${mid} ${y2} ${x2} ${y2}`;
+      }
+
+      function renderPlate() {
+        stopTrace();
+        clearSelection();
+        const v = variants[activeVariant];
+        activePlate = plateBuilders[activeView](v);
+        diagramRoot.replaceChildren();
+
+        activePlate.zones.forEach(([x, y, w, h, label]) => {
+          diagramRoot.append(el("rect", { x, y, width: w, height: h, rx: 22, class: "zone" }));
+          const text = el("text", { x: x + 24, y: y + 32, class: "zone-label" });
+          text.textContent = label;
+          diagramRoot.append(text);
+        });
+
+        const byId = Object.fromEntries(activePlate.nodes.map(item => [item.id, item]));
+        activePlate.edges.forEach((item, index) => {
+          const path = el("path", {
+            d: item.d || defaultPath(byId[item.from], byId[item.to]),
+            class: `edge ${item.color} ${item.dashed ? "dashed" : ""}`,
+            "data-from": item.from,
+            "data-to": item.to,
+            "data-edge": index
+          });
+          diagramRoot.append(path);
+          if (item.label) {
+            const from = byId[item.from];
+            const to = byId[item.to];
+            const text = el("text", { x: (from.x + from.w + to.x) / 2, y: (from.y + from.h / 2 + to.y + to.h / 2) / 2 - 7, class: "edge-label" });
+            text.textContent = item.label;
+            diagramRoot.append(text);
+          }
+        });
+
+        activePlate.nodes.forEach((item) => {
+          const group = el("g", {
+            class: `node ${item.color}`,
+            transform: `translate(${item.x} ${item.y})`,
+            "data-node": item.id,
+            "data-step": item.step,
+            role: "button",
+            tabindex: "0"
+          });
+          renderShape(group, item);
+          renderText(group, item);
+          group.addEventListener("click", event => { event.stopPropagation(); selectNode(group); });
+          group.addEventListener("keydown", event => {
+            if (event.key === "Enter" || event.key === " ") { event.preventDefault(); selectNode(group); }
+          });
+          diagramRoot.append(group);
+        });
+
+        activePlate.notes.forEach(([x, y, content, strong]) => {
+          const text = el("text", { x, y, class: `annotation ${strong ? "strong" : ""}`, "text-anchor": "middle" });
+          text.textContent = content;
+          diagramRoot.append(text);
+        });
+
+        renderLegend();
+        renderContract();
+        const first = diagramRoot.querySelector(".node");
+        if (first) selectNode(first);
+      }
+
+      function renderLegend() {
+        const [title, items] = plateLegends[activeView];
+        legendTitle.textContent = title;
+        legendItems.replaceChildren();
+        items.forEach(([kind, label]) => {
+          const wrapper = document.createElement("span");
+          wrapper.className = "legend-item";
+          const icon = document.createElement("span");
+          icon.className = `symbol-icon ${kind}`;
+          icon.setAttribute("aria-hidden", "true");
+          const text = document.createElement("span");
+          text.textContent = label;
+          wrapper.append(icon, text);
+          legendItems.append(wrapper);
+        });
+      }
+
+      function renderContract() {
+        const spec = contractsFor(variants[activeVariant])[activeView];
+        contract.hidden = !spec;
+        if (!spec) return;
+        contractTitle.textContent = spec.title;
+        contractNotation.replaceChildren();
+        spec.notation.forEach(item => {
+          const chip = document.createElement("span");
+          chip.textContent = item;
+          contractNotation.append(chip);
+        });
+        contractRows.replaceChildren();
+        spec.rows.forEach(([label, shape, note]) => {
+          const row = document.createElement("tr");
+          const heading = document.createElement("th");
+          heading.scope = "row";
+          heading.textContent = label;
+          const cell = document.createElement("td");
+          const code = document.createElement("code");
+          code.textContent = shape;
+          const explanation = document.createElement("span");
+          explanation.className = "shape-note";
+          explanation.textContent = note;
+          cell.append(code, explanation);
+          row.append(heading, cell);
+          contractRows.append(row);
+        });
+        contractNote.textContent = spec.note;
+      }
+
+      function selectNode(group) {
+        const key = group.dataset.node;
+        const raw = details[key];
+        if (!raw) return;
+        clearSelection();
+        group.classList.add("selected");
+        svg.classList.add("has-selection");
+        diagramRoot.querySelectorAll(".edge").forEach(item => {
+          if (item.dataset.from === key || item.dataset.to === key) item.classList.add("highlighted");
+        });
+        const v = variants[activeVariant];
+        const [kicker, title, copy, facts] = raw;
+        detailKicker.textContent = kicker;
+        detailTitle.textContent = title;
+        detailCopy.textContent = copy;
+        detailFacts.replaceChildren();
+        variantValue(facts, v).forEach(([label, value]) => {
+          const wrapper = document.createElement("div");
+          wrapper.className = "detail-fact";
+          const term = document.createElement("dt");
+          term.textContent = label;
+          const definition = document.createElement("dd");
+          definition.textContent = value;
+          wrapper.append(term, definition);
+          detailFacts.append(wrapper);
+        });
+        const implementationKeys = ["queryLatent", "fullQuery", "indexQuery", "indexKey", "kvLatent", "rawIndex", "poolMix", "pooledCache", "expandTokens", "kdaProject", "shortConv", "alphaBeta", "deltaState", "generator", "router", "experts", "mtpBlock", "patchEmbed", "visionBlocks", "patchMerge"];
+        const implementationUrl = activeVariant === "flash" ? flashModelUrl : baseModelUrl;
+        detailSource.href = implementationKeys.includes(key) ? implementationUrl : reportUrl;
+        detailSource.firstElementChild.textContent = detailSource.href === implementationUrl ? "TokenSpeed reference implementation" : "Official technical report";
+      }
+
+      function clearSelection() {
+        svg.classList.remove("has-selection");
+        diagramRoot.querySelectorAll(".selected").forEach(item => item.classList.remove("selected"));
+        diagramRoot.querySelectorAll(".highlighted").forEach(item => item.classList.remove("highlighted"));
+      }
+
+      function setView(name) {
+        activeView = name;
+        document.querySelectorAll(".view-tab").forEach(tab => {
+          const active = tab.dataset.view === name;
+          tab.setAttribute("aria-selected", String(active));
+          if (active) tab.scrollIntoView({ block: "nearest", inline: "nearest" });
+        });
+        resetView();
+        renderPlate();
+      }
+
+      function setVariant(name) {
+        activeVariant = name;
+        const v = variants[name];
+        document.querySelectorAll(".variant-button").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.variant === name)));
+        document.getElementById("metric-total").textContent = v.total;
+        document.getElementById("metric-active").textContent = v.active;
+        document.getElementById("metric-layers").textContent = v.layers;
+        renderPlate();
+      }
+
+      function setViewBox(next) {
+        viewBox = next;
+        svg.setAttribute("viewBox", next.join(" "));
+      }
+
+      function resetView() {
+        setViewBox([0, 0, 1400, 820]);
+      }
+
+      function zoom(factor, x = viewBox[0] + viewBox[2] / 2, y = viewBox[1] + viewBox[3] / 2) {
+        const width = Math.min(2200, Math.max(520, viewBox[2] * factor));
+        const actual = width / viewBox[2];
+        const height = viewBox[3] * actual;
+        const rx = (x - viewBox[0]) / viewBox[2];
+        const ry = (y - viewBox[1]) / viewBox[3];
+        setViewBox([x - rx * width, y - ry * height, width, height]);
+      }
+
+      function clientPoint(clientX, clientY) {
+        const rect = svg.getBoundingClientRect();
+        return { x: viewBox[0] + (clientX - rect.left) / rect.width * viewBox[2], y: viewBox[1] + (clientY - rect.top) / rect.height * viewBox[3] };
+      }
+
+      function stopTrace() {
+        traceTimers.forEach(window.clearTimeout);
+        traceTimers = [];
+        svg.classList.remove("trace-running");
+        traceButton.classList.remove("running");
+        traceButton.textContent = "▶ Trace flow";
+        diagramRoot.querySelectorAll(".processing").forEach(item => item.classList.remove("processing"));
+      }
+
+      function runTrace() {
+        if (svg.classList.contains("trace-running")) { stopTrace(); return; }
+        clearSelection();
+        svg.classList.add("trace-running");
+        traceButton.classList.add("running");
+        traceButton.textContent = "■ Stop";
+        const nodes = [...diagramRoot.querySelectorAll(".node")].sort((a, b) => Number(a.dataset.step) - Number(b.dataset.step));
+        nodes.forEach((item, index) => {
+          traceTimers.push(window.setTimeout(() => {
+            diagramRoot.querySelectorAll(".processing").forEach(node => node.classList.remove("processing"));
+            item.classList.add("processing");
+            selectNode(item);
+          }, index * 680));
+        });
+        traceTimers.push(window.setTimeout(stopTrace, nodes.length * 680 + 800));
+      }
+
+      document.querySelectorAll(".view-tab").forEach(tab => {
+        tab.addEventListener("click", () => setView(tab.dataset.view));
+        tab.addEventListener("keydown", event => {
+          if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+          event.preventDefault();
+          const tabs = [...document.querySelectorAll(".view-tab")];
+          const offset = event.key === "ArrowRight" ? 1 : -1;
+          const next = tabs[(tabs.indexOf(tab) + offset + tabs.length) % tabs.length];
+          next.focus();
+          setView(next.dataset.view);
+        });
+      });
+      document.querySelectorAll(".variant-button").forEach(button => button.addEventListener("click", () => setVariant(button.dataset.variant)));
+      document.getElementById("zoom-in").addEventListener("click", () => zoom(0.82));
+      document.getElementById("zoom-out").addEventListener("click", () => zoom(1.22));
+      document.getElementById("fit-view").addEventListener("click", resetView);
+      traceButton.addEventListener("click", runTrace);
+      svg.addEventListener("click", event => { if (event.target === svg || event.target.classList.contains("zone")) clearSelection(); });
+      svg.addEventListener("wheel", event => { event.preventDefault(); const p = clientPoint(event.clientX, event.clientY); zoom(event.deltaY > 0 ? 1.12 : 0.89, p.x, p.y); }, { passive: false });
+      svg.addEventListener("pointerdown", event => {
+        if (event.target.closest(".node")) return;
+        dragging = true;
+        svg.classList.add("dragging");
+        svg.setPointerCapture(event.pointerId);
+        dragStart = { x: event.clientX, y: event.clientY, box: [...viewBox] };
+      });
+      svg.addEventListener("pointermove", event => {
+        if (!dragging) return;
+        const rect = svg.getBoundingClientRect();
+        setViewBox([dragStart.box[0] - (event.clientX - dragStart.x) / rect.width * dragStart.box[2], dragStart.box[1] - (event.clientY - dragStart.y) / rect.height * dragStart.box[3], dragStart.box[2], dragStart.box[3]]);
+      });
+      function endDrag() { dragging = false; svg.classList.remove("dragging"); }
+      svg.addEventListener("pointerup", endDrag);
+      svg.addEventListener("pointercancel", endDrag);
+      window.addEventListener("keydown", event => { if (event.key === "Escape") { stopTrace(); clearSelection(); } });
+
+      const params = new URLSearchParams(window.location.search);
+      if (Object.hasOwn(variants, params.get("variant"))) activeVariant = params.get("variant");
+      if (Object.hasOwn(plateBuilders, params.get("view"))) activeView = params.get("view");
+      setVariant(activeVariant);
+      setView(activeView);
+    </script>
+  </body>
+</html>
