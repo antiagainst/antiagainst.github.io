@@ -1,0 +1,1835 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="Interactive, source-grounded architecture map for DeepSeek-V4.1-Flash."
+    >
+    <title>DeepSeek V4.1 Architecture · Interactive Visual Map</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #071016;
+        --bg-grid: rgba(114, 223, 183, 0.055);
+        --surface: rgba(13, 27, 35, 0.92);
+        --surface-strong: #10232d;
+        --surface-soft: #132d37;
+        --ink: #edf9f4;
+        --muted: #9bb7af;
+        --faint: #6e8b84;
+        --line: rgba(150, 205, 188, 0.21);
+        --line-strong: rgba(150, 205, 188, 0.42);
+        --mint: #63e6be;
+        --mint-soft: #b2f2df;
+        --cyan: #66d9ef;
+        --violet: #b197fc;
+        --amber: #ffd166;
+        --coral: #ff8f70;
+        --rose: #f783ac;
+        --blue: #74c0fc;
+        --shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+        --node-process: #143b3b;
+        --node-projection: #17394b;
+        --node-cache: #312f4b;
+        --node-routing: #493a24;
+        --node-memory: #432c43;
+        --node-boundary: #1a2933;
+      }
+
+      html[data-theme="light"] {
+        color-scheme: light;
+        --bg: #f3f8f6;
+        --bg-grid: rgba(19, 119, 93, 0.07);
+        --surface: rgba(255, 255, 255, 0.94);
+        --surface-strong: #ffffff;
+        --surface-soft: #edf6f2;
+        --ink: #142821;
+        --muted: #4e6b62;
+        --faint: #70877f;
+        --line: rgba(27, 101, 79, 0.18);
+        --line-strong: rgba(27, 101, 79, 0.34);
+        --mint: #087f5b;
+        --mint-soft: #087f5b;
+        --cyan: #087f9c;
+        --violet: #7048e8;
+        --amber: #9c6500;
+        --coral: #c24128;
+        --rose: #b03060;
+        --blue: #1864ab;
+        --shadow: 0 22px 64px rgba(27, 62, 50, 0.13);
+        --node-process: #dff5ec;
+        --node-projection: #e2f1fa;
+        --node-cache: #ece9fb;
+        --node-routing: #fff1cf;
+        --node-memory: #f8e4f2;
+        --node-boundary: #edf3f5;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        min-width: 320px;
+        background: var(--bg);
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        overflow-x: hidden;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 12% 0%, rgba(99, 230, 190, 0.13), transparent 31rem),
+          radial-gradient(circle at 92% 8%, rgba(177, 151, 252, 0.12), transparent 30rem),
+          linear-gradient(var(--bg-grid) 1px, transparent 1px),
+          linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px),
+          var(--bg);
+        background-size: auto, auto, 32px 32px, 32px 32px, auto;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        line-height: 1.55;
+      }
+
+      button,
+      a {
+        font: inherit;
+      }
+
+      button {
+        color: inherit;
+      }
+
+      .shell {
+        width: min(1760px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 32px 0 72px;
+      }
+
+      .hero {
+        position: relative;
+        overflow: hidden;
+        padding: clamp(28px, 5vw, 64px);
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        background:
+          linear-gradient(135deg, rgba(99, 230, 190, 0.08), transparent 43%),
+          linear-gradient(315deg, rgba(177, 151, 252, 0.08), transparent 38%),
+          var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .hero::after {
+        position: absolute;
+        right: -90px;
+        bottom: -130px;
+        width: 330px;
+        height: 330px;
+        border: 1px solid rgba(99, 230, 190, 0.22);
+        border-radius: 50%;
+        box-shadow:
+          0 0 0 44px rgba(99, 230, 190, 0.035),
+          0 0 0 90px rgba(99, 230, 190, 0.025);
+        content: "";
+        pointer-events: none;
+      }
+
+      .hero-top {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 24px;
+      }
+
+      .eyebrow {
+        margin: 0 0 12px;
+        overflow-wrap: anywhere;
+        color: var(--mint);
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        max-width: 1000px;
+        margin: 0;
+        font-size: clamp(2.35rem, 6vw, 5.6rem);
+        line-height: 0.98;
+        letter-spacing: -0.055em;
+      }
+
+      .hero-copy {
+        position: relative;
+        z-index: 1;
+        max-width: 1080px;
+        margin: 24px 0 0;
+        color: var(--muted);
+        font-size: clamp(1rem, 2vw, 1.25rem);
+      }
+
+      .hero-stats {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 30px;
+      }
+
+      .stat {
+        min-width: 0;
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(7, 16, 22, 0.28);
+      }
+
+      html[data-theme="light"] .stat {
+        background: rgba(255, 255, 255, 0.58);
+      }
+
+      .stat strong,
+      .stat span {
+        display: block;
+      }
+
+      .stat strong {
+        color: var(--mint-soft);
+        font-size: 1.22rem;
+      }
+
+      .stat span {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      .theme-toggle,
+      .tool-button,
+      .view-tab {
+        border: 1px solid var(--line);
+        background: var(--surface-soft);
+        cursor: pointer;
+        transition:
+          transform 150ms ease,
+          border-color 150ms ease,
+          background 150ms ease;
+      }
+
+      .theme-toggle:hover,
+      .tool-button:hover,
+      .view-tab:hover {
+        border-color: var(--line-strong);
+        transform: translateY(-1px);
+      }
+
+      .theme-toggle {
+        position: relative;
+        z-index: 2;
+        display: inline-flex;
+        flex: 0 0 auto;
+        align-items: center;
+        gap: 9px;
+        padding: 10px 13px;
+        border-radius: 999px;
+        font-weight: 750;
+      }
+
+      #theme-icon {
+        width: 1.1rem;
+        text-align: center;
+      }
+
+      .workspace {
+        min-width: 0;
+        max-width: 100%;
+        margin-top: 24px;
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .workspace-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 18px 20px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .view-tabs {
+        display: flex;
+        min-width: 0;
+        gap: 8px;
+        overflow-x: auto;
+        scrollbar-width: thin;
+      }
+
+      .view-tab {
+        flex: 0 0 auto;
+        padding: 9px 13px;
+        border-radius: 999px;
+        color: var(--muted);
+        font-size: 0.84rem;
+        font-weight: 750;
+        white-space: nowrap;
+      }
+
+      .view-tab[aria-selected="true"] {
+        border-color: rgba(99, 230, 190, 0.55);
+        color: var(--ink);
+        background: rgba(99, 230, 190, 0.14);
+      }
+
+      .tools {
+        display: flex;
+        flex: 0 0 auto;
+        gap: 8px;
+      }
+
+      .tool-button {
+        padding: 8px 11px;
+        border-radius: 12px;
+        color: var(--muted);
+        font-size: 0.82rem;
+        font-weight: 750;
+      }
+
+      .workspace-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.75fr) minmax(320px, 0.8fr);
+        min-width: 0;
+      }
+
+      .map-panel,
+      .inspector {
+        min-width: 0;
+      }
+
+      .map-panel {
+        padding: 18px;
+        border-right: 1px solid var(--line);
+      }
+
+      .map-title-row {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 20px;
+        margin: 0 2px 12px;
+      }
+
+      .map-title-row h2 {
+        margin: 0;
+        font-size: clamp(1.15rem, 2vw, 1.5rem);
+      }
+
+      .map-title-row p {
+        margin: 3px 0 0;
+        color: var(--muted);
+        font-size: 0.86rem;
+      }
+
+      .map-hint {
+        flex: 0 0 auto;
+        color: var(--faint) !important;
+        font-size: 0.76rem !important;
+        text-align: right;
+      }
+
+      .svg-wrap {
+        position: relative;
+        overflow: hidden;
+        min-height: 610px;
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        background:
+          linear-gradient(rgba(99, 230, 190, 0.028) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(99, 230, 190, 0.028) 1px, transparent 1px),
+          rgba(5, 14, 19, 0.42);
+        background-size: 24px 24px;
+      }
+
+      html[data-theme="light"] .svg-wrap {
+        background:
+          linear-gradient(rgba(27, 101, 79, 0.045) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(27, 101, 79, 0.045) 1px, transparent 1px),
+          rgba(246, 251, 249, 0.8);
+        background-size: 24px 24px;
+      }
+
+      #architecture-map {
+        display: block;
+        width: 100%;
+        min-width: 760px;
+        height: 610px;
+        touch-action: none;
+        user-select: none;
+      }
+
+      .symbol-legend {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-top: 12px;
+        padding: 12px 14px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--surface-soft);
+      }
+
+      .legend-title {
+        flex: 0 0 auto;
+        color: var(--ink);
+        font-size: 0.78rem;
+        font-weight: 800;
+      }
+
+      .legend-items {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 14px;
+      }
+
+      .legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        color: var(--muted);
+        font-size: 0.74rem;
+      }
+
+      .symbol-icon {
+        width: 20px;
+        height: 13px;
+        border: 1px solid var(--line-strong);
+        border-radius: 4px;
+        background: var(--node-process);
+      }
+
+      .symbol-icon.projection {
+        border-radius: 50%;
+        background: var(--node-projection);
+      }
+
+      .symbol-icon.cache {
+        border-radius: 50% / 24%;
+        background: var(--node-cache);
+      }
+
+      .symbol-icon.routing {
+        clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+        background: var(--node-routing);
+      }
+
+      .symbol-icon.memory {
+        border-style: double;
+        background: var(--node-memory);
+      }
+
+      .symbol-icon.boundary {
+        border-style: dashed;
+        background: transparent;
+      }
+
+      .symbol-icon.flow {
+        position: relative;
+        height: 2px;
+        border: 0;
+        border-radius: 0;
+        background: var(--mint);
+      }
+
+      .symbol-icon.flow::after {
+        position: absolute;
+        top: -3px;
+        right: -1px;
+        border-top: 4px solid transparent;
+        border-bottom: 4px solid transparent;
+        border-left: 6px solid var(--mint);
+        content: "";
+      }
+
+      .inspector {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .detail-card,
+      .contract-card,
+      .plate-note {
+        padding: 22px;
+      }
+
+      .detail-card,
+      .contract-card {
+        border-bottom: 1px solid var(--line);
+      }
+
+      .detail-kicker {
+        margin: 0 0 6px;
+        color: var(--mint);
+        font-size: 0.72rem;
+        font-weight: 850;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .detail-card h3,
+      .contract-card h3 {
+        margin: 0;
+        font-size: 1.2rem;
+      }
+
+      .detail-subtitle {
+        margin: 4px 0 14px;
+        color: var(--cyan);
+        font-size: 0.88rem;
+        font-weight: 750;
+      }
+
+      .detail-copy,
+      .plate-note {
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+
+      .detail-copy {
+        margin: 0;
+      }
+
+      .detail-operation {
+        margin-top: 16px;
+        padding: 12px 13px;
+        border: 1px solid rgba(102, 217, 239, 0.24);
+        border-radius: 13px;
+        background: rgba(102, 217, 239, 0.07);
+      }
+
+      .detail-operation span,
+      .detail-path span {
+        display: block;
+        color: var(--faint);
+        font-size: 0.66rem;
+        font-weight: 800;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+      }
+
+      .detail-operation code {
+        display: block;
+        margin-top: 5px;
+        color: var(--cyan);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.78rem;
+        line-height: 1.55;
+        overflow-wrap: anywhere;
+      }
+
+      .detail-operation sub {
+        font-size: 0.72em;
+        vertical-align: -0.28em;
+      }
+
+      .detail-path {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .detail-path > div {
+        min-width: 0;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--surface-soft);
+      }
+
+      .detail-path p {
+        margin: 5px 0 0;
+        color: var(--ink);
+        font-size: 0.76rem;
+        line-height: 1.42;
+        overflow-wrap: anywhere;
+      }
+
+      .detail-notes {
+        margin: 11px 0 0;
+        padding-left: 18px;
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      .detail-notes:empty {
+        display: none;
+      }
+
+      .detail-notes li + li {
+        margin-top: 5px;
+      }
+
+      .fact-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 16px;
+      }
+
+      .fact {
+        min-width: 0;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--surface-soft);
+      }
+
+      .fact dt {
+        color: var(--faint);
+        font-size: 0.68rem;
+        font-weight: 750;
+        text-transform: uppercase;
+      }
+
+      .fact dd {
+        overflow-wrap: anywhere;
+        margin: 4px 0 0;
+        color: var(--ink);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.75rem;
+      }
+
+      .contract-card {
+        min-height: 280px;
+      }
+
+      .contract-intro {
+        margin: 8px 0 14px;
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+
+      .shape-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        font-size: 0.75rem;
+      }
+
+      .shape-table th,
+      .shape-table td {
+        padding: 8px 7px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .shape-table th {
+        color: var(--faint);
+        font-size: 0.67rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .shape-table td:first-child {
+        width: 34%;
+        color: var(--muted);
+      }
+
+      .shape-table code {
+        color: var(--mint-soft);
+        font-size: 0.72rem;
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+
+      .plate-note {
+        margin: 0;
+      }
+
+      .source-section {
+        margin-top: 24px;
+        padding: clamp(22px, 4vw, 38px);
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .source-section h2 {
+        margin: 0;
+        font-size: 1.45rem;
+      }
+
+      .source-intro {
+        max-width: 960px;
+        margin: 8px 0 20px;
+        color: var(--muted);
+      }
+
+      .source-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .source-card {
+        display: block;
+        min-width: 0;
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 17px;
+        color: inherit;
+        background: var(--surface-soft);
+        text-decoration: none;
+        transition:
+          transform 150ms ease,
+          border-color 150ms ease;
+      }
+
+      .source-card:hover {
+        border-color: var(--line-strong);
+        transform: translateY(-2px);
+      }
+
+      .source-card strong,
+      .source-card span {
+        display: block;
+      }
+
+      .source-card p {
+        margin: 7px 0 16px;
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      .source-card span {
+        color: var(--mint);
+        font-size: 0.76rem;
+        font-weight: 800;
+      }
+
+      footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 26px 4px 0;
+        color: var(--faint);
+        font-size: 0.78rem;
+      }
+
+      .edge {
+        fill: none;
+        stroke: var(--faint);
+        stroke-width: 2.25;
+        opacity: 0.78;
+        marker-end: url(#arrowhead);
+      }
+
+      .edge.accent {
+        stroke: var(--mint);
+      }
+
+      .edge.reuse {
+        stroke: var(--amber);
+        stroke-dasharray: 8 7;
+      }
+
+      .edge.aux {
+        stroke: var(--violet);
+        stroke-dasharray: 4 6;
+      }
+
+      .edge-label {
+        fill: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+        paint-order: stroke;
+        stroke: var(--bg);
+        stroke-width: 5px;
+        stroke-linejoin: round;
+      }
+
+      .node {
+        cursor: pointer;
+        outline: none;
+      }
+
+      .node-shape {
+        stroke: var(--line-strong);
+        stroke-width: 1.5;
+        transition:
+          stroke 140ms ease,
+          filter 140ms ease,
+          transform 140ms ease;
+      }
+
+      .node:hover .node-shape,
+      .node:focus .node-shape,
+      .node.is-active .node-shape {
+        stroke: var(--mint);
+        filter: url(#node-glow);
+      }
+
+      .node-title {
+        fill: var(--ink);
+        font-size: 15px;
+        font-weight: 800;
+        pointer-events: none;
+      }
+
+      .node-subtitle {
+        fill: var(--muted);
+        font-size: 11.5px;
+        font-weight: 620;
+        pointer-events: none;
+      }
+
+      .group-label {
+        fill: var(--mint);
+        font-size: 13px;
+        font-weight: 850;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      #architecture-map.is-tracing .edge {
+        stroke-dasharray: 12 9;
+        animation: trace-flow 1.15s linear infinite;
+        opacity: 1;
+      }
+
+      @keyframes trace-flow {
+        to {
+          stroke-dashoffset: -42;
+        }
+      }
+
+      @media (max-width: 1180px) {
+        .hero-stats {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .workspace-grid {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .map-panel {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .inspector {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .detail-card {
+          border-right: 1px solid var(--line);
+        }
+
+        .plate-note {
+          grid-column: 1 / -1;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .shell {
+          width: min(calc(100% - 20px), 1760px);
+          max-width: calc(100vw - 20px);
+          padding-top: 10px;
+        }
+
+        .hero,
+        .workspace,
+        .source-section {
+          border-radius: 20px;
+        }
+
+        .hero-top,
+        .workspace-head,
+        .map-title-row,
+        footer {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        .theme-toggle {
+          align-self: flex-start;
+        }
+
+        .hero-stats,
+        .source-grid,
+        .inspector {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .tools {
+          width: 100%;
+          justify-content: flex-end;
+        }
+
+        .view-tabs {
+          width: 100%;
+          max-width: 100%;
+        }
+
+        .map-hint {
+          text-align: left;
+        }
+
+        .svg-wrap {
+          overflow-x: auto;
+          min-height: 520px;
+        }
+
+        #architecture-map {
+          height: 520px;
+        }
+
+        .detail-card,
+        .contract-card {
+          border-right: 0;
+        }
+
+        .symbol-legend {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 8px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          animation-duration: 0.001ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.001ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <div class="hero-top">
+          <div>
+            <p class="eyebrow">Model architecture atlas · September 2026</p>
+            <h1>DeepSeek V4.1 Flash</h1>
+          </div>
+          <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to light theme">
+            <span id="theme-icon" aria-hidden="true">☀</span>
+            <span id="theme-label">Light</span>
+          </button>
+        </div>
+        <p class="hero-copy">
+          A clickable map of the multimodal 40-layer Causal Encoder-Decoder, CSA2
+          cross-layer cache sharing, hierarchical sparse indexing, Single-Pass mHC,
+          Engram conditional memory, multimodal MoE routing, and DSpark drafting.
+        </p>
+        <div class="hero-stats">
+          <div class="stat"><strong>552B + 196B</strong><span>backbone + Engram parameters</span></div>
+          <div class="stat"><strong>8B / 16B</strong><span>active parameters · prefill / decode</span></div>
+          <div class="stat"><strong>20 + 20</strong><span>causal encoder + decoder layers</span></div>
+          <div class="stat"><strong>1M</strong><span>maximum context length</span></div>
+          <div class="stat"><strong>890 B/token</strong><span>reported global KV footprint</span></div>
+        </div>
+      </section>
+
+      <section class="workspace" aria-label="Interactive DeepSeek V4.1 architecture explorer">
+        <header class="workspace-head">
+          <nav class="view-tabs" role="tablist" aria-label="Architecture views">
+            <button class="view-tab" role="tab" aria-selected="true" data-view="overall">System flow</button>
+            <button class="view-tab" role="tab" aria-selected="false" data-view="schedule">CED schedule</button>
+            <button class="view-tab" role="tab" aria-selected="false" data-view="vision">Vision path</button>
+            <button class="view-tab" role="tab" aria-selected="false" data-view="csa2">CSA2 modes</button>
+            <button class="view-tab" role="tab" aria-selected="false" data-view="indexer">Hierarchical indexer</button>
+            <button class="view-tab" role="tab" aria-selected="false" data-view="mhc">Single-Pass mHC</button>
+            <button class="view-tab" role="tab" aria-selected="false" data-view="engram">Engram</button>
+            <button class="view-tab" role="tab" aria-selected="false" data-view="moe">DeepSeekMoE</button>
+            <button class="view-tab" role="tab" aria-selected="false" data-view="dspark">DSpark</button>
+          </nav>
+          <div class="tools">
+            <button class="tool-button" id="trace-toggle" type="button">Trace flow</button>
+            <button class="tool-button" id="reset-view" type="button">Reset view</button>
+          </div>
+        </header>
+
+        <div class="workspace-grid">
+          <section class="map-panel">
+            <div class="map-title-row">
+              <div>
+                <h2 id="map-title">System flow</h2>
+                <p id="map-description">Images and text converge before the 20-layer encoder and 20-layer decoder.</p>
+              </div>
+              <p class="map-hint">Click a shape for details · drag to pan · wheel to zoom</p>
+            </div>
+            <div class="svg-wrap">
+              <svg
+                id="architecture-map"
+                viewBox="0 0 1440 820"
+                role="img"
+                tabindex="0"
+                aria-labelledby="map-title map-description"
+              ></svg>
+            </div>
+            <div class="symbol-legend" aria-live="polite">
+              <span class="legend-title" id="symbol-legend-title">System symbols</span>
+              <div class="legend-items" id="symbol-legend-items"></div>
+            </div>
+          </section>
+
+          <aside class="inspector" aria-label="Selected architecture component">
+            <section class="detail-card">
+              <p class="detail-kicker">Selected component</p>
+              <h3 id="detail-title">Causal Encoder-Decoder</h3>
+              <p class="detail-subtitle" id="detail-subtitle">20 encoder layers + 20 decoder layers</p>
+              <p class="detail-copy" id="detail-copy"></p>
+              <div class="detail-operation">
+                <span>Operation</span>
+                <code id="detail-equation"></code>
+              </div>
+              <div class="detail-path">
+                <div><span>Reads from</span><p id="detail-inputs"></p></div>
+                <div><span>Feeds</span><p id="detail-outputs"></p></div>
+              </div>
+              <ul class="detail-notes" id="detail-notes"></ul>
+              <dl class="fact-grid" id="detail-facts"></dl>
+            </section>
+            <section class="contract-card" id="kernel-contract">
+              <p class="detail-kicker">Logical contract</p>
+              <h3 id="contract-title">System tensor contract</h3>
+              <p class="contract-intro" id="contract-intro"></p>
+              <table class="shape-table">
+                <thead><tr><th>Quantity</th><th>Logical shape / value</th></tr></thead>
+                <tbody id="contract-rows"></tbody>
+              </table>
+            </section>
+            <p class="plate-note" id="plate-note"></p>
+          </aside>
+        </div>
+      </section>
+
+      <section class="source-section">
+        <h2>Primary sources</h2>
+        <p class="source-intro">
+          Shapes and schedules are taken from the official model config, technical report,
+          and reference inference implementation. The diagrams show logical model structure
+          rather than deployment-specific storage layouts.
+        </p>
+        <div class="source-grid">
+          <a class="source-card" href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash/blob/main/DeepSeek_V41_Tech_Report.pdf" target="_blank" rel="noreferrer">
+            <strong>Technical report</strong>
+            <p>CED, CSA2 modes, hierarchical indexing, Single-Pass mHC, Engram, DSpark, and KV formats.</p>
+            <span>Open report ↗</span>
+          </a>
+          <a class="source-card" href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash/blob/main/config.json" target="_blank" rel="noreferrer">
+            <strong>Official config</strong>
+            <p>Exact dimensions, layer source lists, compression ratios, experts, vision tower, and draft settings.</p>
+            <span>Open config ↗</span>
+          </a>
+          <a class="source-card" href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash/blob/main/inference/model.py" target="_blank" rel="noreferrer">
+            <strong>Reference model</strong>
+            <p>Executable compressor, indexer, attention, Engram, mHC, MoE, vision merge, and DSpark dataflow.</p>
+            <span>Open model.py ↗</span>
+          </a>
+        </div>
+      </section>
+
+      <footer>
+        <span>DeepSeek V4.1 Flash · source-grounded architecture visualization</span>
+        <span>Auto-generated by gpt-5.6-sol.</span>
+      </footer>
+    </main>
+
+    <script>
+      (function () {
+        "use strict";
+
+        var SVG_NS = "http://www.w3.org/2000/svg";
+        var themeStorageKey = "tokenspeed-architecture-theme";
+        var svg = document.getElementById("architecture-map");
+        var activeView = "overall";
+        var selectedNode = null;
+        var tracing = false;
+        var viewBox = { x: 0, y: 0, w: 1440, h: 820 };
+        var drag = null;
+
+        function n(id, x, y, w, h, title, subtitle, kind, detail) {
+          return {
+            id: id, x: x, y: y, w: w, h: h, title: title, subtitle: subtitle,
+            kind: kind || "process", detail: detail
+          };
+        }
+
+        function e(from, to, label, style) {
+          return { from: from, to: to, label: label || "", style: style || "" };
+        }
+
+        var plates = {
+          overall: {
+            title: "System flow",
+            description: "Images and text converge before the 20-layer encoder and 20-layer decoder.",
+            legend: ["System symbols", [["process", "model stage"], ["projection", "projection / embedding"], ["memory", "conditional memory"], ["routing", "draft / route"], ["flow", "data path"]]],
+            note: "CED changes the prefill path: prompt-wide global KV comes from the causal encoder, while decoder SWA is reconstructed over a bounded 128-token suffix. Decode still traverses the full stack.",
+            defaultNode: "ced",
+            nodes: [
+              n("text", 45, 190, 170, 86, "Text / tool tokens", "IDs in vocabulary 129280", "projection", ["Input stream", "Text embedding path", "Token IDs are embedded at width 5120. Image placeholder spans are overwritten after visual encoding.", [["Input", "[B,T]"], ["Embedding", "[129280,5120]"], ["Context", "up to 1048576"]]]),
+              n("image", 45, 500, 170, 86, "Images", "variable resolution RGB", "projection", ["Input stream", "Native multimodal path", "Images are split into 14×14 patches and processed by a 32-layer DeepSeek-ViT before insertion into the language sequence.", [["Patch", "14×14×3"], ["ViT width", "1024"], ["Max visual tokens", "1024"]]]),
+              n("textEmbed", 270, 190, 190, 86, "Text embedding", "D = 5120", "projection", ["Embedding", "Untied token embedding", "The token lookup produces the initial language-model hidden states.", [["Input", "[B,T]"], ["Output", "[B,T,5120]"], ["Vocabulary", "129280"]]]),
+              n("vision", 270, 480, 190, 126, "DeepSeek-ViT", "32 blocks · 2D-RoPE", "process", ["Vision encoder", "DeepSeek-ViT + aligner", "Bidirectional ViT features are 3×3 pixel-unshuffled, projected to width 5120, and placed into the corresponding image-token span.", [["Patch width", "588"], ["ViT states", "[N,1024]"], ["Aligned states", "[N/9,5120]"]]]),
+              n("fusion", 520, 320, 190, 104, "Multimodal sequence", "text + visual embeddings", "projection", ["Sequence fusion", "Joint embedding stream", "Visual features replace image slots in the same embedding sequence used by text. Both modalities then share the language backbone.", [["Text", "[B,Ttext,5120]"], ["Visual", "[B,Timg,5120]"], ["Merged", "[B,T,5120]"]]]),
+              n("ced", 765, 205, 230, 160, "Causal encoder", "layers 0–19", "process", ["Causal Encoder-Decoder", "20 encoder layers + 20 decoder layers", "The lower half builds prompt representations and the shared global KV sources. The upper half consumes those encoder states while retaining layer-local 128-token SWA.", [["Encoder", "layers 0–19"], ["Decoder", "layers 20–39"], ["Prefill active", "8B parameters"], ["Decode active", "16B parameters"]]]),
+              n("decoder", 1050, 205, 230, 160, "Decoder", "layers 20–39", "process", ["CED decoder", "Shared global KV + local SWA", "Decoder global KV is projected from the final encoder hidden states. Its first Full layer creates the shared candidate pool; later layers reindex or reuse selections.", [["Global KV source", "encoder H20"], ["Local window", "128"], ["Full layer", "20"], ["Reindex", "24 28 32 36"]]]),
+              n("engram", 765, 500, 230, 105, "Engram memory", "layers 1 and 14", "memory", ["Conditional memory", "196B sparse parameters", "N-gram hashes retrieve memory vectors that are gated into each of four residual streams. Image positions are excluded from hashing and memory injection.", [["Orders", "2 3 4"], ["Hash heads", "8"], ["Modules", "layers 1 and 14"], ["Table parameters", "196B"]]]),
+              n("dspark", 1050, 500, 230, 105, "DSpark drafter", "3 blocks · 5 positions", "routing", ["Speculative decoding", "Semi-autoregressive DSpark", "Three SWA-only draft blocks consume backbone features from layers 37–39, predict five positions in parallel, then use a rank-256 Markov head and confidence estimates.", [["Target layers", "37 38 39"], ["Draft blocks", "3"], ["Parallel positions", "5"], ["Draft experts", "128 top-3"]]]),
+              n("head", 1325, 320, 100, 105, "LM head", "129280 logits", "projection", ["Output", "Shared vocabulary head", "The four residual streams are collapsed, normalized, and projected to next-token logits.", [["Input", "[B,T,5120]"], ["Output", "[B,T,129280]"], ["Embedding tied", "no"]]])
+            ],
+            edges: [
+              e("text", "textEmbed"), e("textEmbed", "fusion"), e("image", "vision"), e("vision", "fusion"),
+              e("fusion", "ced", "joint tokens", "accent"), e("ced", "decoder", "encoder H20", "accent"),
+              e("engram", "ced", "gated memory", "aux"), e("decoder", "head"),
+              e("decoder", "dspark", "H37 H38 H39", "aux"), e("dspark", "head", "verified drafts", "reuse")
+            ]
+          },
+
+          schedule: {
+            title: "CED layer schedule",
+            description: "The config assigns exact Full, Reindex, Reuse, and SWA roles to every backbone layer.",
+            legend: ["Schedule symbols", [["process", "current-layer compute"], ["cache", "shared global KV source"], ["routing", "fresh index selection"], ["boundary", "encoder / decoder region"], ["flow", "layer order"]]],
+            note: "Every CSA2 layer also computes its own main Q and layer-local SWA KV. A Reuse label means global main KV and the latest compatible Top-512 indices are reused, not that the whole attention layer is skipped.",
+            defaultNode: "enc0",
+            groups: [
+              { x: 35, y: 65, w: 1370, h: 300, label: "Causal encoder · layers 0–19" },
+              { x: 35, y: 445, w: 1370, h: 300, label: "Decoder · layers 20–39" }
+            ],
+            nodes: [
+              n("enc0", 70, 155, 160, 95, "L0–1", "pure SWA ×2", "process", ["Encoder start", "Two pure-SWA layers", "The first two layers use only the 128-token local branch. Engram is injected before layer 1.", [["Layers", "0–1"], ["Global branch", "none"], ["SWA", "128"], ["Engram", "layer 1"]]]),
+              n("enc2", 270, 135, 170, 135, "L2", "CSA2(2) · Full", "cache", ["Encoder KV source", "Full Mode at layer 2", "Compresses non-overlapping token pairs, writes main KV and indexer K, and selects fresh Top-512 global positions.", [["Ratio", "2"], ["Main KV", "[B,T/2,512]"], ["Indexer K", "[B,T/2,128]"], ["Selection", "Top-512"]]]),
+              n("enc3", 480, 155, 165, 95, "L3–7", "Reuse ×5", "process", ["Encoder reuse run", "Five Reuse layers", "Each layer keeps its own Q and SWA KV while reusing layer 2 main KV and Top-512 indices.", [["Layers", "3–7"], ["Main KV source", "layer 2"], ["Fresh indexer", "no"], ["Local SWA", "yes"]]]),
+              n("enc8", 685, 135, 170, 135, "L8", "CSA2(2) · Full", "cache", ["Encoder KV source", "Full Mode at layer 8", "Starts the second ratio-2 sharing group with newly compressed main KV, indexer K, and Top-512 indices.", [["Ratio", "2"], ["Consumers", "layers 9–13"], ["Indexer heads", "32"], ["Top-k", "512"]]]),
+              n("enc9", 895, 155, 165, 95, "L9–13", "Reuse ×5", "process", ["Encoder reuse run", "Five Reuse layers", "These layers reuse layer 8 global state while computing layer-local Q and SWA.", [["Layers", "9–13"], ["Main KV source", "layer 8"], ["Fresh indexer", "no"], ["Local SWA", "yes"]]]),
+              n("enc14", 1100, 135, 170, 135, "L14", "Full + Engram", "memory", ["Encoder memory source", "Full Mode plus Engram", "Layer 14 receives the second Engram module before creating the third ratio-2 global KV sharing group.", [["Ratio", "2"], ["Engram", "module 2"], ["Consumers", "layers 15–19"], ["Top-k", "512"]]]),
+              n("enc15", 1305, 155, 100, 95, "L15–19", "Reuse ×5", "process", ["Encoder tail", "Five Reuse layers", "The last encoder run produces H20, the source hidden state used to construct decoder global KV.", [["Layers", "15–19"], ["Output", "H20"], ["Width", "5120"], ["Residual streams", "4"]]]),
+              n("dec20", 70, 515, 200, 135, "L20", "CSA2(1) · Full", "cache", ["Decoder source", "Full Mode + candidate pool", "Uses encoder H20 to create uncompressed main KV, indexer K, its own Top-512 selection, and the 16384-position candidate pool.", [["Ratio", "1"], ["Candidate blocks", "2048"], ["Block size", "8"], ["Candidate positions", "16384"]]]),
+              n("dec21", 310, 535, 170, 95, "L21–23", "Reuse ×3", "process", ["Decoder reuse run", "Three Reuse layers", "Reuses layer 20 main KV and its Top-512 indices while computing local Q and SWA KV.", [["Layers", "21–23"], ["Main KV source", "layer 20"], ["Indices source", "layer 20"], ["Local SWA", "128"]]]),
+              n("dec24", 520, 515, 180, 135, "L24 / 28", "Reindex groups", "routing", ["Decoder reindex", "Fresh Top-512 inside candidates", "Layers 24 and 28 each form a new indexer Q, score only the shared candidate pool, and publish new Top-512 indices.", [["Layers", "24 and 28"], ["Search positions", "up to 16384"], ["Top-k", "512"], ["Main KV", "reused from layer 20"]]]),
+              n("dec25", 740, 535, 170, 95, "L25–27 / 29–31", "Reuse ×3 each", "process", ["Decoder reuse runs", "Reuse after each reindex", "Each three-layer run consumes the latest Top-512 selection against the layer 20 main KV.", [["Runs", "25–27 and 29–31"], ["Fresh indexer", "no"], ["Global entries", "512"], ["Local entries", "128"]]]),
+              n("dec32", 950, 515, 180, 135, "L32 / 36", "Reindex groups", "routing", ["Decoder reindex", "Late fresh selections", "Layers 32 and 36 repeat candidate-restricted scoring so deeper layers can change which long-range entries they attend to.", [["Layers", "32 and 36"], ["Indexer Q", "[B,T,32,128]"], ["Top-k", "512"], ["Candidate pool", "shared"]]]),
+              n("dec33", 1170, 535, 205, 95, "L33–35 / 37–39", "Reuse ×3 each", "process", ["Decoder tail", "Final two Reuse runs", "The final run includes DSpark feature taps at attention inputs to layers 37, 38, and 39.", [["Runs", "33–35 and 37–39"], ["DSpark taps", "37 38 39"], ["Output width", "5120"], ["SWA", "128"]]])
+            ],
+            edges: [
+              e("enc0", "enc2"), e("enc2", "enc3"), e("enc3", "enc8"), e("enc8", "enc9"), e("enc9", "enc14"), e("enc14", "enc15"),
+              e("enc15", "dec20", "H20 → decoder KV", "accent"), e("dec20", "dec21"), e("dec21", "dec24"), e("dec24", "dec25"), e("dec25", "dec32"), e("dec32", "dec33")
+            ]
+          },
+
+          vision: {
+            title: "DeepSeek-ViT and aligner",
+            description: "Variable-resolution images become at most 1024 language-width visual tokens.",
+            legend: ["Vision symbols", [["projection", "linear projection"], ["process", "attention / MLP block"], ["boundary", "spatial reshape"], ["flow", "feature flow"]]],
+            note: "At the maximum illustrated resolution 1344×1344, 14×14 patching produces a 96×96 grid. The 3×3 unshuffle reduces it to 32×32 = 1024 visual tokens before projection to D=5120.",
+            defaultNode: "patches",
+            nodes: [
+              n("pixels", 45, 325, 170, 95, "RGB image", "Hpx × Wpx × 3", "projection", ["Vision input", "Variable-resolution image", "The image processor chooses a valid resolution, then materializes non-overlapping RGB patches.", [["Input", "[Hpx,Wpx,3]"], ["Example max", "1344×1344×3"], ["Patch size", "14×14"]]]),
+              n("patches", 270, 300, 185, 145, "Patch vectors", "N × 588", "projection", ["Patch embedding", "Linear patch projection", "Each 14×14×3 patch is flattened to 588 channels and linearly projected; the implementation deliberately uses a linear layer rather than a convolution.", [["N", "nh×nw"], ["Patch vector", "14×14×3 = 588"], ["Weight", "[588,1024]"], ["Output", "[N,1024]"]]]),
+              n("vit", 515, 250, 240, 245, "DeepSeek-ViT ×32", "RMSNorm · MHA · SwiGLU", "process", ["Vision backbone", "32 bidirectional ViT blocks", "Each block uses 16 attention heads at width 64, 2D-RoPE on Q and K, and a SwiGLU MLP with intermediate width 2816.", [["States", "[N,1024]"], ["Q K V", "[N,16,64]"], ["Attention", "[16,N,N]"], ["MLP", "1024→2816→1024"]]]),
+              n("rope", 540, 565, 190, 90, "2D-RoPE", "height + width axes", "projection", ["Vision position encoding", "Two-dimensional rotary positions", "Half of each head encodes row position and half encodes column position, avoiding a fixed absolute embedding table.", [["Head width", "64"], ["RoPE axes", "2"], ["Theta", "10000"], ["Grid", "nh×nw"]]]),
+              n("unshuffle", 815, 285, 220, 175, "3×3 pixel-unshuffle", "9 tokens → channels", "boundary", ["Spatial downsampling", "Token count ÷9", "Each 3×3 feature neighborhood is rearranged into channels. Padding handles grids not divisible by three.", [["Input", "[nh,nw,1024]"], ["Output grid", "[ceil(nh/3),ceil(nw/3)]"], ["Channels", "9×1024 = 9216"], ["Token reduction", "9×"]]]),
+              n("aligner", 1095, 300, 200, 145, "Two-layer aligner", "9216 → 5120 → 5120", "projection", ["Vision-language projector", "GELU MLP aligner", "The flattened 3×3 neighborhood is projected to the language hidden width with two learned linear maps.", [["Input", "[N/9,9216]"], ["W1", "[9216,5120]"], ["W2", "[5120,5120]"], ["Output", "[N/9,5120]"]]]),
+              n("merge", 1340, 325, 80, 95, "Merge", "image span", "projection", ["Embedding merge", "Visual tokens enter the LM", "Aligned features overwrite IMAGE placeholder positions; learned vectors represent image start, end, and row-newline markers.", [["Visual width", "5120"], ["Maximum rows", "1024 tokens"], ["LM input", "[B,T,5120]"]]])
+            ],
+            edges: [e("pixels", "patches"), e("patches", "vit"), e("rope", "vit", "Q/K rotation", "aux"), e("vit", "unshuffle"), e("unshuffle", "aligner"), e("aligner", "merge", "visual embeddings", "accent")]
+          },
+
+          csa2: {
+            title: "CSA2 operating modes",
+            description: "Shown together for comparison; each CSA2 layer executes exactly one of these three modes.",
+            legend: ["CSA2 symbols", [["process", "current attention compute"], ["projection", "learned projection"], ["cache", "main KV / index K"], ["routing", "Top-k selection"], ["flow", "current flow"]]],
+            note: "All three modes finish the same way: gather 512 selected global entries, append up to 128 layer-local SWA entries, run sparse attention with the current layer's main Q, undo the query-side RoPE on the output tail, then apply the grouped low-rank output projection.",
+            defaultNode: "queryLatent",
+            groups: [
+              { x: 420, y: 45, w: 310, h: 730, label: "Full Mode" },
+              { x: 745, y: 45, w: 310, h: 730, label: "Reindex Mode" },
+              { x: 1070, y: 45, w: 335, h: 730, label: "Reuse Mode" }
+            ],
+            nodes: [
+              n("input", 25, 335, 165, 100, "Hidden states H", "[B,T,5120]", "process", ["Attention input", "One mixed hidden stream", "Single-Pass mHC collapses four residual streams to H. H independently feeds the query low-rank projection, the layer-local SWA KV projection, Full-mode compression, and the indexer's head-weight projection.", [["H", "[B,T,5120]"], ["Residual source", "[B,T,4,5120]"], ["Branches", "qr · SWA KV · cache · weights"]], { equation: "H = RMSNorm(Σ<sub>c</sub> α<sub>l−1,c</sub>X<sub>l,c</sub>)", notes: ["The full-attention query is not projected directly from H.", "Every mode uses the current layer's H for its local branch."] }]),
+              n("queryLatent", 215, 100, 180, 95, "Query latent qr", "5120 → 1280", "projection", ["Shared query stem", "Low-rank query latent", "H is first projected to a 1280-wide latent and RMS-normalized. That latent then forks independently into the 64-head main Q and the 32-head indexer Q used by Full and Reindex modes.", [["Input", "[B,T,5120]"], ["Wq_a", "[5120,1280]"], ["qr", "[B,T,1280]"], ["Consumers", "main Q and indexer Q"]], { equation: "q<sub>r</sub> = RMSNorm(H W<sub>q,a</sub>)", notes: ["Main Q and indexer Q are siblings derived from qr.", "Reuse Mode needs main Q but skips the indexer-Q branch."] }]),
+              n("localSwa", 215, 525, 180, 115, "Local SWA KV", "current layer · 128 slots", "cache", ["Layer-local context", "Uncompressed sliding-window KV", "Every mode projects a 512-wide KV latent from the current H, applies RoPE to its last 64 channels, and retains the newest 128 entries. These local entries are appended to the selected global main KV before sparse attention.", [["Projection", "[5120,512]"], ["Current KV", "[B,T,512]"], ["Retained window", "128"], ["Cache dtype", "FP8"]], { equation: "KV<sub>swa</sub> = RoPE(RMSNorm(H W<sub>kv</sub>))", notes: ["SWA KV is never shared across layers.", "The gather contains up to 512 global entries plus 128 local entries."] }]),
+
+              n("fullQ", 455, 85, 240, 65, "Main Q", "qr → 64×512", "projection", ["Full Mode main query", "Layer-local 64-head Q", "The 1280-wide query latent is expanded to 64 heads of width 512. RoPE rotates only the final 64 channels of each head.", [["Input qr", "[B,T,1280]"], ["Wq_b", "[1280,32768]"], ["Q", "[B,T,64,512]"], ["RoPE tail", "64"]], { equation: "Q = RoPE(reshape(q<sub>r</sub> W<sub>q,b</sub>))" }]),
+              n("fullKV", 455, 175, 240, 70, "Create main KV", "non-overlap ratio r", "cache", ["Full Mode cache", "New shared global KV", "For r=2, learned channel-wise gates pool each non-overlapping pair; for r=1, this is a direct 512-wide projection. The result becomes the main KV shared by later layers.", [["Input", "[B,T,5120]"], ["Latent", "[B,T/r,512]"], ["r", "2 encoder · 1 decoder"], ["Stored", "E2M1 FP4"]], { equation: "C<sub>j</sub> = RMSNorm(Σ<sub>i∈group j</sub> softmax(g<sub>i</sub>) ⊙ v<sub>i</sub>)" }]),
+              n("fullIndex", 455, 275, 240, 70, "Indexer Q + K", "fresh sparse scores", "projection", ["Full Mode indexer", "Fresh Q, K, and scores", "Indexer Q is projected from qr, not from main Q. Indexer K is projected from the unrotated 512-wide main-KV latent; H separately provides 32 score-reduction weights.", [["Indexer Q", "[B,T,32,128]"], ["Indexer K", "[B,T/r,128]"], ["Head weights", "[B,T,32]"], ["Scores", "[B,T,T/r]"]], { equation: "s = Σ<sub>h=1</sub><sup>32</sup> ReLU(q<sub>h</sub>kᵀ) · w<sub>h</sub>(H)", notes: ["qr forks directly into indexer Q.", "Main Q is not consumed by the indexer."] }]),
+              n("fullTop", 455, 375, 240, 60, "Fresh Top-512", "global positions", "routing", ["Full Mode selection", "Fresh sparse global indices", "The highest-scoring causally visible main-KV entries are selected and sorted into position order.", [["Indices", "[B,T,512]"], ["Search", "all visible entries"], ["Publisher", "current Full layer"]], { equation: "I<sub>global</sub> = sort(topk(s, 512))" }]),
+              n("fullGather", 455, 470, 240, 70, "Gather + append SWA", "512 global + ≤128 local", "process", ["Full Mode gather", "Global and local KV become one source", "Top-512 indices gather main KV, then the current layer's SWA KV is concatenated as a second source for the same sparse-attention call.", [["Selected main KV", "[B,T,512,512] logical"], ["Local SWA KV", "[B,T,≤128,512] logical"], ["Combined", "[B,T,≤640,512] logical"]], { equation: "KV* = [ gather(KV<sub>main</sub>, I<sub>global</sub>) ; KV<sub>swa</sub> ]" }]),
+              n("fullCore", 455, 575, 240, 65, "Core attention", "current Q over KV*", "process", ["Full Mode attention", "One attention over both contexts", "Each current-layer main-Q head attends to the combined selected-global and local-window entries. A learned per-head attention sink participates in normalization.", [["Q", "[B,T,64,512]"], ["KV*", "[B,T,≤640,512] logical"], ["Head output", "[B,T,64,512]"]], { equation: "O = SparseAttention(Q, KV*, sink)" }]),
+              n("fullOut", 455, 680, 240, 70, "Grouped output", "32768 → 8192 → 5120", "projection", ["Full Mode output", "Grouped low-rank output projection", "After inverse RoPE on the 64-channel tail, eight head groups independently project 4096→1024, concatenate to 8192, then project to the model width.", [["Head result", "[B,T,64,512]"], ["Grouped latent", "[B,T,8,1024]"], ["Flattened", "[B,T,8192]"], ["Output", "[B,T,5120]"]], { equation: "Y = W<sub>o,b</sub> concat<sub>g=1..8</sub>(W<sub>o,a,g</sub> O<sub>g</sub>)" }]),
+
+              n("reQ", 780, 85, 240, 65, "Main Q", "qr → 64×512", "projection", ["Reindex Mode main query", "Fresh layer-local Q", "Reindex Mode uses the same qr→main-Q projection path as Full Mode.", [["Input qr", "[B,T,1280]"], ["Q", "[B,T,64,512]"], ["Reused", "no"]], { equation: "Q = RoPE(reshape(q<sub>r</sub> W<sub>q,b</sub>))" }]),
+              n("reKV", 780, 175, 240, 70, "Reuse main KV + Kidx", "from latest Full", "cache", ["Reindex shared cache", "No new global KV", "The layer receives the main KV and matching indexer K created by the latest Full layer.", [["Main KV", "[B,T/r,512]"], ["Indexer K", "[B,T/r,128]"], ["Producer", "latest Full"], ["New cache", "none"]], { equation: "(KV<sub>main</sub>, K<sub>idx</sub>) ← latest Full layer" }]),
+              n("reIndex", 780, 275, 240, 70, "Fresh indexer Q", "qr → 32×128", "projection", ["Reindex Mode indexer", "Fresh Q over shared K", "The same qr latent independently produces a new 32-head indexer Q. It rescores shared indexer K; decoder layers search only the hierarchical candidate pool.", [["Input qr", "[B,T,1280]"], ["Indexer Q", "[B,T,32,128]"], ["Search", "all or candidates"], ["Output", "fresh Top-512"]], { equation: "Q<sub>idx</sub> = RoPE(reshape(q<sub>r</sub> W<sub>idx</sub>))", notes: ["This branch does not consume main Q.", "H separately produces the 32 head weights."] }]),
+              n("reTop", 780, 375, 240, 60, "Fresh Top-512", "new indices · shared KV", "routing", ["Reindex selection", "Layer-specific global positions", "Fresh scores select a new set of main-KV positions without duplicating the cached main values.", [["Indices", "[B,T,512]"], ["KV source", "latest Full"], ["Selection", "current Reindex"]], { equation: "I<sub>global</sub> = sort(topk(mask(s), 512))" }]),
+              n("reGather", 780, 470, 240, 70, "Gather + append SWA", "new global + current local", "process", ["Reindex gather", "Fresh indices, shared values, local window", "The layer gathers shared main KV at its newly selected indices and appends its own layer-local SWA KV.", [["Selected main KV", "[B,T,512,512] logical"], ["Local SWA KV", "[B,T,≤128,512] logical"], ["Combined", "[B,T,≤640,512] logical"]], { equation: "KV* = [ gather(KV<sub>main</sub>, I<sub>global</sub>) ; KV<sub>swa</sub> ]" }]),
+              n("reCore", 780, 575, 240, 65, "Core attention", "current Q over KV*", "process", ["Reindex Mode attention", "Current Q over newly selected shared values", "The attention computation is identical to Full Mode after KV* is assembled; only ownership of global cache and indices differs.", [["Q", "[B,T,64,512]"], ["KV*", "[B,T,≤640,512] logical"], ["Head output", "[B,T,64,512]"]], { equation: "O = SparseAttention(Q, KV*, sink)" }]),
+              n("reOut", 780, 680, 240, 70, "Grouped output", "32768 → 8192 → 5120", "projection", ["Reindex Mode output", "Same grouped projection", "Eight independent output groups compress the 64 attention heads before the final projection returns to width 5120.", [["Head result", "[B,T,64,512]"], ["Grouped latent", "[B,T,8,1024]"], ["Output", "[B,T,5120]"]], { equation: "Y = W<sub>o,b</sub> concat<sub>g</sub>(W<sub>o,a,g</sub> O<sub>g</sub>)" }]),
+
+              n("reuseQ", 1105, 85, 260, 65, "Main Q", "qr → 64×512", "projection", ["Reuse Mode main query", "Fresh Q despite global reuse", "Reuse Mode still expands the current layer's qr into a new 64-head main Q. Queries are never shared across layers.", [["Input qr", "[B,T,1280]"], ["Q", "[B,T,64,512]"], ["Fresh", "every layer"]], { equation: "Q = RoPE(reshape(q<sub>r</sub> W<sub>q,b</sub>))" }]),
+              n("reuseKV", 1105, 185, 260, 70, "Reuse main KV", "from latest Full", "cache", ["Reuse Mode cache", "Shared global values", "The latest compatible Full layer supplies the 512-wide main KV. No indexer K is needed because this mode performs no scoring.", [["Main KV", "[B,T/r,512]"], ["New global KV", "none"], ["Indexer K read", "no"]], { equation: "KV<sub>main</sub> ← latest Full layer" }]),
+              n("reuseTop", 1105, 300, 260, 75, "Reuse Top-512", "latest Full / Reindex", "routing", ["Reuse Mode selection", "No indexer evaluation", "The layer inherits the newest Top-512 indices computed against the same main KV by a Full or Reindex layer.", [["Indices", "[B,T,512]"], ["Indexer Q", "not computed"], ["Score matrix", "not computed"]], { equation: "I<sub>global</sub> ← latest compatible index-producing layer" }]),
+              n("reuseGather", 1105, 470, 260, 70, "Gather + append SWA", "reused global + current local", "process", ["Reuse gather", "Shared long range plus fresh local context", "Reused indices gather reused main KV, but the appended SWA KV always belongs to the current layer.", [["Selected main KV", "[B,T,512,512] logical"], ["Local SWA KV", "[B,T,≤128,512] logical"], ["Combined", "[B,T,≤640,512] logical"]], { equation: "KV* = [ gather(KV<sub>main</sub>, I<sub>global</sub>) ; KV<sub>swa</sub> ]" }]),
+              n("reuseCore", 1105, 575, 260, 65, "Core attention", "fresh Q over reused global", "process", ["Reuse Mode attention", "Current Q over reused global and current local KV", "This is the cheapest CSA2 mode because it skips global KV creation and indexing, while preserving a fresh layer transformation.", [["Q", "[B,T,64,512]"], ["KV*", "[B,T,≤640,512] logical"], ["Head output", "[B,T,64,512]"]], { equation: "O = SparseAttention(Q, KV*, sink)" }]),
+              n("reuseOut", 1105, 680, 260, 70, "Grouped output", "32768 → 8192 → 5120", "projection", ["Reuse Mode output", "Same final projection", "The attention result follows the same inverse-RoPE and grouped output path as Full and Reindex modes.", [["Head result", "[B,T,64,512]"], ["Grouped latent", "[B,T,8,1024]"], ["Output", "[B,T,5120]"]], { equation: "Y = W<sub>o,b</sub> concat<sub>g</sub>(W<sub>o,a,g</sub> O<sub>g</sub>)" }])
+            ],
+            edges: [
+              e("input", "queryLatent", "Wq,a", "accent"), e("input", "localSwa", "Wkv", "accent"),
+              e("queryLatent", "fullQ"), e("queryLatent", "fullIndex", "independent Qidx", "aux"), e("input", "fullKV"), e("input", "fullIndex", "head weights", "aux"),
+              e("fullKV", "fullIndex", "Kidx"), e("fullIndex", "fullTop"), e("fullKV", "fullGather"), e("fullTop", "fullGather", "indices"), e("localSwa", "fullGather"),
+              e("fullQ", "fullCore"), e("fullGather", "fullCore"), e("fullCore", "fullOut"),
+              e("queryLatent", "reQ"), e("queryLatent", "reIndex", "independent Qidx", "aux"), e("input", "reIndex", "head weights", "aux"),
+              e("fullKV", "reKV", "cross-layer", "reuse"), e("reKV", "reIndex", "shared Kidx"), e("reIndex", "reTop"), e("reKV", "reGather"), e("reTop", "reGather", "indices"), e("localSwa", "reGather"),
+              e("reQ", "reCore"), e("reGather", "reCore"), e("reCore", "reOut"),
+              e("queryLatent", "reuseQ"), e("fullKV", "reuseKV", "cross-layer", "reuse"), e("reTop", "reuseTop", "latest indices", "reuse"),
+              e("reuseKV", "reuseGather"), e("reuseTop", "reuseGather"), e("localSwa", "reuseGather"), e("reuseQ", "reuseCore"), e("reuseGather", "reuseCore"), e("reuseCore", "reuseOut")
+            ]
+          },
+
+          indexer: {
+            title: "Hierarchical Sparse Indexer",
+            description: "Layer 20 scans all visible main KV once; later reindex layers search its bounded candidate pool.",
+            legend: ["Indexer symbols", [["projection", "indexer Q / K"], ["process", "score reduction"], ["routing", "block or position selection"], ["cache", "shared candidate state"], ["flow", "index flow"]]],
+            note: "Candidate selection is blockwise: the maximum score in each 8-position block ranks the block. Selecting 2048 blocks yields at most 16384 candidate positions; every reindex layer still chooses its own final Top-512.",
+            defaultNode: "idxQ",
+            nodes: [
+              n("idxH", 40, 315, 190, 110, "Hidden H + qr", "H 5120 · qr 1280", "process", ["Indexer input", "Separate state and query latent", "H produces 32 scalar head weights; qr independently produces 32 query heads. The full attention Q is not an indexer input.", [["H", "[B,T,5120]"], ["qr", "[B,T,1280]"], ["Full Q dependency", "none"]]]),
+              n("idxQ", 285, 180, 220, 125, "Indexer Q", "Wq: 1280 → 4096", "projection", ["Lightning indexer Q", "32 heads × 128", "The query latent is projected directly to 4096 channels and reshaped into 32 heads. Its last 64 channels receive RoPE.", [["Weight", "[1280,4096]"], ["Q", "[B,T,32,128]"], ["RoPE tail", "64"], ["Cache dtype", "FP4 for compute"]]]),
+              n("idxW", 285, 450, 220, 110, "Head weights", "W: 5120 → 32", "projection", ["Indexer head weights", "Query-dependent head reduction", "A separate projection from H weights the 32 rectified per-head score matrices before summation.", [["Weight", "[5120,32]"], ["Output", "[B,T,32]"], ["Activation", "linear weights"]]]),
+              n("idxK", 565, 180, 220, 125, "Shared indexer K", "main KV 512 → 128", "cache", ["Indexer keys", "Projected from main KV", "Only a Full Mode cache owner creates indexer K. Reindex layers reuse it together with the associated main KV.", [["Input", "[B,T/r,512]"], ["Weight", "[512,128]"], ["K", "[B,T/r,128]"], ["Stored", "FP4"]]]),
+              n("score", 565, 410, 220, 150, "Rectified score", "Σh ReLU(qh·k) wh", "process", ["Indexer score", "32-head reduced affinity", "Per-head dot products produce [B,T,32,T/r]. ReLU is applied before H-dependent weights reduce the head dimension.", [["Raw", "[B,T,32,T/r]"], ["Weights", "[B,T,32]"], ["Reduced", "[B,T,T/r]"], ["Causal mask", "yes"]]]),
+              n("fullTop", 850, 120, 225, 105, "Layer 20 Top-512", "own attention", "routing", ["First selection", "Full-range position Top-k", "The first decoder Full layer selects 512 compressed positions for its own attention.", [["Input scores", "[B,T,T]"], ["Indices", "[B,T,512]"], ["Compression ratio", "1"]]]),
+              n("blocks", 850, 300, 225, 130, "Block max + Top-2048", "8 positions / block", "routing", ["Candidate block selection", "First hierarchy level", "Each 8-position block is represented by its maximum score. The most relevant 2048 blocks are retained.", [["Block scores", "[B,T,ceil(T/8)]"], ["Selected blocks", "2048"], ["Block width", "8"], ["Newest block", "always retained"]]]),
+              n("pool", 850, 505, 225, 105, "Candidate pool", "≤16384 positions", "cache", ["Shared candidate pool", "Bounded decoder search domain", "The selected blocks expand back into a boolean position mask shared by layers 24, 28, 32, and 36.", [["Mask", "[B,T,T] logical"], ["Active positions", "≤16384"], ["Consumers", "24 28 32 36"]]]),
+              n("reQ", 1140, 180, 220, 110, "Later indexer Q", "layer-specific", "projection", ["Later reindex query", "Fresh query at each source layer", "Each deeper reindex layer builds its own 32-head Q and its own head weights.", [["Layers", "24 28 32 36"], ["Q", "[B,T,32,128]"], ["K", "shared from layer 20"]]]),
+              n("masked", 1140, 380, 220, 120, "Score candidates only", "context-independent bound", "process", ["Second-level scoring", "Masked indexer matrix", "Scores outside the layer-20 candidate pool are excluded before the final Top-k.", [["Scored positions", "≤16384"], ["Context scaling", "constant after pool"], ["Fresh scores", "per reindex layer"]]]),
+              n("laterTop", 1140, 590, 220, 95, "Fresh Top-512", "per Reindex layer", "routing", ["Final selection", "Layer-specific Top-k", "Each reindex layer selects its own 512 positions inside the shared pool; following Reuse layers inherit that result.", [["Indices", "[B,T,512]"], ["Selection source", "current reindex"], ["Reuse consumers", "next 3 layers"]]])
+            ],
+            edges: [
+              e("idxH", "idxQ"), e("idxH", "idxW"), e("idxQ", "score"), e("idxK", "score"), e("idxW", "score"),
+              e("score", "fullTop"), e("score", "blocks"), e("blocks", "pool"), e("pool", "masked", "shared mask", "reuse"),
+              e("reQ", "masked"), e("idxK", "masked", "shared K", "reuse"), e("masked", "laterTop")
+            ]
+          },
+
+          mhc: {
+            title: "Single-Pass mHC residual mixing",
+            description: "Four residual streams are mixed with coefficients predicted one sublayer ahead.",
+            legend: ["mHC symbols", [["process", "residual state / sublayer"], ["projection", "coefficient predictor"], ["routing", "mix coefficients"], ["flow", "current data"], ["boundary", "next-sublayer dependency"]]],
+            note: "Key equation: Xₗ₊₁ = Bₗ Xₗ + βₗ F(αₗ₋₁ Xₗ), while (αₗ, Bₗ, βₗ) = H(Xₗ). Shifting input mixing to αₗ₋₁ removes the dependency that blocked a single-pass Mega-mHC kernel.",
+            defaultNode: "streams",
+            nodes: [
+              n("streams", 55, 315, 220, 135, "Residual streams Xₗ", "[B,T,4,5120]", "process", ["mHC state", "Four parallel residual streams at step l", "Every token carries four width-5120 streams between sublayers. The coefficient predictor sees the flattened 20480-wide state Xₗ.", [["Xₗ", "[B,T,4,5120]"], ["Flattened", "[B,T,20480]"], ["Streams", "4"], ["Hidden width", "5120"]], { equation: "X<sub>l</sub> ∈ ℝ<sup>4×5120</sup> per token" }]),
+              n("prevAlpha", 330, 120, 220, 105, "Previous αₗ₋₁", "[B,T,4]", "routing", ["Shifted input mix", "Coefficients from sublayer l−1", "Single-Pass mHC consumes the input-mixing coefficients αₗ₋₁ predicted one sublayer earlier rather than waiting for αₗ.", [["αₗ₋₁", "[B,T,4]"], ["Produced at", "sublayer l−1"], ["Consumer", "current F"]], { equation: "α<sub>l−1</sub> = first 4 outputs of H(X<sub>l−1</sub>)", notes: ["This one-step shift removes the current-step dependency that required an extra residual-stream pass."] }]),
+              n("collapse", 330, 300, 220, 135, "Input mix", "αₗ₋₁ Xₗ", "process", ["Input collapse", "4 streams → one hidden state", "A weighted sum over the stream axis uses αₗ₋₁ to produce the width-5120 input to RMSNorm and the current attention or MoE sublayer.", [["Input Xₗ", "[B,T,4,5120]"], ["Mix αₗ₋₁", "[B,T,4]"], ["Output", "[B,T,5120]"]], { equation: "Ĥ<sub>l</sub> = Σ<sub>c=1</sub><sup>4</sup> α<sub>l−1,c</sub> X<sub>l,c</sub>" }]),
+              n("sublayer", 620, 300, 220, 135, "F(·)", "attention or MoE", "process", ["Transformer sublayer", "CSA2/SWA or DeepSeekMoE", "The normalized mixed input passes through one model sublayer and returns a width-5120 update.", [["Input", "[B,T,5120]"], ["Output", "[B,T,5120]"], ["Occurrences", "2 per block"]]]),
+              n("predict", 620, 535, 260, 145, "H(Xₗ)", "20480 → 24 coefficients", "projection", ["Coefficient predictor", "Current Xₗ predicts the next mix", "RMS-scaled projection produces 24 values: 4 next-input weights αₗ, 4 output weights βₗ, and 16 residual mixing logits for Bₗ.", [["Input Xₗ", "[B,T,20480]"], ["Projection", "[20480,24]"], ["αₗ", "[B,T,4]"], ["βₗ", "[B,T,4]"], ["Bₗ logits", "[B,T,4,4]"]], { equation: "(α<sub>l</sub>, B<sub>l</sub>, β<sub>l</sub>) = H(X<sub>l</sub>)", notes: ["αₗ is carried forward for sublayer l+1.", "Bₗ and βₗ are consumed by the current residual update."] }]),
+              n("sinkhorn", 950, 535, 220, 145, "Sinkhorn ×20", "Bₗ doubly stochastic", "routing", ["Residual matrix", "Birkhoff-constrained Bₗ", "Twenty Sinkhorn iterations normalize non-negative residual mixing coefficients so rows and columns of Bₗ each sum to one.", [["Input", "[B,T,4,4]"], ["Output Bₗ", "[B,T,4,4]"], ["Iterations", "20"], ["Epsilon", "1e-6"]], { equation: "B<sub>l</sub> = Sinkhorn<sub>20</sub>(logits<sub>B,l</sub>)" }]),
+              n("expand", 950, 300, 220, 145, "Residual update", "Bₗ Xₗ + βₗ F", "process", ["Stream expansion", "Current sublayer update returns to four streams", "βₗ scales the single sublayer output into four streams while Bₗ mixes the old residual streams Xₗ.", [["Bₗ Xₗ", "[B,T,4,5120]"], ["βₗ F", "[B,T,4,5120]"], ["Output Xₗ₊₁", "[B,T,4,5120]"]], { equation: "X<sub>l+1</sub> = B<sub>l</sub>X<sub>l</sub> + β<sub>l</sub>F(α<sub>l−1</sub>X<sub>l</sub>)" }]),
+              n("next", 1240, 315, 155, 115, "Xₗ₊₁", "next residual state", "process", ["Next state", "Four streams at step l+1", "The updated streams feed the next mHC-wrapped sublayer; αₗ becomes that next sublayer's input mix.", [["State Xₗ₊₁", "[B,T,4,5120]"], ["Carried mix", "αₗ [B,T,4]"], ["Kernel", "Mega-mHC"]], { equation: "(X<sub>l+1</sub>, α<sub>l</sub>) → sublayer l+1" }])
+            ],
+            edges: [
+              e("streams", "collapse"), e("prevAlpha", "collapse", "αₗ₋₁", "aux"), e("collapse", "sublayer"), e("sublayer", "expand"),
+              e("streams", "predict", "single traversal", "accent"), e("predict", "sinkhorn"), e("sinkhorn", "expand", "Bₗ", "aux"),
+              e("predict", "expand", "βₗ", "aux"), e("expand", "next"), e("predict", "next", "carry αₗ", "reuse")
+            ]
+          },
+
+          engram: {
+            title: "Engram conditional memory",
+            description: "Token n-grams address two enormous sparse tables; a context gate injects retrieved values.",
+            legend: ["Engram symbols", [["projection", "token map / hash"], ["memory", "sparse embedding table"], ["process", "gate / residual update"], ["routing", "multi-head addressing"], ["flow", "lookup flow"]]],
+            note: "The released V4.1 design omits Engram's short causal convolution. Orders 2, 3, and 4 are hashed independently across 8 heads, giving 24 row lookups per token and module.",
+            defaultNode: "tokensE",
+            nodes: [
+              n("tokensE", 45, 305, 190, 115, "Token IDs", "[B,T]", "projection", ["Engram input", "Text-only token stream", "A normalization map compresses equivalent token spellings into a vocabulary of 99092 IDs. Image spans become dead positions and break n-grams.", [["Raw IDs", "[B,T]"], ["Compressed vocab", "99092"], ["Image participation", "none"], ["Pad token", "2"]]]),
+              n("ngrams", 285, 230, 220, 155, "N-gram hashes", "orders 2 · 3 · 4", "routing", ["Hash construction", "24 deterministic addresses", "For each order, 8 independent head-specific prime moduli map the ending n-gram to disjoint table ranges.", [["Orders", "3"], ["Hash heads", "8"], ["Hash columns", "3×8 = 24"], ["Output IDs", "[B,T,24]"]]]),
+              n("table1", 565, 105, 250, 145, "Engram table · L1", "384006168 rows", "memory", ["First Engram module", "Sparse table before layer 1", "Twenty-four rows of width 256 are fetched for every participating token. Deterministic addresses allow host-memory prefetch.", [["Rows", "384006168"], ["Row width", "256"], ["Lookup", "[B,T,24,256]"], ["Placement", "before layer 1"]]]),
+              n("table14", 565, 490, 250, 145, "Engram table · L14", "384016682 rows", "memory", ["Second Engram module", "Sparse table before layer 14", "A separately hashed table provides a second conditional-memory injection deeper in the encoder.", [["Rows", "384016682"], ["Row width", "256"], ["Lookup", "[B,T,24,256]"], ["Placement", "before layer 14"]]]),
+              n("flatten", 875, 275, 210, 125, "Concatenate rows", "24×256 = 6144", "projection", ["Retrieved memory", "Flattened lookup features", "The 24 selected row vectors are concatenated before a learned key/value projection.", [["Input", "[B,T,24,256]"], ["Flattened", "[B,T,6144]"], ["Modules", "2 independent"]]]),
+              n("kvE", 875, 465, 210, 135, "Memory K / V", "6144 → 25600", "projection", ["Engram projection", "Four keys + one shared value", "The projection creates one width-5120 key for each residual stream and one width-5120 value shared by all streams.", [["Weight", "[6144,25600]"], ["Key", "[B,T,4,5120]"], ["Value", "[B,T,5120]"]]]),
+              n("residualE", 875, 75, 210, 115, "Residual X", "[B,T,4,5120]", "process", ["Context state", "Query for memory relevance", "Each residual stream supplies the context vector used to gate its matching memory key.", [["Query", "[B,T,4,5120]"], ["Normalization", "per stream"], ["Image gate", "forced to 0"]]]),
+              n("gateE", 1140, 255, 225, 155, "Context gate", "sigmoid(signed √cosine)", "process", ["Engram gate", "Per-stream relevance", "Normalized stream–key dot products are scaled, transformed by signed square root, then passed through sigmoid.", [["Dot", "[B,T,4]"], ["Gate", "[B,T,4]"], ["Range", "0 to 1"], ["Image positions", "0"]]]),
+              n("outE", 1140, 510, 225, 115, "X + gate · V", "[B,T,4,5120]", "process", ["Engram output", "Gated residual injection", "The shared memory value is independently scaled into each of the four residual streams.", [["Residual", "[B,T,4,5120]"], ["Broadcast value", "[B,T,1,5120]"], ["Output", "[B,T,4,5120]"]]])
+            ],
+            edges: [
+              e("tokensE", "ngrams"), e("ngrams", "table1"), e("ngrams", "table14"), e("table1", "flatten"), e("table14", "flatten"),
+              e("flatten", "kvE"), e("residualE", "gateE"), e("kvE", "gateE"), e("gateE", "outE"), e("kvE", "outE"), e("residualE", "outE")
+            ]
+          },
+
+          moe: {
+            title: "Multimodal DeepSeekMoE",
+            description: "Every backbone layer activates six of 384 routed experts plus one shared expert.",
+            legend: ["MoE symbols", [["projection", "router / linear map"], ["routing", "expert selection"], ["boundary", "expert bank"], ["process", "expert / reduction"], ["flow", "active token path"]]],
+            note: "Text and image tokens use separate correction-bias vectors for expert selection, but selected expert weights come from the unbiased Sqrt(Softplus) scores. This separates modality load balancing from output weighting.",
+            defaultNode: "moeIn",
+            groups: [{ x: 745, y: 100, w: 350, h: 500, label: "384 routed experts · activate 6" }],
+            nodes: [
+              n("moeIn", 45, 320, 200, 110, "Token state x", "[N,5120]", "process", ["MoE input", "Flattened token batch", "Attention output is normalized and flattened across batch and sequence before routing.", [["Input", "[B,T,5120]"], ["Flattened", "[N,5120]"], ["N", "B×T"]]]),
+              n("modality", 295, 135, 205, 105, "Modality mask", "text or image", "routing", ["Routing modality", "Separate correction biases", "Image-span tokens select experts with a visual-language bias vector; text tokens use the text bias vector.", [["Mask", "[N]"], ["Text bias", "[384]"], ["Image bias", "[384]"]]]),
+              n("scores", 295, 300, 205, 135, "Router scores", "√Softplus(xWᵀ)", "projection", ["Expert affinity", "Unbiased routing weights", "A 5120×384 projection followed by Sqrt(Softplus) produces non-negative expert scores.", [["Weight", "[384,5120]"], ["Scores", "[N,384]"], ["Function", "sqrt(softplus)"]]]),
+              n("topk", 550, 250, 170, 155, "Top-6", "score + modality bias", "routing", ["Expert selection", "Six routed experts per token", "Correction bias affects only which indices win. The original scores for those indices are normalized and multiplied by 1.5.", [["Indices", "[N,6]"], ["Weights", "[N,6]"], ["Normalize", "sum to 1"], ["Route scale", "1.5"]]]),
+              n("experts", 785, 185, 270, 155, "Routed expert bank", "384 × SwiGLU", "boundary", ["Routed experts", "Fine-grained FP4 expert bank", "Each selected expert maps width 5120 through two 2304-wide branches, multiplies SiLU(gate) by up, then projects back.", [["Experts", "384"], ["Active", "6 / token"], ["W1 / W3", "[5120,2304]"], ["W2", "[2304,5120]"]]]),
+              n("shared", 785, 440, 270, 120, "Shared expert", "always active", "process", ["Shared expert", "One dense SwiGLU path", "Every token also passes through one shared expert with the same 2304 intermediate width.", [["Experts", "1"], ["Input", "[N,5120]"], ["Intermediate", "[N,2304]"], ["Output", "[N,5120]"]]]),
+              n("reduce", 1135, 300, 210, 135, "Weighted reduce", "Σ6 routed + shared", "process", ["MoE output", "Aggregate expert updates", "Six routed outputs are multiplied by their route weights and summed, then the shared-expert output is added.", [["Routed", "[N,6,5120] logical"], ["Shared", "[N,5120]"], ["Output", "[N,5120]"]]])
+            ],
+            edges: [
+              e("moeIn", "scores"), e("modality", "topk", "bias selects", "aux"), e("scores", "topk"), e("topk", "experts"),
+              e("moeIn", "experts"), e("moeIn", "shared"), e("experts", "reduce"), e("shared", "reduce")
+            ]
+          },
+
+          dspark: {
+            title: "DSpark speculative path",
+            description: "Three SWA draft blocks propose five positions, then Markov and confidence heads refine verification.",
+            legend: ["DSpark symbols", [["process", "draft state / block"], ["projection", "feature fusion / head"], ["routing", "sample / schedule"], ["cache", "128-token SWA"], ["flow", "draft path"]]],
+            note: "The backbone exposes attention-input features from layers 37–39. DSpark is trained separately from backbone pre-training and uses 128 routed experts with top-3 activation inside each of its three blocks.",
+            defaultNode: "taps",
+            nodes: [
+              n("anchor", 35, 130, 190, 100, "Accepted token", "[B,1]", "process", ["Draft anchor", "Current accepted token", "The accepted token occupies the first DSpark input position; the remaining four positions use the learned noise-token embedding.", [["Anchor IDs", "[B,1]"], ["Noise ID", "128799"], ["Draft width", "5 positions"]]]),
+              n("taps", 35, 470, 220, 125, "Backbone features", "H37 ⊕ H38 ⊕ H39", "process", ["Backbone taps", "Three target-layer inputs", "The attention inputs from layers 37, 38, and 39 are concatenated to provide high-level target-model context.", [["Each", "[B,1,5120]"], ["Concat", "[B,1,15360]"], ["Layers", "37 38 39"]]]),
+              n("fuse", 310, 430, 215, 135, "Main projection", "15360 → 5120", "projection", ["Target feature fusion", "DSpark conditioning state", "A learned projection and RMSNorm compress the three backbone features to one width-5120 main state.", [["Weight", "[15360,5120]"], ["Output", "[B,1,5120]"], ["Use", "KV in each draft block"]]]),
+              n("embedD", 310, 125, 215, 125, "Anchor + noise embeds", "5 × 5120", "projection", ["Parallel draft inputs", "Five query positions", "The shared token embedding creates one anchor row and four noise rows, then expands each into four mHC streams.", [["IDs", "[B,5]"], ["Embeddings", "[B,5,5120]"], ["mHC state", "[B,5,4,5120]"]]]),
+              n("blocksD", 600, 220, 250, 250, "DSpark blocks ×3", "SWA 128 · mHC · MoE", "process", ["DSpark transformer", "Three lightweight draft blocks", "Each block uses SWA-only attention. Queries come from five draft positions; KV combines the target model's 128-token local history with draft-position KV.", [["Draft states", "[B,5,5120]"], ["Window KV", "[B,128,512]"], ["Draft Q/KV", "[B,5,64,512] / [B,5,512]"], ["Experts", "128 top-3"]]]),
+              n("base", 930, 105, 210, 125, "Base LM logits", "5 × 129280", "projection", ["Base draft logits", "Shared vocabulary head", "After the third draft block, each of the five positions is projected with the target model's vocabulary head.", [["Hidden", "[B,5,5120]"], ["Logits", "[B,5,129280]"], ["Head", "shared with backbone"]]]),
+              n("markov", 930, 330, 210, 150, "Markov head", "rank 256 recurrence", "projection", ["Token dependency head", "Sequential correction over parallel logits", "Sampled token i is embedded at rank 256 and projected to vocabulary logits that correct position i before the next token is sampled.", [["Embedding", "[129280,256]"], ["Bias logits", "[B,5,129280]"], ["Sampled output", "[B,6] incl. anchor"]]]),
+              n("confidence", 930, 565, 210, 125, "Confidence head", "5376 → 1", "projection", ["Acceptance estimator", "Per-position confidence", "Each final draft state is concatenated with its rank-256 Markov embedding and projected to a conditional acceptance estimate.", [["Input", "[B,5,5376]"], ["Confidence", "[B,5]"], ["Use", "prefix survival estimate"]]]),
+              n("scheduleD", 1215, 310, 190, 150, "Verify scheduler", "dynamic prefix length", "routing", ["Confidence scheduling", "Throughput-aware verification", "Predicted prefix survival is combined with profiled engine throughput to select a verification length for the request.", [["Candidates", "5 draft tokens"], ["Signal", "[B,5] confidence"], ["Decision", "verify prefix length"]]])
+            ],
+            edges: [
+              e("anchor", "embedD"), e("taps", "fuse"), e("embedD", "blocksD"), e("fuse", "blocksD", "main KV context", "accent"),
+              e("blocksD", "base"), e("base", "markov"), e("markov", "confidence"), e("blocksD", "confidence"), e("confidence", "scheduleD"), e("markov", "scheduleD", "draft tokens", "reuse")
+            ]
+          }
+        };
+
+        var contracts = {
+          overall: {
+            title: "System tensor contract",
+            intro: "B is batch, T is the merged text-and-image sequence length, and D=5120.",
+            rows: [
+              ["Token IDs", "[B,T] · vocabulary 129280"],
+              ["Merged embeddings", "[B,T,5120]"],
+              ["mHC residual state", "[B,T,4,5120]"],
+              ["Encoder output H20", "[B,T,5120]"],
+              ["Decoder output", "[B,T,5120]"],
+              ["Vocabulary logits", "[B,T,129280]"]
+            ]
+          },
+          schedule: {
+            title: "CED schedule contract",
+            intro: "Layer IDs are zero-based. Each CSA2 layer also owns 128-token SWA.",
+            rows: [
+              ["Pure SWA", "L0–1"],
+              ["Encoder Full", "L2 L8 L14 · ratio 2"],
+              ["Encoder Reuse", "L3–7 L9–13 L15–19"],
+              ["Decoder Full", "L20 · ratio 1"],
+              ["Decoder Reindex", "L24 L28 L32 L36"],
+              ["Decoder Reuse", "L21–23 L25–27 L29–31 L33–35 L37–39"]
+            ]
+          },
+          vision: {
+            title: "Vision tensor contract",
+            intro: "N=nh×nw patch tokens before 3×3 downsampling.",
+            rows: [
+              ["Patch vector", "[N,588]"],
+              ["ViT hidden", "[N,1024]"],
+              ["Vision Q K V", "[N,16,64] each"],
+              ["Attention scores", "[16,N,N]"],
+              ["Unshuffled features", "[ceil(nh/3)×ceil(nw/3),9216]"],
+              ["Visual LM embeddings", "[N/9,5120]"]
+            ]
+          },
+          csa2: {
+            title: "CSA2 tensor contract",
+            intro: "qr is the shared low-rank query stem. Both main Q and indexer Q are projected independently from qr.",
+            rows: [
+              ["Hidden states H", "[B,T,5120]"],
+              ["Query latent qr", "[B,T,1280]"],
+              ["Main Q", "[B,T,64,512]"],
+              ["Local SWA KV", "[B,T,512] · retain 128"],
+              ["Compressed main KV", "[B,T/r,512]"],
+              ["Indexer Q", "[B,T,32,128]"],
+              ["Indexer K", "[B,T/r,128]"],
+              ["Sparse indices", "[B,T,512]"],
+              ["Attention gather", "[B,T,≤640,512] logical"],
+              ["Attention heads", "[B,T,64,512]"],
+              ["Grouped output latent", "[B,T,8,1024]"],
+              ["Projected output", "[B,T,5120]"]
+            ]
+          },
+          indexer: {
+            title: "Hierarchical indexer contract",
+            intro: "The full score matrix is conceptual; later decoder layers only evaluate active candidate positions.",
+            rows: [
+              ["Q projection", "[1280,4096] → 32×128"],
+              ["K projection", "[512,128]"],
+              ["Per-head scores", "[B,T,32,T/r]"],
+              ["Reduced scores", "[B,T,T/r]"],
+              ["Block scores", "[B,T,ceil((T/r)/8)]"],
+              ["Candidate pool", "2048×8 = 16384 positions"],
+              ["Final indices", "[B,T,512]"]
+            ]
+          },
+          mhc: {
+            title: "Single-Pass mHC contract",
+            intro: "At sublayer l, H(Xₗ) predicts αₗ for the next sublayer and Bₗ, βₗ for the current residual update.",
+            rows: [
+              ["Residual state Xₗ", "[B,T,4,5120]"],
+              ["Flattened predictor input", "[B,T,20480]"],
+              ["Predictor weight", "[20480,24]"],
+              ["Input mix αₗ₋₁", "[B,T,4]"],
+              ["Next input mix αₗ", "[B,T,4]"],
+              ["Output mix βₗ", "[B,T,4]"],
+              ["Residual mix Bₗ", "[B,T,4,4]"],
+              ["Sublayer input / output", "[B,T,5120]"]
+            ]
+          },
+          engram: {
+            title: "Engram tensor contract",
+            intro: "Three n-gram orders times eight heads yield 24 sparse table reads.",
+            rows: [
+              ["Compressed token IDs", "[B,T] · vocabulary 99092"],
+              ["Hash IDs", "[B,T,24]"],
+              ["Fetched rows", "[B,T,24,256]"],
+              ["Concatenated lookup", "[B,T,6144]"],
+              ["Wkv", "[6144,25600]"],
+              ["Memory key", "[B,T,4,5120]"],
+              ["Shared value", "[B,T,5120]"],
+              ["Gated output", "[B,T,4,5120]"]
+            ]
+          },
+          moe: {
+            title: "DeepSeekMoE tensor contract",
+            intro: "N=B×T tokens. Logical shapes show the full expert pool.",
+            rows: [
+              ["Router weight", "[384,5120]"],
+              ["Scores", "[N,384]"],
+              ["Top-k indices / weights", "[N,6] each"],
+              ["Expert gate / up", "[Nactive,2304]"],
+              ["Routed outputs", "[N,6,5120] logical"],
+              ["Shared output", "[N,5120]"],
+              ["Aggregated output", "[B,T,5120]"]
+            ]
+          },
+          dspark: {
+            title: "DSpark tensor contract",
+            intro: "Five draft positions are produced from one accepted anchor.",
+            rows: [
+              ["Target features", "3 × [B,1,5120]"],
+              ["Concatenated target", "[B,1,15360]"],
+              ["Projected main state", "[B,1,5120]"],
+              ["Draft mHC state", "[B,5,4,5120]"],
+              ["Base logits", "[B,5,129280]"],
+              ["Markov embedding", "[B,5,256]"],
+              ["Confidence input", "[B,5,5376]"],
+              ["Confidence", "[B,5]"]
+            ]
+          }
+        };
+
+        function create(tag, attrs) {
+          var el = document.createElementNS(SVG_NS, tag);
+          Object.keys(attrs || {}).forEach(function (key) {
+            el.setAttribute(key, String(attrs[key]));
+          });
+          return el;
+        }
+
+        function nodeFill(kind) {
+          var map = {
+            process: "var(--node-process)",
+            projection: "var(--node-projection)",
+            cache: "var(--node-cache)",
+            routing: "var(--node-routing)",
+            memory: "var(--node-memory)",
+            boundary: "var(--node-boundary)"
+          };
+          return map[kind] || map.process;
+        }
+
+        function addDefs() {
+          var defs = create("defs");
+          var marker = create("marker", {
+            id: "arrowhead", viewBox: "0 0 10 10", refX: "9", refY: "5",
+            markerWidth: "7", markerHeight: "7", orient: "auto-start-reverse"
+          });
+          marker.appendChild(create("path", { d: "M 0 0 L 10 5 L 0 10 z", fill: "var(--faint)" }));
+          defs.appendChild(marker);
+          var filter = create("filter", { id: "node-glow", x: "-25%", y: "-25%", width: "150%", height: "150%" });
+          filter.appendChild(create("feDropShadow", {
+            dx: "0", dy: "0", stdDeviation: "5", "flood-color": "var(--mint)", "flood-opacity": "0.36"
+          }));
+          defs.appendChild(filter);
+          svg.appendChild(defs);
+        }
+
+        function center(node) {
+          return { x: node.x + node.w / 2, y: node.y + node.h / 2 };
+        }
+
+        function edgePath(a, b) {
+          var ac = center(a);
+          var bc = center(b);
+          var dx = bc.x - ac.x;
+          var dy = bc.y - ac.y;
+          var sx;
+          var sy;
+          var tx;
+          var ty;
+          if (Math.abs(dx) >= Math.abs(dy)) {
+            sx = dx >= 0 ? a.x + a.w : a.x;
+            sy = ac.y;
+            tx = dx >= 0 ? b.x : b.x + b.w;
+            ty = bc.y;
+          } else {
+            sx = ac.x;
+            sy = dy >= 0 ? a.y + a.h : a.y;
+            tx = bc.x;
+            ty = dy >= 0 ? b.y : b.y + b.h;
+          }
+          var mx = (sx + tx) / 2;
+          var my = (sy + ty) / 2;
+          var path = Math.abs(dx) >= Math.abs(dy)
+            ? "M " + sx + " " + sy + " C " + mx + " " + sy + " " + mx + " " + ty + " " + tx + " " + ty
+            : "M " + sx + " " + sy + " C " + sx + " " + my + " " + tx + " " + my + " " + tx + " " + ty;
+          return { d: path, x: mx, y: my - 7 };
+        }
+
+        function drawGroups(plate) {
+          (plate.groups || []).forEach(function (group) {
+            svg.appendChild(create("rect", {
+              x: group.x, y: group.y, width: group.w, height: group.h, rx: 24,
+              fill: "var(--node-boundary)", "fill-opacity": "0.24",
+              stroke: "var(--line-strong)", "stroke-width": "1.5", "stroke-dasharray": "9 8"
+            }));
+            var label = create("text", { x: group.x + 18, y: group.y + 28, class: "group-label" });
+            label.textContent = group.label;
+            svg.appendChild(label);
+          });
+        }
+
+        function drawEdges(plate, byId) {
+          plate.edges.forEach(function (edge) {
+            var geo = edgePath(byId[edge.from], byId[edge.to]);
+            svg.appendChild(create("path", { d: geo.d, class: "edge " + edge.style }));
+            if (edge.label) {
+              var label = create("text", { x: geo.x, y: geo.y, "text-anchor": "middle", class: "edge-label" });
+              label.textContent = edge.label;
+              svg.appendChild(label);
+            }
+          });
+        }
+
+        function wrapText(text, maxChars) {
+          var words = text.split(/\s+/);
+          var lines = [];
+          var line = "";
+          words.forEach(function (word) {
+            if ((line + " " + word).trim().length > maxChars && line) {
+              lines.push(line);
+              line = word;
+            } else {
+              line = (line + " " + word).trim();
+            }
+          });
+          if (line) lines.push(line);
+          return lines.slice(0, 3);
+        }
+
+        function drawNode(item) {
+          var group = create("g", {
+            class: "node" + (selectedNode === item.id ? " is-active" : ""),
+            role: "button", tabindex: "0", "aria-label": item.title + ": " + item.subtitle,
+            "data-node": item.id
+          });
+          var shape;
+          if (item.kind === "routing") {
+            var cx = item.x + item.w / 2;
+            var cy = item.y + item.h / 2;
+            shape = create("polygon", {
+              points: cx + "," + item.y + " " + (item.x + item.w) + "," + cy + " " + cx + "," + (item.y + item.h) + " " + item.x + "," + cy,
+              fill: nodeFill(item.kind), class: "node-shape"
+            });
+          } else {
+            shape = create("rect", {
+              x: item.x, y: item.y, width: item.w, height: item.h,
+              rx: item.kind === "projection" ? Math.min(36, item.h / 2) : 18,
+              fill: nodeFill(item.kind), class: "node-shape",
+              "stroke-dasharray": item.kind === "boundary" ? "8 6" : ""
+            });
+          }
+          group.appendChild(shape);
+
+          var cxText = item.x + item.w / 2;
+          var titleLines = wrapText(item.title, Math.max(12, Math.floor(item.w / 10)));
+          var titleStart = item.y + item.h / 2 - (titleLines.length - 1) * 10 - 7;
+          var title = create("text", { x: cxText, y: titleStart, "text-anchor": "middle", class: "node-title" });
+          titleLines.forEach(function (line, index) {
+            var span = create("tspan", { x: cxText, dy: index === 0 ? 0 : 19 });
+            span.textContent = line;
+            title.appendChild(span);
+          });
+          group.appendChild(title);
+
+          var subtitle = create("text", {
+            x: cxText, y: titleStart + titleLines.length * 19 + 5,
+            "text-anchor": "middle", class: "node-subtitle"
+          });
+          var subLines = wrapText(item.subtitle, Math.max(14, Math.floor(item.w / 9)));
+          subLines.slice(0, 2).forEach(function (line, index) {
+            var span = create("tspan", { x: cxText, dy: index === 0 ? 0 : 16 });
+            span.textContent = line;
+            subtitle.appendChild(span);
+          });
+          group.appendChild(subtitle);
+          group.addEventListener("click", function () { selectNode(item.id); });
+          group.addEventListener("keydown", function (event) {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              selectNode(item.id);
+            }
+          });
+          svg.appendChild(group);
+        }
+
+        function renderPlate() {
+          var plate = plates[activeView];
+          document.getElementById("map-title").textContent = plate.title;
+          document.getElementById("map-description").textContent = plate.description;
+          document.getElementById("plate-note").textContent = plate.note;
+          while (svg.firstChild) svg.removeChild(svg.firstChild);
+          addDefs();
+          drawGroups(plate);
+          var byId = {};
+          plate.nodes.forEach(function (item) { byId[item.id] = item; });
+          drawEdges(plate, byId);
+          plate.nodes.forEach(drawNode);
+          renderLegend();
+          renderContract();
+          applyViewBox();
+        }
+
+        function renderLegend() {
+          var spec = plates[activeView].legend;
+          document.getElementById("symbol-legend-title").textContent = spec[0];
+          var root = document.getElementById("symbol-legend-items");
+          root.replaceChildren();
+          spec[1].forEach(function (entry) {
+            var item = document.createElement("span");
+            item.className = "legend-item";
+            var icon = document.createElement("span");
+            icon.className = "symbol-icon " + entry[0];
+            icon.setAttribute("aria-hidden", "true");
+            var label = document.createElement("span");
+            label.textContent = entry[1];
+            item.append(icon, label);
+            root.appendChild(item);
+          });
+        }
+
+        function renderContract() {
+          var spec = contracts[activeView];
+          document.getElementById("contract-title").textContent = spec.title;
+          document.getElementById("contract-intro").textContent = spec.intro;
+          var root = document.getElementById("contract-rows");
+          root.replaceChildren();
+          spec.rows.forEach(function (row) {
+            var tr = document.createElement("tr");
+            var name = document.createElement("td");
+            var value = document.createElement("td");
+            var code = document.createElement("code");
+            name.textContent = row[0];
+            code.textContent = row[1];
+            value.appendChild(code);
+            tr.append(name, value);
+            root.appendChild(tr);
+          });
+        }
+
+        function selectNode(id) {
+          var plate = plates[activeView];
+          var item = plate.nodes.find(function (candidate) { return candidate.id === id; });
+          if (!item) return;
+          selectedNode = id;
+          document.querySelectorAll(".node").forEach(function (node) {
+            node.classList.toggle("is-active", node.getAttribute("data-node") === id);
+          });
+          var detail = item.detail;
+          document.getElementById("detail-title").textContent = detail[0];
+          document.getElementById("detail-subtitle").textContent = detail[1];
+          document.getElementById("detail-copy").textContent = detail[2];
+          var extra = detail[4] || {};
+          var equation = document.getElementById("detail-equation");
+          if (extra.equation) {
+            equation.innerHTML = extra.equation;
+          } else {
+            equation.textContent = detail[1] + " · " + item.subtitle;
+          }
+
+          var nodesById = {};
+          plate.nodes.forEach(function (candidate) {
+            nodesById[candidate.id] = candidate;
+          });
+          function connected(direction) {
+            var names = [];
+            plate.edges.forEach(function (edge) {
+              var matches = direction === "input" ? edge.to === id : edge.from === id;
+              if (!matches) return;
+              var neighborId = direction === "input" ? edge.from : edge.to;
+              var neighbor = nodesById[neighborId];
+              if (!neighbor) return;
+              var name = neighbor.title + (edge.label ? " · " + edge.label : "");
+              if (!names.includes(name)) names.push(name);
+            });
+            return names.length ? names.join(" · ") : (direction === "input" ? "Plate entry" : "Plate output");
+          }
+          document.getElementById("detail-inputs").textContent = connected("input");
+          document.getElementById("detail-outputs").textContent = connected("output");
+
+          var notes = document.getElementById("detail-notes");
+          notes.replaceChildren();
+          (extra.notes || []).forEach(function (note) {
+            var li = document.createElement("li");
+            li.textContent = note;
+            notes.appendChild(li);
+          });
+          var facts = document.getElementById("detail-facts");
+          facts.replaceChildren();
+          detail[3].forEach(function (fact) {
+            var box = document.createElement("div");
+            box.className = "fact";
+            var dt = document.createElement("dt");
+            var dd = document.createElement("dd");
+            dt.textContent = fact[0];
+            dd.textContent = fact[1];
+            box.append(dt, dd);
+            facts.appendChild(box);
+          });
+        }
+
+        function setView(name) {
+          if (!plates[name]) return;
+          activeView = name;
+          selectedNode = plates[name].defaultNode;
+          viewBox = { x: 0, y: 0, w: 1440, h: 820 };
+          document.querySelectorAll(".view-tab").forEach(function (tab) {
+            var active = tab.getAttribute("data-view") === name;
+            tab.setAttribute("aria-selected", String(active));
+            if (active) tab.scrollIntoView({ block: "nearest", inline: "nearest" });
+          });
+          renderPlate();
+          selectNode(selectedNode);
+        }
+
+        function applyViewBox() {
+          svg.setAttribute("viewBox", viewBox.x + " " + viewBox.y + " " + viewBox.w + " " + viewBox.h);
+        }
+
+        function resetView() {
+          viewBox = { x: 0, y: 0, w: 1440, h: 820 };
+          applyViewBox();
+        }
+
+        function setTheme(theme) {
+          document.documentElement.setAttribute("data-theme", theme);
+          localStorage.setItem(themeStorageKey, theme);
+          var light = theme === "light";
+          document.getElementById("theme-icon").textContent = light ? "☾" : "☀";
+          document.getElementById("theme-label").textContent = light ? "Dark" : "Light";
+          document.getElementById("theme-toggle").setAttribute(
+            "aria-label", light ? "Switch to dark theme" : "Switch to light theme"
+          );
+        }
+
+        function initialTheme() {
+          var stored = localStorage.getItem(themeStorageKey);
+          if (stored === "light" || stored === "dark") return stored;
+          return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+
+        document.querySelectorAll(".view-tab").forEach(function (tab) {
+          tab.addEventListener("click", function () { setView(tab.getAttribute("data-view")); });
+          tab.addEventListener("keydown", function (event) {
+            if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+            event.preventDefault();
+            var tabs = Array.from(document.querySelectorAll(".view-tab"));
+            var offset = event.key === "ArrowRight" ? 1 : -1;
+            var next = tabs[(tabs.indexOf(tab) + offset + tabs.length) % tabs.length];
+            next.focus();
+            setView(next.getAttribute("data-view"));
+          });
+        });
+
+        document.getElementById("trace-toggle").addEventListener("click", function () {
+          tracing = !tracing;
+          svg.classList.toggle("is-tracing", tracing);
+          this.textContent = tracing ? "Stop trace" : "Trace flow";
+        });
+        document.getElementById("reset-view").addEventListener("click", resetView);
+        document.getElementById("theme-toggle").addEventListener("click", function () {
+          setTheme(document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light");
+        });
+
+        svg.addEventListener("wheel", function (event) {
+          event.preventDefault();
+          var rect = svg.getBoundingClientRect();
+          var px = viewBox.x + (event.clientX - rect.left) / rect.width * viewBox.w;
+          var py = viewBox.y + (event.clientY - rect.top) / rect.height * viewBox.h;
+          var factor = event.deltaY > 0 ? 1.12 : 0.89;
+          var nextW = Math.min(2200, Math.max(520, viewBox.w * factor));
+          var nextH = nextW * 820 / 1440;
+          viewBox.x = px - (px - viewBox.x) * nextW / viewBox.w;
+          viewBox.y = py - (py - viewBox.y) * nextH / viewBox.h;
+          viewBox.w = nextW;
+          viewBox.h = nextH;
+          applyViewBox();
+        }, { passive: false });
+
+        svg.addEventListener("pointerdown", function (event) {
+          if (event.button !== 0) return;
+          if (event.target.closest && event.target.closest(".node")) return;
+          svg.setPointerCapture(event.pointerId);
+          drag = { x: event.clientX, y: event.clientY, vx: viewBox.x, vy: viewBox.y };
+        });
+        svg.addEventListener("pointermove", function (event) {
+          if (!drag) return;
+          var rect = svg.getBoundingClientRect();
+          viewBox.x = drag.vx - (event.clientX - drag.x) * viewBox.w / rect.width;
+          viewBox.y = drag.vy - (event.clientY - drag.y) * viewBox.h / rect.height;
+          applyViewBox();
+        });
+        function stopDrag(event) {
+          if (!drag) return;
+          if (svg.hasPointerCapture(event.pointerId)) svg.releasePointerCapture(event.pointerId);
+          drag = null;
+        }
+        svg.addEventListener("pointerup", stopDrag);
+        svg.addEventListener("pointercancel", stopDrag);
+
+        setTheme(initialTheme());
+        var requestedView = new URLSearchParams(window.location.search).get("view");
+        setView(plates[requestedView] ? requestedView : "overall");
+      }());
+    </script>
+  </body>
+</html>
