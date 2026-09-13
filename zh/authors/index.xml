@@ -14,8 +14,8 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://www.lei.chat/zh/authors/me/</guid>
-      <description>About This Website Hello, thanks for your interest in my website. 😊 I try to log down my learnings and thoughts about compilers (MLIR, SPIR-V, LLVM, Triton, IREE, etc.), GPU (CUDA, ROCm, Vulkan, Metal, etc.), toolchain (ML frameworks, etc.), and others sporadically.
-About Me I&amp;rsquo;m Lei, leading both Triton teams and SHARK GPU teams to work on open-source ML compiler and runtime solutions within the AMD AI Group. Together with many other talented colleagues and community contributors, we are building Triton to be an awesome language and compiler to program AMD GPUs and IREE to be an awesome ML compiler and runtime solution to provide a smooth deployment story to meet the needs of from datacenter to edge.</description>
+      <description>About Me I work on open-source AI compiler and runtime solutions within the AMD AI Group. I lead Triton and related compiler and kernel efforts, co-founded LightSeek, and co-created TokenSpeed. Together with many other talented colleagues and community contributors, we are building domain-specific languages, compilers, kernels, and inference systems that help AMD GPUs shine.
+Previously, I was fortunate to work with many great Googlers on projects at Google spanning machine learning toolchains (MLIR, IREE, TensorFlow, and TFLite), SPIR-V toolchains (DirectXShaderCompiler, SPIRV-Tools, Glslang, Shaderc, rspirv, and shaderc-rs), and the Vulkan ecosystem (VK-GL-CTS, GAPID, µVkCompute, and hardware-perfcounter).</description>
     </item>
     
   </channel>
