@@ -610,6 +610,7 @@
         margin-top: 13px;
         border-spacing: 0;
         border-collapse: collapse;
+        table-layout: fixed;
       }
 
       .kernel-shapes th,
@@ -622,11 +623,31 @@
         text-align: left;
       }
 
-      .kernel-shapes th {
-        width: 35%;
+      .kernel-shapes thead th {
+        padding-right: 7px;
+        color: var(--faint);
+        font-size: 8px;
+        font-weight: 650;
+        letter-spacing: 0.055em;
+        text-transform: uppercase;
+      }
+
+      .kernel-shapes tbody th {
+        width: 25%;
         padding-right: 8px;
         color: var(--faint);
         font-weight: 560;
+      }
+
+      .kernel-shapes th:nth-child(2),
+      .kernel-shapes td:nth-child(2) {
+        width: 43%;
+        padding-right: 8px;
+      }
+
+      .kernel-shapes th:nth-child(3),
+      .kernel-shapes td:nth-child(3) {
+        width: 32%;
       }
 
       .kernel-shapes code {
@@ -642,6 +663,20 @@
         margin-top: 2px;
         color: var(--faint);
         font-size: 9px;
+      }
+
+      .contract-precision-key {
+        margin: 11px 0 0;
+        color: var(--faint);
+        font-size: 9px;
+        line-height: 1.48;
+      }
+
+      .kernel-shapes .precision {
+        color: var(--yellow);
+        font-size: 9px;
+        line-height: 1.42;
+        overflow-wrap: anywhere;
       }
 
       .kernel-footnote {
@@ -2301,7 +2336,14 @@
               <span class="kernel-badge">logical shapes</span>
             </div>
             <div class="kernel-notation" id="kernel-notation"></div>
+            <p class="contract-precision-key" id="contract-precision-key">
+              Released-checkpoint precision: persistent activations are BF16. MXFP4 W means
+              packed routed-expert W1/W2/W3 weights with a UE8M0 scale per 32 values; the report
+              pairs them with MXFP8 activations. Attention, shared experts, vision/projector,
+              embeddings, and the LM head remain BF16. Explicit FP32 math is stated per row.
+            </p>
             <table class="kernel-shapes">
+              <thead><tr><th>Quantity</th><th>Logical shape / meaning</th><th>Precision / representation</th></tr></thead>
               <tbody id="kernel-shape-rows"></tbody>
             </table>
             <p class="kernel-footnote" id="kernel-footnote"></p>
@@ -2915,14 +2957,14 @@
           title: "KDA tensor contract",
           notation: ["B batch", "T tokens", "H 96 heads", "D 128/head", "M H·D = 12288", "C chunk length"],
           rows: [
-            ["Input", "X [B,T,7168]", "pre-normalized residual stream"],
-            ["Q / K / V weights", "Wq,Wk,Wv [7168,12288]", "each output reshapes to [B,T,96,128]"],
-            ["Retention path", "Wfa [7168,128] · Wfb [128,12288]", "g → [B,T,96,128]; β → [B,T,96]"],
-            ["State recurrence", "St←(I−βtktktᵀ)Diag(αt)St−1+βtktvtᵀ", "per head; decay, erase along k, then write k·vᵀ"],
-            ["Chunk tile", "QKᵀ [B,96,C,C]", "causal, parallel inside each chunk"],
-            ["Recurrent cache", "S [B,96,128,128]", "logical per-head state; recurrent between chunks"],
-            ["Output gate", "Wg [7168,12288]", "σ gate [B,T,96,128]"],
-            ["Output projection", "Wo [12288,7168]", "heads flatten [B,T,12288] → [B,T,7168]"]
+            ["Input", "X [B,T,7168]", "pre-normalized residual stream", "BF16 persistent activation · FP32 RMSNorm math"],
+            ["Q / K / V weights", "Wq,Wk,Wv [7168,12288]", "each output reshapes to [B,T,96,128]", "BF16 W / output"],
+            ["Retention path", "Wfa [7168,128] · Wfb [128,12288]", "g → [B,T,96,128]; β → [B,T,96]", "BF16 W / projections · FP32 gate math"],
+            ["State recurrence", "St←(I−βtktktᵀ)Diag(αt)St−1+βtktvtᵀ", "per head; decay, erase along k, then write k·vᵀ", "FP32 recurrent state / accumulation"],
+            ["Chunk tile", "QKᵀ [B,96,C,C]", "causal, parallel inside each chunk", "BF16 Q/K/V · FP32 accumulator"],
+            ["Recurrent cache", "S [B,96,128,128]", "logical per-head state; recurrent between chunks", "FP32 persistent state"],
+            ["Output gate", "Wg [7168,12288]", "σ gate [B,T,96,128]", "BF16 W / output · FP32 norm / gate math"],
+            ["Output projection", "Wo [12288,7168]", "heads flatten [B,T,12288] → [B,T,7168]", "BF16 W / output · accumulator backend-defined"]
           ],
           footnote: "Matrix weights use math orientation [in,out]. PyTorch stores Linear weights transposed as [out,in]. The physical KDA state layout may be backend-specific; the shape above is the logical contract."
         },
@@ -2930,12 +2972,12 @@
           title: "Short causal Conv1D contract",
           notation: ["B batch", "T tokens", "H 96 heads", "D 128/head", "M H·D = 12288", "W 4 taps"],
           rows: [
-            ["Projected branches", "Q,K,V [B,T,96,128]", "each branch flattens to [B,T,12288]"],
-            ["Channel-first view", "Q/K/V [B,12288,T]", "T is the only convolved axis"],
-            ["Per-branch filters", "Wq,Wk,Wv [12288,1,4]", "groups=12288; one filter per channel"],
-            ["Convolution output", "Q̃,K̃,Ṽ [B,T,96,128]", "same sequence length and channel count after SiLU"],
-            ["Decode state", "C [B,36864,3]", "previous W−1 values across the three branches"],
-            ["Post-conv roles", "L2(Q̃),L2(K̃),Ṽ", "Q/K address memory; V supplies write content"]
+            ["Projected branches", "Q,K,V [B,T,96,128]", "each branch flattens to [B,T,12288]", "BF16 · BF16 projection W"],
+            ["Channel-first view", "Q/K/V [B,12288,T]", "T is the only convolved axis", "BF16 view"],
+            ["Per-branch filters", "Wq,Wk,Wv [12288,1,4]", "groups=12288; one filter per channel", "BF16 W"],
+            ["Convolution output", "Q̃,K̃,Ṽ [B,T,96,128]", "same sequence length and channel count after SiLU", "BF16 output · accumulator backend-defined"],
+            ["Decode state", "C [B,36864,3]", "previous W−1 values across the three branches", "BF16 persistent state"],
+            ["Post-conv roles", "L2(Q̃),L2(K̃),Ṽ", "Q/K address memory; V supplies write content", "BF16 · FP32 normalization math"]
           ],
           footnote: "This is a causal depthwise convolution: each output channel reads only the same channel at t−3 through t. There is no cross-channel mixing or downsampling. Each of K3's 69 KDA layers has distinct Q, K, and V filter weights."
         },
@@ -2943,14 +2985,14 @@
           title: "Gated MLA tensor contract",
           notation: ["B batch", "Tq query tokens", "Tk cached tokens", "H 96", "Dq 192", "Dv 128", "Rkv 512"],
           rows: [
-            ["Input", "X [B,Tq,7168]", "feeds query, latent-KV, and gate paths"],
-            ["Query low rank", "[7168,1536] · [1536,18432]", "Q [B,96,Tq,192]"],
-            ["KV compression", "Wc [7168,576]", "512 latent + 64 shared NoPE channels per token"],
-            ["KV expansion", "Wkv [512,24576]", "Kcontent,V → [B,96,Tk,128] each"],
-            ["Attention scores", "QKᵀ [B,96,Tq,Tk]", "causal softmax over Tk"],
-            ["Head output", "O [B,Tq,96,128]", "flatten → [B,Tq,12288]"],
-            ["Full-rank gate", "Wg [7168,12288]", "σ(WgX) ⊙ Oflat"],
-            ["Output projection", "Wo [12288,7168]", "returns [B,Tq,7168]"]
+            ["Input", "X [B,Tq,7168]", "feeds query, latent-KV, and gate paths", "BF16 persistent activation"],
+            ["Query low rank", "[7168,1536] · [1536,18432]", "Q [B,96,Tq,192]", "BF16 W / output · FP32 RMSNorm math"],
+            ["KV compression", "Wc [7168,576]", "512 latent + 64 shared NoPE channels per token", "BF16 W / latent cache"],
+            ["KV expansion", "Wkv [512,24576]", "Kcontent,V → [B,96,Tk,128] each", "BF16 W / output"],
+            ["Attention scores", "QKᵀ [B,96,Tq,Tk]", "causal softmax over Tk", "BF16 operands · FP32 softmax"],
+            ["Head output", "O [B,Tq,96,128]", "flatten → [B,Tq,12288]", "BF16 · value accumulator backend-defined"],
+            ["Full-rank gate", "Wg [7168,12288]", "σ(WgX) ⊙ Oflat", "BF16 W / output"],
+            ["Output projection", "Wo [12288,7168]", "returns [B,Tq,7168]", "BF16 W / output · accumulator backend-defined"]
           ],
           footnote: "K3 applies no rotary operation in MLA. The config retains a 64-channel field named qk_rope_head_dim; here it is an additional NoPE Q/K component. Latent-cache kernels may fuse KV expansion into attention."
         },
@@ -2958,14 +3000,14 @@
           title: "Stable LatentMoE contract",
           notation: ["N B·T tokens", "D 7168", "L 3584 latent", "F 3072 expert FFN", "E 896", "K 16"],
           rows: [
-            ["Router", "X [N,D] · Wrᵀ [D,E] → scores [N,896]", "top-k ids and weights [N,16]"],
-            ["Latent down", "W↓ [7168,3584]", "routed input [N,3584]"],
-            ["Dispatch", "[N,16,3584] logical", "packed as ragged [tokens_e,3584] per expert"],
-            ["Expert gate / up", "W1,W3 [3584,3072]", "SiTU-GLU consumes paired [tokens_e,6144]"],
-            ["Expert down", "W2 [3072,3584]", "one triplet per each of 896 experts"],
-            ["Combine + norm", "ΣK → [N,3584]", "router-weighted sum, then RMSNorm"],
-            ["Latent up", "W↑ [3584,7168]", "routed result [N,7168]"],
-            ["Shared path", "2 experts; combined F = 6144", "always-on full-width MLP added to routed result"]
+            ["Router", "X [N,D] · Wrᵀ [D,E] → scores [N,896]", "top-k ids and weights [N,16]", "BF16 W · FP32 scores / weights · INT64 expert IDs"],
+            ["Latent down", "W↓ [7168,3584]", "routed input [N,3584]", "BF16 W / output"],
+            ["Dispatch", "[N,16,3584] logical", "packed as ragged [tokens_e,3584] per expert", "BF16 payload · INT64 routing metadata"],
+            ["Expert gate / up", "W1,W3 [3584,3072]", "SiTU-GLU consumes paired [tokens_e,6144]", "FP32 SiTU intermediate · MXFP4 W / MXFP8 act"],
+            ["Expert down", "W2 [3072,3584]", "one triplet per each of 896 experts", "BF16 output · MXFP4 W / MXFP8 act"],
+            ["Combine + norm", "ΣK → [N,3584]", "router-weighted sum, then RMSNorm", "FP32 reduction / norm → BF16"],
+            ["Latent up", "W↑ [3584,7168]", "routed result [N,7168]", "BF16 W / output"],
+            ["Shared path", "2 experts; combined F = 6144", "always-on full-width MLP added to routed result", "BF16 W / output · FP32 SiTU math"]
           ],
           footnote: "[N,16,L] is the logical dispatch shape. Expert-parallel kernels sort and pack tokens by expert, so the physical leading dimension is ragged and load-dependent."
         },
@@ -2973,12 +3015,13 @@
           title: "MoonViT-V2 tensor contract",
           notation: ["P Σ(t·h·w) patches", "Hv 12 heads", "Dh 128", "Cv 1024", "Cqkv 1536"],
           rows: [
-            ["Patch kernel", "Conv [1024,3,14,14]", "image/video → patch tokens [P,1024]"],
-            ["Packed QKV", "Wqkv [1024,4608]", "[P,3,12,128] because 3·Cqkv = 4608"],
-            ["Attention output", "[P,12,128] → [P,1536]", "Wo [1536,1024]"],
-            ["Vision MLP", "[1024,4096] → [4096,1024]", "per token, repeated for 27 layers"],
-            ["2×2 merge", "[t,h/2,w/2,4,1024]", "temporal mean → [h/2·w/2,4,1024]"],
-            ["Projector", "[4096,4096] · [4096,7168]", "flatten each 2×2 group; output [P/4,7168]"]
+            ["Patch kernel", "Conv [1024,3,14,14]", "image/video → patch tokens [P,1024]", "BF16 W / output"],
+            ["Packed QKV", "Wqkv [1024,4608]", "[P,3,12,128] because 3·Cqkv = 4608", "BF16 W / output"],
+            ["Attention output", "[P,12,128] → [P,1536]", "Wo [1536,1024]", "BF16 · FP32 softmax / backend-defined value accumulation"],
+            ["Vision MLP", "[1024,4096] → [4096,1024]", "per token, repeated for 27 layers", "BF16 W / output"],
+            ["2×2 merge", "[t,h/2,w/2,4,1024]", "temporal mean → [h/2·w/2,4,1024]", "BF16"],
+            ["Packed offsets", "cu_seqlens [items+1]", "boundaries for variable-length media", "INT32 metadata"],
+            ["Projector", "[4096,4096] · [4096,7168]", "flatten each 2×2 group; output [P/4,7168]", "BF16 W / output"]
           ],
           footnote: "P is a packed variable-length patch count across media items. Flash-attention kernels consume cumulative sequence lengths rather than a padded batch dimension."
         }
@@ -3055,7 +3098,7 @@
           kernelNotation.append(chip);
         });
         kernelShapeRows.replaceChildren();
-        contract.rows.forEach(([label, shape, note]) => {
+        contract.rows.forEach(([label, shape, note, precision]) => {
           const row = document.createElement("tr");
           const heading = document.createElement("th");
           heading.scope = "row";
@@ -3067,7 +3110,10 @@
           noteElement.className = "shape-note";
           noteElement.textContent = note;
           cell.append(code, noteElement);
-          row.append(heading, cell);
+          const precisionCell = document.createElement("td");
+          precisionCell.className = "precision";
+          precisionCell.textContent = precision;
+          row.append(heading, cell, precisionCell);
           kernelShapeRows.append(row);
         });
         kernelFootnote.textContent = contract.footnote;

@@ -645,6 +645,7 @@
         margin-top: 11px;
         border-spacing: 0;
         border-collapse: collapse;
+        table-layout: fixed;
       }
 
       .shape-table th,
@@ -657,11 +658,31 @@
         text-align: left;
       }
 
-      .shape-table th {
-        width: 33%;
+      .shape-table thead th {
+        padding-right: 7px;
+        color: var(--faint);
+        font-size: 7px;
+        font-weight: 650;
+        letter-spacing: 0.055em;
+        text-transform: uppercase;
+      }
+
+      .shape-table tbody th {
+        width: 25%;
         padding-right: 8px;
         color: var(--faint);
         font-weight: 560;
+      }
+
+      .shape-table th:nth-child(2),
+      .shape-table td:nth-child(2) {
+        width: 43%;
+        padding-right: 8px;
+      }
+
+      .shape-table th:nth-child(3),
+      .shape-table td:nth-child(3) {
+        width: 32%;
       }
 
       .shape-table code {
@@ -677,6 +698,20 @@
         margin-top: 2px;
         color: var(--faint);
         font-size: 8px;
+      }
+
+      .contract-precision-key {
+        margin: 10px 0 0;
+        color: var(--faint);
+        font-size: 8px;
+        line-height: 1.45;
+      }
+
+      .shape-table .precision {
+        color: var(--orange);
+        font-size: 8px;
+        line-height: 1.4;
+        overflow-wrap: anywhere;
       }
 
       .contract-note {
@@ -1429,7 +1464,16 @@
               <span class="contract-badge">logical shapes</span>
             </div>
             <div class="notation" id="contract-notation"></div>
-            <table class="shape-table"><tbody id="contract-rows"></tbody></table>
+            <p class="contract-precision-key" id="contract-precision-key">
+              Released-checkpoint precision: persistent activations are BF16. FP8 W means
+              E4M3 weights with FP32 scales per 128×128 block and dynamically quantized
+              E4M3 inputs. Explicit BF16/FP32 exceptions and metadata types are stated per row;
+              accumulation is backend-defined unless named.
+            </p>
+            <table class="shape-table">
+              <thead><tr><th>Quantity</th><th>Logical shape / meaning</th><th>Precision / representation</th></tr></thead>
+              <tbody id="contract-rows"></tbody>
+            </table>
             <p class="contract-note" id="contract-note"></p>
           </section>
           <a
@@ -1957,21 +2001,23 @@
       };
 
       function contractsFor(v) {
+        const fp8Linear = "BF16 out · FP8 E4M3 W · 128×128 FP32 scales · dynamic FP8 act";
+        const indexLinear = v.key === "flash" ? "BF16 · BF16 W" : fp8Linear;
         return {
           dsa: {
             title: "DSA tensor contract",
             notation: ["B batch", "T query tokens", "H history tokens", "Nh 64", "K 2048"],
             rows: [
-              ["Input", `H [B,T,${v.d}]`, "shared source for attention and indexer paths"],
-              ["Query latent", `Wqa [${v.d},${v.qrank}]`, `qᵣ [B,T,${v.qrank}] after RMSNorm`],
-              ["Full attention Q", `Wqb [${v.qrank},16384]`, "Q [B,T,64,256]"],
-              ["Indexer Q", `Wiq [${v.qrank},4096]`, "Qi [B,T,32,128]"],
-              ["Indexer key", `Wik [${v.d},128]`, "Ki [B,H,128]"],
-              ["Head weights", `Wiw [${v.d},32]`, "wi [B,T,32]"],
-              ["Latent KV", `Wkva [${v.d},${v.kvRank + v.rope}]`, v.rope ? "C [B,H,512] + Krope [B,H,64]" : "C [B,H,512]"],
-              ["Sparse indices", "I [B,T,2048]", v.key === "flash" ? "selected through KPool" : "direct token-level top-k"],
-              ["Gathered history", "Csel [B,T,2048,512]", "latent rows consumed by sparse MLA"],
-              ["Output", `Y [B,T,${v.d}]`, "projected attention update"]
+              ["Input", `H [B,T,${v.d}]`, "shared source for attention and indexer paths", "BF16 persistent activation"],
+              ["Query latent", `Wqa [${v.d},${v.qrank}]`, `qᵣ [B,T,${v.qrank}] after RMSNorm`, fp8Linear],
+              ["Full attention Q", `Wqb [${v.qrank},16384]`, "Q [B,T,64,256]", fp8Linear],
+              ["Indexer Q", `Wiq [${v.qrank},4096]`, "Qi [B,T,32,128]", indexLinear],
+              ["Indexer key", `Wik [${v.d},128]`, "Ki [B,H,128]", indexLinear],
+              ["Head weights", `Wiw [${v.d},32]`, "wi [B,T,32]", "BF16 W / output · FP32 score reduction"],
+              ["Latent KV", `Wkva [${v.d},${v.kvRank + v.rope}]`, v.rope ? "C [B,H,512] + Krope [B,H,64]" : "C [B,H,512]", `${fp8Linear} · BF16 cache`],
+              ["Sparse indices", "I [B,T,2048]", v.key === "flash" ? "selected through KPool" : "direct token-level top-k", "INT32 indices"],
+              ["Gathered history", "Csel [B,T,2048,512]", "latent rows consumed by sparse MLA", "BF16 cache rows · FP32 softmax / accumulation"],
+              ["Output", `Y [B,T,${v.d}]`, "projected attention update", fp8Linear]
             ],
             note: "Weight matrices use math orientation [in,out]. Full attention Q and lightning-indexer Q are independent projections of qᵣ; the indexer never consumes the 64-head full Q tensor."
           },
@@ -1979,14 +2025,14 @@
             title: "KPool tensor contract",
             notation: ["B batch", "T query tokens", "H history tokens", "P 4 tokens / pool", "K 2048"],
             rows: [
-              ["Raw index key", "Kraw [B,H,128]", "normalized per-token key"],
-              ["Gate", "G [B,H,128]", "learned from hidden states"],
-              ["Pool view", "[B,⌊H/4⌋,4,128]", "four consecutive tokens per complete group"],
-              ["Position embedding", "APE [4,128]", "learned position inside each pool"],
-              ["Pooled cache", "Kpool [B,⌊H/4⌋,128]", "Hadamard-transformed FP8 keys"],
-              ["Query", "Qi [B,T,32,128]", "lightning-indexer queries"],
-              ["Candidate groups", "Gids [B,T,512]", "top-scoring pooled rows"],
-              ["Expanded slots", "I [B,T,≤2051]", "flat token positions including visible tail"]
+              ["Raw index key", "Kraw [B,H,128]", "normalized per-token key", "BF16"],
+              ["Gate", "G [B,H,128]", "learned from hidden states", "BF16 · BF16 W"],
+              ["Pool view", "[B,⌊H/4⌋,4,128]", "four consecutive tokens per complete group", "BF16 working tensor"],
+              ["Position embedding", "APE [4,128]", "learned position inside each pool", "FP32 parameter"],
+              ["Pooled cache", "Kpool [B,⌊H/4⌋,128]", "Hadamard-transformed FP8 keys", "FP8 E4M3 · FP32 scale / 128 values"],
+              ["Query", "Qi [B,T,32,128]", "lightning-indexer queries", "BF16 · BF16 W"],
+              ["Candidate groups", "Gids [B,T,512]", "top-scoring pooled rows", "INT32 indices"],
+              ["Expanded slots", "I [B,T,≤2051]", "flat token positions including visible tail", "INT32 indices / lengths"]
             ],
             note: "KPool reduces the first-stage index history by about 4×, then expands shortlisted groups back to exact token positions. A top-2048 request reserves 2048 + 4 − 1 = 2051 slots for the incomplete tail."
           } : null,
@@ -1994,16 +2040,16 @@
             title: "KDA tensor contract",
             notation: ["B batch", "T tokens", "Nh 64 heads", "D 128 head width", "C 4 conv taps"],
             rows: [
-              ["Input", "H [B,T,4096]", "Flash hidden states"],
-              ["Fused projection", "Wqkvβfg [4096,24896]", "3×8192 QKV + 64 β + 128 fₐ + 128 gₐ"],
-              ["Q / K / V", "[B,T,64,128] each", "8192 channels per stream"],
-              ["Depthwise Conv1D", "Wq,Wk,Wv [8192,1,4]", "causal, channel-wise, preserves [B,T,8192]"],
-              ["Decay", "α [B,T,64,128]", "fₐ [B,T,128] projected to 8192 channels"],
-              ["Update strength", "β [B,T,64]", "one value per head and token"],
-              ["Recurrent state", "S [B,64,128,128]", "one key-by-value matrix per head"],
-              ["State update", "S ← Diag(α) (I − βkkᵀ) S + βkvᵀ", "delta-rule erase + write"],
-              ["State read", "qᵀS → O [B,T,64,128]", "linear-time sequence mixing"],
-              ["Output gate", "g [B,T,64,128]", "RMSNorm + gate + [8192,4096] projection"]
+              ["Input", "H [B,T,4096]", "Flash hidden states", "BF16 persistent activation"],
+              ["Fused projection", "Wqkvβfg [4096,24896]", "3×8192 QKV + 64 β + 128 fₐ + 128 gₐ", "BF16 out · BF16 W"],
+              ["Q / K / V", "[B,T,64,128] each", "8192 channels per stream", "BF16"],
+              ["Depthwise Conv1D", "Wq,Wk,Wv [8192,1,4]", "causal, channel-wise, preserves [B,T,8192]", "BF16 W / state / output · accumulator backend-defined"],
+              ["Decay", "α [B,T,64,128]", "fₐ [B,T,128] projected to 8192 channels", "BF16 projection · FP32 gate math"],
+              ["Update strength", "β [B,T,64]", "one value per head and token", "BF16 logits · FP32 sigmoid / recurrence math"],
+              ["Recurrent state", "S [B,64,128,128]", "one key-by-value matrix per head", "FP32 recurrent state"],
+              ["State update", "S ← Diag(α) (I − βkkᵀ) S + βkvᵀ", "delta-rule erase + write", "FP32 state accumulation"],
+              ["State read", "qᵀS → O [B,T,64,128]", "linear-time sequence mixing", "FP32 accumulator → BF16 output"],
+              ["Output gate", "g [B,T,64,128]", "RMSNorm + gate + [8192,4096] projection", "BF16 W / output · FP32 norm math"]
             ],
             note: "The short kernel is a 1-D depthwise causal convolution over sequence positions. Separate four-tap kernels operate on every Q, K, and V channel."
           } : null,
@@ -2011,13 +2057,13 @@
             title: "mHC tensor contract",
             notation: ["B batch", "T tokens", "R 4 residual streams", "D 4096", "M 24 mixing values"],
             rows: [
-              ["Residual", "X [B,T,4,4096]", "flatten → [B,T,16384]"],
-              ["Generator", "Wmix [16384,24]", "separate parameters for attention and FFN"],
-              ["Input map A", "[B,T,1,4]", "sigmoid-bounded pre-mix"],
-              ["Residual map B", "[B,T,4,4]", "20-step Sinkhorn projection"],
-              ["Output map C", "[B,T,4,1]", "2·sigmoid bounded post-map"],
-              ["Inner layer", "F: [B,T,4096] → [B,T,4096]", "KDA, DSA, or FFN remains unexpanded"],
-              ["Update", "X′ [B,T,4,4096]", "B·X + C·F(A·X)"]
+              ["Residual", "X [B,T,4,4096]", "flatten → [B,T,16384]", "BF16 state · FP32 mix math"],
+              ["Generator", "Wmix [16384,24]", "separate parameters for attention and FFN", "FP32 W / working tensor"],
+              ["Input map A", "[B,T,1,4]", "sigmoid-bounded pre-mix", "FP32"],
+              ["Residual map B", "[B,T,4,4]", "20-step Sinkhorn projection", "FP32 Sinkhorn output"],
+              ["Output map C", "[B,T,4,1]", "2·sigmoid bounded post-map", "FP32"],
+              ["Inner layer", "F: [B,T,4096] → [B,T,4096]", "KDA, DSA, or FFN remains unexpanded", "BF16 input / output"],
+              ["Update", "X′ [B,T,4,4096]", "B·X + C·F(A·X)", "FP32 mix accumulation → BF16 state"]
             ],
             note: "mHC is Flash-only. Base keeps a single [B,T,6144] residual stream and a conventional residual add."
           } : null,
@@ -2025,14 +2071,14 @@
             title: "GLM MoE tensor contract",
             notation: ["N B·T tokens", `D ${v.d}`, `E ${v.experts} routed experts`, "K 8 active", "F 2048"],
             rows: [
-              ["Input", `X [N,${v.d}]`, "flattened decoder tokens"],
-              ["Router", `Wr [${v.d},${v.experts}]`, `sigmoid scores [N,${v.experts}]`],
-              ["Selection", "ids/weights [N,8]", "renormalized top-8, scaled by 2.5"],
-              ["Logical dispatch", `[N,8,${v.d}]`, "eight expert assignments per token"],
-              ["Expert gate/up", `W1,W3 [${v.d},2048]`, `one pair per each of ${v.experts} experts`],
-              ["Expert down", `W2 [2048,${v.d}]`, "returns one d-wide contribution"],
-              ["Routed reduce", `[N,8,${v.d}] → [N,${v.d}]`, "weighted sum"],
-              ["Shared expert", `${v.d} → 2048 → ${v.d}`, "always active and added to routed result"]
+              ["Input", `X [N,${v.d}]`, "flattened decoder tokens", "BF16"],
+              ["Router", `Wr [${v.d},${v.experts}]`, `sigmoid scores [N,${v.experts}]`, "BF16 W · FP32 scores"],
+              ["Selection", "ids/weights [N,8]", "renormalized top-8, scaled by 2.5", "INT32 ids · FP32 weights"],
+              ["Logical dispatch", `[N,8,${v.d}]`, "eight expert assignments per token", "BF16 payload"],
+              ["Expert gate/up", `W1,W3 [${v.d},2048]`, `one pair per each of ${v.experts} experts`, fp8Linear],
+              ["Expert down", `W2 [2048,${v.d}]`, "returns one d-wide contribution", fp8Linear],
+              ["Routed reduce", `[N,8,${v.d}] → [N,${v.d}]`, "weighted sum", "BF16 output · accumulator backend-defined"],
+              ["Shared expert", `${v.d} → 2048 → ${v.d}`, "always active and added to routed result", fp8Linear]
             ],
             note: `Layers 0–2 use dense ${v.d} → 12288 → ${v.d} SwiGLU instead. The sparse MoE appears in the remaining ${v.moeLayers} decoder layers.`
           },
@@ -2040,12 +2086,12 @@
             title: "MTP tensor contract",
             notation: ["B batch", "T training positions", `D ${v.d}`, "V 154880"],
             rows: [
-              ["Main state", `H [B,T,${v.d}]`, "completed main-decoder hidden state"],
-              ["Shifted embedding", `E+1 [B,T,${v.d}]`, "shared embedding table"],
-              ["Concatenation", `C [B,T,${2 * v.d}]`, "normalized H and E+1"],
-              ["Fusion projection", `Wf [${2 * v.d},${v.d}]`, `Z [B,T,${v.d}]`],
-              ["NextN layer", `DSA top-2048 · MoE top-8/${v.experts}`, "one extra decoder layer; no Flash mHC"],
-              ["Head", `[B,T,${v.d}] · Wlm [${v.d},154880]`, "shared vocabulary projection"]
+              ["Main state", `H [B,T,${v.d}]`, "completed main-decoder hidden state", "BF16"],
+              ["Shifted embedding", `E+1 [B,T,${v.d}]`, "shared embedding table", "BF16 · BF16 embedding W"],
+              ["Concatenation", `C [B,T,${2 * v.d}]`, "normalized H and E+1", "BF16 · FP32 norm math"],
+              ["Fusion projection", `Wf [${2 * v.d},${v.d}]`, `Z [B,T,${v.d}]`, fp8Linear],
+              ["NextN layer", `DSA top-2048 · MoE top-8/${v.experts}`, "one extra decoder layer; no Flash mHC", "BF16 activations · mixed FP8/BF16 W · INT32 indices"],
+              ["Head", `[B,T,${v.d}] · Wlm [${v.d},154880]`, "shared vocabulary projection", "BF16 checkpoint W · accumulator backend-defined"]
             ],
             note: "The released Base and Flash configs each expose one NextN prediction layer. It can provide draft tokens for speculative decoding without a separate draft checkpoint."
           },
@@ -2053,13 +2099,13 @@
             title: "Vision tensor contract",
             notation: ["Nv visual patch tokens", "Tv merged visual tokens", "C RGB channels"],
             rows: [
-              ["Patch volume", "pixels [Nv,3,2,14,14]", "RGB × time × height × width"],
-              ["Patch embedding", "Conv3D [1024,3,2,14,14]", "stride equals kernel; output [Nv,1024]"],
-              ["Vision QKV", "Wqkv [1024,3072]", "Q/K/V [Nv,16,64] in each of 24 blocks"],
-              ["Vision MLP", "1024 → 4096 → 1024", "gated feed-forward path"],
-              ["Spatial merge", "4 × 1024 → 4096", "2 × 2 neighboring patches"],
-              ["Merger MLP", "4096 → 10240 → 4096", "maps Tv = Nv/4 tokens to text width"],
-              ["Decoder input", "V [B,Tv,4096]", "replaces media placeholder embeddings"]
+              ["Patch volume", "pixels [Nv,3,2,14,14]", "RGB × time × height × width", "BF16 normalized pixels"],
+              ["Patch embedding", "Conv3D [1024,3,2,14,14]", "stride equals kernel; output [Nv,1024]", "BF16 W / output"],
+              ["Vision QKV", "Wqkv [1024,3072]", "Q/K/V [Nv,16,64] in each of 24 blocks", "BF16 W / output · attention accumulator backend-defined"],
+              ["Vision MLP", "1024 → 4096 → 1024", "gated feed-forward path", "BF16 W / output"],
+              ["Spatial merge", "4 × 1024 → 4096", "2 × 2 neighboring patches", "BF16"],
+              ["Merger MLP", "4096 → 10240 → 4096", "maps Tv = Nv/4 tokens to text width", "BF16 W / output"],
+              ["Decoder input", "V [B,Tv,4096]", "replaces media placeholder embeddings", "BF16"]
             ],
             note: "The vision tower is native to GLM 5.3 Flash. Base is text-only and has no vision parameters."
           } : null
@@ -2231,7 +2277,7 @@
           contractNotation.append(chip);
         });
         contractRows.replaceChildren();
-        spec.rows.forEach(([label, shape, note]) => {
+        spec.rows.forEach(([label, shape, note, precision]) => {
           const row = document.createElement("tr");
           const heading = document.createElement("th");
           heading.scope = "row";
@@ -2243,7 +2289,10 @@
           explanation.className = "shape-note";
           explanation.textContent = note;
           cell.append(code, explanation);
-          row.append(heading, cell);
+          const precisionCell = document.createElement("td");
+          precisionCell.className = "precision";
+          precisionCell.textContent = precision;
+          row.append(heading, cell, precisionCell);
           contractRows.append(row);
         });
         contractNote.textContent = spec.note;

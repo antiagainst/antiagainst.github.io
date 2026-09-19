@@ -645,6 +645,7 @@
         margin-top: 11px;
         border-spacing: 0;
         border-collapse: collapse;
+        table-layout: fixed;
       }
 
       .shape-table th,
@@ -657,11 +658,31 @@
         text-align: left;
       }
 
-      .shape-table th {
-        width: 33%;
+      .shape-table thead th {
+        padding-right: 7px;
+        color: var(--faint);
+        font-size: 7px;
+        font-weight: 650;
+        letter-spacing: 0.055em;
+        text-transform: uppercase;
+      }
+
+      .shape-table tbody th {
+        width: 25%;
         padding-right: 8px;
         color: var(--faint);
         font-weight: 560;
+      }
+
+      .shape-table th:nth-child(2),
+      .shape-table td:nth-child(2) {
+        width: 43%;
+        padding-right: 8px;
+      }
+
+      .shape-table th:nth-child(3),
+      .shape-table td:nth-child(3) {
+        width: 32%;
       }
 
       .shape-table code {
@@ -677,6 +698,20 @@
         margin-top: 2px;
         color: var(--faint);
         font-size: 8px;
+      }
+
+      .contract-precision-key {
+        margin: 10px 0 0;
+        color: var(--faint);
+        font-size: 8px;
+        line-height: 1.45;
+      }
+
+      .shape-table .precision {
+        color: var(--orange);
+        font-size: 8px;
+        line-height: 1.4;
+        overflow-wrap: anywhere;
       }
 
       .contract-note {
@@ -1426,7 +1461,16 @@
               <span class="contract-badge">logical shapes</span>
             </div>
             <div class="notation" id="contract-notation"></div>
-            <table class="shape-table"><tbody id="contract-rows"></tbody></table>
+            <p class="contract-precision-key" id="contract-precision-key">
+              Official-reference precision: persistent activations and physical KV-cache tensors
+              are BF16. FP8 W means E4M3 weights with UE8M0 scales per 128×128 block and
+              dynamic E4M3 inputs per 128 values; FP4 W means E2M1 expert weights with
+              E8M0 scales per 32 values. Quantization-simulated caches are identified per row.
+            </p>
+            <table class="shape-table">
+              <thead><tr><th>Quantity</th><th>Logical shape / meaning</th><th>Precision / representation</th></tr></thead>
+              <tbody id="contract-rows"></tbody>
+            </table>
             <p class="contract-note" id="contract-note"></p>
           </section>
           <a
@@ -1800,20 +1844,22 @@
       function contractsFor(v) {
         const hPerGroup = v.heads / v.groups;
         const qOut = v.heads * 512;
+        const fp8Linear = "BF16 out · FP8 E4M3 W · UE8M0 scale / 128×128 · dynamic FP8 act / 128";
         return {
           csa: {
             title: "CSA tensor contract",
             notation: ["B batch", "T query tokens", "H history", `Nh ${v.heads}`, "C 512", "m 4", `K ${v.csaTopk}`],
             rows: [
-              ["Input", `X [B,T,${v.d}]`, "query tokens and KV history"],
-              ["Dual compressor", `Wa/Wb KV,Z [${v.d},512]`, "two overlapping 4-token branches"],
-              ["Compressed KV", "Ccomp [B,⌊H/4⌋,512]", "one shared key/value head"],
-              ["Query latent", `Wqa [${v.d},${v.qrank}]`, `qr [B,T,${v.qrank}]`],
-              ["Full attention Q", `Wq [${v.qrank},${qOut}]`, `Q [B,T,${v.heads},512]`],
-              ["Lightning indexer Q", `Windex [${v.qrank},8192]`, "Qindex [B,T,64,128] plus 64 scalar head weights"],
-              ["Index scores", "I [B,T,⌊H/4⌋]", `top-k indices [B,T,${v.csaTopk}]`],
-              ["Core MQA", `scores [B,${v.heads},T,K+128]`, "shared K=V entries, partial RoPE"],
-              ["Grouped output", `${v.groups} × [${hPerGroup * 512},1024]`, `concat ${v.groupOut} → ${v.d}`]
+              ["Input", `X [B,T,${v.d}]`, "query tokens and KV history", "BF16 persistent activation"],
+              ["Dual compressor", `Wa/Wb KV,Z [${v.d},512]`, "two overlapping 4-token branches", "FP32 compression math · BF16 checkpoint W"],
+              ["Compressed KV", "Ccomp [B,⌊H/4⌋,512]", "one shared key/value head", "FP4-rounded BF16 cache · E8M0 scale / 32 in QAT simulation"],
+              ["Local SWA KV", "Clocal [B,≤128,512]", "uncompressed recent-token window", "BF16 cache · FP8-rounded NoPE / scale per 64 + BF16 RoPE"],
+              ["Query latent", `Wqa [${v.d},${v.qrank}]`, `qr [B,T,${v.qrank}]`, fp8Linear],
+              ["Full attention Q", `Wq [${v.qrank},${qOut}]`, `Q [B,T,${v.heads},512]`, fp8Linear],
+              ["Lightning indexer Q", `Windex [${v.qrank},8192]`, "Qindex [B,T,64,128] plus 64 scalar head weights", "FP4-rounded BF16 Q · FP8 W · BF16 head weights"],
+              ["Index scores", "I [B,T,⌊H/4⌋]", `top-k indices [B,T,${v.csaTopk}]`, "BF16 scores · INT32 selected indices"],
+              ["Core MQA", `scores [B,${v.heads},T,K+128]`, "shared K=V entries, partial RoPE", "BF16 output · FP32 softmax / accumulation"],
+              ["Grouped output", `${v.groups} × [${hPerGroup * 512},1024]`, `concat ${v.groupOut} → ${v.d}`, "BF16 output · FP8 checkpoint W"]
             ],
             note: "Weight matrices use math orientation [in,out]. Full attention Q and lightning indexer Q are independent projections of the same qr latent. The physical cache also keeps an uncompressed 128-token SWA segment and incomplete compression tails."
           },
@@ -1821,12 +1867,13 @@
             title: "HCA tensor contract",
             notation: ["B batch", "T query tokens", "H history", `Nh ${v.heads}`, "C 512", "m′ 128"],
             rows: [
-              ["Input", `X [B,T,${v.d}]`, "query tokens and KV history"],
-              ["Compressor", `WKV,WZ [${v.d},512]`, "positional bias [128,512]"],
-              ["Compressed KV", "Ccomp [B,⌊H/128⌋,512]", "dense compressed history"],
-              ["Query low rank", `[${v.d},${v.qrank}] · [${v.qrank},${qOut}]`, `Q [B,T,${v.heads},512]`],
-              ["Core MQA", `scores [B,${v.heads},T,⌊H/128⌋+128]`, "all compressed + local entries"],
-              ["Grouped output", `${v.groups} × [${hPerGroup * 512},1024]`, `concat ${v.groupOut} → ${v.d}`]
+              ["Input", `X [B,T,${v.d}]`, "query tokens and KV history", "BF16 persistent activation"],
+              ["Compressor", `WKV,WZ [${v.d},512]`, "positional bias [128,512]", "FP32 compression math · BF16 checkpoint W / bias"],
+              ["Compressed KV", "Ccomp [B,⌊H/128⌋,512]", "dense compressed history", "BF16 cache · FP8-rounded NoPE / scale per 64 + BF16 RoPE"],
+              ["Local SWA KV", "Clocal [B,≤128,512]", "uncompressed recent-token window", "BF16 cache · FP8-rounded NoPE / scale per 64 + BF16 RoPE"],
+              ["Query low rank", `[${v.d},${v.qrank}] · [${v.qrank},${qOut}]`, `Q [B,T,${v.heads},512]`, fp8Linear],
+              ["Core MQA", `scores [B,${v.heads},T,⌊H/128⌋+128]`, "all compressed + local entries", "BF16 output · FP32 softmax / accumulation"],
+              ["Grouped output", `${v.groups} × [${hPerGroup * 512},1024]`, `concat ${v.groupOut} → ${v.d}`, "BF16 output · FP8 checkpoint W"]
             ],
             note: "At 1M context HCA stores about 8,192 compressed entries per layer, plus local and incomplete-block state."
           },
@@ -1834,13 +1881,13 @@
             title: "mHC tensor contract",
             notation: ["B batch", "T tokens", "R 4 streams", `D ${v.d}`, "M 24 mixing values"],
             rows: [
-              ["Residual", `X [B,T,4,${v.d}]`, `flatten → [B,T,${4 * v.d}]`],
-              ["Generator", `Wmix [${4 * v.d},24]`, "separate matrices for attention and MoE"],
-              ["Input map A", "[B,T,1,4]", "sigmoid-bounded pre-mix"],
-              ["Residual map B", "[B,T,4,4]", "20-step Sinkhorn projection"],
-              ["Output map C", "[B,T,4,1]", "2·sigmoid bounded post-map"],
-              ["Inner layer", `F: [B,T,${v.d}] → [B,T,${v.d}]`, "attention or MoE remains unexpanded"],
-              ["Update", `X′ [B,T,4,${v.d}]`, "B·X + C·F(A·X)"]
+              ["Residual", `X [B,T,4,${v.d}]`, `flatten → [B,T,${4 * v.d}]`, "BF16 state · FP32 mix math"],
+              ["Generator", `Wmix [${4 * v.d},24]`, "separate matrices for attention and MoE", "FP32 W / working tensor"],
+              ["Input map A", "[B,T,1,4]", "sigmoid-bounded pre-mix", "FP32"],
+              ["Residual map B", "[B,T,4,4]", "20-step Sinkhorn projection", "FP32 Sinkhorn output"],
+              ["Output map C", "[B,T,4,1]", "2·sigmoid bounded post-map", "FP32"],
+              ["Inner layer", `F: [B,T,${v.d}] → [B,T,${v.d}]`, "attention or MoE remains unexpanded", "BF16 input / output"],
+              ["Update", `X′ [B,T,4,${v.d}]`, "B·X + C·F(A·X)", "FP32 mix accumulation → BF16 state"]
             ],
             note: "The reference stores the dynamic generator as [24,4D] in PyTorch Linear orientation. Fused kernels generate A/B/C and apply the Sinkhorn map."
           },
@@ -1848,13 +1895,13 @@
             title: "DeepSeekMoE tensor contract",
             notation: ["N B·T tokens", `D ${v.d}`, `E ${v.experts}`, "K 6", `F ${v.expertFfn}`],
             rows: [
-              ["Learned router", `X [N,D] · Wrᵀ [D,${v.experts}]`, `scores [N,${v.experts}] → ids/weights [N,6]`],
-              ["Hash router", "tid2eid [129280,6]", "used in transformer layers 0–2"],
-              ["Logical dispatch", `[N,6,${v.d}]`, `physically packed [tokens_e,${v.d}]`],
-              ["Expert gate/up", `W1,W3 [${v.d},${v.expertFfn}]`, "clamped SwiGLU"],
-              ["Expert down", `W2 [${v.expertFfn},${v.d}]`, `one triplet for each of ${v.experts} experts`],
-              ["Routed reduce", `[N,6,${v.d}] → [N,${v.d}]`, "weighted sum"],
-              ["Shared expert", `${v.d} → ${v.expertFfn} → ${v.d}`, "always active; added after routed reduce"]
+              ["Learned router", `X [N,D] · Wrᵀ [D,${v.experts}]`, `scores [N,${v.experts}] → ids/weights [N,6]`, "BF16 W · FP32 scores / weights · INT64 ids"],
+              ["Hash router", "tid2eid [129280,6]", "used in transformer layers 0–2", "INT32 lookup table"],
+              ["Logical dispatch", `[N,6,${v.d}]`, `physically packed [tokens_e,${v.d}]`, "BF16 payload · integer routing metadata"],
+              ["Expert gate/up", `W1,W3 [${v.d},${v.expertFfn}]`, "clamped SwiGLU", "FP32 intermediate · FP4 W / dynamic FP8 act"],
+              ["Expert down", `W2 [${v.expertFfn},${v.d}]`, `one triplet for each of ${v.experts} experts`, "BF16 output · FP4 W / dynamic FP8 act"],
+              ["Routed reduce", `[N,6,${v.d}] → [N,${v.d}]`, "weighted sum", "FP32 reduction → BF16 output"],
+              ["Shared expert", `${v.d} → ${v.expertFfn} → ${v.d}`, "always active; added after routed reduce", "BF16 output · FP8 W / dynamic FP8 act"]
             ],
             note: "The logical dispatch is dense in notation; expert-parallel MegaMoE kernels sort and pack a ragged number of tokens per expert. Instruct routed weights are FP4."
           },
@@ -1862,11 +1909,11 @@
             title: "MTP tensor contract",
             notation: ["B batch", "T training positions", "R 4", `D ${v.d}`, "V 129280"],
             rows: [
-              ["Main state", `H [B,T,4,${v.d}]`, "completed main decoder state"],
-              ["Shifted embedding", `E+1 [B,T,${v.d}]`, "shared embedding table"],
-              ["Fusion", `Wh,Wе [${v.d},${v.d}]`, `broadcast sum [B,T,4,${v.d}]`],
-              ["MTP block", `4D residual · SWA 128 · MoE top-6/${v.experts}`, "one extra V4 transformer block"],
-              ["Head", `collapse [B,T,4,D] → [B,T,D]`, "shared LM head [D,129280]"]
+              ["Main state", `H [B,T,4,${v.d}]`, "completed main decoder state", "BF16 state · FP32 mHC coefficients"],
+              ["Shifted embedding", `E+1 [B,T,${v.d}]`, "shared embedding table", "BF16 · BF16 checkpoint embedding W"],
+              ["Fusion", `Wh,Wе [${v.d},${v.d}]`, `broadcast sum [B,T,4,${v.d}]`, fp8Linear],
+              ["MTP block", `4D residual · SWA 128 · MoE top-6/${v.experts}`, "one extra V4 transformer block", "BF16 state · FP8/FP4 W · INT32 attention indices"],
+              ["Head", `collapse [B,T,4,D] → [B,T,D]`, "shared LM head [D,129280]", "FP32 logits · BF16 checkpoint head W"]
             ],
             note: "During autoregressive speculative decoding T is typically one. The released compress-ratio schedule assigns the MTP block pure sliding-window attention."
           }
@@ -2034,7 +2081,7 @@
           contractNotation.append(chip);
         });
         contractRows.replaceChildren();
-        spec.rows.forEach(([label, shape, note]) => {
+        spec.rows.forEach(([label, shape, note, precision]) => {
           const row = document.createElement("tr");
           const heading = document.createElement("th");
           heading.scope = "row";
@@ -2046,7 +2093,10 @@
           explanation.className = "shape-note";
           explanation.textContent = note;
           cell.append(code, explanation);
-          row.append(heading, cell);
+          const precisionCell = document.createElement("td");
+          precisionCell.className = "precision";
+          precisionCell.textContent = precision;
+          row.append(heading, cell, precisionCell);
           contractRows.append(row);
         });
         contractNote.textContent = spec.note;
